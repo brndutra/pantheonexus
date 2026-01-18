@@ -548,7 +548,7 @@ export class SupabaseStorage implements IStorage {
     
     console.log('characterToScionsight - birthrights:', char.birthrights);
     
-    if (char.legend !== undefined) result.legend_level = char.legend;
+    // NOTE: legend_level is computed/read-only in Supabase, don't update it
     if (char.legendPointsCurrent !== undefined) result.legend_pool_total = char.legendPointsCurrent;
     if (char.willpower !== undefined) result.willpower_pool_total = char.willpower;
     if (char.willpowerCurrent !== undefined) result.willpower_pool_current = char.willpowerCurrent;
@@ -576,19 +576,19 @@ export class SupabaseStorage implements IStorage {
     if (char.virtues && Array.isArray(char.virtues)) {
       const virtues = char.virtues as any[];
       if (virtues[0]) {
-        result.virtue_1 = virtues[0].name || "";
+        result.virtue_1_name = virtues[0].name || "";
         result.virtue_1_rating = virtues[0].value || 1;
       }
       if (virtues[1]) {
-        result.virtue_2 = virtues[1].name || "";
+        result.virtue_2_name = virtues[1].name || "";
         result.virtue_2_rating = virtues[1].value || 1;
       }
       if (virtues[2]) {
-        result.virtue_3 = virtues[2].name || "";
+        result.virtue_3_name = virtues[2].name || "";
         result.virtue_3_rating = virtues[2].value || 1;
       }
       if (virtues[3]) {
-        result.virtue_4 = virtues[3].name || "";
+        result.virtue_4_name = virtues[3].name || "";
         result.virtue_4_rating = virtues[3].value || 1;
       }
       if (virtues[4]) {
