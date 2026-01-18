@@ -1743,28 +1743,6 @@ export default function CharacterSheet() {
                              </div>
                         </div>
 
-                        {/* Feats & Merits Section */}
-                        <div className="space-y-2 pt-2 border-t border-primary/10">
-                             <div className="flex justify-between items-center">
-                                <h5 className="text-[10px] font-mythic uppercase text-primary/70">Feats & Merits</h5>
-                                <button className="text-[10px] text-primary hover:text-white border border-primary/30 px-2 py-0.5 rounded-sm hover:bg-primary/20 transition-colors">+ ADD</button>
-                             </div>
-                            {feats.length === 0 ? (
-                                <div className="text-[10px] text-muted-foreground/40 italic text-center py-2 border border-dashed border-primary/10 rounded-sm">
-                                    NO FEATS RECORDED
-                                </div>
-                            ) : (
-                                <div className="space-y-1">
-                                    {feats.map((feat, i) => (
-                                        <div key={i} className="flex justify-between items-center text-[10px] bg-black/40 p-2 border border-primary/10 rounded-sm">
-                                            <span className="text-primary font-bold">{feat.name}</span>
-                                            <span className="text-muted-foreground">{feat.cost}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-
                         {/* Combat Derived Stats - Compact Grid */}
                         <div className="grid grid-cols-2 gap-2 pt-2 border-t border-primary/10">
                             <div className="bg-black/40 p-2 flex justify-between items-center border-l-2 border-primary/40">
