@@ -272,16 +272,31 @@ export default function CharacterSheet() {
         {/* TOP IDENTITY BLOCK */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
             <div className="md:col-span-8 space-y-6">
-                {/* Basic Info */}
-                <div className="border border-thin-gold p-6 bg-card/50 backdrop-blur-sm rounded-sm grid grid-cols-1 md:grid-cols-2 gap-6">
-                   <div className="space-y-4">
-                      <ScionInput label="Name" placeholder="CHARACTER NAME" className="text-xl md:text-2xl" />
-                      <ScionInput label="Player" placeholder="PLAYER NAME" />
-                   </div>
-                   <div className="space-y-4">
-                      <ScionInput label="Pantheon" placeholder="PANTHEON" />
-                      <ScionInput label="Chronicle" placeholder="CHRONICLE" />
-                   </div>
+                
+                {/* ID CARD HEADER - Identity & Genesis */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                   {/* 1) Identity Section */}
+                   <SectionFrame title="Identity" subHeader="Designation Profile" className="h-full">
+                      <div className="space-y-4">
+                         <ScionInput label="Designation (Name)" placeholder="CHARACTER NAME" className="text-lg" />
+                         <ScionInput label="Pantheon" placeholder="PANTHEON" />
+                         <ScionInput label="Heritage" placeholder="DIVINE PARENT / PATRON" />
+                      </div>
+                   </SectionFrame>
+
+                   {/* 4) Genesis Data Section */}
+                   <SectionFrame title="Genesis Data" subHeader="Origin Records" className="h-full">
+                      <div className="space-y-4">
+                         <div className="grid grid-cols-2 gap-4">
+                            <ScionInput label="Date of Birth" placeholder="DD/MM/AAAA" />
+                            <ScionInput label="Nationality" placeholder="NATIONALITY" />
+                         </div>
+                         <div className="grid grid-cols-2 gap-4">
+                            <ScionInput label="Origin City" placeholder="CITY" />
+                            <ScionInput label="State" placeholder="STATE/UF" />
+                         </div>
+                      </div>
+                   </SectionFrame>
                 </div>
 
                 {/* COMBINED SECTION: Callings, Nature, Virtues */}
