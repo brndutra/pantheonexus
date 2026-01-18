@@ -2229,6 +2229,42 @@ export default function CharacterSheet() {
                              </div>
                          </div>
                     </div>
+                    
+                    {/* Health Track - Moved here below Virtues */}
+                    <div className="mt-3 pt-3 border-t border-primary/15 space-y-2">
+                        <div className="flex justify-between items-center text-xs font-mythic uppercase text-primary/70">
+                             <span>Níveis de Vitalidade</span>
+                             <div className="flex items-center gap-2">
+                                 <div className="flex items-center gap-1 text-[9px] text-muted-foreground">
+                                     <span className="w-2 h-2 border border-primary/50 bg-black/50 block" /> B
+                                     <span className="w-2 h-2 border border-primary/50 bg-black/50 flex items-center justify-center text-[8px]" >x</span> L
+                                     <span className="w-2 h-2 border border-red-500/50 bg-black/50 flex items-center justify-center text-[8px] text-red-500" >*</span> A
+                                 </div>
+                                 <div className="flex items-center gap-1 border-l border-primary/20 pl-2">
+                                     <span className="text-[8px] text-muted-foreground">-0:</span>
+                                     <button 
+                                         onClick={() => setExtraOxBody(Math.max(0, extraOxBody - 1))}
+                                         className="w-4 h-4 flex items-center justify-center bg-black/50 border border-primary/30 text-primary/70 hover:bg-primary/20 hover:text-primary rounded-sm text-[10px] transition-colors"
+                                         data-testid="btn-decrease-ox"
+                                     >-</button>
+                                     <span className="text-[9px] font-tech text-primary w-4 text-center">{1 + extraOxBody}</span>
+                                     <button 
+                                         onClick={() => setExtraOxBody(extraOxBody + 1)}
+                                         className="w-4 h-4 flex items-center justify-center bg-black/50 border border-primary/30 text-primary/70 hover:bg-primary/20 hover:text-primary rounded-sm text-[10px] transition-colors"
+                                         data-testid="btn-increase-ox"
+                                     >+</button>
+                                 </div>
+                             </div>
+                         </div>
+                         <div className="flex flex-wrap gap-2 justify-center">
+                             {currentHealthLevels.map((level, idx) => (
+                                 <div key={idx} className="flex flex-col items-center gap-1">
+                                     <HealthBox status={healthDamage[idx]} onClick={() => toggleHealth(idx)} />
+                                     <span className="text-[9px] font-tech text-muted-foreground">{level}</span>
+                                 </div>
+                             ))}
+                         </div>
+                    </div>
                 </MythicHUDFrame>
 
             </div>
@@ -2247,44 +2283,8 @@ export default function CharacterSheet() {
                 className="md:col-span-1"
             >
                     <div className="space-y-6">
-                        {/* Health Track */}
-                        <div className="space-y-2">
-                            <div className="flex justify-between items-center text-xs font-mythic uppercase text-primary/70">
-                                 <span>Structural Integrity</span>
-                                 <div className="flex items-center gap-2">
-                                     <div className="flex items-center gap-1 text-[9px] text-muted-foreground">
-                                         <span className="w-2 h-2 border border-primary/50 bg-black/50 block" /> B
-                                         <span className="w-2 h-2 border border-primary/50 bg-black/50 flex items-center justify-center text-[8px]" >x</span> L
-                                         <span className="w-2 h-2 border border-red-500/50 bg-black/50 flex items-center justify-center text-[8px] text-red-500" >*</span> A
-                                     </div>
-                                     <div className="flex items-center gap-1 border-l border-primary/20 pl-2">
-                                         <span className="text-[8px] text-muted-foreground">-0:</span>
-                                         <button 
-                                             onClick={() => setExtraOxBody(Math.max(0, extraOxBody - 1))}
-                                             className="w-4 h-4 flex items-center justify-center bg-black/50 border border-primary/30 text-primary/70 hover:bg-primary/20 hover:text-primary rounded-sm text-[10px] transition-colors"
-                                             data-testid="btn-decrease-ox"
-                                         >-</button>
-                                         <span className="text-[9px] font-tech text-primary w-4 text-center">{1 + extraOxBody}</span>
-                                         <button 
-                                             onClick={() => setExtraOxBody(extraOxBody + 1)}
-                                             className="w-4 h-4 flex items-center justify-center bg-black/50 border border-primary/30 text-primary/70 hover:bg-primary/20 hover:text-primary rounded-sm text-[10px] transition-colors"
-                                             data-testid="btn-increase-ox"
-                                         >+</button>
-                                     </div>
-                                 </div>
-                             </div>
-                             <div className="flex flex-wrap gap-2 justify-center">
-                                 {currentHealthLevels.map((level, idx) => (
-                                     <div key={idx} className="flex flex-col items-center gap-1">
-                                         <HealthBox status={healthDamage[idx]} onClick={() => toggleHealth(idx)} />
-                                         <span className="text-[9px] font-tech text-muted-foreground">{level}</span>
-                                     </div>
-                                 ))}
-                             </div>
-                        </div>
-
                         {/* Combat Derived Stats - Compact Grid */}
-                        <div className="grid grid-cols-2 gap-2 pt-2 border-t border-primary/10">
+                        <div className="grid grid-cols-2 gap-2">
                             <div className="bg-black/40 p-2 flex justify-between items-center border-l-2 border-primary/40">
                                 <span className="text-[8px] uppercase tracking-wider text-muted-foreground">Dodge DV</span>
                                 <span className="font-mythic text-primary text-sm">{dodgeDV}</span>
