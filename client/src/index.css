@@ -39,41 +39,41 @@
 
 :root {
   /* Ultra-dark black/gold theme matching reference */
-  --background: 0 0% 5%; /* Pure black almost */
+  --background: 240 10% 4%; /* Deep Void Black with slight blue tint for depth */
   --foreground: 45 30% 85%; /* Pale gold/parchment text */
   
-  --card: 0 0% 8%; /* Very dark grey card */
+  --card: 240 10% 6%; /* Very dark grey card */
   --card-foreground: 45 30% 90%;
   
-  --popover: 0 0% 8%;
+  --popover: 240 10% 6%;
   --popover-foreground: 45 30% 90%;
   
   /* The specific Gold from the reference image */
-  --primary: 42 70% 55%; /* Rich Amber/Gold */
+  --primary: 46 80% 50%; /* Brighter, more metallic Gold */
   --primary-foreground: 0 0% 10%;
   
   /* Secondary is now a fainter version of the gold, not silver/cyan */
-  --secondary: 42 40% 30%; /* Dim Gold */
+  --secondary: 42 40% 25%; /* Dim Antique Gold */
   --secondary-foreground: 45 30% 90%;
   
-  --muted: 0 0% 15%;
-  --muted-foreground: 42 20% 50%;
+  --muted: 240 5% 15%;
+  --muted-foreground: 42 20% 60%;
   
-  --accent: 42 50% 20%;
-  --accent-foreground: 45 50% 90%;
+  --accent: 42 50% 15%;
+  --accent-foreground: 46 70% 80%;
   
   --destructive: 0 80% 50%;
   --destructive-foreground: 210 40% 98%;
 
-  --border: 42 60% 35%; /* Defining gold border */
-  --input: 0 0% 12%;
-  --ring: 42 70% 55%;
+  --border: 46 60% 30%; /* Metallic gold border */
+  --input: 240 10% 10%;
+  --ring: 46 80% 50%;
   
   --radius: 0.125rem; /* Sharper corners like reference */
   
-  --mythic-gold: 42 100% 50%;
-  --tech-silver: 0 0% 60%;
-  --void-black: 0 0% 4%;
+  --mythic-gold: 46 100% 50%;
+  --tech-silver: 200 10% 60%;
+  --void-black: 240 10% 3%;
 }
 
 .dark {
