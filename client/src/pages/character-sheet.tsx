@@ -39,6 +39,7 @@ interface Calling {
   id: number;
   name: string;
   title: string;
+  value: number;
 }
 
 interface Virtue {
@@ -180,9 +181,9 @@ export default function CharacterSheet() {
   );
   
   const [callings, setCallings] = useState<Calling[]>([
-    { id: 1, name: "", title: "" },
-    { id: 2, name: "", title: "" },
-    { id: 3, name: "", title: "" },
+    { id: 1, name: "", title: "", value: 1 },
+    { id: 2, name: "", title: "", value: 1 },
+    { id: 3, name: "", title: "", value: 1 },
   ]);
 
   const [virtues, setVirtues] = useState<Virtue[]>([
@@ -261,8 +262,9 @@ export default function CharacterSheet() {
     setAttributes({ ...attributes, [cat]: newCat });
   };
 
-  const updateCalling = (index: number, field: keyof Calling, value: string) => {
+  const updateCalling = (index: number, field: keyof Calling, value: string | number) => {
     const newCallings = [...callings];
+    // @ts-ignore
     newCallings[index] = { ...newCallings[index], [field]: value };
     setCallings(newCallings);
   };
@@ -621,6 +623,10 @@ export default function CharacterSheet() {
                                   value={c.name}
                                   onChange={(e) => updateCalling(i, 'name', e.target.value)}
                                 />
+                                <div className="flex items-center gap-1">
+                                    <DotRating value={c.value} max={5} className="scale-75" onChange={(v) => updateCalling(i, 'value', v)} />
+                                    <span className="font-mythic text-primary text-[10px] w-3 text-center">{c.value}</span>
+                                </div>
                                 <button 
                                   onClick={() => setActiveTitleIndex(activeTitleIndex === i ? null : i)}
                                   className={cn("opacity-30 hover:opacity-100 transition-opacity", c.title && "text-primary opacity-100 drop-shadow-[0_0_5px_gold]")}
@@ -673,7 +679,10 @@ export default function CharacterSheet() {
                                      onChange={(e) => updateVirtue(idx, 'name', e.target.value)}
                                      placeholder="VIRTUE"
                                   />
-                                  <DotRating value={virtue.value} max={5} className="scale-75" onChange={(v) => updateVirtue(idx, 'value', v)} />
+                                  <div className="flex items-center gap-1">
+                                    <DotRating value={virtue.value} max={5} className="scale-75" onChange={(v) => updateVirtue(idx, 'value', v)} />
+                                    <span className="font-mythic text-primary text-[10px] w-3 text-center">{virtue.value}</span>
+                                  </div>
                                </div>
                             ))}
                          </div>
@@ -843,12 +852,15 @@ export default function CharacterSheet() {
                                           </div>
                                           
                                           {/* Max 10 Dots, wrapping enabled in component */}
-                                          <DotRating 
-                                             value={attr.value} 
-                                             max={10} 
-                                             onChange={(v) => updateAttribute(category, idx, 'value', v)} 
-                                             className="justify-start max-w-full"
-                                          />
+                                          <div className="flex items-center gap-2">
+                                              <DotRating 
+                                                 value={attr.value} 
+                                                 max={10} 
+                                                 onChange={(v) => updateAttribute(category, idx, 'value', v)} 
+                                                 className="justify-start max-w-full flex-1"
+                                              />
+                                              <span className="font-mythic text-primary text-sm w-4 text-center border border-white/5 rounded bg-black/40 h-5 flex items-center justify-center">{attr.value}</span>
+                                          </div>
                                           
                                           {/* Epic Dots - Subtle */}
                                           {attr.value >= 1 && (
