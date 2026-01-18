@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { ArrowLeft, BookOpen, Search, Tag, Calendar, User } from "lucide-react";
 import { useArticles } from "@/lib/articles-store";
 import textureBg from "@assets/generated_images/minimalist_gold_grid_background.png";
-import cornerOrnament from "@assets/generated_images/mythological_corner_ornament.png";
+import cornerOrnament from "@assets/generated_images/tech_mythic_corner_ornament.png";
 import darkGoldTexture from "@assets/generated_images/dark_gold_texture_background.png";
 
 const SectionFrame = ({ children, className }: { children: React.ReactNode, className?: string }) => (

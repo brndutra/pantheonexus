@@ -18,10 +18,10 @@ import {
 import virtueIcon from "@assets/generated_images/virtue_icon_gold_geometric.png";
 import crownIcon from "@assets/generated_images/legendary_title_crown_icon.png";
 import textureBg from "@assets/generated_images/minimalist_gold_grid_background.png";
-import cornerOrnament from "@assets/generated_images/mythological_corner_ornament.png";
-import artNouveauFrame from "@assets/generated_images/art_nouveau_gold_border_frame.png";
+import cornerOrnament from "@assets/generated_images/tech_mythic_corner_ornament.png";
+import artNouveauFrame from "@assets/generated_images/tech_mythic_frame_border.png";
 import darkGoldTexture from "@assets/generated_images/dark_gold_texture_background.png";
-import divineDivider from "@assets/generated_images/divine_divider_line.png";
+import divineDivider from "@assets/generated_images/tech_mythic_divider_line.png";
 
 
 // --- Types ---

@@ -4,9 +4,9 @@ import { cn } from "@/lib/utils";
 import { Shield, Scroll, LayoutGrid, BookOpen, Crown, ChevronRight, User, Star, Plus } from "lucide-react";
 import { useCharacters, slugify } from "@/lib/characters-store";
 import textureBg from "@assets/generated_images/minimalist_gold_grid_background.png";
-import cornerOrnament from "@assets/generated_images/mythological_corner_ornament.png";
+import cornerOrnament from "@assets/generated_images/tech_mythic_corner_ornament.png";
 import darkGoldTexture from "@assets/generated_images/dark_gold_texture_background.png";
-import artNouveauFrame from "@assets/generated_images/art_nouveau_gold_border_frame.png";
+import artNouveauFrame from "@assets/generated_images/tech_mythic_frame_border.png";
 import {
   Carousel,
   CarouselContent,
