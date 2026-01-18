@@ -462,6 +462,10 @@ export default function CharacterSheet() {
             if (data && data.scion_id) {
               setScionsight(data);
               setLegendPoolCurrent(data.legend_pool_current || 0);
+              // Load saved offensives from scionsight
+              if (data.offensives && Array.isArray(data.offensives)) {
+                setWeapons(data.offensives);
+              }
             }
           })
           .catch(err => console.error('Failed to fetch scionsight:', err));
@@ -1213,9 +1217,9 @@ export default function CharacterSheet() {
     };
   }, [legend, legendPointsCurrent, willpower, willpowerCurrent, extraOxBody, healthDamage, portrait, characterId]);
   
-  // Auto-add innate offensives when loaded
+  // Auto-add innate offensives when loaded (and save to scionsight)
   useEffect(() => {
-    if (availableOffensives.innate && availableOffensives.innate.length > 0 && !innateOffensivesLoaded) {
+    if (availableOffensives.innate && availableOffensives.innate.length > 0 && !innateOffensivesLoaded && scionsight) {
       const innateWeapons: Weapon[] = availableOffensives.innate.map(o => ({
         name: o.offensive_name,
         category: o.category || 'innate',
@@ -1235,11 +1239,17 @@ export default function CharacterSheet() {
       setWeapons(prev => {
         const existingNames = new Set(prev.map(w => w.name));
         const newInnate = innateWeapons.filter(w => !existingNames.has(w.name));
-        return [...newInnate, ...prev];
+        if (newInnate.length > 0) {
+          const updatedWeapons = [...newInnate, ...prev];
+          // Save to scionsight
+          saveOffensivesToScionsight(updatedWeapons);
+          return updatedWeapons;
+        }
+        return prev;
       });
       setInnateOffensivesLoaded(true);
     }
-  }, [availableOffensives.innate, innateOffensivesLoaded]);
+  }, [availableOffensives.innate, innateOffensivesLoaded, scionsight]);
 
   // Create edit handlers for each section
   const createEditHandlers = (isEditing: boolean, setEditing: (v: boolean) => void) => ({
