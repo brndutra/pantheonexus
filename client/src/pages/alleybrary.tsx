@@ -104,36 +104,53 @@ export default function Alleybrary() {
         <div className="space-y-6">
            {filteredArticles.length > 0 ? (
              filteredArticles.map((article) => (
-                <SectionFrame key={article.id} className="group hover:border-primary/40 transition-colors">
-                   <div className="flex flex-col gap-4">
-                      <div className="flex justify-between items-start border-b border-white/5 pb-4">
-                         <div>
-                            <div className="flex gap-2 mb-2">
-                               {article.tags.map(tag => (
-                                  <span key={tag} className="text-[9px] font-code bg-primary/10 text-primary px-2 py-0.5 rounded-sm uppercase tracking-wider border border-primary/20">
-                                     {tag}
-                                  </span>
-                               ))}
+                <SectionFrame key={article.id} className="group hover:border-primary/40 transition-colors p-0 overflow-hidden">
+                   {/* Cover Image */}
+                   {article.coverImage && (
+                       <div className="h-32 w-full overflow-hidden relative border-b border-primary/20">
+                          <img src={article.coverImage} className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity" alt="" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+                       </div>
+                   )}
+                   
+                   <div className="p-8 relative">
+                      {/* Portrait Float - if exists */}
+                      {article.portraitImage && (
+                          <div className="float-right ml-6 mb-2 w-24 h-32 border border-primary/30 p-1 bg-black/60 rotate-2 shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+                              <img src={article.portraitImage} className="w-full h-full object-cover" alt="" />
+                          </div>
+                      )}
+
+                      <div className="flex flex-col gap-4">
+                         <div className="flex justify-between items-start border-b border-white/5 pb-4">
+                            <div>
+                               <div className="flex gap-2 mb-2">
+                                  {article.tags.map(tag => (
+                                     <span key={tag} className="text-[9px] font-code bg-primary/10 text-primary px-2 py-0.5 rounded-sm uppercase tracking-wider border border-primary/20">
+                                        {tag}
+                                     </span>
+                                  ))}
+                               </div>
+                               <h2 className="font-mythic text-2xl text-primary tracking-wide mb-1 group-hover:text-white transition-colors">
+                                  {article.title}
+                               </h2>
+                               <p className="font-tech text-sm text-muted-foreground/80 italic">
+                                  {article.summary}
+                               </p>
                             </div>
-                            <h2 className="font-mythic text-2xl text-primary tracking-wide mb-1 group-hover:text-white transition-colors">
-                               {article.title}
-                            </h2>
-                            <p className="font-tech text-sm text-muted-foreground/80 italic">
-                               {article.summary}
-                            </p>
+                            <div className="text-right">
+                               <div className="flex items-center justify-end gap-1 text-[10px] text-primary/60 font-code uppercase mb-1">
+                                  <Calendar className="w-3 h-3" /> {article.date}
+                               </div>
+                               <div className="flex items-center justify-end gap-1 text-[10px] text-muted-foreground/60 font-code uppercase">
+                                  <User className="w-3 h-3" /> {article.author}
+                               </div>
+                            </div>
                          </div>
-                         <div className="text-right">
-                            <div className="flex items-center justify-end gap-1 text-[10px] text-primary/60 font-code uppercase mb-1">
-                               <Calendar className="w-3 h-3" /> {article.date}
-                            </div>
-                            <div className="flex items-center justify-end gap-1 text-[10px] text-muted-foreground/60 font-code uppercase">
-                               <User className="w-3 h-3" /> {article.author}
-                            </div>
+                         
+                         <div className="font-serif text-foreground/80 leading-relaxed text-sm md:text-base whitespace-pre-wrap">
+                            {article.content}
                          </div>
-                      </div>
-                      
-                      <div className="font-serif text-foreground/80 leading-relaxed text-sm md:text-base whitespace-pre-wrap">
-                         {article.content}
                       </div>
                    </div>
                 </SectionFrame>

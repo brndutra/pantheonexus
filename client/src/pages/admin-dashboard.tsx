@@ -61,7 +61,9 @@ export default function AdminDashboard() {
     summary: "",
     content: "",
     author: "Admin",
-    tags: ""
+    tags: "",
+    coverImage: "",
+    portraitImage: ""
   });
 
   const handleAddScroll = () => {
@@ -88,10 +90,24 @@ export default function AdminDashboard() {
               summary: newArticle.summary,
               content: newArticle.content,
               author: newArticle.author,
-              tags: newArticle.tags.split(',').map(t => t.trim()).filter(Boolean)
+              tags: newArticle.tags.split(',').map(t => t.trim()).filter(Boolean),
+              coverImage: newArticle.coverImage,
+              portraitImage: newArticle.portraitImage
           });
-          setNewArticle({ title: "", summary: "", content: "", author: "Admin", tags: "" });
+          setNewArticle({ title: "", summary: "", content: "", author: "Admin", tags: "", coverImage: "", portraitImage: "" });
       }
+  };
+
+  // Helper to handle image file to base64
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, field: 'coverImage' | 'portraitImage') => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setNewArticle(prev => ({ ...prev, [field]: reader.result as string }));
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -306,6 +322,29 @@ export default function AdminDashboard() {
                                     value={newArticle.tags}
                                     onChange={(e) => setNewArticle({...newArticle, tags: e.target.value})}
                                 />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                               <div className="flex flex-col gap-1 w-full">
+                                  <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic">Cover Image</label>
+                                  <div className="bg-black/20 border border-white/10 rounded-sm p-2 flex items-center justify-between">
+                                     <span className="text-[9px] text-muted-foreground truncate w-20">{newArticle.coverImage ? "Image Loaded" : "No Image"}</span>
+                                     <label className="cursor-pointer bg-primary/10 hover:bg-primary/20 text-primary px-2 py-1 rounded-sm text-[9px] uppercase tracking-widest transition-colors">
+                                        Upload
+                                        <input type="file" className="hidden" accept="image/*" onChange={(e) => handleImageUpload(e, 'coverImage')} />
+                                     </label>
+                                  </div>
+                               </div>
+                               <div className="flex flex-col gap-1 w-full">
+                                  <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic">Portrait Image</label>
+                                  <div className="bg-black/20 border border-white/10 rounded-sm p-2 flex items-center justify-between">
+                                     <span className="text-[9px] text-muted-foreground truncate w-20">{newArticle.portraitImage ? "Image Loaded" : "No Image"}</span>
+                                     <label className="cursor-pointer bg-primary/10 hover:bg-primary/20 text-primary px-2 py-1 rounded-sm text-[9px] uppercase tracking-widest transition-colors">
+                                        Upload
+                                        <input type="file" className="hidden" accept="image/*" onChange={(e) => handleImageUpload(e, 'portraitImage')} />
+                                     </label>
+                                  </div>
+                               </div>
                             </div>
 
                             <button 
