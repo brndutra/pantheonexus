@@ -356,12 +356,13 @@ export default function CharacterSheet() {
         </div> 
         */}
 
-        {/* TOP IDENTITY BLOCK */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
-            <div className="md:col-span-8 space-y-6">
+        {/* TOP BLOCK: ID & RESOURCES */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8 items-start">
+            {/* LEFT COLUMN: IDENTITY & ESSENCE */}
+            <div className="md:col-span-8 flex flex-col gap-6">
                 
-                {/* ID CARD HEADER - Combined */}
-                <SectionFrame title="ID Card" subHeader="Designation & Genesis Records" className="h-full">
+                {/* ID CARD */}
+                <SectionFrame title="ID Card" subHeader="Designation & Genesis Records">
                     <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
                         {/* Portrait Column */}
                         <div className="md:col-span-3 flex flex-col gap-2 relative">
@@ -508,7 +509,7 @@ export default function CharacterSheet() {
                 </SectionFrame>
 
                 {/* COMBINED SECTION: Callings, Nature, Virtues */}
-                <SectionFrame title="Essence & Nature" subHeader="Divine Matrix" className="min-h-[250px]">
+                <SectionFrame title="Essence & Nature" subHeader="Divine Matrix">
                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
                       {/* Vertical Dividers */}
                       <div className="absolute left-1/3 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-primary/20 to-transparent hidden md:block" />
@@ -590,80 +591,80 @@ export default function CharacterSheet() {
                 </SectionFrame>
             </div>
 
-            {/* Right Column: Legend & Aether Status */}
+            {/* RIGHT COLUMN: LEGEND & VITALITY */}
             <div className="md:col-span-4 flex flex-col gap-6">
                 {/* Legend Rank Block */}
-                <div className="flex-1 border-2 border-primary/30 p-6 bg-black/60 backdrop-blur-md rounded-sm flex flex-col items-center justify-center relative overflow-hidden shadow-[0_0_30px_rgba(212,175,55,0.1)]">
+                <div className="border-2 border-primary/30 p-6 bg-black/60 backdrop-blur-md rounded-sm flex flex-col items-center justify-center relative overflow-hidden shadow-[0_0_30px_rgba(212,175,55,0.1)]">
                    <img src={artNouveauFrame} className="absolute inset-0 w-full h-full opacity-30 mix-blend-overlay pointer-events-none" alt="" />
                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.1)_0%,transparent_70%)]" />
                    
-                   <h2 className="text-4xl font-mythic text-primary tracking-tighter z-10 mb-6 drop-shadow-[0_0_10px_gold]">LEGEND</h2>
+                   <h2 className="text-3xl font-mythic text-primary tracking-tighter z-10 mb-4 drop-shadow-[0_0_10px_gold]">LEGEND</h2>
                    
-                   <div className="flex items-center gap-8 z-10">
+                   <div className="flex items-center gap-6 z-10">
                       <div className="flex flex-col items-center">
-                         <div className="w-24 h-24 border-2 border-primary flex items-center justify-center bg-black/80 text-6xl font-mythic text-primary shadow-[0_0_30px_rgba(212,175,55,0.4)] relative">
+                         <div className="w-20 h-20 border-2 border-primary flex items-center justify-center bg-black/80 text-5xl font-mythic text-primary shadow-[0_0_30px_rgba(212,175,55,0.4)] relative">
                             {/* Inner Border */}
                             <div className="absolute inset-1 border border-primary/30" />
                             {legend}
                          </div>
-                         <span className="text-[10px] tracking-[0.3em] text-primary/60 mt-3 uppercase font-bold">Rank</span>
+                         <span className="text-[10px] tracking-[0.3em] text-primary/60 mt-2 uppercase font-bold">Rank</span>
                       </div>
                       
                       {/* Aether Percentage Display */}
                       <div className="flex flex-col items-center">
-                         <div className="w-24 h-24 rounded-full flex items-center justify-center bg-black/40 relative">
+                         <div className="w-20 h-20 rounded-full flex items-center justify-center bg-black/40 relative">
                             {/* SVG Circle for Progress */}
                             <svg className="absolute inset-0 w-full h-full -rotate-90 drop-shadow-[0_0_10px_rgba(212,175,55,0.3)]">
-                               <circle cx="48" cy="48" r="42" stroke="#1a1a1a" strokeWidth="4" fill="transparent" />
+                               <circle cx="40" cy="40" r="36" stroke="#1a1a1a" strokeWidth="3" fill="transparent" />
                                <circle 
-                                 cx="48" cy="48" r="42" 
+                                 cx="40" cy="40" r="36" 
                                  stroke="#d4af37" 
-                                 strokeWidth="4" 
+                                 strokeWidth="3" 
                                  fill="transparent" 
-                                 strokeDasharray={`${2 * Math.PI * 42}`}
-                                 strokeDashoffset={`${2 * Math.PI * 42 * (1 - aetherPercentage/100)}`}
+                                 strokeDasharray={`${2 * Math.PI * 36}`}
+                                 strokeDashoffset={`${2 * Math.PI * 36 * (1 - aetherPercentage/100)}`}
                                  strokeLinecap="round"
                                  className="transition-all duration-1000 ease-out"
                                />
                             </svg>
                             <div className="flex flex-col items-center">
-                                <span className="font-code text-2xl text-primary font-bold">{aetherPercentage}%</span>
+                                <span className="font-code text-xl text-primary font-bold">{aetherPercentage}%</span>
                             </div>
                          </div>
-                         <span className="text-[10px] tracking-[0.3em] text-primary/60 mt-3 uppercase font-bold">Aether</span>
+                         <span className="text-[10px] tracking-[0.3em] text-primary/60 mt-2 uppercase font-bold">Aether</span>
                       </div>
                    </div>
                 </div>
 
                 {/* Pools & Health Section Combined */}
-                <SectionFrame title="Resources & Vitality" subHeader="Power & Biometric Status" className="flex-1 min-h-[400px]">
-                   <div className="space-y-8 py-2">
+                <SectionFrame title="Vitality" subHeader="Status Monitor" className="flex-1">
+                   <div className="space-y-6">
                       {/* Legend Points */}
-                      <div className="space-y-3">
-                         <div className="flex justify-between text-xs font-mythic text-primary/90 uppercase tracking-widest">
+                      <div className="space-y-2">
+                         <div className="flex justify-between text-[10px] font-mythic text-primary/90 uppercase tracking-widest">
                             <span>Legend Points</span>
                             <span className="font-code text-primary">{legendCurrent} / {legendPoolTotal}</span>
                          </div>
-                         <div className="h-3 bg-black/80 border border-primary/30 rounded-full overflow-hidden relative shadow-inner">
+                         <div className="h-2 bg-black/80 border border-primary/30 rounded-full overflow-hidden relative shadow-inner">
                             <div 
                               className="absolute top-0 left-0 h-full bg-gradient-to-r from-primary/60 to-primary" 
                               style={{ width: `${(legendCurrent / legendPoolTotal) * 100}%` }}
                             />
                          </div>
                          <div className="flex gap-1 justify-between">
-                            <button onClick={() => setLegendCurrent(Math.max(0, legendCurrent - 1))} className="w-8 h-6 flex items-center justify-center border border-primary/20 text-[10px] hover:bg-primary/10 hover:border-primary text-primary transition-colors rounded-sm">-</button>
-                            <button onClick={() => setLegendCurrent(Math.min(legendPoolTotal, legendCurrent + 1))} className="w-8 h-6 flex items-center justify-center border border-primary/20 text-[10px] hover:bg-primary/10 hover:border-primary text-primary transition-colors rounded-sm">+</button>
+                            <button onClick={() => setLegendCurrent(Math.max(0, legendCurrent - 1))} className="w-6 h-5 flex items-center justify-center border border-primary/20 text-[9px] hover:bg-primary/10 hover:border-primary text-primary transition-colors rounded-sm">-</button>
+                            <button onClick={() => setLegendCurrent(Math.min(legendPoolTotal, legendCurrent + 1))} className="w-6 h-5 flex items-center justify-center border border-primary/20 text-[9px] hover:bg-primary/10 hover:border-primary text-primary transition-colors rounded-sm">+</button>
                          </div>
                       </div>
 
                       {/* Willpower */}
-                      <div className="space-y-3">
-                         <div className="flex justify-between text-xs font-mythic text-primary/90 uppercase tracking-widest">
+                      <div className="space-y-2">
+                         <div className="flex justify-between text-[10px] font-mythic text-primary/90 uppercase tracking-widest">
                             <span>Willpower</span>
                             <span className="font-code text-primary">{willpowerCurrent} / {willpower}</span>
                          </div>
                          <div className="flex justify-between items-center mb-1 px-1">
-                            <DotRating value={willpower} max={10} onChange={setWillpower} className="scale-90 origin-left" />
+                            <DotRating value={willpower} max={10} onChange={setWillpower} className="scale-75 origin-left" />
                          </div>
                          <div className="grid grid-cols-10 gap-1 px-1">
                             {Array.from({length: 10}).map((_, i) => (
@@ -671,7 +672,7 @@ export default function CharacterSheet() {
                                  key={i}
                                  onClick={() => setWillpowerCurrent(i + 1 === willpowerCurrent ? 0 : i + 1)}
                                  className={cn(
-                                   "h-4 border border-primary/30 cursor-pointer transition-all duration-300 rounded-[1px]",
+                                   "h-3 border border-primary/30 cursor-pointer transition-all duration-300 rounded-[1px]",
                                    i < willpowerCurrent ? "bg-primary shadow-[0_0_8px_rgba(212,175,55,0.5)] border-primary" : "bg-transparent hover:bg-primary/10",
                                    i >= willpower && "opacity-10 pointer-events-none border-none bg-white/5" // Disable dots beyond permanent rating
                                  )}
@@ -681,16 +682,16 @@ export default function CharacterSheet() {
                       </div>
 
                       {/* Divider */}
-                      <div className="flex items-center gap-4 opacity-30 py-2">
+                      <div className="flex items-center gap-4 opacity-30 py-1">
                          <div className="h-px bg-primary/30 flex-1" />
-                         <Activity className="w-4 h-4 text-primary" />
+                         <Activity className="w-3 h-3 text-primary" />
                          <div className="h-px bg-primary/30 flex-1" />
                       </div>
 
                       {/* Health Tracker Integrated */}
-                      <div className="space-y-4">
+                      <div className="space-y-3">
                           <div className="flex justify-between items-center">
-                             <h4 className="text-[10px] uppercase tracking-[0.2em] font-mythic text-primary/70">Health Monitor</h4>
+                             <h4 className="text-[10px] uppercase tracking-[0.2em] font-mythic text-primary/70">Health</h4>
                              <button 
                                 onClick={() => setExtraOxBody(prev => Math.min(prev + 1, 5))}
                                 className="text-[9px] border border-primary/30 px-2 py-0.5 hover:bg-primary/10 text-primary transition-colors uppercase tracking-wider rounded-sm"
@@ -699,12 +700,12 @@ export default function CharacterSheet() {
                              </button>
                           </div>
                           
-                          <div className="flex flex-wrap gap-4 justify-center items-end">
+                          <div className="flex flex-wrap gap-x-3 gap-y-2 justify-start items-end">
                              {currentHealthLevels.map((level, i) => (
-                                <div key={i} className="flex flex-col items-center gap-2 group relative">
+                                <div key={i} className="flex flex-col items-center gap-1 group relative">
                                    <HealthBox status={healthDamage[i]} onClick={() => toggleHealth(i)} />
                                    <span className={cn(
-                                      "font-code text-[9px] uppercase tracking-wider transition-all duration-300",
+                                      "font-code text-[8px] uppercase tracking-wider transition-all duration-300",
                                       level === "Incap" ? "text-red-500 font-bold" : "text-muted-foreground group-hover:text-primary"
                                    )}>
                                       {level}
