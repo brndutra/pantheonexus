@@ -3,10 +3,6 @@ import { Link } from "wouter";
 import { cn } from "@/lib/utils";
 import { Shield, Scroll, LayoutGrid, BookOpen, Crown, ChevronRight, User, Star, Plus } from "lucide-react";
 import { useCharacters, slugify } from "@/lib/characters-store";
-import textureBg from "@assets/generated_images/minimalist_gold_grid_background.png";
-import cornerOrnament from "@assets/generated_images/tech_mythic_corner_ornament.png";
-import darkGoldTexture from "@assets/generated_images/dark_sci-fi_mythic_gold_background.png";
-import artNouveauFrame from "@assets/generated_images/cyber_mythic_ornate_frame.png";
 import {
   Carousel,
   CarouselContent,
@@ -20,26 +16,25 @@ export default function Home() {
 
   return (
     <div 
-      className="min-h-screen bg-black text-foreground overflow-hidden font-tech selection:bg-primary/30 relative flex items-center justify-center"
-      style={{
-        backgroundImage: `url(${darkGoldTexture})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-      }}
+      className="min-h-screen bg-black text-foreground overflow-hidden font-tech selection:bg-primary/30 relative flex items-center justify-center bg-grid-gold"
     >
       <div className="fixed inset-0 pointer-events-none z-10 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.9)_80%)]" />
 
       {/* Main Central Box */}
       <div className="relative z-20 max-w-6xl w-full mx-4 flex flex-col items-center">
-        {/* Frame Decoration */}
-        <div className="absolute -inset-4 md:-inset-8 pointer-events-none opacity-80 hidden md:block">
-            <img src={artNouveauFrame} alt="" className="w-full h-full object-fill drop-shadow-[0_0_15px_rgba(212,175,55,0.3)]" />
+        {/* CSS Frame Decoration */}
+        <div className="absolute -inset-4 md:-inset-8 pointer-events-none opacity-80 hidden md:block border border-primary/20 rounded-lg">
+             {/* Corner Accents */}
+             <div className="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 border-primary rounded-tl-lg" />
+             <div className="absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2 border-primary rounded-tr-lg" />
+             <div className="absolute bottom-0 left-0 w-16 h-16 border-b-2 border-l-2 border-primary rounded-bl-lg" />
+             <div className="absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2 border-primary rounded-br-lg" />
         </div>
         
-        <div className="bg-black/80 backdrop-blur-xl p-8 md:p-12 rounded-sm shadow-[0_0_50px_rgba(212,175,55,0.15)] text-center relative overflow-hidden group w-full max-w-5xl">
+        <div className="bg-black/90 backdrop-blur-xl p-8 md:p-12 rounded-lg border border-primary/20 shadow-[0_0_50px_rgba(212,175,55,0.1)] text-center relative overflow-hidden group w-full max-w-5xl">
             
             {/* Animated Background Scanline */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_0%,rgba(212,175,55,0.05)_50%,transparent_100%)] h-[200%] w-full animate-scanline pointer-events-none opacity-30" />
+            <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_0%,rgba(212,175,55,0.05)_50%,transparent_100%)] h-[200%] w-full animate-scanline pointer-events-none opacity-20" />
 
             <div className="relative z-10 flex flex-col items-center mb-10">
                 <Shield className="w-12 h-12 text-primary mb-4 drop-shadow-[0_0_15px_rgba(212,175,55,0.6)]" />
