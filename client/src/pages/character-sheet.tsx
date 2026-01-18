@@ -53,6 +53,16 @@ interface Ability {
 
 type DamageType = 0 | 1 | 2 | 3; // 0: None, 1: Bashing, 2: Lethal, 3: Aggravated
 
+interface Weapon {
+  name: string;
+  accuracy: string;
+  damage: string;
+  defense: string;
+  overwhelming: string;
+  minStr: string;
+  tags: string;
+}
+
 // --- Data ---
 const DEFAULT_ATTRIBUTES: Record<AttributeCategory, Attribute[]> = {
   Physical: [
@@ -173,6 +183,11 @@ export default function CharacterSheet() {
   const [boons, setBoons] = useState<string[]>([]);
   const [newBoon, setNewBoon] = useState("");
 
+  const [weapons, setWeapons] = useState<Weapon[]>([]);
+  const [newWeapon, setNewWeapon] = useState<Weapon>({
+     name: "", accuracy: "", damage: "", defense: "", overwhelming: "", minStr: "", tags: ""
+  });
+
   const [activeTitleIndex, setActiveTitleIndex] = useState<number | null>(null);
 
   // Portrait State
@@ -291,6 +306,13 @@ export default function CharacterSheet() {
       setBoons([...boons, newBoon]);
       setNewBoon("");
     }
+  };
+
+  const addWeapon = () => {
+     if (newWeapon.name.trim()) {
+        setWeapons([...weapons, newWeapon]);
+        setNewWeapon({ name: "", accuracy: "", damage: "", defense: "", overwhelming: "", minStr: "", tags: "" });
+     }
   };
 
   // Build current health levels array
@@ -917,6 +939,114 @@ export default function CharacterSheet() {
                           <div className="grid grid-cols-2 gap-4">
                              <ScionInput label="Lift" value={`${lift} lbs`} readOnly />
                              <ScionInput label="Throw" value={`${throwRange} yds`} readOnly />
+                          </div>
+                       </div>
+                    </div>
+                 </SectionFrame>
+              </div>
+
+              {/* Offensive / Arsenal Section */}
+              <div className="md:col-span-12">
+                 <SectionFrame title="Offensive Capabilities" subHeader="Weapons & Attack Profiles">
+                    <div className="space-y-4">
+                       {/* Weapons Header */}
+                       <div className="grid grid-cols-12 gap-2 text-[9px] uppercase tracking-widest text-primary/60 font-mythic border-b border-primary/20 pb-2 px-2">
+                          <div className="col-span-3">Weapon</div>
+                          <div className="col-span-1 text-center">Acc</div>
+                          <div className="col-span-1 text-center">Dmg</div>
+                          <div className="col-span-1 text-center">Def</div>
+                          <div className="col-span-1 text-center">Ovw</div>
+                          <div className="col-span-3 text-center">Tags</div>
+                          <div className="col-span-2 text-right">Action</div>
+                       </div>
+                       
+                       {/* Weapons List */}
+                       <div className="space-y-2">
+                          <AnimatePresence>
+                             {weapons.map((w, i) => (
+                                <motion.div 
+                                   key={i}
+                                   initial={{ opacity: 0, height: 0 }}
+                                   animate={{ opacity: 1, height: 'auto' }}
+                                   exit={{ opacity: 0, height: 0 }}
+                                   className="grid grid-cols-12 gap-2 items-center bg-black/40 border border-white/5 p-2 rounded-sm group hover:border-primary/30 transition-colors"
+                                >
+                                   <div className="col-span-3 font-tech text-foreground">{w.name}</div>
+                                   <div className="col-span-1 font-code text-primary text-center">+{w.accuracy}</div>
+                                   <div className="col-span-1 font-code text-destructive text-center">+{w.damage}</div>
+                                   <div className="col-span-1 font-code text-primary text-center">+{w.defense}</div>
+                                   <div className="col-span-1 font-code text-muted-foreground text-center">{w.overwhelming}</div>
+                                   <div className="col-span-3 font-tech text-[10px] text-muted-foreground text-center truncate">{w.tags}</div>
+                                   <div className="col-span-2 flex justify-end">
+                                      <button 
+                                         onClick={() => setWeapons(prev => prev.filter((_, idx) => idx !== i))}
+                                         className="text-destructive/50 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                                      >
+                                         <Trash2 className="w-4 h-4" />
+                                      </button>
+                                   </div>
+                                </motion.div>
+                             ))}
+                          </AnimatePresence>
+                          
+                          {/* New Weapon Input Row */}
+                          <div className="grid grid-cols-12 gap-2 pt-2 items-center">
+                             <div className="col-span-3">
+                                <input 
+                                   className="w-full bg-black/20 border border-white/10 rounded-sm px-2 py-1 text-xs font-tech text-foreground outline-none focus:border-primary/50 placeholder:text-muted-foreground/30"
+                                   placeholder="Name..."
+                                   value={newWeapon.name}
+                                   onChange={(e) => setNewWeapon({...newWeapon, name: e.target.value})}
+                                />
+                             </div>
+                             <div className="col-span-1">
+                                <input 
+                                   className="w-full bg-black/20 border border-white/10 rounded-sm px-1 py-1 text-xs font-code text-center text-primary outline-none focus:border-primary/50 placeholder:text-muted-foreground/30"
+                                   placeholder="+0"
+                                   value={newWeapon.accuracy}
+                                   onChange={(e) => setNewWeapon({...newWeapon, accuracy: e.target.value})}
+                                />
+                             </div>
+                             <div className="col-span-1">
+                                <input 
+                                   className="w-full bg-black/20 border border-white/10 rounded-sm px-1 py-1 text-xs font-code text-center text-destructive outline-none focus:border-primary/50 placeholder:text-muted-foreground/30"
+                                   placeholder="+0L"
+                                   value={newWeapon.damage}
+                                   onChange={(e) => setNewWeapon({...newWeapon, damage: e.target.value})}
+                                />
+                             </div>
+                             <div className="col-span-1">
+                                <input 
+                                   className="w-full bg-black/20 border border-white/10 rounded-sm px-1 py-1 text-xs font-code text-center text-primary outline-none focus:border-primary/50 placeholder:text-muted-foreground/30"
+                                   placeholder="+0"
+                                   value={newWeapon.defense}
+                                   onChange={(e) => setNewWeapon({...newWeapon, defense: e.target.value})}
+                                />
+                             </div>
+                             <div className="col-span-1">
+                                <input 
+                                   className="w-full bg-black/20 border border-white/10 rounded-sm px-1 py-1 text-xs font-code text-center text-muted-foreground outline-none focus:border-primary/50 placeholder:text-muted-foreground/30"
+                                   placeholder="1"
+                                   value={newWeapon.overwhelming}
+                                   onChange={(e) => setNewWeapon({...newWeapon, overwhelming: e.target.value})}
+                                />
+                             </div>
+                             <div className="col-span-3">
+                                <input 
+                                   className="w-full bg-black/20 border border-white/10 rounded-sm px-2 py-1 text-xs font-tech text-muted-foreground outline-none focus:border-primary/50 placeholder:text-muted-foreground/30"
+                                   placeholder="Tags..."
+                                   value={newWeapon.tags}
+                                   onChange={(e) => setNewWeapon({...newWeapon, tags: e.target.value})}
+                                />
+                             </div>
+                             <div className="col-span-2 flex justify-end">
+                                <button 
+                                   onClick={addWeapon}
+                                   className="bg-primary/10 hover:bg-primary/20 border border-primary/30 text-primary px-3 py-1 rounded-sm flex items-center justify-center transition-colors text-xs uppercase tracking-wider w-full"
+                                >
+                                   <Plus className="w-3 h-3 mr-1" /> Add
+                                </button>
+                             </div>
                           </div>
                        </div>
                     </div>
