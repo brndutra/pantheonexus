@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import cover1 from "@assets/generated_images/mythological_city_skyline_rift.png";
+import portrait1 from "@assets/generated_images/mysterious_oracle_silhouette.png";
 
 export interface Article {
   id: number;
@@ -8,6 +10,8 @@ export interface Article {
   author: string;
   date: string;
   tags: string[];
+  coverImage?: string;
+  portraitImage?: string;
 }
 
 const STORAGE_KEY = 'pantheonexus_articles';
@@ -30,7 +34,9 @@ export const useArticles = () => {
           content: "Recent scion activity suggests a thinning of the Veil near the East River. Be on guard for manifestations.",
           author: "Admin",
           date: "2026-01-15",
-          tags: ["Alert", "Titans"]
+          tags: ["Alert", "Titans"],
+          coverImage: cover1,
+          portraitImage: portrait1
         },
         {
             id: 2,
