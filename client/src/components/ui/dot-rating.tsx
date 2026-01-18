@@ -22,7 +22,7 @@ export function DotRating({
   const dots = Array.from({ length: max }, (_, i) => i + 1);
 
   return (
-    <div className={cn("flex gap-1.5 items-center", className)}>
+    <div className={cn("flex gap-1.5 items-center flex-wrap", className)}>
       {dots.map((dot) => (
         <button
           key={dot}

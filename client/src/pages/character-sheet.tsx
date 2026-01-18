@@ -25,7 +25,7 @@ interface Attribute {
   name: AttributeName;
   value: number;
   epic: number;
-  rune: string; // Added rune property
+  rune: string;
 }
 
 interface Calling {
@@ -135,8 +135,10 @@ export default function CharacterSheet() {
   ]);
   
   const [legend, setLegend] = useState(2);
+  const [legendCurrent, setLegendCurrent] = useState(4); // Example value
+
   const [willpower, setWillpower] = useState(5);
-  const [willpowerTemp, setWillpowerTemp] = useState(5);
+  const [willpowerCurrent, setWillpowerCurrent] = useState(5);
   
   // Health State
   const [extraOxBody, setExtraOxBody] = useState(0);
@@ -202,9 +204,12 @@ export default function CharacterSheet() {
   ].map(attr => ({
      subject: attr.name.substring(0, 3).toUpperCase(),
      A: attr.value,
-     fullMark: 5
+     fullMark: 10
   }));
 
+  // Aether Calculation (Example: Legend * 10%)
+  const aetherPercentage = legend * 10;
+  const legendPoolTotal = legend * legend;
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden font-tech selection:bg-primary/30 relative bg-grid-gold">
@@ -215,32 +220,33 @@ export default function CharacterSheet() {
       {/* Main Container */}
       <div className="relative z-20 container mx-auto p-4 md:p-12 max-w-7xl">
         
-        {/* Header Block from Reference */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-12">
-            
-            {/* Left: Identity */}
-            <div className="md:col-span-8 border border-thin-gold p-6 bg-card/50 backdrop-blur-sm rounded-sm">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                   <div className="space-y-6">
+        {/* TOP IDENTITY BLOCK */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
+            <div className="md:col-span-8 space-y-6">
+                {/* Basic Info */}
+                <div className="border border-thin-gold p-6 bg-card/50 backdrop-blur-sm rounded-sm grid grid-cols-1 md:grid-cols-2 gap-6">
+                   <div className="space-y-4">
                       <ScionInput label="Name" placeholder="CHARACTER NAME" className="text-xl md:text-2xl" />
                       <ScionInput label="Player" placeholder="PLAYER NAME" />
-                      <ScionInput label="Chronicle" placeholder="CHRONICLE NAME" />
                    </div>
-                   <div className="space-y-6">
+                   <div className="space-y-4">
                       <ScionInput label="Pantheon" placeholder="PANTHEON" />
-                      <ScionInput label="Nature" placeholder="NATURE" />
-                      
-                      {/* Callings List in Header */}
-                      <div className="relative">
-                        <label className="block text-[10px] uppercase tracking-[0.2em] mb-2 font-mythic text-primary/70">
-                          CALLINGS
-                        </label>
-                        <div className="flex flex-col gap-2">
+                      <ScionInput label="Chronicle" placeholder="CHRONICLE" />
+                   </div>
+                </div>
+
+                {/* COMBINED SECTION: Callings, Nature, Virtues */}
+                <SectionFrame title="Essence & Nature" subHeader="Divine Matrix" className="min-h-[250px]">
+                   <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                      {/* Callings */}
+                      <div className="space-y-4">
+                         <h4 className="text-[10px] uppercase tracking-[0.2em] font-mythic text-primary/70 mb-2 border-b border-thin-gold/30 pb-1">Callings</h4>
+                         <div className="flex flex-col gap-3">
                            {callings.map((c, i) => (
-                             <div key={i} className="flex items-center gap-2 border-b border-muted-foreground/20 pb-1">
+                             <div key={i} className="flex items-center gap-2">
                                 <input 
-                                  className="bg-transparent w-full outline-none font-tech text-foreground placeholder:text-muted-foreground/20"
-                                  placeholder="Calling..."
+                                  className="bg-transparent w-full outline-none font-tech text-foreground placeholder:text-muted-foreground/20 text-sm"
+                                  placeholder={`Calling ${i+1}`}
                                   value={c.name}
                                   onChange={(e) => updateCalling(i, 'name', e.target.value)}
                                 />
@@ -250,12 +256,11 @@ export default function CharacterSheet() {
                                 >
                                    <Crown className="w-3 h-3" />
                                 </button>
-                                {/* Title Popup */}
                                 <AnimatePresence>
                                   {activeTitleIndex === i && (
                                     <motion.div 
                                       initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}
-                                      className="absolute right-0 top-full z-50 bg-black border border-primary p-2 w-48 shadow-2xl"
+                                      className="absolute left-0 mt-6 z-50 bg-black border border-primary p-2 w-48 shadow-2xl"
                                     >
                                        <input 
                                           autoFocus
@@ -269,22 +274,120 @@ export default function CharacterSheet() {
                                 </AnimatePresence>
                              </div>
                            ))}
-                        </div>
+                         </div>
+                      </div>
+
+                      {/* Nature */}
+                      <div className="space-y-4">
+                         <h4 className="text-[10px] uppercase tracking-[0.2em] font-mythic text-primary/70 mb-2 border-b border-thin-gold/30 pb-1">Nature</h4>
+                         <ScionInput placeholder="NATURE ARCHETYPE" />
+                      </div>
+
+                      {/* Virtues */}
+                      <div className="space-y-4">
+                         <h4 className="text-[10px] uppercase tracking-[0.2em] font-mythic text-primary/70 mb-2 border-b border-thin-gold/30 pb-1">Virtues</h4>
+                         <div className="space-y-2">
+                            {virtues.map((virtue, idx) => (
+                               <div key={idx} className="flex justify-between items-center group">
+                                  <input 
+                                     className="bg-transparent font-tech text-xs text-muted-foreground group-hover:text-primary transition-colors outline-none w-20 uppercase"
+                                     value={virtue.name}
+                                     onChange={(e) => updateVirtue(idx, 'name', e.target.value)}
+                                     placeholder="VIRTUE"
+                                  />
+                                  <DotRating value={virtue.value} max={5} className="scale-75" onChange={(v) => updateVirtue(idx, 'value', v)} />
+                               </div>
+                            ))}
+                         </div>
+                      </div>
+                   </div>
+                </SectionFrame>
+            </div>
+
+            {/* Right Column: Legend & Aether Status */}
+            <div className="md:col-span-4 flex flex-col gap-6">
+                {/* Legend Rank Block */}
+                <div className="flex-1 border border-thin-gold p-6 bg-card/50 backdrop-blur-sm rounded-sm flex flex-col items-center justify-center relative overflow-hidden">
+                   <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,gold_0%,transparent_70%)]" />
+                   <h2 className="text-3xl font-mythic text-primary tracking-tighter z-10 mb-4">LEGEND</h2>
+                   
+                   <div className="flex items-center gap-6 z-10">
+                      <div className="flex flex-col items-center">
+                         <div className="w-20 h-20 border-2 border-primary flex items-center justify-center bg-black/50 text-5xl font-mythic text-primary shadow-[0_0_20px_rgba(212,175,55,0.3)]">
+                            {legend}
+                         </div>
+                         <span className="text-[10px] tracking-[0.2em] text-muted-foreground mt-2 uppercase">Rank</span>
+                      </div>
+                      
+                      {/* Aether Percentage Display */}
+                      <div className="flex flex-col items-center">
+                         <div className="w-20 h-20 border border-thin-gold/50 rounded-full flex items-center justify-center bg-black/30 relative">
+                            {/* SVG Circle for Progress */}
+                            <svg className="absolute inset-0 w-full h-full -rotate-90">
+                               <circle cx="40" cy="40" r="36" stroke="#333" strokeWidth="4" fill="transparent" />
+                               <circle 
+                                 cx="40" cy="40" r="36" 
+                                 stroke="#d4af37" 
+                                 strokeWidth="4" 
+                                 fill="transparent" 
+                                 strokeDasharray={`${2 * Math.PI * 36}`}
+                                 strokeDashoffset={`${2 * Math.PI * 36 * (1 - aetherPercentage/100)}`}
+                                 className="transition-all duration-1000 ease-out"
+                               />
+                            </svg>
+                            <span className="font-code text-xl text-primary">{aetherPercentage}%</span>
+                         </div>
+                         <span className="text-[10px] tracking-[0.2em] text-muted-foreground mt-2 uppercase">Aether</span>
                       </div>
                    </div>
                 </div>
-            </div>
 
-            {/* Right: Logo / Rank */}
-            <div className="md:col-span-4 border border-thin-gold p-6 bg-card/50 backdrop-blur-sm rounded-sm flex flex-col items-center justify-center text-center relative overflow-hidden">
-                <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,gold_0%,transparent_70%)]" />
-                <h1 className="text-5xl md:text-7xl font-mythic text-primary tracking-tighter z-10 drop-shadow-[0_0_15px_rgba(212,175,55,0.5)]">SCION</h1>
-                <div className="mt-4 flex items-center gap-4 z-10">
-                   <span className="text-xs tracking-[0.3em] text-muted-foreground font-code">LEGEND RANK</span>
-                   <div className="w-12 h-12 border border-primary flex items-center justify-center bg-black/50 text-2xl font-mythic text-primary">
-                      {legend}
+                {/* Pools Section */}
+                <SectionFrame title="Pools" subHeader="Resource Management" className="flex-1">
+                   <div className="space-y-6">
+                      {/* Legend Points */}
+                      <div className="space-y-2">
+                         <div className="flex justify-between text-xs font-mythic text-primary/80 uppercase">
+                            <span>Legend Points</span>
+                            <span>{legendCurrent} / {legendPoolTotal}</span>
+                         </div>
+                         <div className="h-2 bg-black/50 border border-thin-gold/30 rounded-sm overflow-hidden relative">
+                            <div 
+                              className="absolute top-0 left-0 h-full bg-primary/60" 
+                              style={{ width: `${(legendCurrent / legendPoolTotal) * 100}%` }}
+                            />
+                         </div>
+                         <div className="flex gap-1 justify-between">
+                            <button onClick={() => setLegendCurrent(Math.max(0, legendCurrent - 1))} className="px-2 py-0.5 border border-white/10 text-[10px] hover:bg-white/10">-</button>
+                            <button onClick={() => setLegendCurrent(Math.min(legendPoolTotal, legendCurrent + 1))} className="px-2 py-0.5 border border-white/10 text-[10px] hover:bg-white/10">+</button>
+                         </div>
+                      </div>
+
+                      {/* Willpower */}
+                      <div className="space-y-2">
+                         <div className="flex justify-between text-xs font-mythic text-primary/80 uppercase">
+                            <span>Willpower</span>
+                            <span>{willpowerCurrent} / {willpower}</span>
+                         </div>
+                         <div className="flex justify-between items-center mb-1">
+                            <DotRating value={willpower} max={10} onChange={setWillpower} className="scale-75 origin-left" />
+                         </div>
+                         <div className="grid grid-cols-10 gap-0.5">
+                            {Array.from({length: 10}).map((_, i) => (
+                               <div 
+                                 key={i}
+                                 onClick={() => setWillpowerCurrent(i + 1 === willpowerCurrent ? 0 : i + 1)}
+                                 className={cn(
+                                   "h-3 border border-thin-gold/40 cursor-pointer transition-colors",
+                                   i < willpowerCurrent ? "bg-primary" : "bg-transparent",
+                                   i >= willpower && "opacity-20 pointer-events-none" // Disable dots beyond permanent rating
+                                 )}
+                               />
+                            ))}
+                         </div>
+                      </div>
                    </div>
-                </div>
+                </SectionFrame>
             </div>
         </div>
 
@@ -299,128 +402,85 @@ export default function CharacterSheet() {
               className="grid grid-cols-1 md:grid-cols-12 gap-6"
             >
               
-              {/* MAIN ATTRIBUTES GRID - Matching Reference Layout */}
-              <div className="md:col-span-8">
-                 <SectionFrame title="Attributes" subHeader="Core Parameters" className="h-full">
-                    <div className="grid grid-cols-3 gap-0 divide-x divide-thin-gold/30">
-                       {(Object.entries(attributes) as [AttributeCategory, Attribute[]][]).map(([category, attrs]) => (
-                          <div key={category} className="px-4 first:pl-0 last:pr-0">
-                             <h4 className="text-center font-code text-muted-foreground text-[10px] uppercase tracking-[0.3em] mb-6">
-                                {category}
-                             </h4>
-                             <div className="space-y-8">
-                                {attrs.map((attr, idx) => (
-                                   <div key={attr.name} className="space-y-2 group">
-                                      <div className="flex items-center justify-between mb-1">
-                                         <div className="flex items-center gap-3">
-                                            <span className="text-primary font-mythic text-lg opacity-60 group-hover:opacity-100 transition-opacity w-4 text-center">{attr.rune}</span>
-                                            <span className="font-tech text-lg text-foreground tracking-wide">{attr.name}</span>
-                                         </div>
-                                         <span className="text-[9px] text-muted-foreground font-code">{attr.name.substring(0,3).toUpperCase()}</span>
-                                      </div>
-                                      
-                                      <DotRating 
-                                         value={attr.value} 
-                                         max={5} 
-                                         onChange={(v) => updateAttribute(category, idx, 'value', v)} 
-                                         className="justify-between"
-                                      />
-                                      
-                                      {/* Epic Dots - Subtle */}
-                                      {attr.value >= 1 && (
-                                         <div className="flex justify-end pt-1 opacity-40 hover:opacity-100 transition-opacity">
-                                            <DotRating 
-                                               value={attr.epic} 
-                                               max={5} 
-                                               variant="tech"
-                                               className="scale-75 gap-0.5"
-                                               onChange={(v) => updateAttribute(category, idx, 'epic', v)} 
-                                            />
-                                         </div>
-                                      )}
-                                   </div>
-                                ))}
-                             </div>
-                          </div>
-                       ))}
-                    </div>
-                 </SectionFrame>
-              </div>
-
-              {/* RIGHT SIDE ANALYSIS & VITALS */}
-              <div className="md:col-span-4 space-y-6">
-                 
-                 {/* Radar Chart */}
-                 <SectionFrame title="Radar Analysis" subHeader="Metric Visualization" className="min-h-[300px]">
-                    <div className="w-full h-[250px] relative">
-                       <ResponsiveContainer width="100%" height="100%">
-                          <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
-                             <PolarGrid stroke="#333" />
-                             <PolarAngleAxis dataKey="subject" tick={{ fill: '#666', fontSize: 10, fontFamily: 'Share Tech Mono' }} />
-                             <PolarRadiusAxis angle={30} domain={[0, 5]} tick={false} axisLine={false} />
-                             <RechartsRadar
-                                name="Attributes"
-                                dataKey="A"
-                                stroke="#d4af37"
-                                strokeWidth={2}
-                                fill="#d4af37"
-                                fillOpacity={0.15}
-                                isAnimationActive={true}
-                             />
-                          </RadarChart>
-                       </ResponsiveContainer>
-                       {/* Center Decor */}
-                       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-primary rounded-full shadow-[0_0_10px_gold]" />
-                    </div>
-                 </SectionFrame>
-
-                 {/* Virtues Grid */}
-                 <SectionFrame title="Virtues" subHeader="Moral Compass">
-                    <div className="grid grid-cols-2 gap-4">
-                       {virtues.map((virtue, idx) => (
-                          <div key={idx} className="flex flex-col gap-1 border border-white/5 p-2 bg-black/20">
-                             <input 
-                                className="bg-transparent font-mythic text-xs text-primary/80 outline-none text-center uppercase tracking-widest"
-                                value={virtue.name}
-                                onChange={(e) => updateVirtue(idx, 'name', e.target.value)}
-                                placeholder="VIRTUE"
-                             />
-                             <div className="flex justify-center">
-                                <DotRating value={virtue.value} max={5} className="scale-75" onChange={(v) => updateVirtue(idx, 'value', v)} />
-                             </div>
-                          </div>
-                       ))}
-                    </div>
-                 </SectionFrame>
-
-                 {/* Willpower & Legend Points */}
-                 <div className="grid grid-cols-2 gap-6">
-                    <div className="border border-thin-gold p-4 bg-card/50 rounded-sm">
-                       <h4 className="text-center font-mythic text-primary text-sm mb-2">WILLPOWER</h4>
-                       <div className="flex justify-center mb-2">
-                          <DotRating value={willpower} max={10} onChange={setWillpower} className="flex-wrap justify-center w-24" />
-                       </div>
-                       <div className="flex flex-wrap gap-1 justify-center mt-2 border-t border-white/10 pt-2">
-                           {Array.from({length: 10}).map((_, i) => (
-                             <button 
-                               key={i}
-                               onClick={() => setWillpowerTemp(i + 1 === willpowerTemp ? 0 : i + 1)}
-                               className={cn(
-                                 "w-2 h-2 rounded-[1px] border border-muted-foreground/50 transition-all",
-                                 i < willpowerTemp ? "bg-primary border-primary" : "bg-transparent"
-                               )}
-                             />
+              {/* MAIN ATTRIBUTES GRID + RADAR */}
+              <div className="md:col-span-12">
+                 <SectionFrame title="Attributes" subHeader="Core Parameters & Analysis">
+                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                       
+                       {/* Left 3 Cols: Attributes List */}
+                       <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-0 md:divide-x divide-thin-gold/30">
+                           {(Object.entries(attributes) as [AttributeCategory, Attribute[]][]).map(([category, attrs]) => (
+                              <div key={category} className="px-4 first:pl-0 last:pr-0 py-4 md:py-0">
+                                 <h4 className="text-center font-code text-muted-foreground text-[10px] uppercase tracking-[0.3em] mb-6">
+                                    {category}
+                                 </h4>
+                                 <div className="space-y-8">
+                                    {attrs.map((attr, idx) => (
+                                       <div key={attr.name} className="space-y-2 group">
+                                          <div className="flex items-center justify-between mb-1">
+                                             <div className="flex items-center gap-3">
+                                                <span className="text-primary font-mythic text-lg opacity-60 group-hover:opacity-100 transition-opacity w-4 text-center">{attr.rune}</span>
+                                                <span className="font-tech text-lg text-foreground tracking-wide">{attr.name}</span>
+                                             </div>
+                                             <span className="text-[9px] text-muted-foreground font-code">{attr.name.substring(0,3).toUpperCase()}</span>
+                                          </div>
+                                          
+                                          {/* Max 10 Dots, wrapping enabled in component */}
+                                          <DotRating 
+                                             value={attr.value} 
+                                             max={10} 
+                                             onChange={(v) => updateAttribute(category, idx, 'value', v)} 
+                                             className="justify-start max-w-full"
+                                          />
+                                          
+                                          {/* Epic Dots - Subtle */}
+                                          {attr.value >= 1 && (
+                                             <div className="flex justify-end pt-1 opacity-40 hover:opacity-100 transition-opacity">
+                                                <DotRating 
+                                                   value={attr.epic} 
+                                                   max={5} 
+                                                   variant="tech"
+                                                   className="scale-75 gap-0.5"
+                                                   onChange={(v) => updateAttribute(category, idx, 'epic', v)} 
+                                                />
+                                             </div>
+                                          )}
+                                       </div>
+                                    ))}
+                                 </div>
+                              </div>
                            ))}
                        </div>
-                    </div>
-                    
-                    <div className="border border-thin-gold p-4 bg-card/50 rounded-sm flex flex-col items-center justify-center">
-                       <h4 className="text-center font-mythic text-primary text-sm mb-2">LEGEND POINTS</h4>
-                       <div className="text-3xl font-code text-white mb-1">{legend * legend}</div>
-                       <div className="text-[9px] text-muted-foreground uppercase">Max Pool</div>
-                    </div>
-                 </div>
 
+                       {/* Right Col: Radar Chart */}
+                       <div className="lg:col-span-1 flex flex-col justify-center border-l border-thin-gold/30 pl-8">
+                          <h4 className="text-center font-code text-muted-foreground text-[10px] uppercase tracking-[0.3em] mb-4">
+                             Radar Analysis
+                          </h4>
+                          <div className="w-full h-[250px] relative">
+                             <ResponsiveContainer width="100%" height="100%">
+                                <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
+                                   <PolarGrid stroke="#333" />
+                                   <PolarAngleAxis dataKey="subject" tick={{ fill: '#666', fontSize: 10, fontFamily: 'Share Tech Mono' }} />
+                                   <PolarRadiusAxis angle={30} domain={[0, 10]} tick={false} axisLine={false} />
+                                   <RechartsRadar
+                                      name="Attributes"
+                                      dataKey="A"
+                                      stroke="#d4af37"
+                                      strokeWidth={2}
+                                      fill="#d4af37"
+                                      fillOpacity={0.15}
+                                      isAnimationActive={true}
+                                   />
+                                </RadarChart>
+                             </ResponsiveContainer>
+                             {/* Center Decor */}
+                             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-primary rounded-full shadow-[0_0_10px_gold]" />
+                          </div>
+                       </div>
+
+                    </div>
+                 </SectionFrame>
               </div>
 
               {/* Abilities Row */}
