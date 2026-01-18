@@ -4,9 +4,10 @@ import { DotRating } from "@/components/ui/dot-rating";
 import { ScionInput } from "@/components/ui/scion-input";
 import { Link, useRoute } from "wouter";
 import { cn } from "@/lib/utils";
-import { Shield, Zap, Skull, Scroll, Activity, Cpu, Hexagon, Plus, Trash2, Crown, Heart, Radar, Minus, Upload, Image as ImageIcon, X, FileText, User, LayoutGrid, ArrowLeft, Target, Sword, Crosshair, Fingerprint, Dna, Brain } from "lucide-react";
-import { useCharacters, slugify } from "@/lib/characters-store";
+import { Shield, Zap, Skull, Scroll, Activity, Cpu, Hexagon, Plus, Trash2, Crown, Heart, Radar, Minus, Upload, Image as ImageIcon, X, FileText, User, LayoutGrid, ArrowLeft, Target, Sword, Crosshair, Fingerprint, Dna, Brain, Save } from "lucide-react";
+import { useCharacter, useUpdateCharacter } from "@/lib/use-characters";
 import { useCompendium } from "@/lib/compendium-store";
+import { Button } from "@/components/ui/button";
 import {
   RadarChart,
   PolarGrid,
@@ -227,8 +228,10 @@ const HealthBox = ({ status, onClick }: { status: DamageType, onClick: () => voi
 };
 
 export default function CharacterSheet() {
-  const [match, params] = useRoute("/character-sheet/:slug");
-  const { getCharacterBySlug } = useCharacters();
+  const [match, params] = useRoute("/character-sheet/:id");
+  const characterId = params?.id;
+  const { data: loadedCharacter, isLoading } = useCharacter(characterId);
+  const { mutate: updateCharacter } = useUpdateCharacter();
   const { callings: compendiumCallings, natures: compendiumNatures, virtues: compendiumVirtues } = useCompendium();
   const [activeTab, setActiveTab] = useState<"sheet" | "powers" | "bio">("sheet");
   const [idCardTab, setIdCardTab] = useState<"identity" | "psychic" | "presence">("identity");
@@ -261,17 +264,84 @@ export default function CharacterSheet() {
 
   // Sync with URL params
   useEffect(() => {
-    if (match && params?.slug) {
-      const character = getCharacterBySlug(params.slug);
-      if (character) {
-        setScionName(character.name);
-        setScionPlayer(character.player);
-        setScionPantheon(character.pantheon);
-        setLegend(character.legend);
-        setAetherPercentage(character.aetherPercentage || character.legend * 10);
+    if (loadedCharacter) {
+      // Basic identity
+      setScionName(loadedCharacter.name);
+      setScionPlayer(loadedCharacter.player || "");
+      setScionPantheon(loadedCharacter.pantheon || "");
+      setDivineParent(loadedCharacter.divineParent || "");
+      setDateOfBirth(loadedCharacter.dateOfBirth || "");
+      setNationality(loadedCharacter.nationality || "");
+      setCityOfOrigin(loadedCharacter.cityOfOrigin || "");
+      setStateRegion(loadedCharacter.stateRegion || "");
+      
+      // Core stats
+      setLegend(loadedCharacter.legend);
+      setLegendPointsCurrent(loadedCharacter.legendPointsCurrent);
+      
+      // Attributes
+      if (loadedCharacter.attributes && typeof loadedCharacter.attributes === 'object') {
+        setAttributes(loadedCharacter.attributes as any);
+      }
+      
+      // Abilities
+      if (loadedCharacter.abilities && typeof loadedCharacter.abilities === 'object') {
+        setAbilities(loadedCharacter.abilities as any);
+      }
+      
+      // Callings
+      if (Array.isArray(loadedCharacter.callings)) {
+        setCallings(loadedCharacter.callings as any);
+      }
+      
+      // Virtues
+      if (Array.isArray(loadedCharacter.virtues)) {
+        setVirtues(loadedCharacter.virtues as any);
+      }
+      
+      // Willpower
+      setWillpower(loadedCharacter.willpower);
+      setWillpowerCurrent(loadedCharacter.willpowerCurrent);
+      
+      // Health
+      setExtraOxBody(loadedCharacter.extraOxBody);
+      if (Array.isArray(loadedCharacter.healthDamage)) {
+        setHealthDamage(loadedCharacter.healthDamage as any);
+      }
+      
+      // Powers
+      if (Array.isArray(loadedCharacter.knacks)) {
+        setKnacks(loadedCharacter.knacks as any);
+      }
+      if (Array.isArray(loadedCharacter.boons)) {
+        setBoons(loadedCharacter.boons as any);
+      }
+      
+      // Equipment
+      if (Array.isArray(loadedCharacter.weapons)) {
+        setWeapons(loadedCharacter.weapons as any);
+      }
+      if (Array.isArray(loadedCharacter.armorList)) {
+        setArmorList(loadedCharacter.armorList as any);
+      }
+      if (Array.isArray(loadedCharacter.feats)) {
+        setFeats(loadedCharacter.feats as any);
+      }
+      
+      // Portrait
+      if (loadedCharacter.portrait) {
+        setPortrait(loadedCharacter.portrait);
+      }
+      
+      // Profiles
+      if (loadedCharacter.psychicProfile && typeof loadedCharacter.psychicProfile === 'object') {
+        setPsychicProfile(loadedCharacter.psychicProfile as any);
+      }
+      if (loadedCharacter.presenceProfile && typeof loadedCharacter.presenceProfile === 'object') {
+        setPresenceProfile(loadedCharacter.presenceProfile as any);
       }
     }
-  }, [match, params?.slug, getCharacterBySlug]);
+  }, [loadedCharacter]);
 
   const [abilities, setAbilities] = useState<Record<string, Ability>>(
     ABILITIES_LIST.reduce((acc, curr) => ({ 
@@ -515,6 +585,66 @@ export default function CharacterSheet() {
   const [feats, setFeats] = useState<{name: string, type: string, cost: string, desc: string}[]>([]);
   const [newFeat, setNewFeat] = useState({name: "", type: "", cost: "", desc: ""});
 
+  // Save function to persist character changes to database
+  const handleSave = () => {
+    if (!characterId) return;
+    
+    updateCharacter({
+      id: characterId,
+      updates: {
+        name: scionName,
+        player: scionPlayer,
+        pantheon: scionPantheon,
+        divineParent,
+        dateOfBirth,
+        nationality,
+        cityOfOrigin,
+        stateRegion,
+        legend,
+        legendPointsCurrent,
+        attributes,
+        abilities,
+        callings,
+        virtues,
+        willpower,
+        willpowerCurrent,
+        extraOxBody,
+        healthDamage,
+        knacks,
+        boons,
+        weapons,
+        armorList,
+        feats,
+        portrait: portrait || undefined,
+        psychicProfile,
+        presenceProfile,
+      },
+    });
+  };
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-mythic-void text-foreground flex items-center justify-center">
+        <p className="font-tech text-primary uppercase tracking-widest">Loading character data...</p>
+      </div>
+    );
+  }
+
+  // No character found
+  if (!characterId || (!loadedCharacter && !isLoading)) {
+    return (
+      <div className="min-h-screen bg-mythic-void text-foreground flex flex-col items-center justify-center gap-4">
+        <p className="font-tech text-muted-foreground uppercase tracking-widest">No character selected</p>
+        <Link href="/">
+          <button className="text-sm text-primary hover:text-white border border-primary/30 hover:border-primary px-6 py-3 rounded-sm font-mythic uppercase tracking-wider flex items-center gap-2 transition-all hover:shadow-[0_0_15px_rgba(212,175,55,0.3)] hover:bg-primary/10">
+            <ArrowLeft className="w-4 h-4" /> Return Home
+          </button>
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-mythic-void text-foreground overflow-x-hidden font-tech selection:bg-primary/30 relative">
       <div className="fixed inset-0 pointer-events-none z-10 overlay-vignette opacity-70" />
@@ -547,11 +677,20 @@ export default function CharacterSheet() {
                         <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse shadow-[0_0_8px_gold]"></div>
                     </div>
                 </div>
-                <Link href="/">
-                  <button className="flex items-center gap-2 text-[10px] font-mythic uppercase tracking-widest text-primary border border-primary/30 px-3 py-1 hover:bg-primary/10 transition-colors rounded-sm ml-auto hover:shadow-[0_0_10px_rgba(212,175,55,0.2)] group">
-                    <ArrowLeft className="w-3 h-3 group-hover:-translate-x-1 transition-transform" /> TERMINATE SESSION
+                <div className="flex items-center gap-2">
+                  <button 
+                    onClick={handleSave}
+                    data-testid="button-save"
+                    className="flex items-center gap-2 text-[10px] font-mythic uppercase tracking-widest text-primary border border-primary/30 px-3 py-1 hover:bg-primary/10 transition-colors rounded-sm hover:shadow-[0_0_10px_rgba(212,175,55,0.2)] group"
+                  >
+                    <Save className="w-3 h-3" /> SAVE CHARACTER
                   </button>
-                </Link>
+                  <Link href="/">
+                    <button className="flex items-center gap-2 text-[10px] font-mythic uppercase tracking-widest text-primary border border-primary/30 px-3 py-1 hover:bg-primary/10 transition-colors rounded-sm hover:shadow-[0_0_10px_rgba(212,175,55,0.2)] group">
+                      <ArrowLeft className="w-3 h-3 group-hover:-translate-x-1 transition-transform" /> TERMINATE SESSION
+                    </button>
+                  </Link>
+                </div>
             </div>
         </div>
 
