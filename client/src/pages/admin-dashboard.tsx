@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { Link } from "wouter";
 import { cn } from "@/lib/utils";
-import { Plus, Trash2, Scroll, Shield, User, Star, LayoutGrid, FileText, Send } from "lucide-react";
+import { Plus, Trash2, Scroll, Shield, User, Star, LayoutGrid, FileText, Send, Book, Zap, Skull, Heart } from "lucide-react";
 import { useArticles } from "@/lib/articles-store";
 import { useCharacters } from "@/lib/characters-store";
+import { useCompendium } from "@/lib/compendium-store";
 import textureBg from "@assets/generated_images/minimalist_gold_grid_background.png";
 import cornerOrnament from "@assets/generated_images/tech_mythic_corner_ornament.png";
 import darkGoldTexture from "@assets/generated_images/digital_hieroglyph_dark_background.png";
@@ -43,7 +44,49 @@ const ScionInput = ({ label, className, as: Component = "input", ...props }: Rea
 );
 
 export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState<"scrolls" | "alleybrary">("scrolls");
+  const [activeTab, setActiveTab] = useState<"scrolls" | "alleybrary" | "compendium">("scrolls");
+  const [compendiumTab, setCompendiumTab] = useState<"knacks" | "boons" | "virtues" | "natures">("knacks");
+
+  // Compendium State
+  const { 
+    knacks, addKnack, deleteKnack,
+    boons, addBoon, deleteBoon,
+    virtues, addVirtue, deleteVirtue,
+    natures, addNature, deleteNature
+  } = useCompendium();
+
+  const [newKnack, setNewKnack] = useState({ name: "", description: "", epicAttribute: "", prerequisite: "" });
+  const [newBoon, setNewBoon] = useState({ name: "", purview: "", level: 1, cost: "", type: "", description: "" });
+  const [newVirtue, setNewVirtue] = useState({ name: "", description: "" });
+  const [newNature, setNewNature] = useState({ name: "", description: "" });
+
+  const handleAddKnack = () => {
+    if (newKnack.name && newKnack.description) {
+      addKnack(newKnack);
+      setNewKnack({ name: "", description: "", epicAttribute: "", prerequisite: "" });
+    }
+  };
+
+  const handleAddBoon = () => {
+    if (newBoon.name && newBoon.description) {
+      addBoon(newBoon);
+      setNewBoon({ name: "", purview: "", level: 1, cost: "", type: "", description: "" });
+    }
+  };
+
+  const handleAddVirtue = () => {
+    if (newVirtue.name && newVirtue.description) {
+      addVirtue(newVirtue);
+      setNewVirtue({ name: "", description: "" });
+    }
+  };
+
+  const handleAddNature = () => {
+    if (newNature.name && newNature.description) {
+      addNature(newNature);
+      setNewNature({ name: "", description: "" });
+    }
+  };
 
   // Scrolls State
   const { characters: scrolls, addCharacter, deleteCharacter } = useCharacters();
@@ -171,7 +214,164 @@ export default function AdminDashboard() {
             >
                 <FileText className="w-4 h-4" /> Alleybrary CMS
             </button>
+            <button 
+                onClick={() => setActiveTab("compendium")}
+                className={cn(
+                    "flex items-center gap-2 px-6 py-2 text-xs uppercase tracking-[0.2em] font-mythic border rounded-sm transition-all",
+                    activeTab === "compendium" 
+                        ? "bg-primary/20 border-primary text-primary shadow-[0_0_10px_rgba(212,175,55,0.2)]" 
+                        : "bg-black/40 border-white/10 text-muted-foreground hover:border-primary/40 hover:text-primary/70"
+                )}
+            >
+                <Book className="w-4 h-4" /> Compendium Registry
+            </button>
         </div>
+
+        {activeTab === "compendium" && (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                {/* Sub-navigation for Compendium */}
+                <div className="lg:col-span-12 flex flex-wrap gap-2 mb-4">
+                     {[
+                         { id: "knacks", label: "Knacks", icon: Zap },
+                         { id: "boons", label: "Boons", icon: Star },
+                         { id: "virtues", label: "Virtues", icon: Shield },
+                         { id: "natures", label: "Natures", icon: Heart }
+                     ].map((tab) => (
+                         <button
+                            key={tab.id}
+                            onClick={() => setCompendiumTab(tab.id as any)}
+                            className={cn(
+                                "flex items-center gap-2 px-4 py-1.5 text-[10px] uppercase tracking-[0.2em] font-mythic border rounded-sm transition-all",
+                                compendiumTab === tab.id
+                                    ? "bg-primary/20 border-primary text-primary"
+                                    : "bg-black/30 border-white/10 text-muted-foreground hover:border-primary/40"
+                            )}
+                         >
+                             <tab.icon className="w-3 h-3" /> {tab.label}
+                         </button>
+                     ))}
+                </div>
+
+                {/* Left Panel: Input Form */}
+                <div className="lg:col-span-4">
+                    <SectionFrame title={`Register ${compendiumTab}`} subHeader="Database Entry">
+                        {compendiumTab === "knacks" && (
+                             <div className="space-y-4">
+                                <ScionInput label="Knack Name" placeholder="e.g. Cat's Grace" value={newKnack.name} onChange={e => setNewKnack({...newKnack, name: e.target.value})} />
+                                <ScionInput label="Epic Attribute" placeholder="e.g. Dexterity" value={newKnack.epicAttribute} onChange={e => setNewKnack({...newKnack, epicAttribute: e.target.value})} />
+                                <ScionInput label="Prerequisite" placeholder="e.g. None" value={newKnack.prerequisite} onChange={e => setNewKnack({...newKnack, prerequisite: e.target.value})} />
+                                <div className="flex flex-col gap-1 w-full">
+                                    <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic">Description</label>
+                                    <textarea className="bg-black/20 border border-white/10 rounded-sm px-3 py-2 text-sm font-tech text-foreground outline-none focus:border-primary/50 h-24 resize-none" value={newKnack.description} onChange={e => setNewKnack({...newKnack, description: e.target.value})} />
+                                </div>
+                                <button onClick={handleAddKnack} className="w-full mt-2 bg-primary/10 hover:bg-primary/20 border border-primary/40 text-primary py-2 px-4 rounded-sm flex items-center justify-center gap-2 uppercase tracking-widest font-mythic text-xs"><Plus className="w-3 h-3" /> Add Knack</button>
+                             </div>
+                        )}
+                        {compendiumTab === "boons" && (
+                             <div className="space-y-4">
+                                <ScionInput label="Boon Name" placeholder="e.g. Sky's Grace" value={newBoon.name} onChange={e => setNewBoon({...newBoon, name: e.target.value})} />
+                                <div className="grid grid-cols-2 gap-4">
+                                    <ScionInput label="Purview" placeholder="e.g. Sky" value={newBoon.purview} onChange={e => setNewBoon({...newBoon, purview: e.target.value})} />
+                                    <div className="flex flex-col gap-1">
+                                         <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic">Level</label>
+                                         <input type="number" min="1" max="10" className="bg-black/20 border border-white/10 rounded-sm px-3 py-2 text-sm font-tech text-foreground" value={newBoon.level} onChange={e => setNewBoon({...newBoon, level: parseInt(e.target.value)})} />
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <ScionInput label="Cost" placeholder="e.g. 1 Legend" value={newBoon.cost} onChange={e => setNewBoon({...newBoon, cost: e.target.value})} />
+                                    <ScionInput label="Type" placeholder="e.g. Reflexive" value={newBoon.type} onChange={e => setNewBoon({...newBoon, type: e.target.value})} />
+                                </div>
+                                <div className="flex flex-col gap-1 w-full">
+                                    <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic">Description</label>
+                                    <textarea className="bg-black/20 border border-white/10 rounded-sm px-3 py-2 text-sm font-tech text-foreground outline-none focus:border-primary/50 h-24 resize-none" value={newBoon.description} onChange={e => setNewBoon({...newBoon, description: e.target.value})} />
+                                </div>
+                                <button onClick={handleAddBoon} className="w-full mt-2 bg-primary/10 hover:bg-primary/20 border border-primary/40 text-primary py-2 px-4 rounded-sm flex items-center justify-center gap-2 uppercase tracking-widest font-mythic text-xs"><Plus className="w-3 h-3" /> Add Boon</button>
+                             </div>
+                        )}
+                        {compendiumTab === "virtues" && (
+                             <div className="space-y-4">
+                                <ScionInput label="Virtue Name" placeholder="e.g. Valor" value={newVirtue.name} onChange={e => setNewVirtue({...newVirtue, name: e.target.value})} />
+                                <div className="flex flex-col gap-1 w-full">
+                                    <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic">Description</label>
+                                    <textarea className="bg-black/20 border border-white/10 rounded-sm px-3 py-2 text-sm font-tech text-foreground outline-none focus:border-primary/50 h-24 resize-none" value={newVirtue.description} onChange={e => setNewVirtue({...newVirtue, description: e.target.value})} />
+                                </div>
+                                <button onClick={handleAddVirtue} className="w-full mt-2 bg-primary/10 hover:bg-primary/20 border border-primary/40 text-primary py-2 px-4 rounded-sm flex items-center justify-center gap-2 uppercase tracking-widest font-mythic text-xs"><Plus className="w-3 h-3" /> Add Virtue</button>
+                             </div>
+                        )}
+                        {compendiumTab === "natures" && (
+                             <div className="space-y-4">
+                                <ScionInput label="Nature / Archetype" placeholder="e.g. Architect" value={newNature.name} onChange={e => setNewNature({...newNature, name: e.target.value})} />
+                                <div className="flex flex-col gap-1 w-full">
+                                    <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic">Description</label>
+                                    <textarea className="bg-black/20 border border-white/10 rounded-sm px-3 py-2 text-sm font-tech text-foreground outline-none focus:border-primary/50 h-24 resize-none" value={newNature.description} onChange={e => setNewNature({...newNature, description: e.target.value})} />
+                                </div>
+                                <button onClick={handleAddNature} className="w-full mt-2 bg-primary/10 hover:bg-primary/20 border border-primary/40 text-primary py-2 px-4 rounded-sm flex items-center justify-center gap-2 uppercase tracking-widest font-mythic text-xs"><Plus className="w-3 h-3" /> Add Nature</button>
+                             </div>
+                        )}
+                    </SectionFrame>
+                </div>
+
+                {/* Right Panel: List */}
+                <div className="lg:col-span-8">
+                    <SectionFrame title={`Registered ${compendiumTab}`} subHeader="Active Records">
+                         <div className="space-y-3 max-h-[600px] overflow-y-auto scion-scrollbar pr-2">
+                            {compendiumTab === "knacks" && knacks.map(item => (
+                                <div key={item.id} className="p-3 bg-black/30 border border-white/5 rounded-sm hover:border-primary/30 group">
+                                    <div className="flex justify-between items-start">
+                                        <div>
+                                            <h4 className="font-mythic text-primary text-sm">{item.name}</h4>
+                                            <div className="flex gap-2 text-[10px] text-muted-foreground uppercase mb-1">
+                                                <span>{item.epicAttribute}</span>
+                                                {item.prerequisite && <span>• Req: {item.prerequisite}</span>}
+                                            </div>
+                                            <p className="text-xs text-muted-foreground/80 font-serif">{item.description}</p>
+                                        </div>
+                                        <button onClick={() => deleteKnack(item.id)} className="text-destructive/50 hover:text-destructive"><Trash2 className="w-3 h-3" /></button>
+                                    </div>
+                                </div>
+                            ))}
+                            {compendiumTab === "boons" && boons.map(item => (
+                                <div key={item.id} className="p-3 bg-black/30 border border-white/5 rounded-sm hover:border-primary/30 group">
+                                    <div className="flex justify-between items-start">
+                                        <div>
+                                            <h4 className="font-mythic text-primary text-sm">{item.name} <span className="text-muted-foreground ml-2 text-[10px] tracking-wider">Lvl {item.level}</span></h4>
+                                            <div className="flex gap-2 text-[10px] text-muted-foreground uppercase mb-1">
+                                                <span className="text-primary/70">{item.purview}</span>
+                                                <span>• {item.cost}</span>
+                                                <span>• {item.type}</span>
+                                            </div>
+                                            <p className="text-xs text-muted-foreground/80 font-serif">{item.description}</p>
+                                        </div>
+                                        <button onClick={() => deleteBoon(item.id)} className="text-destructive/50 hover:text-destructive"><Trash2 className="w-3 h-3" /></button>
+                                    </div>
+                                </div>
+                            ))}
+                            {(compendiumTab === "virtues" ? virtues : compendiumTab === "natures" ? natures : []).map((item: any) => (
+                                <div key={item.id} className="p-3 bg-black/30 border border-white/5 rounded-sm hover:border-primary/30 group">
+                                    <div className="flex justify-between items-start">
+                                        <div>
+                                            <h4 className="font-mythic text-primary text-sm">{item.name}</h4>
+                                            <p className="text-xs text-muted-foreground/80 font-serif mt-1">{item.description}</p>
+                                        </div>
+                                        <button onClick={() => compendiumTab === "virtues" ? deleteVirtue(item.id) : deleteNature(item.id)} className="text-destructive/50 hover:text-destructive"><Trash2 className="w-3 h-3" /></button>
+                                    </div>
+                                </div>
+                            ))}
+                            
+                            {/* Empty State */}
+                            {((compendiumTab === "knacks" && knacks.length === 0) || 
+                              (compendiumTab === "boons" && boons.length === 0) ||
+                              (compendiumTab === "virtues" && virtues.length === 0) ||
+                              (compendiumTab === "natures" && natures.length === 0)) && (
+                                <div className="text-center py-8 text-muted-foreground/50 font-tech text-xs uppercase tracking-widest border border-dashed border-white/10">
+                                    No records found in this registry.
+                                </div>
+                            )}
+                         </div>
+                    </SectionFrame>
+                </div>
+            </div>
+        )}
 
         {activeTab === "scrolls" ? (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -253,9 +453,11 @@ export default function AdminDashboard() {
                                 <div className="h-8 w-px bg-white/10 mx-2" />
                                 
                                 <div className="flex gap-2">
-                                <button className="p-2 hover:bg-white/5 rounded-sm text-muted-foreground hover:text-primary transition-colors">
-                                    <Star className="w-4 h-4" />
-                                </button>
+                                <Link href={`/character-sheet/${scroll.name.toLowerCase().replace(/\s+/g, '-')}`}>
+                                    <button className="p-2 hover:bg-white/5 rounded-sm text-muted-foreground hover:text-primary transition-colors">
+                                        <Star className="w-4 h-4" />
+                                    </button>
+                                </Link>
                                 <button 
                                     onClick={() => handleDeleteScroll(scroll.id)}
                                     className="p-2 hover:bg-red-900/20 rounded-sm text-muted-foreground hover:text-destructive transition-colors"
@@ -277,7 +479,7 @@ export default function AdminDashboard() {
             </div>
 
             </div>
-        ) : (
+        ) : activeTab === "alleybrary" ? (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                  {/* Publish Article Panel */}
                  <div className="lg:col-span-5">
