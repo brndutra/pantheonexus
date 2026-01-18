@@ -497,7 +497,7 @@ export default function CharacterSheet() {
                 <MythicHUDFrame title="Identity Matrix" icon={Fingerprint} subHeader="SUBJECT DESIGNATION" className="h-auto">
                      <div className="flex flex-col gap-4">
                          {/* Portrait + Name */}
-                         <div className="relative h-64 w-full border border-primary/20 bg-black/50 overflow-hidden group">
+                         <div className="relative h-[450px] w-full border border-primary/20 bg-black/50 overflow-hidden group">
                              {/* Corner accents for portrait */}
                              <div className="absolute top-0 left-0 w-8 h-8 border-t border-l border-primary/40 z-10" />
                              <div className="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-primary/40 z-10" />
@@ -592,27 +592,67 @@ export default function CharacterSheet() {
                                       exit={{ opacity: 0, height: 0 }}
                                       className="space-y-3 mt-4"
                                     >
-                                        <h5 className="text-[10px] font-mythic uppercase text-primary/60 border-b border-primary/10 pb-1">Psychological Matrix</h5>
-                                        <div className="grid grid-cols-2 gap-3">
-                                            <div className="col-span-2">
+                                        <h5 className="text-[10px] font-mythic uppercase text-[hsl(var(--highlight-purple))] border-b border-[hsl(var(--highlight-purple))]/20 pb-1">Psychological Matrix</h5>
+                                        
+                                        <div className="space-y-2">
+                                            <ScionInput 
+                                                label="Deep Analysis" 
+                                                className="h-16 text-xs bg-black/40 border-primary/20 resize-none"
+                                                textarea
+                                                value={psychicProfile.analysis}
+                                                onChange={(e) => setPsychicProfile({...psychicProfile, analysis: e.target.value})}
+                                            />
+                                            
+                                            <div className="grid grid-cols-2 gap-3">
                                                 <ScionInput 
-                                                    label="Psyche Analysis" 
+                                                    label="Keywords" 
                                                     className="h-8 text-xs bg-black/40 border-primary/20"
-                                                    value={psychicProfile.analysis}
-                                                    onChange={(e) => setPsychicProfile({...psychicProfile, analysis: e.target.value})}
+                                                    value={psychicProfile.keywords}
+                                                    onChange={(e) => setPsychicProfile({...psychicProfile, keywords: e.target.value})}
+                                                />
+                                                <ScionInput 
+                                                    label="Major Arcana" 
+                                                    className="h-8 text-xs bg-black/40 border-primary/20 text-[hsl(var(--highlight-purple))]"
+                                                    value={psychicProfile.majorArcana}
+                                                    onChange={(e) => setPsychicProfile({...psychicProfile, majorArcana: e.target.value})}
                                                 />
                                             </div>
+
+                                            <div className="grid grid-cols-2 gap-3">
+                                                <ScionInput 
+                                                    label="Temperament" 
+                                                    className="h-8 text-xs bg-black/40 border-primary/20"
+                                                    value={psychicProfile.temperament}
+                                                    onChange={(e) => setPsychicProfile({...psychicProfile, temperament: e.target.value})}
+                                                />
+                                                <ScionInput 
+                                                    label="Cognitive Type" 
+                                                    className="h-8 text-xs bg-black/40 border-primary/20"
+                                                    value={psychicProfile.cognitiveType}
+                                                    onChange={(e) => setPsychicProfile({...psychicProfile, cognitiveType: e.target.value})}
+                                                />
+                                            </div>
+
+                                            <div className="grid grid-cols-2 gap-3">
+                                                <ScionInput 
+                                                    label="Strengths" 
+                                                    className="h-8 text-xs bg-black/40 border-primary/20 text-green-400/80"
+                                                    value={psychicProfile.strengths}
+                                                    onChange={(e) => setPsychicProfile({...psychicProfile, strengths: e.target.value})}
+                                                />
+                                                <ScionInput 
+                                                    label="Weaknesses" 
+                                                    className="h-8 text-xs bg-black/40 border-primary/20 text-red-400/80"
+                                                    value={psychicProfile.weaknesses}
+                                                    onChange={(e) => setPsychicProfile({...psychicProfile, weaknesses: e.target.value})}
+                                                />
+                                            </div>
+
                                             <ScionInput 
-                                                label="Temperament" 
+                                                label="Behaviors" 
                                                 className="h-8 text-xs bg-black/40 border-primary/20"
-                                                value={psychicProfile.temperament}
-                                                onChange={(e) => setPsychicProfile({...psychicProfile, temperament: e.target.value})}
-                                            />
-                                            <ScionInput 
-                                                label="Cognitive Type" 
-                                                className="h-8 text-xs bg-black/40 border-primary/20"
-                                                value={psychicProfile.cognitiveType}
-                                                onChange={(e) => setPsychicProfile({...psychicProfile, cognitiveType: e.target.value})}
+                                                value={psychicProfile.behaviors}
+                                                onChange={(e) => setPsychicProfile({...psychicProfile, behaviors: e.target.value})}
                                             />
                                         </div>
                                     </motion.div>
@@ -625,7 +665,8 @@ export default function CharacterSheet() {
                                       exit={{ opacity: 0, height: 0 }}
                                       className="space-y-3 mt-4"
                                     >
-                                         <h5 className="text-[10px] font-mythic uppercase text-primary/60 border-b border-primary/10 pb-1">Physical Presence</h5>
+                                         <h5 className="text-[10px] font-mythic uppercase text-[hsl(var(--highlight-blue))] border-b border-[hsl(var(--highlight-blue))]/20 pb-1">Physical Presence</h5>
+                                         
                                          <div className="grid grid-cols-3 gap-3">
                                             <ScionInput 
                                                 label="Height" 
@@ -645,15 +686,44 @@ export default function CharacterSheet() {
                                                 value={presenceProfile.hairColor}
                                                 onChange={(e) => setPresenceProfile({...presenceProfile, hairColor: e.target.value})}
                                             />
-                                            <div className="col-span-3">
-                                                <ScionInput 
-                                                    label="Distinguishing Marks" 
-                                                    className="h-8 text-xs bg-black/40 border-primary/20"
-                                                    value={presenceProfile.distinguishingMark}
-                                                    onChange={(e) => setPresenceProfile({...presenceProfile, distinguishingMark: e.target.value})}
-                                                />
-                                            </div>
                                          </div>
+
+                                         <div className="grid grid-cols-2 gap-3">
+                                            <ScionInput 
+                                                label="Aura Signature" 
+                                                className="h-8 text-xs bg-black/40 border-primary/20 text-[hsl(var(--highlight-blue))]"
+                                                value={presenceProfile.auraSignature}
+                                                onChange={(e) => setPresenceProfile({...presenceProfile, auraSignature: e.target.value})}
+                                            />
+                                            <ScionInput 
+                                                label="Scent / Essence" 
+                                                className="h-8 text-xs bg-black/40 border-primary/20"
+                                                value={presenceProfile.scent}
+                                                onChange={(e) => setPresenceProfile({...presenceProfile, scent: e.target.value})}
+                                            />
+                                         </div>
+
+                                         <ScionInput 
+                                            label="Fashion & Style" 
+                                            className="h-8 text-xs bg-black/40 border-primary/20"
+                                            value={presenceProfile.fashion}
+                                            onChange={(e) => setPresenceProfile({...presenceProfile, fashion: e.target.value})}
+                                         />
+
+                                         <ScionInput 
+                                            label="Distinguishing Marks" 
+                                            className="h-8 text-xs bg-black/40 border-primary/20"
+                                            value={presenceProfile.distinguishingMark}
+                                            onChange={(e) => setPresenceProfile({...presenceProfile, distinguishingMark: e.target.value})}
+                                         />
+                                         
+                                         <ScionInput 
+                                            label="Visual Notes" 
+                                            className="h-16 text-xs bg-black/40 border-primary/20 resize-none"
+                                            textarea
+                                            value={presenceProfile.visualNotes}
+                                            onChange={(e) => setPresenceProfile({...presenceProfile, visualNotes: e.target.value})}
+                                         />
                                     </motion.div>
                                 )}
                             </AnimatePresence>
@@ -662,46 +732,7 @@ export default function CharacterSheet() {
                 </MythicHUDFrame>
 
                 {/* 2. LEGEND & AETHER (Replaces old square blocks) */}
-                <div className="grid grid-cols-2 gap-4">
-                    {/* Legend Module */}
-                    <div className="bg-black/40 border border-primary/30 p-4 relative overflow-hidden group">
-                        <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                        <div className="absolute top-0 right-0 p-1 opacity-50">
-                            <Crown className="w-4 h-4 text-primary" />
-                        </div>
-                        <h4 className="text-[10px] font-mythic tracking-widest text-primary/60 mb-2">LEGEND RANK</h4>
-                        <div className="flex items-center justify-center">
-                            <span className="text-4xl font-mythic text-primary drop-shadow-[0_0_10px_gold]">{legend}</span>
-                        </div>
-                        <div className="mt-2 text-center text-[9px] text-muted-foreground font-tech">
-                            POOL: {legendPoolTotal}
-                        </div>
-                    </div>
-
-                    {/* Aether Module */}
-                    <div className="bg-black/40 border border-primary/30 p-4 relative overflow-hidden group">
-                        <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                        <div className="absolute top-0 right-0 p-1 opacity-50">
-                            <Zap className="w-4 h-4 text-primary" />
-                        </div>
-                        <h4 className="text-[10px] font-mythic tracking-widest text-primary/60 mb-2">AETHER LEVEL</h4>
-                        <div className="flex items-center justify-center relative">
-                             <svg className="w-12 h-12 -rotate-90">
-                                <circle cx="24" cy="24" r="20" stroke="#333" strokeWidth="3" fill="transparent" />
-                                <circle 
-                                  cx="24" cy="24" r="20" 
-                                  stroke="#d4af37" 
-                                  strokeWidth="3" 
-                                  fill="transparent" 
-                                  strokeDasharray={`${2 * Math.PI * 20}`}
-                                  strokeDashoffset={`${2 * Math.PI * 20 * (1 - aetherPercentage/100)}`}
-                                  strokeLinecap="round"
-                                />
-                             </svg>
-                             <span className="absolute inset-0 flex items-center justify-center text-sm font-bold text-primary">{aetherPercentage}%</span>
-                        </div>
-                    </div>
-                </div>
+                {/* MOVED TO VITALITY MONITOR */}
 
                 {/* 3. VIRTUES MODULE */}
                 <MythicHUDFrame title="Virtue Matrix" icon={Target} subHeader="MORAL COMPASS ALIGNMENT">
@@ -848,8 +879,49 @@ export default function CharacterSheet() {
             <div className="col-span-12 md:col-span-4 flex flex-col gap-6">
 
                 {/* 1. VITALITY MONITOR */}
-                <MythicHUDFrame title="Vitality Monitor" icon={Activity} subHeader="BIOMETRICS & WILLPOWER">
+                <MythicHUDFrame title="Vitality & Energy" icon={Activity} subHeader="BIOMETRICS & POOLS">
                     <div className="space-y-6">
+                        {/* Legend & Aether Integrated */}
+                        <div className="grid grid-cols-2 gap-3 pb-4 border-b border-primary/10">
+                            {/* Legend Module */}
+                            <div className="bg-black/60 border border-[hsl(var(--highlight-amber))]/30 p-3 relative overflow-hidden group rounded-sm shadow-[0_0_15px_rgba(255,160,0,0.1)]">
+                                <div className="absolute inset-0 bg-[hsl(var(--highlight-amber))]/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <h4 className="text-[10px] font-mythic tracking-widest text-[hsl(var(--highlight-amber))] mb-1 flex items-center gap-2">
+                                    <Crown className="w-3 h-3" /> LEGEND
+                                </h4>
+                                <div className="flex items-end justify-between mt-2">
+                                    <span className="text-4xl font-mythic text-[hsl(var(--highlight-amber))] drop-shadow-[0_0_10px_orange] leading-none">{legend}</span>
+                                    <div className="text-right">
+                                        <div className="text-[9px] text-muted-foreground uppercase">Pool</div>
+                                        <div className="text-lg font-code font-bold text-primary/80">{legendPoolTotal}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Aether Module */}
+                            <div className="bg-black/60 border border-[hsl(var(--highlight-blue))]/30 p-3 relative overflow-hidden group rounded-sm shadow-[0_0_15px_rgba(0,200,255,0.1)]">
+                                <div className="absolute inset-0 bg-[hsl(var(--highlight-blue))]/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <h4 className="text-[10px] font-mythic tracking-widest text-[hsl(var(--highlight-blue))] mb-1 flex items-center gap-2">
+                                    <Zap className="w-3 h-3" /> AETHER
+                                </h4>
+                                <div className="flex items-center justify-center mt-1 relative h-12">
+                                     <svg className="w-12 h-12 -rotate-90 filter drop-shadow-[0_0_5px_cyan]">
+                                        <circle cx="24" cy="24" r="20" stroke="#333" strokeWidth="3" fill="transparent" />
+                                        <circle 
+                                          cx="24" cy="24" r="20" 
+                                          stroke="hsl(var(--highlight-blue))" 
+                                          strokeWidth="3" 
+                                          fill="transparent" 
+                                          strokeDasharray={`${2 * Math.PI * 20}`}
+                                          strokeDashoffset={`${2 * Math.PI * 20 * (1 - aetherPercentage/100)}`}
+                                          strokeLinecap="round"
+                                        />
+                                     </svg>
+                                     <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-[hsl(var(--highlight-blue))]">{aetherPercentage}%</span>
+                                </div>
+                            </div>
+                        </div>
+
                         {/* Willpower */}
                         <div className="space-y-2">
                              <div className="flex justify-between items-center text-xs font-mythic uppercase text-primary/70">
