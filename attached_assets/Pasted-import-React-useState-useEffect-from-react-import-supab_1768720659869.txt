@@ -1,0 +1,299 @@
+import React, { useState, useEffect } from 'react';
+import { supabase } from '@/lib/customSupabaseClient';
+import { 
+    Dialog, 
+    DialogContent, 
+    DialogHeader, 
+    DialogTitle,
+    DialogDescription
+} from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Loader2, AlertCircle, Sparkles, Dice5, Zap, Info, Play, ShieldAlert, Plus, Check } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+
+// Helper to safely access object properties regardless of case (fallback for old data structure if any remains)
+const getProp = (obj, key) => {
+    if (!obj) return null;
+    const exact = obj[key];
+    if (exact !== undefined) return exact;
+    
+    const lowerKey = key.toLowerCase();
+    const foundKey = Object.keys(obj).find(k => k.toLowerCase() === lowerKey);
+    return foundKey ? obj[foundKey] : null;
+};
+
+// Check if a value is "empty" or a placeholder
+const isValid = (val) => {
+    if (val === null || val === undefined) return false;
+    if (typeof val === 'string') {
+        const trimmed = val.trim();
+        return trimmed !== '' && trimmed !== '—' && trimmed !== '-' && trimmed.toLowerCase() !== 'none';
+    }
+    return true;
+};
+
+const BoonCard = ({ boon, onSelect, isSelected }) => {
+    // New standardized columns
+    const name = boon.name || getProp(boon, "Boon") || "Unknown Boon";
+    const tier = boon.tier || 1;
+    const cost = boon.cost || getProp(boon, "Cost");
+    const dicePool = boon.dice_pool || getProp(boon, "Dice Pool");
+    const resistance = boon.resistance || getProp(boon, "Difficulty / Resistance");
+    const description = boon.description || getProp(boon, "Full Description");
+    const action = boon.action;
+    const duration = boon.duration;
+    const tags = boon.tags || [];
+
+    return (
+        <div className={cn(
+            "bg-[#1c1917] border p-5 rounded-sm mb-4 transition-colors group relative overflow-hidden flex flex-col gap-4",
+            isSelected ? "border-green-500/50 bg-green-900/10" : "border-[#333] hover:border-[#E3963E]/50"
+        )}>
+            
+            {/* Selection Button Overlay (Top Right) */}
+            {onSelect && (
+                <div className="absolute top-4 right-4 z-20">
+                    <Button 
+                        size="sm" 
+                        variant={isSelected ? "default" : "secondary"}
+                        onClick={() => onSelect(boon)}
+                        className={cn(
+                            "h-7 text-xs uppercase font-bold tracking-wider",
+                            isSelected ? "bg-green-600 hover:bg-green-700 text-white" : "bg-[#333] hover:bg-[#E3963E] text-gray-300 hover:text-black"
+                        )}
+                    >
+                        {isSelected ? <><Check size={12} className="mr-1" /> Added</> : <><Plus size={12} className="mr-1" /> Select</>}
+                    </Button>
+                </div>
+            )}
+
+            {/* Top: Header (Name / Level) */}
+            <div className="flex justify-between items-start border-b border-[#333] pb-3 pr-24"> {/* pr-24 to avoid overlap with button */}
+                <div>
+                    <h4 className="text-[#E3963E] font-ritual text-xl uppercase tracking-wider leading-none flex items-center gap-2">
+                        {name}
+                        {action && <span className="text-[10px] bg-[#333] text-gray-400 px-1.5 py-0.5 rounded font-mono uppercase tracking-normal flex items-center gap-1"><Play size={8}/> {action}</span>}
+                    </h4>
+                    <span className="text-[10px] text-gray-500 font-tech uppercase tracking-widest mt-1 block">
+                        Tier {tier} Power {duration && `// ${duration}`}
+                    </span>
+                </div>
+                {tags && tags.length > 0 && (
+                     <div className="flex gap-1 flex-wrap justify-end max-w-[150px]">
+                        {tags.map((tag, i) => (
+                            <Badge key={i} variant="outline" className="text-[9px] border-[#333] text-gray-400">{tag}</Badge>
+                        ))}
+                     </div>
+                )}
+            </div>
+
+            {/* Middle: Stats Boxes (Cost & Dice Pool) */}
+            <div className="flex gap-2">
+                {/* Cost Box */}
+                <div className="flex-1 bg-black/40 rounded border border-[#333] p-2 flex flex-col items-center justify-center min-h-[60px]">
+                    <div className="flex items-center gap-1 mb-1">
+                        <Zap size={12} className="text-[#E3963E]" />
+                        <span className="text-[9px] text-gray-500 uppercase font-bold">Cost</span>
+                    </div>
+                    <span className="text-xs text-white font-mono text-center leading-tight">
+                        {isValid(cost) ? cost : "None"}
+                    </span>
+                </div>
+                
+                {/* Dice Pool Box */}
+                <div className="flex-1 bg-black/40 rounded border border-[#333] p-2 flex flex-col items-center justify-center min-h-[60px]">
+                    <div className="flex items-center gap-1 mb-1">
+                        <Dice5 size={12} className="text-blue-400" />
+                        <span className="text-[9px] text-gray-500 uppercase font-bold">Dice Pool</span>
+                    </div>
+                    <span className="text-xs text-white font-mono text-center leading-tight">
+                        {isValid(dicePool) ? dicePool : "None"}
+                    </span>
+                </div>
+
+                {/* Resistance Box - ONLY IF VALID (Not '—') */}
+                {isValid(resistance) && (
+                     <div className="flex-1 bg-black/40 rounded border border-[#333] p-2 flex flex-col items-center justify-center min-h-[60px]">
+                        <div className="flex items-center gap-1 mb-1">
+                            <ShieldAlert size={12} className="text-red-400" />
+                            <span className="text-[9px] text-gray-500 uppercase font-bold">Resistance</span>
+                        </div>
+                        <span className="text-xs text-red-300 font-mono text-center leading-tight">
+                            {resistance}
+                        </span>
+                    </div>
+                )}
+            </div>
+
+            {/* Bottom: Description */}
+            <div className="text-sm text-gray-300 leading-relaxed font-serif whitespace-pre-wrap bg-[#0c0a09]/50 p-3 rounded border border-[#333]/50">
+                {description || "No description provided."}
+            </div>
+            
+            {/* Prerequisites footer if exists */}
+            {boon.prerequisites && (
+                <div className="text-[10px] text-gray-500 font-mono pt-2 border-t border-[#333]/50">
+                    REQ: {Array.isArray(boon.prerequisites) 
+                        ? boon.prerequisites.map(p => p.name || p).join(", ") 
+                        : (typeof boon.prerequisites === 'object' ? JSON.stringify(boon.prerequisites) : boon.prerequisites)}
+                </div>
+            )}
+        </div>
+    );
+};
+
+const BoonsCatalogModal = ({ isOpen, onClose, purview, type = "capitals", onAddBoon, currentBoons = [] }) => {
+    const [boons, setBoons] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [search, setSearch] = useState('');
+    const [filterPurview, setFilterPurview] = useState(purview || 'All');
+    const [availablePurviews, setAvailablePurviews] = useState([]);
+
+    useEffect(() => {
+        if (isOpen) {
+            setFilterPurview(purview || 'All');
+            fetchBoons();
+        } else {
+            setBoons([]);
+            setError(null);
+        }
+    }, [isOpen, purview, type]);
+
+    const fetchBoons = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const tableName = type === "specials" ? "boons_specials" : "boons_capitals";
+            const { data, error } = await supabase
+                .from(tableName)
+                .select('*')
+                .order('tier', { ascending: true })
+                .order('name', { ascending: true });
+
+            if (error) throw error;
+            setBoons(data || []);
+            
+            // Extract unique purviews for filter
+            const purviews = [...new Set(data.map(b => b.purview).filter(Boolean))].sort();
+            setAvailablePurviews(purviews);
+
+        } catch (err) {
+            console.error("Error fetching boons:", err);
+            setError(`Failed to load boons: ${err.message}`);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const filteredBoons = boons.filter(b => {
+        const matchesSearch = !search || 
+            b.name.toLowerCase().includes(search.toLowerCase()) || 
+            (b.description && b.description.toLowerCase().includes(search.toLowerCase()));
+        
+        const matchesPurview = filterPurview === 'All' || 
+            (b.purview && b.purview.toLowerCase().includes(filterPurview.toLowerCase()));
+
+        return matchesSearch && matchesPurview;
+    });
+
+    const handleSelect = (boon) => {
+        if (onAddBoon) {
+            onAddBoon(boon);
+        }
+    };
+
+    return (
+        <Dialog open={isOpen} onOpenChange={onClose}>
+            <DialogContent className="max-w-4xl h-[85vh] bg-[#0c0a09] border-[#333] p-0 flex flex-col overflow-hidden text-white shadow-2xl shadow-black/90 z-[9999]">
+                <DialogHeader className="p-6 border-b border-[#333] bg-[#111] flex-shrink-0">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div className="flex items-center gap-4">
+                             <div className="w-12 h-12 rounded-full bg-[#E3963E]/10 flex items-center justify-center border border-[#E3963E]/30 shadow-[0_0_15px_rgba(227,150,62,0.2)]">
+                                <Sparkles size={24} className="text-[#E3963E]" />
+                             </div>
+                             <div>
+                                <DialogTitle className="text-3xl font-ritual uppercase tracking-widest text-white">
+                                    Divine <span className="text-[#E3963E]">Boons</span>
+                                </DialogTitle>
+                                <DialogDescription className="text-gray-500 font-tech uppercase tracking-wider text-xs">
+                                    {type === 'capitals' ? 'Capital Domain Registry' : 'Specialized Mystery Registry'}
+                                </DialogDescription>
+                             </div>
+                        </div>
+
+                        {/* Filters */}
+                        <div className="flex gap-2 items-center">
+                            <Select value={filterPurview} onValueChange={setFilterPurview}>
+                                <SelectTrigger className="w-[160px] bg-[#000] border-[#333] text-xs h-9 uppercase font-bold">
+                                    <SelectValue placeholder="All Domains" />
+                                </SelectTrigger>
+                                <SelectContent className="bg-[#111] border-[#333] max-h-[300px]">
+                                    <SelectItem value="All">All Domains</SelectItem>
+                                    {availablePurviews.map(p => (
+                                        <SelectItem key={p} value={p}>{p}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <div className="relative w-48">
+                                <Input 
+                                    placeholder="Search power..." 
+                                    value={search}
+                                    onChange={e => setSearch(e.target.value)}
+                                    className="bg-[#000] border-[#333] text-xs h-9 pr-8"
+                                />
+                                <div className="absolute right-2 top-2.5 text-gray-500 pointer-events-none">
+                                    <Sparkles size={12} />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </DialogHeader>
+
+                <div className="flex-1 overflow-hidden bg-[#0a0a0a] relative">
+                    <ScrollArea className="h-full w-full p-6">
+                        {loading ? (
+                            <div className="flex flex-col items-center justify-center h-64 gap-4">
+                                <Loader2 className="animate-spin text-[#E3963E]" size={40} />
+                                <p className="text-gray-500 font-tech animate-pulse tracking-widest uppercase text-xs">Accessing Divine Records...</p>
+                            </div>
+                        ) : error ? (
+                            <div className="flex flex-col items-center justify-center h-64 gap-4 text-red-400">
+                                <AlertCircle size={40} />
+                                <p className="font-tech uppercase">{error}</p>
+                            </div>
+                        ) : filteredBoons.length > 0 ? (
+                            <div className="space-y-4 pb-10">
+                                {filteredBoons.map((boon, idx) => {
+                                    const isSelected = currentBoons.some(b => b.name === boon.name);
+                                    return (
+                                        <BoonCard 
+                                            key={idx} 
+                                            boon={boon} 
+                                            onSelect={onAddBoon ? handleSelect : undefined}
+                                            isSelected={isSelected}
+                                        />
+                                    );
+                                })}
+                            </div>
+                        ) : (
+                            <div className="flex flex-col items-center justify-center h-64 text-gray-500 opacity-50">
+                                <Info size={48} className="mb-4 text-gray-600" />
+                                <p className="font-ritual text-xl mb-2 tracking-widest">NO RECORDS FOUND</p>
+                                <p className="font-tech text-xs uppercase text-center max-w-md">
+                                    No boons match your search criteria.
+                                </p>
+                            </div>
+                        )}
+                    </ScrollArea>
+                </div>
+            </DialogContent>
+        </Dialog>
+    );
+};
+
+export default BoonsCatalogModal;
