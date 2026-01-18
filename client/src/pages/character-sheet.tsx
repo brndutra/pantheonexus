@@ -279,7 +279,7 @@ export default function CharacterSheet() {
   const { mutate: updateCharacter } = useUpdateCharacter();
   const { callings: compendiumCallings, natures: compendiumNatures, virtues: compendiumVirtues } = useCompendium();
   const [activeTab, setActiveTab] = useState<"sheet" | "powers" | "bio">("sheet");
-  const [idCardTab, setIdCardTab] = useState<"identity" | "psychic" | "presence" | "bio" | "professional">("identity");
+  const [idCardTab, setIdCardTab] = useState<"identity" | "psychic" | "presence" | "professional">("identity");
   
   
   // State
@@ -429,13 +429,23 @@ export default function CharacterSheet() {
     { id: 3, name: "", title: "", value: 1 },
   ]);
 
-  const [virtues, setVirtues] = useState<Virtue[]>([
-    { id: 1, name: "Valor", value: 1 },
-    { id: 2, name: "Harmony", value: 1 },
-    { id: 3, name: "Order", value: 1 },
-    { id: 4, name: "Piety", value: 1 },
-    { id: 5, name: "", value: 1 },
-  ]);
+  const [virtues, setVirtues] = useState<Virtue[]>([]);
+  
+  // Available virtues from database for autocomplete
+  const [availableVirtues, setAvailableVirtues] = useState<{id: string, name: string, description?: string}[]>([]);
+  const [virtueSearchOpen, setVirtueSearchOpen] = useState<number | null>(null);
+  
+  // Fetch available virtues from API
+  useEffect(() => {
+    fetch('/api/virtues')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setAvailableVirtues(data);
+        }
+      })
+      .catch(err => console.error('Failed to fetch virtues:', err));
+  }, []);
   
   // legend state is initialized above now
   const [legendCurrent, setLegendCurrent] = useState(4); // Example value
@@ -547,6 +557,15 @@ export default function CharacterSheet() {
     const newVirtues = [...virtues];
     newVirtues[index] = { ...newVirtues[index], [field]: value };
     setVirtues(newVirtues);
+  };
+  
+  const addVirtue = (virtueName?: string) => {
+    const newId = virtues.length > 0 ? Math.max(...virtues.map(v => v.id)) + 1 : 1;
+    setVirtues([...virtues, { id: newId, name: virtueName || "", value: 1 }]);
+  };
+  
+  const removeVirtue = (index: number) => {
+    setVirtues(virtues.filter((_, i) => i !== index));
   };
 
   const updateAbilityValue = (abilityName: string, newValue: number) => {
@@ -850,9 +869,8 @@ export default function CharacterSheet() {
                 {/* 1. IDENTITY MODULE */}
                 <MythicHUDFrame title="Identity Matrix" icon={Fingerprint} subHeader="SUBJECT DESIGNATION" className="h-auto" isEditing={editingIdentity} {...createEditHandlers(editingIdentity, setEditingIdentity)}>
                      <div className="flex flex-col gap-4">
-                         {/* Portrait + Name */}
-                         <div className="relative h-[450px] w-full border border-primary/20 bg-black/50 overflow-hidden group">
-                             {/* Corner accents for portrait */}
+                         {/* Portrait + Name - Always visible */}
+                         <div className="relative h-[280px] w-full border border-primary/20 bg-black/50 overflow-hidden group">
                              <div className="absolute top-0 left-0 w-8 h-8 border-t border-l border-primary/40 z-10" />
                              <div className="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-primary/40 z-10" />
                              
@@ -891,112 +909,13 @@ export default function CharacterSheet() {
                              <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handlePortraitUpload} />
                          </div>
                          
-                         {/* Secondary Identity Data */}
-                         <div className="space-y-2 p-2 border border-primary/10 bg-primary/5 rounded-sm relative overflow-hidden">
-                             {/* Background Data Stream */}
-                             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/diagmonds-light.png')] opacity-10" />
-                             
-                             <div className="grid grid-cols-2 gap-4 relative z-10">
-                                 <div className="col-span-2">
-                                     <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">Designation (Name)</label>
-                                     <ScionInput 
-                                        value={scionName} 
-                                        onChange={(e) => setScionName(e.target.value)}
-                                        className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
-                                        viewMode={!editingIdentity}
-                                     />
-                                 </div>
-                                 
-                                 <div>
-                                     <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">Pantheon</label>
-                                     <ScionInput 
-                                        value={scionPantheon} 
-                                        onChange={(e) => setScionPantheon(e.target.value)}
-                                        className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
-                                        viewMode={!editingIdentity}
-                                        list="pantheons-list"
-                                     />
-                                     <datalist id="pantheons-list">
-                                        <option value="Aesir" />
-                                        <option value="Kami" />
-                                        <option value="Manitou" />
-                                        <option value="Netjer" />
-                                        <option value="Theoi" />
-                                        <option value="Tuatha Dé Danann" />
-                                        <option value="Yazata" />
-                                     </datalist>
-                                 </div>
-
-                                 <div>
-                                     <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">Heritage (Divine Parent)</label>
-                                     <ScionInput 
-                                        value={divineParent} 
-                                        onChange={(e) => setDivineParent(e.target.value)}
-                                        className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-[hsl(var(--highlight-amber))]" 
-                                        viewMode={!editingIdentity}
-                                     />
-                                 </div>
-
-                                 <div>
-                                     <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">Nature Archetype</label>
-                                     <ScionInput 
-                                        placeholder="SELECT NATURE" 
-                                        className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
-                                        list="natures-list"
-                                        viewMode={!editingIdentity}
-                                     />
-                                     <datalist id="natures-list">
-                                        {compendiumNatures.map((n: any) => (
-                                            <option key={n.id} value={n.name} />
-                                        ))}
-                                     </datalist>
-                                 </div>
-
-                                 <div>
-                                     <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">Date of Birth</label>
-                                     <ScionInput 
-                                        value={dateOfBirth} 
-                                        onChange={(e) => setDateOfBirth(e.target.value)}
-                                        className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
-                                        viewMode={!editingIdentity}
-                                        type="date"
-                                     />
-                                 </div>
-
-                                 <div>
-                                     <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">Nationality</label>
-                                     <ScionInput 
-                                        value={nationality} 
-                                        onChange={(e) => setNationality(e.target.value)}
-                                        className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
-                                        viewMode={!editingIdentity}
-                                     />
-                                 </div>
-
-                                 <div>
-                                     <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">City of Origin</label>
-                                     <ScionInput 
-                                        value={cityOfOrigin} 
-                                        onChange={(e) => setCityOfOrigin(e.target.value)}
-                                        className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
-                                        viewMode={!editingIdentity}
-                                     />
-                                 </div>
-
-                                 <div>
-                                     <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">State / Region</label>
-                                     <ScionInput 
-                                        value={stateRegion} 
-                                        onChange={(e) => setStateRegion(e.target.value)}
-                                        className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
-                                        viewMode={!editingIdentity}
-                                     />
-                                 </div>
-                             </div>
-
-                            {/* ID Card Internal Navigation - RESTORED */}
-                            <div className="flex gap-4 mt-4 border-b border-primary/20 pb-1 flex-shrink-0 relative z-10">
-                               {['identity', 'psychic', 'presence', 'bio', 'professional'].map((tab) => (
+                         {/* Tab Content Area */}
+                         <div className="p-2 border border-primary/10 bg-primary/5 rounded-sm relative overflow-hidden">
+                            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/diagmonds-light.png')] opacity-10" />
+                            
+                            {/* Tab Navigation */}
+                            <div className="flex gap-3 border-b border-primary/20 pb-1 relative z-10">
+                              {['identity', 'psychic', 'presence', 'professional'].map((tab) => (
                                   <button
                                     key={tab}
                                     onClick={() => setIdCardTab(tab as any)}
@@ -1014,6 +933,115 @@ export default function CharacterSheet() {
                             </div>
                             
                             <AnimatePresence mode="wait">
+                                {idCardTab === 'identity' && (
+                                    <motion.div 
+                                      key="identity"
+                                      initial={{ opacity: 0, height: 0 }}
+                                      animate={{ opacity: 1, height: 'auto' }}
+                                      exit={{ opacity: 0, height: 0 }}
+                                      className="space-y-3 mt-4"
+                                    >
+                                        <h5 className="text-[10px] font-mythic uppercase text-primary border-b border-primary/20 pb-1">Basic Data</h5>
+                                        
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <div className="col-span-2">
+                                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">Designation (Name)</label>
+                                                <ScionInput 
+                                                   value={scionName} 
+                                                   onChange={(e) => setScionName(e.target.value)}
+                                                   className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
+                                                   viewMode={!editingIdentity}
+                                                />
+                                            </div>
+                                            
+                                            <div>
+                                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">Pantheon</label>
+                                                <ScionInput 
+                                                   value={scionPantheon} 
+                                                   onChange={(e) => setScionPantheon(e.target.value)}
+                                                   className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
+                                                   viewMode={!editingIdentity}
+                                                   list="pantheons-list"
+                                                />
+                                                <datalist id="pantheons-list">
+                                                   <option value="Aesir" />
+                                                   <option value="Kami" />
+                                                   <option value="Manitou" />
+                                                   <option value="Netjer" />
+                                                   <option value="Theoi" />
+                                                   <option value="Tuatha Dé Danann" />
+                                                   <option value="Yazata" />
+                                                </datalist>
+                                            </div>
+
+                                            <div>
+                                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">Heritage (Divine Parent)</label>
+                                                <ScionInput 
+                                                   value={divineParent} 
+                                                   onChange={(e) => setDivineParent(e.target.value)}
+                                                   className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-[hsl(var(--highlight-amber))]" 
+                                                   viewMode={!editingIdentity}
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">Nature Archetype</label>
+                                                <ScionInput 
+                                                   placeholder="SELECT NATURE" 
+                                                   className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
+                                                   list="natures-list"
+                                                   viewMode={!editingIdentity}
+                                                />
+                                                <datalist id="natures-list">
+                                                   {compendiumNatures.map((n: any) => (
+                                                       <option key={n.id} value={n.name} />
+                                                   ))}
+                                                </datalist>
+                                            </div>
+
+                                            <div>
+                                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">Date of Birth</label>
+                                                <ScionInput 
+                                                   value={dateOfBirth} 
+                                                   onChange={(e) => setDateOfBirth(e.target.value)}
+                                                   className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
+                                                   viewMode={!editingIdentity}
+                                                   type="date"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">Nationality</label>
+                                                <ScionInput 
+                                                   value={nationality} 
+                                                   onChange={(e) => setNationality(e.target.value)}
+                                                   className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
+                                                   viewMode={!editingIdentity}
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">City of Origin</label>
+                                                <ScionInput 
+                                                   value={cityOfOrigin} 
+                                                   onChange={(e) => setCityOfOrigin(e.target.value)}
+                                                   className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
+                                                   viewMode={!editingIdentity}
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">State / Region</label>
+                                                <ScionInput 
+                                                   value={stateRegion} 
+                                                   onChange={(e) => setStateRegion(e.target.value)}
+                                                   className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
+                                                   viewMode={!editingIdentity}
+                                                />
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                )}
                                 {idCardTab === 'psychic' && (
                                     <motion.div 
                                       key="psychic"
@@ -1172,96 +1200,6 @@ export default function CharacterSheet() {
                                          />
                                     </motion.div>
                                 )}
-                                {idCardTab === 'bio' && (
-                                    <motion.div 
-                                      key="bio"
-                                      initial={{ opacity: 0, height: 0 }}
-                                      animate={{ opacity: 1, height: 'auto' }}
-                                      exit={{ opacity: 0, height: 0 }}
-                                      className="space-y-3 mt-4"
-                                    >
-                                        <h5 className="text-[10px] font-mythic uppercase text-[hsl(var(--highlight-green))] border-b border-[hsl(var(--highlight-green))]/20 pb-1">Biography & Nature</h5>
-                                        
-                                        <div className="grid grid-cols-2 gap-3">
-                                            <ScionInput 
-                                                label="Nature" 
-                                                className="h-8 text-xs bg-black/40 border-primary/20"
-                                                value={nature}
-                                                onChange={(e) => setNature(e.target.value)}
-                                                viewMode={!editingIdentity}
-                                            />
-                                            <ScionInput 
-                                                label="Legendary Title" 
-                                                className="h-8 text-xs bg-black/40 border-primary/20 text-[hsl(var(--highlight-green))]"
-                                                value={legendaryTitle}
-                                                onChange={(e) => setLegendaryTitle(e.target.value)}
-                                                viewMode={!editingIdentity}
-                                            />
-                                        </div>
-                                        
-                                        <div className="grid grid-cols-2 gap-3">
-                                            <ScionInput 
-                                                label="Zodiac Sign" 
-                                                className="h-8 text-xs bg-black/40 border-primary/20"
-                                                value={zodiacSign}
-                                                onChange={(e) => setZodiacSign(e.target.value)}
-                                                viewMode={!editingIdentity}
-                                            />
-                                            <ScionInput 
-                                                label="Playlist Link" 
-                                                className="h-8 text-xs bg-black/40 border-primary/20"
-                                                value={playlistLink}
-                                                onChange={(e) => setPlaylistLink(e.target.value)}
-                                                viewMode={!editingIdentity}
-                                            />
-                                        </div>
-                                        
-                                        <ScionInput 
-                                            label="Biography" 
-                                            className="h-24 text-xs bg-black/40 border-primary/20 resize-none"
-                                            textarea
-                                            value={biography}
-                                            onChange={(e) => setBiography(e.target.value)}
-                                            viewMode={!editingIdentity}
-                                        />
-                                        
-                                        <h5 className="text-[10px] font-mythic uppercase text-primary/70 border-b border-primary/20 pb-1 mt-4">Birthrights</h5>
-                                        
-                                        <div className="grid grid-cols-2 gap-3">
-                                            <ScionInput 
-                                                label="Creatures" 
-                                                className="h-8 text-xs bg-black/40 border-primary/20"
-                                                value={birthrights.creatures}
-                                                onChange={(e) => setBirthrights({...birthrights, creatures: e.target.value})}
-                                                viewMode={!editingIdentity}
-                                            />
-                                            <ScionInput 
-                                                label="Guides" 
-                                                className="h-8 text-xs bg-black/40 border-primary/20"
-                                                value={birthrights.guides}
-                                                onChange={(e) => setBirthrights({...birthrights, guides: e.target.value})}
-                                                viewMode={!editingIdentity}
-                                            />
-                                        </div>
-                                        
-                                        <div className="grid grid-cols-2 gap-3">
-                                            <ScionInput 
-                                                label="Followers" 
-                                                className="h-8 text-xs bg-black/40 border-primary/20"
-                                                value={birthrights.followers}
-                                                onChange={(e) => setBirthrights({...birthrights, followers: e.target.value})}
-                                                viewMode={!editingIdentity}
-                                            />
-                                            <ScionInput 
-                                                label="Relics" 
-                                                className="h-8 text-xs bg-black/40 border-primary/20"
-                                                value={birthrights.relics}
-                                                onChange={(e) => setBirthrights({...birthrights, relics: e.target.value})}
-                                                viewMode={!editingIdentity}
-                                            />
-                                        </div>
-                                    </motion.div>
-                                )}
                                 {idCardTab === 'professional' && (
                                     <motion.div 
                                       key="professional"
@@ -1342,43 +1280,6 @@ export default function CharacterSheet() {
                 {/* 2. LEGEND & AETHER (Replaces old square blocks) */}
                 {/* MOVED TO VITALITY MONITOR */}
 
-                {/* 3. VIRTUES MODULE */}
-                <MythicHUDFrame title="Virtue Matrix" icon={Target} subHeader="MORAL COMPASS ALIGNMENT" isEditing={editingVirtues} {...createEditHandlers(editingVirtues, setEditingVirtues)}>
-                    <div className="space-y-3">
-                        {virtues.map((virtue, idx) => (
-                           <div key={idx} className="relative group">
-                               {/* Tech Background for Virtue Row */}
-                               <div className="absolute inset-0 bg-primary/5 skew-x-[-10deg] border border-primary/10 group-hover:border-primary/30 transition-colors" />
-                               
-                               <div className="relative z-10 flex items-center justify-between p-2 pl-4">
-                                   <div className="flex flex-col">
-                                       <input 
-                                         value={virtue.name} 
-                                         onChange={(e) => updateVirtue(idx, 'name', e.target.value)}
-                                         className="bg-transparent border-none focus:ring-0 outline-none w-32 text-xs font-mythic uppercase tracking-widest text-primary/90 placeholder:text-primary/30" 
-                                         placeholder={`VIRTUE 0${idx+1}`}
-                                         disabled={!editingVirtues}
-                                       />
-                                       <div className="h-[1px] w-full bg-gradient-to-r from-primary/30 to-transparent mt-0.5" />
-                                   </div>
-                                   
-                                   <div className="flex items-center gap-3">
-                                       <span className="text-sm font-bold font-code text-primary opacity-50 group-hover:opacity-100 transition-opacity">{virtue.value}</span>
-                                       <DotRating 
-                                          value={virtue.value} 
-                                          max={5} 
-                                          onChange={(v) => updateVirtue(idx, 'value', v)} 
-                                          iconClassName="w-2.5 h-2.5 rotate-45 border-primary/40 group-hover:border-primary/70"
-                                          activeClassName="bg-primary shadow-[0_0_8px_gold] scale-110"
-                                          readOnly={!editingVirtues}
-                                       />
-                                   </div>
-                               </div>
-                           </div>
-                        ))}
-                    </div>
-                </MythicHUDFrame>
-
             </div>
 
             {/* MIDDLE COLUMN: CALLINGS (Width 4) */}
@@ -1429,6 +1330,113 @@ export default function CharacterSheet() {
                                 </div>
                             </div>
                         ))}
+                    </div>
+                </MythicHUDFrame>
+
+                {/* VIRTUES MODULE */}
+                <MythicHUDFrame title="Virtue Matrix" icon={Target} subHeader="MORAL COMPASS" isEditing={editingVirtues} {...createEditHandlers(editingVirtues, setEditingVirtues)}>
+                    <div className="space-y-2">
+                        {virtues.length === 0 ? (
+                            <div className="text-center py-4">
+                                <p className="text-xs text-muted-foreground mb-3">Nenhuma virtude adicionada</p>
+                                {editingVirtues && (
+                                    <button 
+                                        onClick={() => addVirtue()}
+                                        className="flex items-center gap-2 mx-auto text-xs text-primary hover:text-primary/80 transition-colors"
+                                    >
+                                        <Plus className="w-4 h-4" />
+                                        Adicionar Virtude
+                                    </button>
+                                )}
+                            </div>
+                        ) : (
+                            <>
+                                {virtues.map((virtue, idx) => (
+                                    <div key={virtue.id} className="relative group">
+                                        <div className="absolute inset-0 bg-primary/5 skew-x-[-5deg] border border-primary/10 group-hover:border-primary/30 transition-colors" />
+                                        
+                                        <div className="relative z-10 flex items-center justify-between p-2 pl-3">
+                                            <div className="flex flex-col flex-1 relative group/virtue">
+                                                <input 
+                                                    value={virtue.name} 
+                                                    onChange={(e) => updateVirtue(idx, 'name', e.target.value)}
+                                                    onFocus={() => editingVirtues && setVirtueSearchOpen(idx)}
+                                                    onBlur={() => setTimeout(() => setVirtueSearchOpen(null), 200)}
+                                                    className="bg-transparent border-none focus:ring-0 outline-none w-full text-xs font-mythic uppercase tracking-widest text-primary/90 placeholder:text-primary/30" 
+                                                    placeholder="Selecione uma virtude..."
+                                                    disabled={!editingVirtues}
+                                                    list={`virtues-list-${idx}`}
+                                                />
+                                                {/* Description Tooltip on hover */}
+                                                {virtue.name && !editingVirtues && (() => {
+                                                    const foundVirtue = availableVirtues.find(v => v.name.toLowerCase() === virtue.name.toLowerCase());
+                                                    return foundVirtue?.description ? (
+                                                        <div className="absolute left-0 top-full mt-2 p-2 bg-black/95 border border-primary/30 rounded-sm text-[10px] font-tech text-primary/70 max-w-[200px] opacity-0 group-hover/virtue:opacity-100 transition-opacity z-50 pointer-events-none">
+                                                            {foundVirtue.description}
+                                                        </div>
+                                                    ) : null;
+                                                })()}
+                                                {/* Autocomplete dropdown */}
+                                                {virtueSearchOpen === idx && editingVirtues && (
+                                                    <div className="absolute top-full left-0 right-0 mt-1 bg-black/95 border border-primary/30 rounded-sm max-h-32 overflow-y-auto z-50">
+                                                        {availableVirtues
+                                                            .filter(v => v.name.toLowerCase().includes(virtue.name.toLowerCase()))
+                                                            .slice(0, 8)
+                                                            .map(v => (
+                                                                <div
+                                                                    key={v.id}
+                                                                    onClick={() => {
+                                                                        updateVirtue(idx, 'name', v.name);
+                                                                        setVirtueSearchOpen(null);
+                                                                    }}
+                                                                    className="w-full text-left px-2 py-1.5 text-xs font-tech text-primary/80 hover:bg-primary/20 hover:text-primary transition-colors cursor-pointer"
+                                                                    title={v.description || ''}
+                                                                >
+                                                                    <span className="block">{v.name}</span>
+                                                                    {v.description && (
+                                                                        <span className="block text-[9px] text-muted-foreground truncate">{v.description}</span>
+                                                                    )}
+                                                                </div>
+                                                            ))
+                                                        }
+                                                    </div>
+                                                )}
+                                                <div className="h-[1px] w-full bg-gradient-to-r from-primary/30 to-transparent mt-0.5" />
+                                            </div>
+                                            
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-sm font-bold font-code text-primary opacity-50 group-hover:opacity-100 transition-opacity">{virtue.value}</span>
+                                                <DotRating 
+                                                    value={virtue.value} 
+                                                    max={5} 
+                                                    onChange={(v) => updateVirtue(idx, 'value', v)} 
+                                                    iconClassName="w-2 h-2 rotate-45 border-primary/40 group-hover:border-primary/70"
+                                                    activeClassName="bg-primary shadow-[0_0_6px_gold] scale-110"
+                                                    readOnly={!editingVirtues}
+                                                />
+                                                {editingVirtues && (
+                                                    <button 
+                                                        onClick={() => removeVirtue(idx)}
+                                                        className="opacity-0 group-hover:opacity-100 text-red-500/50 hover:text-red-500 transition-opacity"
+                                                    >
+                                                        <X className="w-3 h-3" />
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                                {editingVirtues && virtues.length < 5 && (
+                                    <button 
+                                        onClick={() => addVirtue()}
+                                        className="flex items-center gap-2 text-xs text-primary/50 hover:text-primary transition-colors mt-2"
+                                    >
+                                        <Plus className="w-3 h-3" />
+                                        Adicionar Virtude
+                                    </button>
+                                )}
+                            </>
+                        )}
                     </div>
                 </MythicHUDFrame>
 
