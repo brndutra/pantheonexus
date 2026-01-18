@@ -1,6 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { supabase } from "./supabase";
 import { 
   insertCharacterSchema, insertBoonSchema, insertKnackSchema,
   insertCallingSchema, insertNatureSchema, insertAttackSchema
@@ -398,6 +399,156 @@ export async function registerRoutes(
     } catch (error) {
       console.error("Error deleting attack:", error);
       res.status(500).json({ error: "Failed to delete attack" });
+    }
+  });
+
+  // =====================
+  // IMPORT FROM SCROLLS
+  // =====================
+  
+  app.post("/api/import-scrolls", async (req, res) => {
+    try {
+      const { data: scrolls, error } = await supabase
+        .from('scrolls')
+        .select('*');
+      
+      if (error) {
+        console.error("Error fetching scrolls:", error);
+        return res.status(500).json({ error: "Failed to fetch scrolls from Supabase" });
+      }
+      
+      if (!scrolls || scrolls.length === 0) {
+        return res.json({ message: "No scrolls found to import", imported: 0 });
+      }
+      
+      const importedCharacters = [];
+      
+      for (const scroll of scrolls) {
+        const characterData = {
+          name: scroll.name || "Unknown",
+          player: "",
+          pantheon: scroll.pantheon || "",
+          divineParent: "",
+          dateOfBirth: scroll.birth_day || "",
+          nationality: scroll.origin_country || "",
+          cityOfOrigin: scroll.origin_city || "",
+          stateRegion: scroll.origin_state || "",
+          legend: 1,
+          legendPointsCurrent: 1,
+          attributes: {
+            Physical: [
+              { name: "Strength", value: 1, epic: 0, rune: "ᚠ" },
+              { name: "Dexterity", value: 1, epic: 0, rune: "ᚢ" },
+              { name: "Stamina", value: 1, epic: 0, rune: "ᚦ" }
+            ],
+            Social: [
+              { name: "Charisma", value: 1, epic: 0, rune: "ᚨ" },
+              { name: "Manipulation", value: 1, epic: 0, rune: "ᚱ" },
+              { name: "Appearance", value: 1, epic: 0, rune: "ᚲ" }
+            ],
+            Mental: [
+              { name: "Perception", value: 1, epic: 0, rune: "ᚷ" },
+              { name: "Intelligence", value: 1, epic: 0, rune: "ᚹ" },
+              { name: "Wits", value: 1, epic: 0, rune: "ᚺ" }
+            ]
+          },
+          abilities: {},
+          callings: [
+            { id: 1, name: "", title: "", value: 1 },
+            { id: 2, name: "", title: "", value: 1 },
+            { id: 3, name: "", title: "", value: 1 }
+          ],
+          virtues: [
+            { id: 1, name: "Valor", value: 1 },
+            { id: 2, name: "Harmony", value: 1 },
+            { id: 3, name: "Order", value: 1 },
+            { id: 4, name: "Piety", value: 1 },
+            { id: 5, name: "", value: 1 }
+          ],
+          willpower: 5,
+          willpowerCurrent: 5,
+          extraOxBody: 0,
+          healthDamage: [],
+          knacks: [],
+          boons: [],
+          weapons: [],
+          armorList: [],
+          feats: [],
+          portrait: scroll.url_portrait_prism || null,
+          portraitCover: scroll.url_prism_cover || null,
+          nature: "",
+          legendaryTitle: "",
+          birthrights: {
+            creatures: "",
+            guides: "",
+            followers: "",
+            relics: ""
+          },
+          movementFeats: { walk: 0, run: 0, jump: 0, lift: 0 },
+          isPublic: scroll.is_public || "true",
+          zodiacSign: scroll.zodiac_sign || "",
+          playlistLink: scroll.playlist_link || "",
+          biography: scroll.biography || "",
+          serapeumAccountNumber: scroll.serapeum_account_number || "",
+          psychicProfile: {
+            analysis: scroll.psy_description || "",
+            keywords: scroll.psy_tags || "",
+            strengths: scroll.psy_strengths || "",
+            behaviors: scroll.psy_behaviors || "",
+            weaknesses: scroll.psy_weaknesses || "",
+            temperament: scroll.psy_temperament || "",
+            cognitiveType: scroll.psy_intp || "",
+            majorArcana: scroll.psy_archetypal_arcana || ""
+          },
+          presenceProfile: {
+            eyeColor: "",
+            hairColor: "",
+            height: "",
+            auraSignature: "",
+            scent: "",
+            fashion: "",
+            distinguishingMark: "",
+            visualNotes: ""
+          },
+          professionalProfile: {
+            educationHistory: scroll.prof_education_history || "",
+            mentorInfo: scroll.prof_mentor_info || "",
+            pupilInfo: scroll.prof_pupil_info || "",
+            interestedPurviews: scroll.prof_interested_purviews || "",
+            interestedAttributes: scroll.prof_interested_attributes || "",
+            interestedAbilities: scroll.prof_interested_abilities || "",
+            professionalNotes: scroll.prof_professional_notes || ""
+          }
+        };
+        
+        try {
+          const created = await storage.createCharacter(characterData);
+          importedCharacters.push(created);
+        } catch (err) {
+          console.error(`Failed to import scroll ${scroll.name}:`, err);
+        }
+      }
+      
+      res.json({ 
+        message: `Successfully imported ${importedCharacters.length} characters from scrolls`,
+        imported: importedCharacters.length,
+        characters: importedCharacters
+      });
+    } catch (error) {
+      console.error("Error importing scrolls:", error);
+      res.status(500).json({ error: "Failed to import scrolls" });
+    }
+  });
+
+  // Get scrolls directly from Supabase
+  app.get("/api/scrolls", async (req, res) => {
+    try {
+      const { data, error } = await supabase.from('scrolls').select('*');
+      if (error) throw new Error(error.message);
+      res.json(data || []);
+    } catch (error) {
+      console.error("Error fetching scrolls:", error);
+      res.status(500).json({ error: "Failed to fetch scrolls" });
     }
   });
 
