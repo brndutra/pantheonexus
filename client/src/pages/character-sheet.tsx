@@ -4,7 +4,7 @@ import { DotRating } from "@/components/ui/dot-rating";
 import { ScionInput } from "@/components/ui/scion-input";
 import { Link, useRoute } from "wouter";
 import { cn } from "@/lib/utils";
-import { Shield, Zap, Skull, Scroll, Activity, Cpu, Hexagon, Plus, Trash2, Crown, Heart, Radar, Minus, Upload, Image as ImageIcon, X, FileText, User, LayoutGrid, ArrowLeft, Target, Sword, Crosshair, Fingerprint, Dna, Brain, Pencil, Check, Loader2 } from "lucide-react";
+import { Shield, Zap, Skull, Scroll, Activity, Cpu, Hexagon, Plus, Trash2, Crown, Heart, Radar, Minus, Upload, Image as ImageIcon, X, FileText, User, LayoutGrid, ArrowLeft, Target, Sword, Crosshair, Fingerprint, Dna, Brain, Pencil, Check, Loader2, Star } from "lucide-react";
 import { useCharacter, useUpdateCharacter } from "@/lib/use-characters";
 import { useCompendium } from "@/lib/compendium-store";
 import { Button } from "@/components/ui/button";
@@ -55,7 +55,17 @@ interface Virtue {
 interface Ability {
   name: string;
   value: number;
+  sparks: number;
+  heritage: boolean;
   specialties: { name: string; value: number }[];
+}
+
+interface AbilitySchema {
+  name: string;
+  ratingColumn: string;
+  sparksColumn: string;
+  heritageColumn: string;
+  specialtiesColumn: string;
 }
 
 type DamageType = 0 | 1 | 2 | 3; // 0: None, 1: Bashing, 2: Lethal, 3: Aggravated
@@ -383,8 +393,16 @@ export default function CharacterSheet() {
     }
   }, [loadedCharacter]);
 
-  // Abilities list from API or default
-  const [abilitiesList, setAbilitiesList] = useState<string[]>(DEFAULT_ABILITIES_LIST);
+  // Abilities schema from API
+  const [abilitiesSchema, setAbilitiesSchema] = useState<AbilitySchema[]>(
+    DEFAULT_ABILITIES_LIST.map(name => ({
+      name,
+      ratingColumn: `ability_${name.toLowerCase()}_rating`,
+      sparksColumn: `ability_${name.toLowerCase()}_sparks_rating`,
+      heritageColumn: `ability_${name.toLowerCase()}_heritage_fav`,
+      specialtiesColumn: `ability_${name.toLowerCase()}_specialties_rating`
+    }))
+  );
   
   // Fetch abilities schema from API
   useEffect(() => {
@@ -392,7 +410,7 @@ export default function CharacterSheet() {
       .then(res => res.json())
       .then(data => {
         if (data.abilities && data.abilities.length > 0) {
-          setAbilitiesList(data.abilities);
+          setAbilitiesSchema(data.abilities);
         }
       })
       .catch(err => console.error('Failed to fetch abilities schema:', err));
@@ -401,7 +419,7 @@ export default function CharacterSheet() {
   const [abilities, setAbilities] = useState<Record<string, Ability>>(
     DEFAULT_ABILITIES_LIST.reduce((acc, curr) => ({ 
       ...acc, 
-      [curr]: { name: curr, value: 0, specialties: [] } 
+      [curr]: { name: curr, value: 0, sparks: 0, heritage: false, specialties: [] } 
     }), {} as Record<string, Ability>)
   );
   
@@ -535,6 +553,20 @@ export default function CharacterSheet() {
     setAbilities(prev => ({
       ...prev,
       [abilityName]: { ...prev[abilityName], value: Math.max(0, newValue) }
+    }));
+  };
+
+  const updateAbilitySparks = (abilityName: string, newSparks: number) => {
+    setAbilities(prev => ({
+      ...prev,
+      [abilityName]: { ...prev[abilityName], sparks: Math.min(5, Math.max(0, newSparks)) }
+    }));
+  };
+
+  const updateAbilityHeritage = (abilityName: string, isHeritage: boolean) => {
+    setAbilities(prev => ({
+      ...prev,
+      [abilityName]: { ...prev[abilityName], heritage: isHeritage }
     }));
   };
 
@@ -1609,22 +1641,42 @@ export default function CharacterSheet() {
                 <MythicHUDFrame title="Abilities Database" icon={Brain} subHeader="SKILL SET MATRIX" className="flex-1 min-h-[500px] flex flex-col" isEditing={editingAbilities} {...createEditHandlers(editingAbilities, setEditingAbilities)}>
                     <div className="flex-1 overflow-y-auto pr-2 scion-scrollbar custom-scroll-area">
                         <div className="grid grid-cols-1 gap-1 h-full content-start">
-                            {abilitiesList.map((abilityName) => {
-                                const ability = abilities[abilityName] || { value: 0, specialties: [] };
-                                const isFavored = false; // Todo: Add favored logic
+                            {abilitiesSchema.map((schema) => {
+                                const abilityName = schema.name;
+                                const ability = abilities[abilityName] || { value: 0, sparks: 0, heritage: false, specialties: [] };
+                                const isHeritage = ability.heritage;
                                 return (
                                     <div key={abilityName} className={cn(
                                         "flex items-center justify-between p-2 hover:bg-primary/5 rounded-sm transition-colors border border-transparent hover:border-primary/10 group",
-                                        (ability.value || 0) > 0 ? "opacity-100" : "opacity-60 hover:opacity-100"
+                                        (ability.value || 0) > 0 ? "opacity-100" : "opacity-60 hover:opacity-100",
+                                        isHeritage && "border-l-2 border-l-[hsl(var(--highlight-amber))]"
                                     )}>
                                         <div className="flex items-center gap-2">
+                                            {/* Heritage indicator - star icon */}
+                                            {isHeritage && (
+                                                <Star className="w-3 h-3 text-[hsl(var(--highlight-amber))] fill-[hsl(var(--highlight-amber))]" />
+                                            )}
                                             <span className={cn(
                                                 "text-xs uppercase tracking-wider font-tech transition-colors",
+                                                isHeritage ? "text-[hsl(var(--highlight-amber))]" : 
                                                 (ability.value || 0) > 0 ? "text-primary" : "text-muted-foreground group-hover:text-primary/70"
                                             )}>
                                                 {abilityName}
                                             </span>
-                                            {/* Add specialty button (hidden by default) */}
+                                            {/* Heritage toggle button (in edit mode) */}
+                                            {editingAbilities && (
+                                                <button 
+                                                    onClick={() => updateAbilityHeritage(abilityName, !ability.heritage)}
+                                                    className={cn(
+                                                        "opacity-0 group-hover:opacity-100 transition-opacity",
+                                                        isHeritage ? "text-[hsl(var(--highlight-amber))]" : "text-muted-foreground/40 hover:text-[hsl(var(--highlight-amber))]"
+                                                    )}
+                                                    title="Toggle Heritage Favored"
+                                                >
+                                                    <Star className="w-3 h-3" />
+                                                </button>
+                                            )}
+                                            {/* Add specialty button */}
                                             {editingAbilities && (
                                                 <button 
                                                     onClick={() => addSpecialty(abilityName)}
@@ -1636,6 +1688,7 @@ export default function CharacterSheet() {
                                         </div>
                                         
                                         <div className="flex flex-col items-end gap-1">
+                                            {/* Main ability dots */}
                                             <DotRating 
                                                 value={ability.value || 0} 
                                                 max={5} 
@@ -1644,6 +1697,24 @@ export default function CharacterSheet() {
                                                 activeClassName="bg-primary"
                                                 readOnly={!editingAbilities}
                                             />
+                                            {/* Sparks - small dots that evolve ability */}
+                                            <div className="flex items-center gap-0.5">
+                                                <span className="text-[8px] text-muted-foreground/50 mr-1">SPARKS</span>
+                                                {Array.from({ length: 5 }).map((_, i) => (
+                                                    <button
+                                                        key={i}
+                                                        onClick={() => editingAbilities && updateAbilitySparks(abilityName, i < (ability.sparks || 0) ? i : i + 1)}
+                                                        disabled={!editingAbilities}
+                                                        className={cn(
+                                                            "w-1 h-1 rounded-full border transition-all",
+                                                            i < (ability.sparks || 0) 
+                                                                ? "bg-accent-foreground border-accent-foreground shadow-[0_0_3px_cyan]" 
+                                                                : "bg-transparent border-muted-foreground/30",
+                                                            editingAbilities && "hover:border-accent-foreground cursor-pointer"
+                                                        )}
+                                                    />
+                                                ))}
+                                            </div>
                                             {/* Specialties List */}
                                             {(ability.specialties || []).length > 0 && (
                                                 <div className="flex flex-col gap-1 mt-1 items-end">
