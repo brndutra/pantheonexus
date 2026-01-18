@@ -206,6 +206,25 @@ export const insertCallingSchema = createInsertSchema(callings).omit({
 export type InsertCalling = z.infer<typeof insertCallingSchema>;
 export type Calling = typeof callings.$inferSelect;
 
+// Virtues Table - Character virtue types
+export const virtues = pgTable("virtues", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  description: text("description").default(""),
+  pantheons: jsonb("pantheons").default([]),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const insertVirtueSchema = createInsertSchema(virtues).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertVirtue = z.infer<typeof insertVirtueSchema>;
+export type Virtue = typeof virtues.$inferSelect;
+
 // Natures Table - Character personality types
 export const natures = pgTable("natures", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
