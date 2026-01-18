@@ -100,9 +100,13 @@ export class SupabaseStorage implements IStorage {
     const { data: scionsights } = await supabase.from('scionsight').select('*');
     const scionsightMap = new Map((scionsights || []).map(s => [s.scion_id, s]));
     
+    const { data: scionAttributes } = await supabase.from('scion_attributes').select('*');
+    const attributesMap = new Map((scionAttributes || []).map(a => [a.scion_id, a]));
+    
     return (scrolls || []).map(scroll => {
       const scionsight = scionsightMap.get(scroll.id);
-      return this.scrollToCharacter(scroll, scionsight);
+      const attrs = attributesMap.get(scroll.id);
+      return this.scrollToCharacter(scroll, scionsight, attrs);
     }) as Character[];
   }
 
@@ -111,8 +115,9 @@ export class SupabaseStorage implements IStorage {
     if (error || !scroll) return undefined;
     
     const { data: scionsight } = await supabase.from('scionsight').select('*').eq('scion_id', id).single();
+    const { data: scionAttrs } = await supabase.from('scion_attributes').select('*').eq('scion_id', id).single();
     
-    return this.scrollToCharacter(scroll, scionsight) as Character;
+    return this.scrollToCharacter(scroll, scionsight, scionAttrs) as Character;
   }
 
   async createCharacter(character: InsertCharacter): Promise<Character> {
@@ -141,8 +146,22 @@ export class SupabaseStorage implements IStorage {
       }
     }
     
+    const attributeUpdates = this.characterToScionAttributes(updates as any);
+    if (Object.keys(attributeUpdates).length > 0) {
+      attributeUpdates.updated_at = new Date().toISOString();
+      const { data: existingAttrs } = await supabase.from('scion_attributes').select('id').eq('scion_id', id).single();
+      
+      if (existingAttrs) {
+        await supabase.from('scion_attributes').update(attributeUpdates).eq('scion_id', id);
+      } else {
+        attributeUpdates.scion_id = id;
+        await supabase.from('scion_attributes').insert(attributeUpdates);
+      }
+    }
+    
     const { data: scionsight } = await supabase.from('scionsight').select('*').eq('scion_id', id).single();
-    return this.scrollToCharacter(scrollData, scionsight) as Character;
+    const { data: scionAttrs } = await supabase.from('scion_attributes').select('*').eq('scion_id', id).single();
+    return this.scrollToCharacter(scrollData, scionsight, scionAttrs) as Character;
   }
 
   async deleteCharacter(id: string): Promise<boolean> {
@@ -270,13 +289,79 @@ export class SupabaseStorage implements IStorage {
     ];
   }
 
-  private scrollToCharacter(scroll: any, scionsight?: any): Character {
+  private scionAttributesToCharacter(sa: any): any {
+    if (!sa) return null;
+    
+    return {
+      Physical: [
+        { name: "Strength", value: sa.attribute_strength || 1, epic: sa.epic_strength || 0, rune: "ᚠ" },
+        { name: "Dexterity", value: sa.attribute_dexterity || 1, epic: sa.epic_dexterity || 0, rune: "ᚢ" },
+        { name: "Stamina", value: sa.attribute_stamina || 1, epic: sa.epic_stamina || 0, rune: "ᚦ" }
+      ],
+      Social: [
+        { name: "Charisma", value: sa.attribute_charisma || 1, epic: sa.epic_charisma || 0, rune: "ᚨ" },
+        { name: "Manipulation", value: sa.attribute_manipulation || 1, epic: sa.epic_manipulation || 0, rune: "ᚱ" },
+        { name: "Appearance", value: sa.attribute_appearance || 1, epic: sa.epic_appearance || 0, rune: "ᚲ" }
+      ],
+      Mental: [
+        { name: "Perception", value: sa.attribute_perception || 1, epic: sa.epic_perception || 0, rune: "ᚷ" },
+        { name: "Intelligence", value: sa.attribute_intelligence || 1, epic: sa.epic_intelligence || 0, rune: "ᚹ" },
+        { name: "Wits", value: sa.attribute_wits || 1, epic: sa.epic_wits || 0, rune: "ᚺ" }
+      ]
+    };
+  }
+
+  private characterToScionAttributes(char: Partial<InsertCharacter>): any {
+    if (!char.attributes) return {};
+    
+    const attrs = char.attributes as any;
+    const result: any = {};
+    
+    if (attrs.Physical && Array.isArray(attrs.Physical)) {
+      const physical = attrs.Physical;
+      const str = physical.find((a: any) => a.name === "Strength");
+      const dex = physical.find((a: any) => a.name === "Dexterity");
+      const sta = physical.find((a: any) => a.name === "Stamina");
+      
+      if (str) { result.attribute_strength = str.value; result.epic_strength = str.epic || 0; }
+      if (dex) { result.attribute_dexterity = dex.value; result.epic_dexterity = dex.epic || 0; }
+      if (sta) { result.attribute_stamina = sta.value; result.epic_stamina = sta.epic || 0; }
+    }
+    
+    if (attrs.Social && Array.isArray(attrs.Social)) {
+      const social = attrs.Social;
+      const cha = social.find((a: any) => a.name === "Charisma");
+      const man = social.find((a: any) => a.name === "Manipulation");
+      const app = social.find((a: any) => a.name === "Appearance");
+      
+      if (cha) { result.attribute_charisma = cha.value; result.epic_charisma = cha.epic || 0; }
+      if (man) { result.attribute_manipulation = man.value; result.epic_manipulation = man.epic || 0; }
+      if (app) { result.attribute_appearance = app.value; result.epic_appearance = app.epic || 0; }
+    }
+    
+    if (attrs.Mental && Array.isArray(attrs.Mental)) {
+      const mental = attrs.Mental;
+      const per = mental.find((a: any) => a.name === "Perception");
+      const int = mental.find((a: any) => a.name === "Intelligence");
+      const wit = mental.find((a: any) => a.name === "Wits");
+      
+      if (per) { result.attribute_perception = per.value; result.epic_perception = per.epic || 0; }
+      if (int) { result.attribute_intelligence = int.value; result.epic_intelligence = int.epic || 0; }
+      if (wit) { result.attribute_wits = wit.value; result.epic_wits = wit.epic || 0; }
+    }
+    
+    return result;
+  }
+
+  private scrollToCharacter(scroll: any, scionsight?: any, scionAttrs?: any): Character {
     const scrollData = scroll.data || {};
     const ss = scionsight || {};
     
     const callings = this.normalizeCallings(scrollData.callings, ss);
     const virtues = this.normalizeVirtues(scrollData.virtues, ss);
-    const attributes = this.normalizeAttributes(scrollData.attributes);
+    
+    const attrsFromTable = this.scionAttributesToCharacter(scionAttrs);
+    const attributes = attrsFromTable || this.normalizeAttributes(scrollData.attributes);
     
     return {
       id: scroll.id,
