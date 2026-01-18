@@ -414,13 +414,13 @@ export default function CharacterSheet() {
         */}
 
         {/* TOP BLOCK: ID & RESOURCES */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-6 items-start">
             {/* LEFT COLUMN: IDENTITY & ESSENCE */}
-            <div className="md:col-span-8 flex flex-col gap-6">
+            <div className="md:col-span-8 flex flex-col gap-4">
                 
                 {/* ID CARD */}
-                <SectionFrame title="ID Card" subHeader="Designation & Genesis Records">
-                    <div className="grid grid-cols-1 md:grid-cols-12 gap-6 h-[420px]">
+                <SectionFrame title="ID Card" subHeader="Designation & Genesis Records" className="p-4">
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-4 h-[300px]">
                         {/* Portrait Column */}
                         <div className="md:col-span-3 flex flex-col gap-2 relative h-full">
                             {/* Decorative Frame for Portrait */}
@@ -434,13 +434,13 @@ export default function CharacterSheet() {
                                     <>
                                         <img src={portrait} alt="Scion Portrait" className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
                                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
-                                            <span className="text-xs uppercase tracking-widest text-primary font-mythic border border-primary px-3 py-1">Change</span>
+                                            <span className="text-[10px] uppercase tracking-widest text-primary font-mythic border border-primary px-2 py-0.5">Change</span>
                                         </div>
                                     </>
                                 ) : (
                                     <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground/30 group-hover:text-primary/60 transition-colors">
-                                        <ImageIcon className="w-12 h-12 mb-3 opacity-50" />
-                                        <span className="text-[10px] uppercase tracking-widest text-center px-4 font-mythic">Upload Visual</span>
+                                        <ImageIcon className="w-8 h-8 mb-2 opacity-50" />
+                                        <span className="text-[9px] uppercase tracking-widest text-center px-2 font-mythic leading-tight">Upload Visual</span>
                                     </div>
                                 )}
                                 <input 
@@ -454,29 +454,29 @@ export default function CharacterSheet() {
                              {portrait && (
                                  <button 
                                     onClick={() => setPortrait(null)}
-                                    className="absolute bottom-2 left-0 right-0 text-[9px] uppercase tracking-widest text-destructive/70 hover:text-red-400 flex items-center justify-center gap-1 py-1 transition-colors bg-black/80"
+                                    className="absolute bottom-1 left-0 right-0 text-[8px] uppercase tracking-widest text-destructive/70 hover:text-red-400 flex items-center justify-center gap-1 py-0.5 transition-colors bg-black/80"
                                  >
-                                     <X className="w-3 h-3" /> Clear
+                                     <X className="w-2 h-2" /> Clear
                                  </button>
                              )}
                         </div>
 
                         {/* Data Column */}
-                        <div className="md:col-span-9 flex flex-col gap-4 justify-start pl-4 border-l border-primary/10 relative h-full overflow-hidden">
+                        <div className="md:col-span-9 flex flex-col gap-2 justify-start pl-4 border-l border-primary/10 relative h-full overflow-hidden">
                             {/* ID Card Internal Navigation */}
-                            <div className="flex gap-4 mb-2 border-b border-primary/20 pb-2 flex-shrink-0">
+                            <div className="flex gap-4 mb-1 border-b border-primary/20 pb-1 flex-shrink-0">
                                {['identity', 'psychic', 'presence'].map((tab) => (
                                   <button
                                     key={tab}
                                     onClick={() => setIdCardTab(tab as any)}
                                     className={cn(
-                                      "text-[10px] uppercase tracking-[0.2em] font-mythic transition-colors pb-1 relative",
+                                      "text-[9px] uppercase tracking-[0.2em] font-mythic transition-colors pb-1 relative",
                                       idCardTab === tab ? "text-primary" : "text-muted-foreground hover:text-primary/70"
                                     )}
                                   >
                                     {tab}
                                     {idCardTab === tab && (
-                                       <motion.div layoutId="idTabIndicator" className="absolute bottom-0 left-0 right-0 h-px bg-primary shadow-[0_0_5px_gold]" />
+                                       <motion.div layoutId="idTabIndicator" className="absolute bottom-0 left-0 right-0 h-[1px] bg-primary shadow-[0_0_5px_gold]" />
                                     )}
                                   </button>
                                ))}
@@ -487,29 +487,29 @@ export default function CharacterSheet() {
                                     {idCardTab === 'identity' && (
                                         <motion.div 
                                           key="identity"
-                                          initial={{ opacity: 0, x: -10 }}
+                                          initial={{ opacity: 0, x: -5 }}
                                           animate={{ opacity: 1, x: 0 }}
-                                          exit={{ opacity: 0, x: 10 }}
-                                          className="space-y-6"
+                                          exit={{ opacity: 0, x: 5 }}
+                                          className="space-y-3"
                                         >
                                             {/* Identity Fields */}
-                                            <div className="space-y-4">
-                                                <ScionInput label="Designation (Name)" placeholder="CHARACTER NAME" className="text-2xl md:text-3xl font-mythic text-primary drop-shadow-[0_0_10px_rgba(212,175,55,0.3)]" />
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div className="space-y-3">
+                                                <ScionInput label="Designation (Name)" placeholder="CHARACTER NAME" className="text-xl md:text-2xl font-mythic text-primary drop-shadow-[0_0_10px_rgba(212,175,55,0.3)]" />
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                     <ScionInput label="Pantheon" placeholder="PANTHEON" />
                                                     <ScionInput label="Heritage" placeholder="DIVINE PARENT / PATRON" />
                                                 </div>
                                             </div>
 
                                             {/* Divider with Ornament */}
-                                            <div className="flex items-center gap-4 opacity-50">
+                                            <div className="flex items-center gap-4 opacity-30 py-1">
                                                <div className="h-px bg-primary/30 flex-1" />
-                                               <img src={divineDivider} className="h-4 w-auto" alt="" />
+                                               <img src={divineDivider} className="h-3 w-auto" alt="" />
                                                <div className="h-px bg-primary/30 flex-1" />
                                             </div>
 
                                             {/* Genesis Fields */}
-                                            <div className="grid grid-cols-2 gap-4">
+                                            <div className="grid grid-cols-2 gap-3">
                                                 <ScionInput label="Date of Birth" placeholder="DD/MM/AAAA" />
                                                 <ScionInput label="Nationality" placeholder="NATIONALITY" />
                                                 <ScionInput label="Origin City" placeholder="CITY" />
@@ -521,22 +521,22 @@ export default function CharacterSheet() {
                                     {idCardTab === 'psychic' && (
                                        <motion.div 
                                           key="psychic"
-                                          initial={{ opacity: 0, x: -10 }}
+                                          initial={{ opacity: 0, x: -5 }}
                                           animate={{ opacity: 1, x: 0 }}
-                                          exit={{ opacity: 0, x: 10 }}
-                                          className="space-y-4 pb-4"
+                                          exit={{ opacity: 0, x: 5 }}
+                                          className="space-y-3 pb-2"
                                        >
-                                          <div className="grid grid-cols-2 gap-4">
+                                          <div className="grid grid-cols-2 gap-3">
                                              <ScionInput label="Temperament" placeholder="Dominant Emotion" value={psychicProfile.temperament} onChange={(e) => setPsychicProfile({...psychicProfile, temperament: e.target.value})} />
                                              <ScionInput label="Cognitive Type" placeholder="Thought Pattern" value={psychicProfile.cognitiveType} onChange={(e) => setPsychicProfile({...psychicProfile, cognitiveType: e.target.value})} />
                                           </div>
-                                          <div className="grid grid-cols-2 gap-4">
+                                          <div className="grid grid-cols-2 gap-3">
                                               <ScionInput label="Major Arcana" placeholder="Archetype" value={psychicProfile.majorArcana} onChange={(e) => setPsychicProfile({...psychicProfile, majorArcana: e.target.value})} />
                                               <ScionInput label="Keywords" placeholder="Key Terms" value={psychicProfile.keywords} onChange={(e) => setPsychicProfile({...psychicProfile, keywords: e.target.value})} />
                                           </div>
                                           <div className="space-y-1">
-                                             <label className="text-[9px] uppercase tracking-widest text-primary/70 font-mythic">Deep Analysis</label>
-                                             <textarea className="w-full bg-black/20 border border-white/10 rounded-sm p-2 text-xs font-tech text-foreground outline-none focus:border-primary/50 min-h-[60px]" placeholder="Analysis..." value={psychicProfile.analysis} onChange={(e) => setPsychicProfile({...psychicProfile, analysis: e.target.value})} />
+                                             <label className="text-[8px] uppercase tracking-widest text-primary/70 font-mythic">Deep Analysis</label>
+                                             <textarea className="w-full bg-black/20 border border-white/10 rounded-sm p-2 text-[10px] font-tech text-foreground outline-none focus:border-primary/50 min-h-[50px]" placeholder="Analysis..." value={psychicProfile.analysis} onChange={(e) => setPsychicProfile({...psychicProfile, analysis: e.target.value})} />
                                           </div>
                                        </motion.div>
                                     )}
@@ -544,17 +544,17 @@ export default function CharacterSheet() {
                                     {idCardTab === 'presence' && (
                                        <motion.div 
                                           key="presence"
-                                          initial={{ opacity: 0, x: -10 }}
+                                          initial={{ opacity: 0, x: -5 }}
                                           animate={{ opacity: 1, x: 0 }}
-                                          exit={{ opacity: 0, x: 10 }}
-                                          className="space-y-4 pb-4"
+                                          exit={{ opacity: 0, x: 5 }}
+                                          className="space-y-3 pb-2"
                                        >
-                                           <div className="grid grid-cols-3 gap-3">
+                                           <div className="grid grid-cols-3 gap-2">
                                               <ScionInput label="Height" placeholder="Height" value={presenceProfile.height} onChange={(e) => setPresenceProfile({...presenceProfile, height: e.target.value})} />
                                               <ScionInput label="Eyes" placeholder="Color" value={presenceProfile.eyeColor} onChange={(e) => setPresenceProfile({...presenceProfile, eyeColor: e.target.value})} />
                                               <ScionInput label="Hair" placeholder="Color" value={presenceProfile.hairColor} onChange={(e) => setPresenceProfile({...presenceProfile, hairColor: e.target.value})} />
                                            </div>
-                                           <div className="grid grid-cols-2 gap-4">
+                                           <div className="grid grid-cols-2 gap-3">
                                                <ScionInput label="Aura" placeholder="Signature" value={presenceProfile.auraSignature} onChange={(e) => setPresenceProfile({...presenceProfile, auraSignature: e.target.value})} />
                                                <ScionInput label="Scent" placeholder="Essence" value={presenceProfile.scent} onChange={(e) => setPresenceProfile({...presenceProfile, scent: e.target.value})} />
                                            </div>
@@ -568,18 +568,18 @@ export default function CharacterSheet() {
                 </SectionFrame>
 
                 {/* COMBINED SECTION: Callings, Nature, Virtues */}
-                <SectionFrame title="Essence & Nature" subHeader="Divine Matrix">
-                   <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+                <SectionFrame title="Essence & Nature" subHeader="Divine Matrix" className="p-4">
+                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
                       {/* Vertical Dividers */}
                       <div className="absolute left-1/3 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-primary/20 to-transparent hidden md:block" />
                       <div className="absolute right-1/3 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-primary/20 to-transparent hidden md:block" />
 
                       {/* Callings */}
-                      <div className="space-y-4">
-                         <h4 className="text-[10px] uppercase tracking-[0.2em] font-mythic text-primary/70 mb-2 border-b border-primary/20 pb-2 flex items-center justify-between">
+                      <div className="space-y-2">
+                         <h4 className="text-[9px] uppercase tracking-[0.2em] font-mythic text-primary/70 mb-1 border-b border-primary/20 pb-1 flex items-center justify-between">
                             Callings <Crown className="w-3 h-3 text-primary/40" />
                          </h4>
-                         <div className="flex flex-col gap-4">
+                         <div className="flex flex-col gap-2">
                            {callings.map((c, i) => (
                              <div key={i} className="flex items-center gap-2 group">
                                 <div className="w-1 h-1 bg-primary/50 rotate-45 group-hover:bg-primary transition-colors" />
@@ -599,7 +599,7 @@ export default function CharacterSheet() {
                                   {activeTitleIndex === i && (
                                     <motion.div 
                                       initial={{ opacity: 0, scale: 0.9, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 10 }}
-                                      className="absolute left-0 mt-8 z-50 bg-black/90 border border-primary p-3 w-48 shadow-[0_0_30px_rgba(0,0,0,0.8)] backdrop-blur-xl rounded-sm"
+                                      className="absolute left-0 mt-6 z-50 bg-black/90 border border-primary p-3 w-48 shadow-[0_0_30px_rgba(0,0,0,0.8)] backdrop-blur-xl rounded-sm"
                                     >
                                        <div className="text-[9px] uppercase tracking-widest text-muted-foreground mb-1">Legendary Title</div>
                                        <input 
@@ -618,25 +618,25 @@ export default function CharacterSheet() {
                       </div>
 
                       {/* Nature */}
-                      <div className="space-y-4">
-                         <h4 className="text-[10px] uppercase tracking-[0.2em] font-mythic text-primary/70 mb-2 border-b border-primary/20 pb-2 flex items-center justify-between">
+                      <div className="space-y-2">
+                         <h4 className="text-[9px] uppercase tracking-[0.2em] font-mythic text-primary/70 mb-1 border-b border-primary/20 pb-1 flex items-center justify-between">
                             Nature <User className="w-3 h-3 text-primary/40" />
                          </h4>
-                         <div className="pt-2">
-                           <ScionInput placeholder="ARCHETYPE" className="text-center text-xl font-mythic text-primary/90" />
+                         <div className="pt-1">
+                           <ScionInput placeholder="ARCHETYPE" className="text-center text-lg font-mythic text-primary/90" />
                          </div>
                       </div>
 
                       {/* Virtues */}
-                      <div className="space-y-4">
-                         <h4 className="text-[10px] uppercase tracking-[0.2em] font-mythic text-primary/70 mb-2 border-b border-primary/20 pb-2 flex items-center justify-between">
+                      <div className="space-y-2">
+                         <h4 className="text-[9px] uppercase tracking-[0.2em] font-mythic text-primary/70 mb-1 border-b border-primary/20 pb-1 flex items-center justify-between">
                             Virtues <Heart className="w-3 h-3 text-primary/40" />
                          </h4>
-                         <div className="space-y-3">
+                         <div className="space-y-2">
                             {virtues.map((virtue, idx) => (
                                <div key={idx} className="flex justify-between items-center group">
                                   <input 
-                                     className="bg-transparent font-tech text-xs text-muted-foreground group-hover:text-primary transition-colors outline-none w-24 uppercase tracking-wider"
+                                     className="bg-transparent font-tech text-xs text-muted-foreground group-hover:text-primary transition-colors outline-none w-20 uppercase tracking-wider"
                                      value={virtue.name}
                                      onChange={(e) => updateVirtue(idx, 'name', e.target.value)}
                                      placeholder="VIRTUE"
@@ -651,87 +651,78 @@ export default function CharacterSheet() {
             </div>
 
             {/* RIGHT COLUMN: LEGEND & VITALITY */}
-            <div className="md:col-span-4 flex flex-col gap-6">
-                {/* Legend Rank Block */}
-                <div className="border-2 border-primary/30 p-6 bg-black/60 backdrop-blur-md rounded-sm flex flex-col items-center justify-center relative overflow-hidden shadow-[0_0_30px_rgba(212,175,55,0.1)]">
+            <div className="md:col-span-4 flex flex-col gap-4">
+                {/* Legend Rank Block - Condensed */}
+                <div className="border-2 border-primary/30 p-4 bg-black/60 backdrop-blur-md rounded-sm flex items-center justify-between relative overflow-hidden shadow-[0_0_30px_rgba(212,175,55,0.1)] h-[120px]">
                    <img src={artNouveauFrame} className="absolute inset-0 w-full h-full opacity-30 mix-blend-overlay pointer-events-none" alt="" />
                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.1)_0%,transparent_70%)]" />
                    
-                   <h2 className="text-3xl font-mythic text-primary tracking-tighter z-10 mb-4 drop-shadow-[0_0_10px_gold]">LEGEND</h2>
-                   
-                   <div className="flex items-center gap-6 z-10">
-                      <div className="flex flex-col items-center">
-                         <div className="w-20 h-20 border-2 border-primary flex items-center justify-center bg-black/80 text-5xl font-mythic text-primary shadow-[0_0_30px_rgba(212,175,55,0.4)] relative">
-                            {/* Inner Border */}
-                            <div className="absolute inset-1 border border-primary/30" />
-                            {legend}
-                         </div>
-                         <span className="text-[10px] tracking-[0.3em] text-primary/60 mt-2 uppercase font-bold">Rank</span>
+                   <div className="flex flex-col items-center z-10 w-1/2 border-r border-primary/20">
+                      <h2 className="text-xs font-mythic text-primary/70 tracking-widest mb-1">LEGEND</h2>
+                      <div className="w-16 h-16 border-2 border-primary flex items-center justify-center bg-black/80 text-4xl font-mythic text-primary shadow-[0_0_20px_rgba(212,175,55,0.3)] relative">
+                         <div className="absolute inset-1 border border-primary/30" />
+                         {legend}
                       </div>
-                      
-                      {/* Aether Percentage Display */}
-                      <div className="flex flex-col items-center">
-                         <div className="w-20 h-20 rounded-full flex items-center justify-center bg-black/40 relative">
-                            {/* SVG Circle for Progress */}
-                            <svg className="absolute inset-0 w-full h-full -rotate-90 drop-shadow-[0_0_10px_rgba(212,175,55,0.3)]">
-                               <circle cx="40" cy="40" r="36" stroke="#1a1a1a" strokeWidth="3" fill="transparent" />
-                               <circle 
-                                 cx="40" cy="40" r="36" 
-                                 stroke="#d4af37" 
-                                 strokeWidth="3" 
-                                 fill="transparent" 
-                                 strokeDasharray={`${2 * Math.PI * 36}`}
-                                 strokeDashoffset={`${2 * Math.PI * 36 * (1 - aetherPercentage/100)}`}
-                                 strokeLinecap="round"
-                                 className="transition-all duration-1000 ease-out"
-                               />
-                            </svg>
-                            <div className="flex flex-col items-center">
-                                <span className="font-code text-xl text-primary font-bold">{aetherPercentage}%</span>
-                            </div>
-                         </div>
-                         <span className="text-[10px] tracking-[0.3em] text-primary/60 mt-2 uppercase font-bold">Aether</span>
+                   </div>
+                   
+                   <div className="flex flex-col items-center z-10 w-1/2">
+                      <h2 className="text-xs font-mythic text-primary/70 tracking-widest mb-1">AETHER</h2>
+                      <div className="w-16 h-16 rounded-full flex items-center justify-center bg-black/40 relative">
+                         <svg className="absolute inset-0 w-full h-full -rotate-90 drop-shadow-[0_0_10px_rgba(212,175,55,0.3)]">
+                            <circle cx="32" cy="32" r="28" stroke="#1a1a1a" strokeWidth="3" fill="transparent" />
+                            <circle 
+                              cx="32" cy="32" r="28" 
+                              stroke="#d4af37" 
+                              strokeWidth="3" 
+                              fill="transparent" 
+                              strokeDasharray={`${2 * Math.PI * 28}`}
+                              strokeDashoffset={`${2 * Math.PI * 28 * (1 - aetherPercentage/100)}`}
+                              strokeLinecap="round"
+                              className="transition-all duration-1000 ease-out"
+                            />
+                         </svg>
+                         <span className="font-code text-lg text-primary font-bold">{aetherPercentage}%</span>
                       </div>
                    </div>
                 </div>
 
                 {/* Pools & Health Section Combined */}
-                <SectionFrame title="Vitality" subHeader="Status Monitor" className="flex-1">
-                   <div className="space-y-6">
+                <SectionFrame title="Vitality" subHeader="Status Monitor" className="flex-1 p-4">
+                   <div className="space-y-4">
                       {/* Legend Points */}
-                      <div className="space-y-2">
-                         <div className="flex justify-between text-[10px] font-mythic text-primary/90 uppercase tracking-widest">
+                      <div className="space-y-1">
+                         <div className="flex justify-between text-[9px] font-mythic text-primary/90 uppercase tracking-widest">
                             <span>Legend Points</span>
                             <span className="font-code text-primary">{legendCurrent} / {legendPoolTotal}</span>
                          </div>
-                         <div className="h-2 bg-black/80 border border-primary/30 rounded-full overflow-hidden relative shadow-inner">
+                         <div className="h-1.5 bg-black/80 border border-primary/30 rounded-full overflow-hidden relative shadow-inner">
                             <div 
                               className="absolute top-0 left-0 h-full bg-gradient-to-r from-primary/60 to-primary" 
                               style={{ width: `${(legendCurrent / legendPoolTotal) * 100}%` }}
                             />
                          </div>
                          <div className="flex gap-1 justify-between">
-                            <button onClick={() => setLegendCurrent(Math.max(0, legendCurrent - 1))} className="w-6 h-5 flex items-center justify-center border border-primary/20 text-[9px] hover:bg-primary/10 hover:border-primary text-primary transition-colors rounded-sm">-</button>
-                            <button onClick={() => setLegendCurrent(Math.min(legendPoolTotal, legendCurrent + 1))} className="w-6 h-5 flex items-center justify-center border border-primary/20 text-[9px] hover:bg-primary/10 hover:border-primary text-primary transition-colors rounded-sm">+</button>
+                            <button onClick={() => setLegendCurrent(Math.max(0, legendCurrent - 1))} className="w-5 h-4 flex items-center justify-center border border-primary/20 text-[8px] hover:bg-primary/10 hover:border-primary text-primary transition-colors rounded-sm">-</button>
+                            <button onClick={() => setLegendCurrent(Math.min(legendPoolTotal, legendCurrent + 1))} className="w-5 h-4 flex items-center justify-center border border-primary/20 text-[8px] hover:bg-primary/10 hover:border-primary text-primary transition-colors rounded-sm">+</button>
                          </div>
                       </div>
 
                       {/* Willpower */}
-                      <div className="space-y-2">
-                         <div className="flex justify-between text-[10px] font-mythic text-primary/90 uppercase tracking-widest">
+                      <div className="space-y-1">
+                         <div className="flex justify-between text-[9px] font-mythic text-primary/90 uppercase tracking-widest">
                             <span>Willpower</span>
                             <span className="font-code text-primary">{willpowerCurrent} / {willpower}</span>
                          </div>
-                         <div className="flex justify-between items-center mb-1 px-1">
-                            <DotRating value={willpower} max={10} onChange={setWillpower} className="scale-75 origin-left" />
+                         <div className="flex justify-between items-center mb-0.5 px-1">
+                            <DotRating value={willpower} max={10} onChange={setWillpower} className="scale-75 origin-left gap-0.5" />
                          </div>
-                         <div className="grid grid-cols-10 gap-1 px-1">
+                         <div className="grid grid-cols-10 gap-0.5 px-1">
                             {Array.from({length: 10}).map((_, i) => (
                                <div 
                                  key={i}
                                  onClick={() => setWillpowerCurrent(i + 1 === willpowerCurrent ? 0 : i + 1)}
                                  className={cn(
-                                   "h-3 border border-primary/30 cursor-pointer transition-all duration-300 rounded-[1px]",
+                                   "h-2.5 border border-primary/30 cursor-pointer transition-all duration-300 rounded-[1px]",
                                    i < willpowerCurrent ? "bg-primary shadow-[0_0_8px_rgba(212,175,55,0.5)] border-primary" : "bg-transparent hover:bg-primary/10",
                                    i >= willpower && "opacity-10 pointer-events-none border-none bg-white/5" // Disable dots beyond permanent rating
                                  )}
@@ -748,23 +739,23 @@ export default function CharacterSheet() {
                       </div>
 
                       {/* Health Tracker Integrated */}
-                      <div className="space-y-3">
+                      <div className="space-y-2">
                           <div className="flex justify-between items-center">
-                             <h4 className="text-[10px] uppercase tracking-[0.2em] font-mythic text-primary/70">Health</h4>
+                             <h4 className="text-[9px] uppercase tracking-[0.2em] font-mythic text-primary/70">Health</h4>
                              <button 
                                 onClick={() => setExtraOxBody(prev => Math.min(prev + 1, 5))}
-                                className="text-[9px] border border-primary/30 px-2 py-0.5 hover:bg-primary/10 text-primary transition-colors uppercase tracking-wider rounded-sm"
+                                className="text-[8px] border border-primary/30 px-1.5 py-0.5 hover:bg-primary/10 text-primary transition-colors uppercase tracking-wider rounded-sm"
                              >
                                 + OxBody
                              </button>
                           </div>
                           
-                          <div className="flex flex-wrap gap-x-3 gap-y-2 justify-start items-end">
+                          <div className="flex flex-wrap gap-x-2 gap-y-2 justify-start items-end">
                              {currentHealthLevels.map((level, i) => (
-                                <div key={i} className="flex flex-col items-center gap-1 group relative">
+                                <div key={i} className="flex flex-col items-center gap-0.5 group relative">
                                    <HealthBox status={healthDamage[i]} onClick={() => toggleHealth(i)} />
                                    <span className={cn(
-                                      "font-code text-[8px] uppercase tracking-wider transition-all duration-300",
+                                      "font-code text-[7px] uppercase tracking-wider transition-all duration-300",
                                       level === "Incap" ? "text-red-500 font-bold" : "text-muted-foreground group-hover:text-primary"
                                    )}>
                                       {level}
@@ -776,8 +767,8 @@ export default function CharacterSheet() {
                                          newDamage.splice(i, 1);
                                          newDamage.push(0); 
                                          setHealthDamage(newDamage);
-                                      }} className="absolute -top-3 -right-2 text-destructive hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity">
-                                         <Trash2 className="w-3 h-3" />
+                                      }} className="absolute -top-2 -right-1 text-destructive hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                                         <Trash2 className="w-2 h-2" />
                                       </button>
                                    )}
                                 </div>
@@ -791,14 +782,14 @@ export default function CharacterSheet() {
         </div>
 
         {/* Content Area */}
-        <div className="space-y-6">
+        <div className="space-y-4">
           {/* Main Sheet Content */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
               
               {/* MAIN ATTRIBUTES GRID + RADAR */}
               <div className="md:col-span-12">
-                 <SectionFrame title="Attributes" subHeader="Core Parameters & Analysis">
-                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                 <SectionFrame title="Attributes" subHeader="Core Parameters & Analysis" className="p-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                        
                        {/* Left 3 Cols: Attributes List */}
                        <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-0 md:divide-x divide-primary/10">
@@ -884,66 +875,83 @@ export default function CharacterSheet() {
                  </SectionFrame>
               </div>
 
-              {/* Combat Dynamics & Physical Feats Section */}
-              <div className="md:col-span-12">
-                 <SectionFrame title="Combat & Feats" subHeader="Tactical Data & Physics">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {/* Combat & Feats + Abilities in same row */}
+              <div className="md:col-span-12 grid grid-cols-1 xl:grid-cols-2 gap-4">
+                 
+                 {/* Combat & Feats */}
+                 <SectionFrame title="Combat & Feats" subHeader="Tactical Data" className="p-4 h-full">
+                    <div className="flex flex-col gap-4">
                        
-                       {/* Defensive Values */}
-                       <div className="space-y-4">
-                          <h4 className="text-[10px] uppercase tracking-[0.2em] font-mythic text-primary/70 mb-2 border-b border-primary/20 pb-2 flex items-center justify-between">
-                             Defense <Shield className="w-3 h-3 text-primary/40" />
-                          </h4>
-                          <div className="grid grid-cols-2 gap-4">
-                             <ScionInput label="Dodge DV" value={dodgeDV} readOnly className="text-center font-code text-xl text-primary" />
-                             <ScionInput label="Parry DV" value={parryDV} readOnly className="text-center font-code text-xl text-primary" />
+                       {/* Defensive Values Row */}
+                       <div className="grid grid-cols-3 gap-4">
+                          <div className="space-y-1">
+                             <span className="text-[8px] uppercase tracking-widest text-primary/50 text-center block">Dodge DV</span>
+                             <div className="bg-black/40 border border-primary/30 text-center font-code text-lg py-1 text-primary">{dodgeDV}</div>
                           </div>
-                          <ScionInput label="Join Battle" value={joinBattle} readOnly className="text-center font-code text-lg" />
+                          <div className="space-y-1">
+                             <span className="text-[8px] uppercase tracking-widest text-primary/50 text-center block">Parry DV</span>
+                             <div className="bg-black/40 border border-primary/30 text-center font-code text-lg py-1 text-primary">{parryDV}</div>
+                          </div>
+                          <div className="space-y-1">
+                             <span className="text-[8px] uppercase tracking-widest text-primary/50 text-center block">Join Battle</span>
+                             <div className="bg-black/40 border border-primary/30 text-center font-code text-lg py-1 text-primary">{joinBattle}</div>
+                          </div>
                        </div>
 
-                       {/* Soak & Resistance */}
-                       <div className="space-y-4">
-                          <h4 className="text-[10px] uppercase tracking-[0.2em] font-mythic text-primary/70 mb-2 border-b border-primary/20 pb-2 flex items-center justify-between">
-                             Resilience <Hexagon className="w-3 h-3 text-primary/40" />
-                          </h4>
+                       {/* Soak Row */}
+                       <div className="space-y-1">
+                          <h4 className="text-[9px] uppercase tracking-[0.2em] font-mythic text-primary/70 border-b border-primary/20 pb-1">Resilience</h4>
                           <div className="grid grid-cols-3 gap-2">
-                             <div className="flex flex-col gap-1">
-                                <label className="text-[8px] uppercase tracking-widest text-primary/50 text-center">Bashing</label>
-                                <input className="bg-black/40 border border-primary/30 text-center font-code text-lg py-2 text-primary focus:bg-primary/10 outline-none transition-colors" value={bashingSoak} readOnly />
+                             <div className="text-center bg-black/20 p-1 border border-white/5 rounded-sm">
+                                <span className="block text-[8px] text-muted-foreground uppercase">Bashing</span>
+                                <span className="font-code text-primary">{bashingSoak}</span>
                              </div>
-                             <div className="flex flex-col gap-1">
-                                <label className="text-[8px] uppercase tracking-widest text-primary/50 text-center">Lethal</label>
-                                <input className="bg-black/40 border border-primary/30 text-center font-code text-lg py-2 text-primary focus:bg-primary/10 outline-none transition-colors" value={lethalSoak} readOnly />
+                             <div className="text-center bg-black/20 p-1 border border-white/5 rounded-sm">
+                                <span className="block text-[8px] text-muted-foreground uppercase">Lethal</span>
+                                <span className="font-code text-primary">{lethalSoak}</span>
                              </div>
-                             <div className="flex flex-col gap-1">
-                                <label className="text-[8px] uppercase tracking-widest text-primary/50 text-center">Aggravated</label>
-                                <input className="bg-black/40 border border-primary/30 text-center font-code text-lg py-2 text-primary focus:bg-primary/10 outline-none transition-colors" value={aggSoak} readOnly />
+                             <div className="text-center bg-black/20 p-1 border border-white/5 rounded-sm">
+                                <span className="block text-[8px] text-muted-foreground uppercase">Aggravated</span>
+                                <span className="font-code text-primary">{aggSoak}</span>
                              </div>
-                          </div>
-                          <div className="grid grid-cols-2 gap-4 mt-2">
-                              <ScionInput label="Armor" placeholder="Name/Type" />
-                              <ScionInput label="Mobility Penalty" placeholder="-0" />
                           </div>
                        </div>
 
-                       {/* Physical Feats */}
-                       <div className="space-y-4">
-                          <h4 className="text-[10px] uppercase tracking-[0.2em] font-mythic text-primary/70 mb-2 border-b border-primary/20 pb-2 flex items-center justify-between">
-                             Movement & Feats <Activity className="w-3 h-3 text-primary/40" />
-                          </h4>
-                          <div className="grid grid-cols-2 gap-4">
-                             <ScionInput label="Move" value={`${move} yds`} readOnly />
-                             <ScionInput label="Dash" value={`${dash} yds`} readOnly />
-                          </div>
-                          <div className="grid grid-cols-2 gap-4">
-                             <ScionInput label="Jump (V)" value={`${jumpVert} yds`} readOnly />
-                             <ScionInput label="Jump (H)" value={`${jumpHoriz} yds`} readOnly />
-                          </div>
-                          <div className="grid grid-cols-2 gap-4">
-                             <ScionInput label="Lift" value={`${lift} lbs`} readOnly />
-                             <ScionInput label="Throw" value={`${throwRange} yds`} readOnly />
+                       {/* Movement Grid */}
+                       <div className="space-y-1">
+                          <h4 className="text-[9px] uppercase tracking-[0.2em] font-mythic text-primary/70 border-b border-primary/20 pb-1">Movement</h4>
+                          <div className="grid grid-cols-4 gap-2 text-[9px] font-code">
+                             <div className="flex flex-col"><span className="text-muted-foreground">Move</span> <span className="text-foreground">{move} yds</span></div>
+                             <div className="flex flex-col"><span className="text-muted-foreground">Dash</span> <span className="text-foreground">{dash} yds</span></div>
+                             <div className="flex flex-col"><span className="text-muted-foreground">Jump V</span> <span className="text-foreground">{jumpVert} yds</span></div>
+                             <div className="flex flex-col"><span className="text-muted-foreground">Jump H</span> <span className="text-foreground">{jumpHoriz} yds</span></div>
                           </div>
                        </div>
+                    </div>
+                 </SectionFrame>
+
+                 {/* Abilities Compact */}
+                 <SectionFrame title="Abilities" subHeader="Skill Matrix" className="p-4 h-full">
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 overflow-y-auto max-h-[300px] scion-scrollbar pr-2">
+                       {Object.values(abilities).map(ability => (
+                          <div key={ability.name} className="flex items-center justify-between border-b border-white/5 pb-1 group hover:border-primary/30 transition-colors">
+                             <div className="flex flex-col min-w-0">
+                                <span className="text-[10px] font-tech text-foreground/90 uppercase tracking-wider truncate group-hover:text-primary transition-colors">{ability.name}</span>
+                                {ability.specialties.length > 0 && (
+                                   <span className="text-[8px] text-primary/60 truncate">{ability.specialties.map(s => s.name).join(", ")}</span>
+                                )}
+                             </div>
+                             <div className="flex items-center gap-1">
+                                <button onClick={() => updateAbilityValue(ability.name, ability.value - 1)} className="text-muted-foreground hover:text-white hover:bg-white/10 rounded px-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <Minus className="w-2 h-2" />
+                                </button>
+                                <span className="font-mythic text-primary text-sm w-4 text-center">{ability.value}</span>
+                                <button onClick={() => updateAbilityValue(ability.name, ability.value + 1)} className="text-muted-foreground hover:text-white hover:bg-white/10 rounded px-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <Plus className="w-2 h-2" />
+                                </button>
+                             </div>
+                          </div>
+                       ))}
                     </div>
                  </SectionFrame>
               </div>
@@ -975,19 +983,17 @@ export default function CharacterSheet() {
                                    exit={{ opacity: 0, height: 0 }}
                                    className="grid grid-cols-12 gap-2 items-center bg-black/40 border border-white/5 p-2 rounded-sm group hover:border-primary/30 transition-colors"
                                 >
-                                   <div className="col-span-3 font-tech text-foreground">{w.name}</div>
-                                   <div className="col-span-2 font-code text-xs text-muted-foreground text-center flex flex-col justify-center">
-                                       <span>{w.attribute}</span>
-                                       <span className="text-[8px] opacity-60">+ {w.ability}</span>
+                                   <div className="col-span-3 font-tech text-foreground truncate" title={w.name}>{w.name}</div>
+                                   <div className="col-span-2 font-code text-[10px] text-muted-foreground text-center truncate">
+                                       {w.attribute} + {w.ability}
                                    </div>
                                    <div className="col-span-1 font-code text-primary text-center">+{w.accuracy}</div>
-                                   <div className="col-span-1 font-code text-destructive text-center flex flex-col justify-center">
-                                       <span>+{w.damage}</span>
-                                       <span className="text-[8px] text-muted-foreground opacity-60">({w.damageAttribute})</span>
+                                   <div className="col-span-1 font-code text-destructive text-center text-[10px] truncate">
+                                       +{w.damage} ({w.damageAttribute})
                                    </div>
                                    <div className="col-span-1 font-code text-primary text-center">+{w.defense}</div>
                                    <div className="col-span-1 font-code text-muted-foreground text-center">{w.overwhelming}</div>
-                                   <div className="col-span-2 font-tech text-[10px] text-muted-foreground text-center truncate">{w.tags}</div>
+                                   <div className="col-span-2 font-tech text-[10px] text-muted-foreground text-center truncate" title={w.tags}>{w.tags}</div>
                                    <div className="col-span-1 flex justify-end">
                                       <button 
                                          onClick={() => setWeapons(prev => prev.filter((_, idx) => idx !== i))}
@@ -1001,7 +1007,7 @@ export default function CharacterSheet() {
                           </AnimatePresence>
                           
                           {/* New Weapon Input Row */}
-                          <div className="grid grid-cols-12 gap-2 pt-2 items-start">
+                          <div className="grid grid-cols-12 gap-2 pt-2 items-center">
                              <div className="col-span-3">
                                 <input 
                                    className="w-full bg-black/20 border border-white/10 rounded-sm px-2 py-1 text-xs font-tech text-foreground outline-none focus:border-primary/50 placeholder:text-muted-foreground/30"
@@ -1010,15 +1016,15 @@ export default function CharacterSheet() {
                                    onChange={(e) => setNewWeapon({...newWeapon, name: e.target.value})}
                                 />
                              </div>
-                             <div className="col-span-2 flex flex-col gap-1">
+                             <div className="col-span-2 flex gap-1">
                                 <input 
-                                   className="w-full bg-black/20 border border-white/10 rounded-sm px-1 py-1 text-[9px] font-code text-center text-muted-foreground outline-none focus:border-primary/50 placeholder:text-muted-foreground/30 uppercase"
+                                   className="w-1/2 bg-black/20 border border-white/10 rounded-sm px-1 py-1 text-[9px] font-code text-center text-muted-foreground outline-none focus:border-primary/50 placeholder:text-muted-foreground/30 uppercase"
                                    placeholder="ATTR"
                                    value={newWeapon.attribute}
                                    onChange={(e) => setNewWeapon({...newWeapon, attribute: e.target.value})}
                                 />
                                 <input 
-                                   className="w-full bg-black/20 border border-white/10 rounded-sm px-1 py-1 text-[9px] font-code text-center text-muted-foreground outline-none focus:border-primary/50 placeholder:text-muted-foreground/30 uppercase"
+                                   className="w-1/2 bg-black/20 border border-white/10 rounded-sm px-1 py-1 text-[9px] font-code text-center text-muted-foreground outline-none focus:border-primary/50 placeholder:text-muted-foreground/30 uppercase"
                                    placeholder="ABIL"
                                    value={newWeapon.ability}
                                    onChange={(e) => setNewWeapon({...newWeapon, ability: e.target.value})}
@@ -1032,15 +1038,15 @@ export default function CharacterSheet() {
                                    onChange={(e) => setNewWeapon({...newWeapon, accuracy: e.target.value})}
                                 />
                              </div>
-                             <div className="col-span-1 flex flex-col gap-1">
+                             <div className="col-span-1 flex gap-1">
                                 <input 
-                                   className="w-full bg-black/20 border border-white/10 rounded-sm px-1 py-1 text-xs font-code text-center text-destructive outline-none focus:border-primary/50 placeholder:text-muted-foreground/30"
+                                   className="w-1/2 bg-black/20 border border-white/10 rounded-sm px-1 py-1 text-xs font-code text-center text-destructive outline-none focus:border-primary/50 placeholder:text-muted-foreground/30"
                                    placeholder="+0L"
                                    value={newWeapon.damage}
                                    onChange={(e) => setNewWeapon({...newWeapon, damage: e.target.value})}
                                 />
                                 <input 
-                                   className="w-full bg-black/20 border border-white/10 rounded-sm px-1 py-1 text-[9px] font-code text-center text-muted-foreground outline-none focus:border-primary/50 placeholder:text-muted-foreground/30 uppercase"
+                                   className="w-1/2 bg-black/20 border border-white/10 rounded-sm px-1 py-1 text-[9px] font-code text-center text-muted-foreground outline-none focus:border-primary/50 placeholder:text-muted-foreground/30 uppercase"
                                    placeholder="ATTR"
                                    value={newWeapon.damageAttribute}
                                    onChange={(e) => setNewWeapon({...newWeapon, damageAttribute: e.target.value})}
