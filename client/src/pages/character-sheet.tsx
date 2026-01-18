@@ -246,7 +246,7 @@ export default function CharacterSheet() {
                          )}
                          title="Add Legendary Title"
                       >
-                         <img src={crownIcon} alt="Title" className="w-4 h-4" />
+                         <img src={crownIcon} alt="Title" className="w-4 h-4 grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" />
                       </button>
                       
                       <AnimatePresence>
@@ -435,7 +435,7 @@ export default function CharacterSheet() {
                                 onClick={() => setWillpowerTemp(i + 1 === willpowerTemp ? 0 : i + 1)}
                                 className={cn(
                                   "w-3 h-3 border border-secondary/50 rounded-sm transition-all",
-                                  i < willpowerTemp ? "bg-secondary shadow-[0_0_5px_cyan]" : "bg-transparent"
+                                  i < willpowerTemp ? "bg-secondary shadow-[0_0_5px_silver]" : "bg-transparent"
                                 )}
                                />
                             ))}

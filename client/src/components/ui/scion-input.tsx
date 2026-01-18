@@ -37,7 +37,7 @@ export const ScionInput = React.forwardRef<HTMLInputElement, ScionInputProps>(
           {/* Corner accents */}
           <div className={cn(
             "absolute bottom-0 left-0 w-0 h-[2px] transition-all duration-500",
-            variant === "mythic" ? "bg-primary shadow-[0_0_10px_gold]" : "bg-secondary shadow-[0_0_10px_cyan]",
+            variant === "mythic" ? "bg-primary shadow-[0_0_10px_gold]" : "bg-secondary shadow-[0_0_10px_silver]",
             "group-focus-within:w-full"
           )} />
         </div>

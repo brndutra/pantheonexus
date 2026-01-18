@@ -29,7 +29,7 @@
   --color-ring: hsl(var(--ring));
   
   --color-mythic-gold: hsl(var(--mythic-gold));
-  --color-tech-cyan: hsl(var(--tech-cyan));
+  --color-tech-silver: hsl(var(--tech-silver));
   --color-void-black: hsl(var(--void-black));
   
   --radius-sm: calc(var(--radius) - 4px);
@@ -52,8 +52,8 @@
   --primary: 45 80% 60%; /* Bright Gold */
   --primary-foreground: 220 20% 10%;
   
-  /* Cyan/Tech accents */
-  --secondary: 180 100% 50%; /* Neon Cyan */
+  /* Silver/Tech accents (Replaces Cyan) */
+  --secondary: 210 15% 70%; /* Platinum/Silver */
   --secondary-foreground: 220 20% 10%;
   
   --muted: 220 20% 20%;
@@ -72,7 +72,7 @@
   --radius: 0.25rem;
   
   --mythic-gold: 45 100% 50%;
-  --tech-cyan: 180 100% 50%;
+  --tech-silver: 210 15% 70%;
   --void-black: 220 30% 8%;
 }
 
@@ -88,7 +88,7 @@
   body {
     @apply font-tech antialiased bg-background text-foreground;
     background-image: 
-      radial-gradient(circle at 50% 50%, rgba(45, 212, 191, 0.03) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, rgba(200, 200, 210, 0.03) 0%, transparent 50%),
       linear-gradient(rgba(10, 15, 30, 0.9), rgba(10, 15, 30, 0.95));
   }
 }
