@@ -1,55 +1,46 @@
 import { 
-  users, characters, boons, knacks, callings, natures, attacks,
   type User, type InsertUser, type Character, type InsertCharacter,
   type Boon, type InsertBoon, type Knack, type InsertKnack,
   type Calling, type InsertCalling, type Nature, type InsertNature,
   type Attack, type InsertAttack
 } from "@shared/schema";
-import { db } from "./db";
-import { eq, sql } from "drizzle-orm";
+import { supabase } from "./supabase";
 
 export interface IStorage {
-  // User operations
   getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   
-  // Character operations
   getAllCharacters(): Promise<Character[]>;
   getCharacter(id: string): Promise<Character | undefined>;
   createCharacter(character: InsertCharacter): Promise<Character>;
   updateCharacter(id: string, character: Partial<InsertCharacter>): Promise<Character | undefined>;
   deleteCharacter(id: string): Promise<boolean>;
   
-  // Boon operations
   getAllBoons(): Promise<Boon[]>;
   getBoon(id: string): Promise<Boon | undefined>;
   createBoon(boon: InsertBoon): Promise<Boon>;
   updateBoon(id: string, boon: Partial<InsertBoon>): Promise<Boon | undefined>;
   deleteBoon(id: string): Promise<boolean>;
   
-  // Knack operations
   getAllKnacks(): Promise<Knack[]>;
   getKnack(id: string): Promise<Knack | undefined>;
   createKnack(knack: InsertKnack): Promise<Knack>;
   updateKnack(id: string, knack: Partial<InsertKnack>): Promise<Knack | undefined>;
   deleteKnack(id: string): Promise<boolean>;
   
-  // Calling operations
   getAllCallings(): Promise<Calling[]>;
   getCalling(id: string): Promise<Calling | undefined>;
   createCalling(calling: InsertCalling): Promise<Calling>;
   updateCalling(id: string, calling: Partial<InsertCalling>): Promise<Calling | undefined>;
   deleteCalling(id: string): Promise<boolean>;
   
-  // Nature operations
   getAllNatures(): Promise<Nature[]>;
   getNature(id: string): Promise<Nature | undefined>;
   createNature(nature: InsertNature): Promise<Nature>;
   updateNature(id: string, nature: Partial<InsertNature>): Promise<Nature | undefined>;
   deleteNature(id: string): Promise<boolean>;
   
-  // Attack operations
   getAllAttacks(): Promise<Attack[]>;
   getAttack(id: string): Promise<Attack | undefined>;
   createAttack(attack: InsertAttack): Promise<Attack>;
@@ -57,182 +48,236 @@ export interface IStorage {
   deleteAttack(id: string): Promise<boolean>;
 }
 
-export class DatabaseStorage implements IStorage {
-  // User operations
+function snakeToCamel(obj: any): any {
+  if (obj === null || obj === undefined) return obj;
+  if (Array.isArray(obj)) return obj.map(snakeToCamel);
+  if (typeof obj !== 'object') return obj;
+  
+  const newObj: any = {};
+  for (const key in obj) {
+    const camelKey = key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+    newObj[camelKey] = obj[key];
+  }
+  return newObj;
+}
+
+function camelToSnake(obj: any): any {
+  if (obj === null || obj === undefined) return obj;
+  if (Array.isArray(obj)) return obj.map(camelToSnake);
+  if (typeof obj !== 'object') return obj;
+  
+  const newObj: any = {};
+  for (const key in obj) {
+    const snakeKey = key.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+    newObj[snakeKey] = obj[key];
+  }
+  return newObj;
+}
+
+export class SupabaseStorage implements IStorage {
   async getUser(id: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.id, id));
-    return user || undefined;
+    const { data, error } = await supabase.from('users').select('*').eq('id', id).single();
+    if (error || !data) return undefined;
+    return snakeToCamel(data) as User;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.username, username));
-    return user || undefined;
+    const { data, error } = await supabase.from('users').select('*').eq('username', username).single();
+    if (error || !data) return undefined;
+    return snakeToCamel(data) as User;
   }
 
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const [user] = await db
-      .insert(users)
-      .values(insertUser)
-      .returning();
-    return user;
+  async createUser(user: InsertUser): Promise<User> {
+    const { data, error } = await supabase.from('users').insert(camelToSnake(user)).select().single();
+    if (error) throw new Error(error.message);
+    return snakeToCamel(data) as User;
   }
-  
-  // Character operations
+
   async getAllCharacters(): Promise<Character[]> {
-    return await db.select().from(characters).orderBy(sql`${characters.updatedAt} DESC`);
+    const { data, error } = await supabase.from('characters').select('*').order('updated_at', { ascending: false });
+    if (error) throw new Error(error.message);
+    return (data || []).map(snakeToCamel) as Character[];
   }
-  
+
   async getCharacter(id: string): Promise<Character | undefined> {
-    const [character] = await db.select().from(characters).where(eq(characters.id, id));
-    return character || undefined;
+    const { data, error } = await supabase.from('characters').select('*').eq('id', id).single();
+    if (error || !data) return undefined;
+    return snakeToCamel(data) as Character;
   }
-  
-  async createCharacter(insertCharacter: InsertCharacter): Promise<Character> {
-    const [character] = await db
-      .insert(characters)
-      .values(insertCharacter)
-      .returning();
-    return character;
+
+  async createCharacter(character: InsertCharacter): Promise<Character> {
+    const { data, error } = await supabase.from('characters').insert(camelToSnake(character)).select().single();
+    if (error) throw new Error(error.message);
+    return snakeToCamel(data) as Character;
   }
-  
+
   async updateCharacter(id: string, updates: Partial<InsertCharacter>): Promise<Character | undefined> {
-    const [character] = await db
-      .update(characters)
-      .set({ ...updates, updatedAt: new Date() })
-      .where(eq(characters.id, id))
-      .returning();
-    return character || undefined;
+    const snakeUpdates = camelToSnake(updates);
+    snakeUpdates.updated_at = new Date().toISOString();
+    const { data, error } = await supabase.from('characters').update(snakeUpdates).eq('id', id).select().single();
+    if (error || !data) return undefined;
+    return snakeToCamel(data) as Character;
   }
-  
+
   async deleteCharacter(id: string): Promise<boolean> {
-    const result = await db.delete(characters).where(eq(characters.id, id));
-    return result.rowCount !== null && result.rowCount > 0;
+    const { error } = await supabase.from('characters').delete().eq('id', id);
+    return !error;
   }
-  
-  // Boon operations
+
   async getAllBoons(): Promise<Boon[]> {
-    return await db.select().from(boons).orderBy(sql`${boons.purview}, ${boons.level}`);
+    const { data, error } = await supabase.from('boons').select('*').order('purview').order('level');
+    if (error) throw new Error(error.message);
+    return (data || []).map(snakeToCamel) as Boon[];
   }
-  
+
   async getBoon(id: string): Promise<Boon | undefined> {
-    const [boon] = await db.select().from(boons).where(eq(boons.id, id));
-    return boon || undefined;
+    const { data, error } = await supabase.from('boons').select('*').eq('id', id).single();
+    if (error || !data) return undefined;
+    return snakeToCamel(data) as Boon;
   }
-  
-  async createBoon(insertBoon: InsertBoon): Promise<Boon> {
-    const [boon] = await db.insert(boons).values(insertBoon).returning();
-    return boon;
+
+  async createBoon(boon: InsertBoon): Promise<Boon> {
+    const { data, error } = await supabase.from('boons').insert(camelToSnake(boon)).select().single();
+    if (error) throw new Error(error.message);
+    return snakeToCamel(data) as Boon;
   }
-  
+
   async updateBoon(id: string, updates: Partial<InsertBoon>): Promise<Boon | undefined> {
-    const [boon] = await db.update(boons).set({ ...updates, updatedAt: new Date() }).where(eq(boons.id, id)).returning();
-    return boon || undefined;
+    const snakeUpdates = camelToSnake(updates);
+    snakeUpdates.updated_at = new Date().toISOString();
+    const { data, error } = await supabase.from('boons').update(snakeUpdates).eq('id', id).select().single();
+    if (error || !data) return undefined;
+    return snakeToCamel(data) as Boon;
   }
-  
+
   async deleteBoon(id: string): Promise<boolean> {
-    const result = await db.delete(boons).where(eq(boons.id, id));
-    return result.rowCount !== null && result.rowCount > 0;
+    const { error } = await supabase.from('boons').delete().eq('id', id);
+    return !error;
   }
-  
-  // Knack operations
+
   async getAllKnacks(): Promise<Knack[]> {
-    return await db.select().from(knacks).orderBy(sql`${knacks.attribute}, ${knacks.tier}`);
+    const { data, error } = await supabase.from('knacks').select('*').order('attribute').order('tier');
+    if (error) throw new Error(error.message);
+    return (data || []).map(snakeToCamel) as Knack[];
   }
-  
+
   async getKnack(id: string): Promise<Knack | undefined> {
-    const [knack] = await db.select().from(knacks).where(eq(knacks.id, id));
-    return knack || undefined;
+    const { data, error } = await supabase.from('knacks').select('*').eq('id', id).single();
+    if (error || !data) return undefined;
+    return snakeToCamel(data) as Knack;
   }
-  
-  async createKnack(insertKnack: InsertKnack): Promise<Knack> {
-    const [knack] = await db.insert(knacks).values(insertKnack).returning();
-    return knack;
+
+  async createKnack(knack: InsertKnack): Promise<Knack> {
+    const { data, error } = await supabase.from('knacks').insert(camelToSnake(knack)).select().single();
+    if (error) throw new Error(error.message);
+    return snakeToCamel(data) as Knack;
   }
-  
+
   async updateKnack(id: string, updates: Partial<InsertKnack>): Promise<Knack | undefined> {
-    const [knack] = await db.update(knacks).set({ ...updates, updatedAt: new Date() }).where(eq(knacks.id, id)).returning();
-    return knack || undefined;
+    const snakeUpdates = camelToSnake(updates);
+    snakeUpdates.updated_at = new Date().toISOString();
+    const { data, error } = await supabase.from('knacks').update(snakeUpdates).eq('id', id).select().single();
+    if (error || !data) return undefined;
+    return snakeToCamel(data) as Knack;
   }
-  
+
   async deleteKnack(id: string): Promise<boolean> {
-    const result = await db.delete(knacks).where(eq(knacks.id, id));
-    return result.rowCount !== null && result.rowCount > 0;
+    const { error } = await supabase.from('knacks').delete().eq('id', id);
+    return !error;
   }
-  
-  // Calling operations
+
   async getAllCallings(): Promise<Calling[]> {
-    return await db.select().from(callings).orderBy(sql`${callings.name}`);
+    const { data, error } = await supabase.from('callings').select('*').order('name');
+    if (error) throw new Error(error.message);
+    return (data || []).map(snakeToCamel) as Calling[];
   }
-  
+
   async getCalling(id: string): Promise<Calling | undefined> {
-    const [calling] = await db.select().from(callings).where(eq(callings.id, id));
-    return calling || undefined;
+    const { data, error } = await supabase.from('callings').select('*').eq('id', id).single();
+    if (error || !data) return undefined;
+    return snakeToCamel(data) as Calling;
   }
-  
-  async createCalling(insertCalling: InsertCalling): Promise<Calling> {
-    const [calling] = await db.insert(callings).values(insertCalling).returning();
-    return calling;
+
+  async createCalling(calling: InsertCalling): Promise<Calling> {
+    const { data, error } = await supabase.from('callings').insert(camelToSnake(calling)).select().single();
+    if (error) throw new Error(error.message);
+    return snakeToCamel(data) as Calling;
   }
-  
+
   async updateCalling(id: string, updates: Partial<InsertCalling>): Promise<Calling | undefined> {
-    const [calling] = await db.update(callings).set({ ...updates, updatedAt: new Date() }).where(eq(callings.id, id)).returning();
-    return calling || undefined;
+    const snakeUpdates = camelToSnake(updates);
+    snakeUpdates.updated_at = new Date().toISOString();
+    const { data, error } = await supabase.from('callings').update(snakeUpdates).eq('id', id).select().single();
+    if (error || !data) return undefined;
+    return snakeToCamel(data) as Calling;
   }
-  
+
   async deleteCalling(id: string): Promise<boolean> {
-    const result = await db.delete(callings).where(eq(callings.id, id));
-    return result.rowCount !== null && result.rowCount > 0;
+    const { error } = await supabase.from('callings').delete().eq('id', id);
+    return !error;
   }
-  
-  // Nature operations
+
   async getAllNatures(): Promise<Nature[]> {
-    return await db.select().from(natures).orderBy(sql`${natures.name}`);
+    const { data, error } = await supabase.from('natures').select('*').order('name');
+    if (error) throw new Error(error.message);
+    return (data || []).map(snakeToCamel) as Nature[];
   }
-  
+
   async getNature(id: string): Promise<Nature | undefined> {
-    const [nature] = await db.select().from(natures).where(eq(natures.id, id));
-    return nature || undefined;
+    const { data, error } = await supabase.from('natures').select('*').eq('id', id).single();
+    if (error || !data) return undefined;
+    return snakeToCamel(data) as Nature;
   }
-  
-  async createNature(insertNature: InsertNature): Promise<Nature> {
-    const [nature] = await db.insert(natures).values(insertNature).returning();
-    return nature;
+
+  async createNature(nature: InsertNature): Promise<Nature> {
+    const { data, error } = await supabase.from('natures').insert(camelToSnake(nature)).select().single();
+    if (error) throw new Error(error.message);
+    return snakeToCamel(data) as Nature;
   }
-  
+
   async updateNature(id: string, updates: Partial<InsertNature>): Promise<Nature | undefined> {
-    const [nature] = await db.update(natures).set({ ...updates, updatedAt: new Date() }).where(eq(natures.id, id)).returning();
-    return nature || undefined;
+    const snakeUpdates = camelToSnake(updates);
+    snakeUpdates.updated_at = new Date().toISOString();
+    const { data, error } = await supabase.from('natures').update(snakeUpdates).eq('id', id).select().single();
+    if (error || !data) return undefined;
+    return snakeToCamel(data) as Nature;
   }
-  
+
   async deleteNature(id: string): Promise<boolean> {
-    const result = await db.delete(natures).where(eq(natures.id, id));
-    return result.rowCount !== null && result.rowCount > 0;
+    const { error } = await supabase.from('natures').delete().eq('id', id);
+    return !error;
   }
-  
-  // Attack operations
+
   async getAllAttacks(): Promise<Attack[]> {
-    return await db.select().from(attacks).orderBy(sql`${attacks.type}, ${attacks.name}`);
+    const { data, error } = await supabase.from('attacks').select('*').order('type').order('name');
+    if (error) throw new Error(error.message);
+    return (data || []).map(snakeToCamel) as Attack[];
   }
-  
+
   async getAttack(id: string): Promise<Attack | undefined> {
-    const [attack] = await db.select().from(attacks).where(eq(attacks.id, id));
-    return attack || undefined;
+    const { data, error } = await supabase.from('attacks').select('*').eq('id', id).single();
+    if (error || !data) return undefined;
+    return snakeToCamel(data) as Attack;
   }
-  
-  async createAttack(insertAttack: InsertAttack): Promise<Attack> {
-    const [attack] = await db.insert(attacks).values(insertAttack).returning();
-    return attack;
+
+  async createAttack(attack: InsertAttack): Promise<Attack> {
+    const { data, error } = await supabase.from('attacks').insert(camelToSnake(attack)).select().single();
+    if (error) throw new Error(error.message);
+    return snakeToCamel(data) as Attack;
   }
-  
+
   async updateAttack(id: string, updates: Partial<InsertAttack>): Promise<Attack | undefined> {
-    const [attack] = await db.update(attacks).set({ ...updates, updatedAt: new Date() }).where(eq(attacks.id, id)).returning();
-    return attack || undefined;
+    const snakeUpdates = camelToSnake(updates);
+    snakeUpdates.updated_at = new Date().toISOString();
+    const { data, error } = await supabase.from('attacks').update(snakeUpdates).eq('id', id).select().single();
+    if (error || !data) return undefined;
+    return snakeToCamel(data) as Attack;
   }
-  
+
   async deleteAttack(id: string): Promise<boolean> {
-    const result = await db.delete(attacks).where(eq(attacks.id, id));
-    return result.rowCount !== null && result.rowCount > 0;
+    const { error } = await supabase.from('attacks').delete().eq('id', id);
+    return !error;
   }
 }
 
-export const storage = new DatabaseStorage();
+export const storage = new SupabaseStorage();
