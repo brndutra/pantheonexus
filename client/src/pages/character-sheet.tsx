@@ -1535,13 +1535,11 @@ export default function CharacterSheet() {
             {/* RIGHT COLUMN: ABILITIES & COMBAT (Width 4) */}
             <div className="col-span-12 md:col-span-4 flex flex-col gap-6">
 
-                {/* 1. VITALITY MONITOR */}
+                {/* 1. VITALITY MONITOR - No edit mode needed, fields are always interactive */}
                 <MythicHUDFrame 
                     title="Vitality & Energy" 
                     icon={Activity} 
                     subHeader="BIOMETRICS & POOLS"
-                    isEditing={editingVitality}
-                    {...createEditHandlers(editingVitality, setEditingVitality)}
                 >
                     <div className="space-y-6">
                         {/* Legend & Aether Integrated */}
