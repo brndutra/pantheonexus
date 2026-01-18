@@ -4,7 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-mythic: "Cinzel Decorative", serif;
+  --font-mythic: "Orbitron", sans-serif;
   --font-tech: "Rajdhani", sans-serif;
   --font-code: "Share Tech Mono", monospace;
 
