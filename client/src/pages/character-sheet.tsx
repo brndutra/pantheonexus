@@ -83,6 +83,7 @@ interface Weapon {
   clip: string | null;
   speed: number;
   tags: string | null;
+  isInnate?: boolean;
 }
 
 interface SupabaseOffensive {
@@ -456,19 +457,55 @@ export default function CharacterSheet() {
       
       // Fetch scionsight data from Supabase
       if (loadedCharacter.id) {
-        fetch(`/api/scionsight/${loadedCharacter.id}`)
-          .then(res => res.json())
-          .then(data => {
-            if (data && data.scion_id) {
-              setScionsight(data);
-              setLegendPoolCurrent(data.legend_pool_current || 0);
-              // Load saved offensives from scionsight
-              if (data.offensives && Array.isArray(data.offensives)) {
-                setWeapons(data.offensives);
+        // First fetch innate offensives, then scionsight
+        Promise.all([
+          fetch('/api/offensives/innate').then(res => res.json()),
+          fetch(`/api/scionsight/${loadedCharacter.id}`).then(res => res.json())
+        ])
+          .then(([innateData, scionsightData]) => {
+            // Process innate offensives
+            const innateWeapons: Weapon[] = Array.isArray(innateData) ? innateData.map((o: any) => ({
+              name: o.offensive_name,
+              category: o.category || 'innate',
+              accuracy: o.accuracy || 0,
+              attackAttribute: o.attack_attribute || '',
+              attackAbility: o.attack_ability || '',
+              damage: o.damage || '',
+              damageAttribute: o.damage_attribute || '',
+              defense: o.defense || 0,
+              range: o.range,
+              clip: o.clip,
+              speed: o.speed || 0,
+              tags: o.tags,
+              isInnate: true, // Mark as innate so it can't be removed
+            })) : [];
+            
+            if (scionsightData && scionsightData.scion_id) {
+              setScionsight(scionsightData);
+              setLegendPoolCurrent(scionsightData.legend_pool_current || 0);
+              
+              // Load saved offensives from scionsight and merge with innate
+              const savedOffensives = Array.isArray(scionsightData.offensives) ? scionsightData.offensives : [];
+              
+              // Filter out any saved innate offensives (we'll use fresh ones)
+              const nonInnateOffensives = savedOffensives.filter((w: Weapon) => w.category !== 'innate');
+              
+              // Combine innate (at start) with other saved offensives
+              const mergedWeapons = [...innateWeapons, ...nonInnateOffensives];
+              setWeapons(mergedWeapons);
+              setInnateOffensivesLoaded(true);
+              
+              // Save merged weapons back to scionsight to persist innate offensives
+              if (innateWeapons.length > 0 && savedOffensives.length === 0) {
+                saveOffensivesToScionsight(mergedWeapons);
               }
+            } else {
+              // No scionsight data, just set innate offensives
+              setWeapons(innateWeapons);
+              setInnateOffensivesLoaded(true);
             }
           })
-          .catch(err => console.error('Failed to fetch scionsight:', err));
+          .catch(err => console.error('Failed to fetch scionsight/innate:', err));
       }
     }
   }, [loadedCharacter]);
@@ -936,6 +973,10 @@ export default function CharacterSheet() {
   };
   
   const removeWeapon = (index: number) => {
+    // Don't allow removing innate offensives
+    if (weapons[index]?.isInnate || weapons[index]?.category === 'innate') {
+      return;
+    }
     const newWeapons = weapons.filter((_, i) => i !== index);
     setWeapons(newWeapons);
     // Save to scionsight
@@ -1117,17 +1158,16 @@ export default function CharacterSheet() {
   // Lift capacity based on Strength (simplified)
   const liftCapacity = strengthTotal * 50; // lbs base 
   
-  // Soak (Scion 1st Ed)
-  // Bashing Soak = Stamina + Epic Stamina
-  // Lethal Soak = RoundDown(Stamina / 2) + Epic Stamina
-  // Aggravated Soak = Epic Stamina
-  // + Armor values added later
-  const staminaVal = getAttributeTotal("Stamina") - getAttributeEpic("Stamina"); // Base Stamina
+  // Soak (Scion 1st Ed - Regras do usuário)
+  // Bashing Soak = Vitalidade (Stamina base)
+  // Lethal Soak = Vitalidade / 2 (arredondado para baixo)
+  // Aggravated Soak = Apenas Armadura (0 sem armadura)
+  const staminaVal = getAttributeTotal("Stamina") - getAttributeEpic("Stamina"); // Vitalidade base
   const epicStamina = getAttributeEpic("Stamina");
   
-  const baseBashingSoak = staminaVal + epicStamina;
-  const baseLethalSoak = Math.floor(staminaVal / 2) + epicStamina;
-  const baseAggSoak = epicStamina;
+  const baseBashingSoak = staminaVal; // Apenas Vitalidade
+  const baseLethalSoak = Math.floor(staminaVal / 2); // Vitalidade / 2
+  const baseAggSoak = 0; // Apenas armadura
 
   const [armorList, setArmorList] = useState<{name: string, soakB: number, soakL: number, soakA: number, mobility: number, fatigue: number}[]>([]);
   const [selectedArmor, setSelectedArmor] = useState<string>("");
@@ -1262,39 +1302,6 @@ export default function CharacterSheet() {
     };
   }, [legend, legendPointsCurrent, willpower, willpowerCurrent, extraOxBody, healthDamage, portrait, characterId]);
   
-  // Auto-add innate offensives when loaded (and save to scionsight)
-  useEffect(() => {
-    if (availableOffensives.innate && availableOffensives.innate.length > 0 && !innateOffensivesLoaded && scionsight) {
-      const innateWeapons: Weapon[] = availableOffensives.innate.map(o => ({
-        name: o.offensive_name,
-        category: o.category || 'innate',
-        accuracy: o.accuracy || 0,
-        attackAttribute: o.attack_attribute || '',
-        attackAbility: o.attack_ability || '',
-        damage: o.damage || '',
-        damageAttribute: o.damage_attribute || '',
-        defense: o.defense || 0,
-        range: o.range,
-        clip: o.clip,
-        speed: o.speed || 0,
-        tags: o.tags,
-      }));
-      
-      // Only add innate offensives if not already present
-      setWeapons(prev => {
-        const existingNames = new Set(prev.map(w => w.name));
-        const newInnate = innateWeapons.filter(w => !existingNames.has(w.name));
-        if (newInnate.length > 0) {
-          const updatedWeapons = [...newInnate, ...prev];
-          // Save to scionsight
-          saveOffensivesToScionsight(updatedWeapons);
-          return updatedWeapons;
-        }
-        return prev;
-      });
-      setInnateOffensivesLoaded(true);
-    }
-  }, [availableOffensives.innate, innateOffensivesLoaded, scionsight]);
 
   // Create edit handlers for each section
   const createEditHandlers = (isEditing: boolean, setEditing: (v: boolean) => void) => ({
@@ -2183,9 +2190,9 @@ export default function CharacterSheet() {
                                 <span className="text-[8px] uppercase tracking-wider text-muted-foreground">Parry DV</span>
                                 <span className="font-mythic text-primary text-sm">{parryDV}</span>
                             </div>
-                            <div className="bg-black/40 p-2 flex justify-between items-center border-l-2 border-[hsl(var(--highlight-amber))]/40">
+                            <div className="bg-black/40 p-2 flex justify-between items-center border-l-2 border-primary/40">
                                 <span className="text-[8px] uppercase tracking-wider text-muted-foreground">Armed DV</span>
-                                <span className="font-mythic text-[hsl(var(--highlight-amber))] text-sm">{armedDV}</span>
+                                <span className="font-mythic text-primary text-sm">{armedDV}</span>
                             </div>
                             <div className="bg-black/40 p-2 flex justify-between items-center border-l-2 border-primary/40">
                                 <span className="text-[8px] uppercase tracking-wider text-muted-foreground">Join Battle</span>
@@ -2195,21 +2202,21 @@ export default function CharacterSheet() {
                         
                         {/* Movement & Feats */}
                         <div className="grid grid-cols-2 gap-2 pt-2 border-t border-primary/10">
-                            <div className="bg-black/40 p-1.5 flex justify-between items-center border-l-2 border-cyan-500/40">
+                            <div className="bg-black/40 p-1.5 flex justify-between items-center border-l-2 border-primary/30">
                                 <span className="text-[7px] uppercase tracking-wider text-muted-foreground">Move</span>
-                                <span className="font-tech text-cyan-400 text-xs">{moveSpeed}m</span>
+                                <span className="font-tech text-primary/80 text-xs">{moveSpeed}m</span>
                             </div>
-                            <div className="bg-black/40 p-1.5 flex justify-between items-center border-l-2 border-cyan-500/40">
+                            <div className="bg-black/40 p-1.5 flex justify-between items-center border-l-2 border-primary/30">
                                 <span className="text-[7px] uppercase tracking-wider text-muted-foreground">Dash</span>
-                                <span className="font-tech text-cyan-400 text-xs">{dashSpeed}m</span>
+                                <span className="font-tech text-primary/80 text-xs">{dashSpeed}m</span>
                             </div>
-                            <div className="bg-black/40 p-1.5 flex justify-between items-center border-l-2 border-green-500/40">
+                            <div className="bg-black/40 p-1.5 flex justify-between items-center border-l-2 border-primary/30">
                                 <span className="text-[7px] uppercase tracking-wider text-muted-foreground">Jump V/H</span>
-                                <span className="font-tech text-green-400 text-xs">{verticalJump}/{horizontalJump}m</span>
+                                <span className="font-tech text-primary/80 text-xs">{verticalJump}/{horizontalJump}m</span>
                             </div>
-                            <div className="bg-black/40 p-1.5 flex justify-between items-center border-l-2 border-orange-500/40">
+                            <div className="bg-black/40 p-1.5 flex justify-between items-center border-l-2 border-primary/30">
                                 <span className="text-[7px] uppercase tracking-wider text-muted-foreground">Lift</span>
-                                <span className="font-tech text-orange-400 text-xs">{liftCapacity}kg</span>
+                                <span className="font-tech text-primary/80 text-xs">{liftCapacity}kg</span>
                             </div>
                         </div>
                     </div>
@@ -2377,27 +2384,33 @@ export default function CharacterSheet() {
                     {/* Weapons List */}
                     <div className="space-y-0 max-h-[200px] overflow-y-auto">
                         {weapons.map((w, i) => (
-                            <div key={i} className="grid grid-cols-[1.5fr_0.6fr_0.6fr_0.6fr_0.5fr_0.5fr_0.5fr_0.6fr_0.6fr_0.8fr_auto] gap-0.5 text-[8px] font-tech text-primary/80 items-center p-0.5 hover:bg-primary/10 transition-colors border-l-2 border-transparent hover:border-primary group">
+                            <div key={i} className={`grid grid-cols-[1.5fr_0.6fr_0.6fr_0.6fr_0.5fr_0.5fr_0.5fr_0.6fr_0.6fr_0.8fr_auto] gap-0.5 text-[8px] font-tech text-primary/80 items-center p-0.5 hover:bg-primary/10 transition-colors border-l-2 ${w.isInnate || w.category === 'innate' ? 'border-primary/30 bg-primary/5' : 'border-transparent hover:border-primary'} group`}>
                                 <div className="font-bold truncate flex items-center gap-1">
                                     <Crosshair className="w-2 h-2 text-primary/40 shrink-0" />
                                     <span className="truncate">{w.name}</span>
                                     <span className="text-[6px] text-muted-foreground/50 uppercase shrink-0">({w.category?.slice(0,3)})</span>
                                 </div>
-                                <div className="text-center text-cyan-400/70 text-[7px]">{w.attackAttribute || "-"}</div>
-                                <div className="text-center text-cyan-400/70 text-[7px]">{w.attackAbility || "-"}</div>
+                                <div className="text-center text-primary/60 text-[7px]">{w.attackAttribute || "-"}</div>
+                                <div className="text-center text-primary/60 text-[7px]">{w.attackAbility || "-"}</div>
                                 <div className="text-center text-muted-foreground">{w.accuracy >= 0 ? `+${w.accuracy}` : w.accuracy}</div>
-                                <div className="text-center text-orange-400/70 text-[7px]">{w.damageAttribute || "-"}</div>
-                                <div className="text-center text-red-400/70">{w.damage}</div>
-                                <div className="text-center text-blue-400/70">{w.defense >= 0 ? `+${w.defense}` : w.defense}</div>
+                                <div className="text-center text-primary/60 text-[7px]">{w.damageAttribute || "-"}</div>
+                                <div className="text-center text-primary/80">{w.damage}</div>
+                                <div className="text-center text-primary/70">{w.defense >= 0 ? `+${w.defense}` : w.defense}</div>
                                 <div className="text-center text-muted-foreground">{w.speed}</div>
                                 <div className="text-center text-muted-foreground/60">{w.range || "-"}</div>
                                 <div className="text-center text-[6px] uppercase opacity-60 truncate">{w.tags || "-"}</div>
-                                <button 
-                                    onClick={() => removeWeapon(i)}
-                                    className="w-4 h-4 flex items-center justify-center text-red-400/50 hover:text-red-400 hover:bg-red-400/10 rounded-sm transition-colors opacity-0 group-hover:opacity-100"
-                                >
-                                    <Trash2 className="w-2.5 h-2.5" />
-                                </button>
+                                {w.isInnate || w.category === 'innate' ? (
+                                    <div className="w-4 h-4 flex items-center justify-center text-primary/30">
+                                        <span className="text-[6px]">●</span>
+                                    </div>
+                                ) : (
+                                    <button 
+                                        onClick={() => removeWeapon(i)}
+                                        className="w-4 h-4 flex items-center justify-center text-red-400/50 hover:text-red-400 hover:bg-red-400/10 rounded-sm transition-colors opacity-0 group-hover:opacity-100"
+                                    >
+                                        <Trash2 className="w-2.5 h-2.5" />
+                                    </button>
+                                )}
                             </div>
                         ))}
                         
@@ -2412,7 +2425,7 @@ export default function CharacterSheet() {
                             <select 
                                 value={customOffensive.attackAttribute || 'Dexterity'}
                                 onChange={e => setCustomOffensive({...customOffensive, attackAttribute: e.target.value})}
-                                className="bg-transparent border-b border-primary/20 text-[7px] text-center text-cyan-400/70 outline-none"
+                                className="bg-transparent border-b border-primary/20 text-[7px] text-center text-primary/60 outline-none"
                             >
                                 <option value="Strength">Str</option>
                                 <option value="Dexterity">Dex</option>
@@ -2420,7 +2433,7 @@ export default function CharacterSheet() {
                             <select 
                                 value={customOffensive.attackAbility || 'Melee'}
                                 onChange={e => setCustomOffensive({...customOffensive, attackAbility: e.target.value})}
-                                className="bg-transparent border-b border-primary/20 text-[7px] text-center text-cyan-400/70 outline-none"
+                                className="bg-transparent border-b border-primary/20 text-[7px] text-center text-primary/60 outline-none"
                             >
                                 <option value="Melee">Melee</option>
                                 <option value="Brawl">Brawl</option>
@@ -2436,7 +2449,7 @@ export default function CharacterSheet() {
                             <select 
                                 value={customOffensive.damageAttribute || 'Strength'}
                                 onChange={e => setCustomOffensive({...customOffensive, damageAttribute: e.target.value})}
-                                className="bg-transparent border-b border-primary/20 text-[7px] text-center text-orange-400/70 outline-none"
+                                className="bg-transparent border-b border-primary/20 text-[7px] text-center text-primary/60 outline-none"
                             >
                                 <option value="Strength">Str</option>
                                 <option value="Dexterity">Dex</option>
@@ -2446,13 +2459,13 @@ export default function CharacterSheet() {
                                 value={customOffensive.damage || '0L'}
                                 onChange={e => setCustomOffensive({...customOffensive, damage: e.target.value})}
                                 placeholder="0L"
-                                className="bg-transparent border-b border-primary/20 text-[8px] text-center text-red-400/70 outline-none w-full"
+                                className="bg-transparent border-b border-primary/20 text-[8px] text-center text-primary/80 outline-none w-full"
                             />
                             <input 
                                 type="number"
                                 value={customOffensive.defense || 0}
                                 onChange={e => setCustomOffensive({...customOffensive, defense: parseInt(e.target.value) || 0})}
-                                className="bg-transparent border-b border-primary/20 text-[8px] text-center text-blue-400/70 outline-none w-full"
+                                className="bg-transparent border-b border-primary/20 text-[8px] text-center text-primary/70 outline-none w-full"
                             />
                             <input 
                                 type="number"
