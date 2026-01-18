@@ -30,6 +30,13 @@ Preferred communication style: Simple, everyday language.
 - **Key Tables**: 
   - `users` - User authentication (id, username, password)
   - `characters` - Character sheets with JSONB fields for flexible attribute storage
+  
+- **Compendium Tables** (reference data for Scion RPG):
+  - `boons` - Divine powers by purview (Fire, Sky, Death, etc.)
+  - `knacks` - Epic Attribute powers (tier-based abilities)
+  - `callings` - Scion roles/archetypes with favored purviews and abilities
+  - `natures` - Character personality types with willpower recovery rules
+  - `attacks` - Combat attack templates (melee, ranged, unarmed, special)
 
 ### Project Structure
 ```
