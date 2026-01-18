@@ -1,10 +1,11 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { DotRating } from "@/components/ui/dot-rating";
 import { ScionInput } from "@/components/ui/scion-input";
-import { Link } from "wouter";
+import { Link, useRoute } from "wouter";
 import { cn } from "@/lib/utils";
 import { Shield, Zap, Skull, Scroll, Activity, Cpu, Hexagon, Plus, Trash2, Crown, Heart, Radar, Minus, Upload, Image as ImageIcon, X, FileText, User, LayoutGrid, ArrowLeft } from "lucide-react";
+import { useCharacters, slugify } from "@/lib/characters-store";
 import {
   RadarChart,
   PolarGrid,
@@ -146,11 +147,31 @@ const HealthBox = ({ status, onClick }: { status: DamageType, onClick: () => voi
 };
 
 export default function CharacterSheet() {
+  const [match, params] = useRoute("/character-sheet/:slug");
+  const { getCharacterBySlug } = useCharacters();
   const [activeTab, setActiveTab] = useState<"sheet" | "powers" | "bio">("sheet");
   const [idCardTab, setIdCardTab] = useState<"identity" | "psychic" | "presence">("identity");
   
   // State
   const [attributes, setAttributes] = useState(DEFAULT_ATTRIBUTES);
+  const [legend, setLegend] = useState(2);
+  const [scionName, setScionName] = useState("");
+  const [scionPlayer, setScionPlayer] = useState("");
+  const [scionPantheon, setScionPantheon] = useState("");
+
+  // Sync with URL params
+  useEffect(() => {
+    if (match && params?.slug) {
+      const character = getCharacterBySlug(params.slug);
+      if (character) {
+        setScionName(character.name);
+        setScionPlayer(character.player);
+        setScionPantheon(character.pantheon);
+        setLegend(character.legend);
+      }
+    }
+  }, [match, params?.slug, getCharacterBySlug]);
+
   const [abilities, setAbilities] = useState<Record<string, Ability>>(
     ABILITIES_LIST.reduce((acc, curr) => ({ 
       ...acc, 
@@ -172,7 +193,7 @@ export default function CharacterSheet() {
     { id: 5, name: "", value: 1 },
   ]);
   
-  const [legend, setLegend] = useState(2);
+  // legend state is initialized above now
   const [legendCurrent, setLegendCurrent] = useState(4); // Example value
 
   const [willpower, setWillpower] = useState(5);
@@ -501,9 +522,20 @@ export default function CharacterSheet() {
                                         >
                                             {/* Identity Fields */}
                                             <div className="space-y-3">
-                                                <ScionInput label="Designation (Name)" placeholder="CHARACTER NAME" className="text-xl md:text-2xl font-mythic text-primary drop-shadow-[0_0_10px_rgba(212,175,55,0.3)]" />
+                                                <ScionInput 
+                                                  label="Designation (Name)" 
+                                                  placeholder="CHARACTER NAME" 
+                                                  className="text-xl md:text-2xl font-mythic text-primary drop-shadow-[0_0_10px_rgba(212,175,55,0.3)]"
+                                                  value={scionName}
+                                                  onChange={(e) => setScionName(e.target.value)}
+                                                />
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                    <ScionInput label="Pantheon" placeholder="PANTHEON" />
+                                                    <ScionInput 
+                                                      label="Pantheon" 
+                                                      placeholder="PANTHEON" 
+                                                      value={scionPantheon}
+                                                      onChange={(e) => setScionPantheon(e.target.value)}
+                                                    />
                                                     <ScionInput label="Heritage" placeholder="DIVINE PARENT / PATRON" />
                                                 </div>
                                             </div>
