@@ -106,7 +106,8 @@ export default function AdminDashboard() {
     name: "",
     player: "",
     legend: 1,
-    pantheon: ""
+    pantheon: "",
+    aetherPercentage: 10
   });
 
   // Articles State
@@ -128,8 +129,9 @@ export default function AdminDashboard() {
           player: newScroll.player,
           legend: newScroll.legend,
           pantheon: newScroll.pantheon,
+          aetherPercentage: newScroll.aetherPercentage
       });
-      setNewScroll({ name: "", player: "", legend: 1, pantheon: "" });
+      setNewScroll({ name: "", player: "", legend: 1, pantheon: "", aetherPercentage: 10 });
     }
   };
 

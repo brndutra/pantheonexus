@@ -8,6 +8,7 @@ export interface CharacterScroll {
   pantheon: string;
   path: string; // The image path or avatar
   status: "active" | "archived";
+  aetherPercentage?: number;
 }
 
 const STORAGE_KEY = 'pantheonexus_characters';
@@ -17,9 +18,9 @@ import stormImg from "@assets/generated_images/storm_god_viking_portrait.png";
 import shadowImg from "@assets/generated_images/shadowy_anubis_scion_portrait.png";
 
 const DEFAULT_CHARACTERS: CharacterScroll[] = [
-  { id: 1, name: "Victorious Sun", player: "Helios", legend: 4, pantheon: "Theoi", status: "active", path: victorImg },
-  { id: 2, name: "Storm Caller", player: "Thor", legend: 3, pantheon: "Aesir", status: "active", path: stormImg },
-  { id: 3, name: "Shadow Walker", player: "Anubis", legend: 5, pantheon: "Netjer", status: "active", path: shadowImg },
+  { id: 1, name: "Victorious Sun", player: "Helios", legend: 4, pantheon: "Theoi", status: "active", path: victorImg, aetherPercentage: 40 },
+  { id: 2, name: "Storm Caller", player: "Thor", legend: 3, pantheon: "Aesir", status: "active", path: stormImg, aetherPercentage: 30 },
+  { id: 3, name: "Shadow Walker", player: "Anubis", legend: 5, pantheon: "Netjer", status: "active", path: shadowImg, aetherPercentage: 50 },
 ];
 
 // Helper to convert name to URL-friendly slug
