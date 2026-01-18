@@ -563,6 +563,100 @@ export default function CharacterSheet() {
                                      </datalist>
                                  </div>
                              </div>
+
+                            {/* ID Card Internal Navigation - RESTORED */}
+                            <div className="flex gap-4 mt-4 border-b border-primary/20 pb-1 flex-shrink-0 relative z-10">
+                               {['identity', 'psychic', 'presence'].map((tab) => (
+                                  <button
+                                    key={tab}
+                                    onClick={() => setIdCardTab(tab as any)}
+                                    className={cn(
+                                      "text-[9px] uppercase tracking-[0.2em] font-mythic transition-colors pb-1 relative",
+                                      idCardTab === tab ? "text-primary" : "text-muted-foreground hover:text-primary/70"
+                                    )}
+                                  >
+                                    {tab}
+                                    {idCardTab === tab && (
+                                       <motion.div layoutId="idTabIndicator" className="absolute bottom-0 left-0 right-0 h-[1px] bg-primary shadow-[0_0_5px_gold]" />
+                                    )}
+                                  </button>
+                               ))}
+                            </div>
+                            
+                            <AnimatePresence mode="wait">
+                                {idCardTab === 'psychic' && (
+                                    <motion.div 
+                                      key="psychic"
+                                      initial={{ opacity: 0, height: 0 }}
+                                      animate={{ opacity: 1, height: 'auto' }}
+                                      exit={{ opacity: 0, height: 0 }}
+                                      className="space-y-3 mt-4"
+                                    >
+                                        <h5 className="text-[10px] font-mythic uppercase text-primary/60 border-b border-primary/10 pb-1">Psychological Matrix</h5>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <div className="col-span-2">
+                                                <ScionInput 
+                                                    label="Psyche Analysis" 
+                                                    className="h-8 text-xs bg-black/40 border-primary/20"
+                                                    value={psychicProfile.analysis}
+                                                    onChange={(e) => setPsychicProfile({...psychicProfile, analysis: e.target.value})}
+                                                />
+                                            </div>
+                                            <ScionInput 
+                                                label="Temperament" 
+                                                className="h-8 text-xs bg-black/40 border-primary/20"
+                                                value={psychicProfile.temperament}
+                                                onChange={(e) => setPsychicProfile({...psychicProfile, temperament: e.target.value})}
+                                            />
+                                            <ScionInput 
+                                                label="Cognitive Type" 
+                                                className="h-8 text-xs bg-black/40 border-primary/20"
+                                                value={psychicProfile.cognitiveType}
+                                                onChange={(e) => setPsychicProfile({...psychicProfile, cognitiveType: e.target.value})}
+                                            />
+                                        </div>
+                                    </motion.div>
+                                )}
+                                {idCardTab === 'presence' && (
+                                    <motion.div 
+                                      key="presence"
+                                      initial={{ opacity: 0, height: 0 }}
+                                      animate={{ opacity: 1, height: 'auto' }}
+                                      exit={{ opacity: 0, height: 0 }}
+                                      className="space-y-3 mt-4"
+                                    >
+                                         <h5 className="text-[10px] font-mythic uppercase text-primary/60 border-b border-primary/10 pb-1">Physical Presence</h5>
+                                         <div className="grid grid-cols-3 gap-3">
+                                            <ScionInput 
+                                                label="Height" 
+                                                className="h-8 text-xs bg-black/40 border-primary/20"
+                                                value={presenceProfile.height}
+                                                onChange={(e) => setPresenceProfile({...presenceProfile, height: e.target.value})}
+                                            />
+                                            <ScionInput 
+                                                label="Eye Color" 
+                                                className="h-8 text-xs bg-black/40 border-primary/20"
+                                                value={presenceProfile.eyeColor}
+                                                onChange={(e) => setPresenceProfile({...presenceProfile, eyeColor: e.target.value})}
+                                            />
+                                            <ScionInput 
+                                                label="Hair Color" 
+                                                className="h-8 text-xs bg-black/40 border-primary/20"
+                                                value={presenceProfile.hairColor}
+                                                onChange={(e) => setPresenceProfile({...presenceProfile, hairColor: e.target.value})}
+                                            />
+                                            <div className="col-span-3">
+                                                <ScionInput 
+                                                    label="Distinguishing Marks" 
+                                                    className="h-8 text-xs bg-black/40 border-primary/20"
+                                                    value={presenceProfile.distinguishingMark}
+                                                    onChange={(e) => setPresenceProfile({...presenceProfile, distinguishingMark: e.target.value})}
+                                                />
+                                            </div>
+                                         </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
                          </div>
                      </div>
                 </MythicHUDFrame>
@@ -825,9 +919,9 @@ export default function CharacterSheet() {
                 </MythicHUDFrame>
 
                 {/* 2. ABILITIES SCROLL */}
-                <MythicHUDFrame title="Abilities Database" icon={Brain} subHeader="SKILL SET MATRIX" className="flex-1">
-                    <div className="h-[400px] overflow-y-auto pr-2 scion-scrollbar">
-                        <div className="grid grid-cols-1 gap-1">
+                <MythicHUDFrame title="Abilities Database" icon={Brain} subHeader="SKILL SET MATRIX" className="flex-1 min-h-[500px] flex flex-col">
+                    <div className="flex-1 overflow-y-auto pr-2 scion-scrollbar custom-scroll-area">
+                        <div className="grid grid-cols-1 gap-1 h-full content-start">
                             {ABILITIES_LIST.map((abilityName) => {
                                 const ability = abilities[abilityName];
                                 const isFavored = false; // Todo: Add favored logic
