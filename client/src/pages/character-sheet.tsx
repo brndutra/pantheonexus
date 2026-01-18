@@ -924,6 +924,7 @@ export default function CharacterSheet() {
                                                 textarea
                                                 value={psychicProfile.analysis}
                                                 onChange={(e) => setPsychicProfile({...psychicProfile, analysis: e.target.value})}
+                                                viewMode={!editingIdentity}
                                             />
                                             
                                             <div className="grid grid-cols-2 gap-3">
@@ -932,12 +933,14 @@ export default function CharacterSheet() {
                                                     className="h-8 text-xs bg-black/40 border-primary/20"
                                                     value={psychicProfile.keywords}
                                                     onChange={(e) => setPsychicProfile({...psychicProfile, keywords: e.target.value})}
+                                                    viewMode={!editingIdentity}
                                                 />
                                                 <ScionInput 
                                                     label="Major Arcana" 
                                                     className="h-8 text-xs bg-black/40 border-primary/20 text-[hsl(var(--highlight-purple))]"
                                                     value={psychicProfile.majorArcana}
                                                     onChange={(e) => setPsychicProfile({...psychicProfile, majorArcana: e.target.value})}
+                                                    viewMode={!editingIdentity}
                                                 />
                                             </div>
 
@@ -947,12 +950,14 @@ export default function CharacterSheet() {
                                                     className="h-8 text-xs bg-black/40 border-primary/20"
                                                     value={psychicProfile.temperament}
                                                     onChange={(e) => setPsychicProfile({...psychicProfile, temperament: e.target.value})}
+                                                    viewMode={!editingIdentity}
                                                 />
                                                 <ScionInput 
                                                     label="Cognitive Type" 
                                                     className="h-8 text-xs bg-black/40 border-primary/20"
                                                     value={psychicProfile.cognitiveType}
                                                     onChange={(e) => setPsychicProfile({...psychicProfile, cognitiveType: e.target.value})}
+                                                    viewMode={!editingIdentity}
                                                 />
                                             </div>
 
@@ -962,12 +967,14 @@ export default function CharacterSheet() {
                                                     className="h-8 text-xs bg-black/40 border-primary/20 text-green-400/80"
                                                     value={psychicProfile.strengths}
                                                     onChange={(e) => setPsychicProfile({...psychicProfile, strengths: e.target.value})}
+                                                    viewMode={!editingIdentity}
                                                 />
                                                 <ScionInput 
                                                     label="Weaknesses" 
                                                     className="h-8 text-xs bg-black/40 border-primary/20 text-red-400/80"
                                                     value={psychicProfile.weaknesses}
                                                     onChange={(e) => setPsychicProfile({...psychicProfile, weaknesses: e.target.value})}
+                                                    viewMode={!editingIdentity}
                                                 />
                                             </div>
 
@@ -976,6 +983,7 @@ export default function CharacterSheet() {
                                                 className="h-8 text-xs bg-black/40 border-primary/20"
                                                 value={psychicProfile.behaviors}
                                                 onChange={(e) => setPsychicProfile({...psychicProfile, behaviors: e.target.value})}
+                                                viewMode={!editingIdentity}
                                             />
                                         </div>
                                     </motion.div>
@@ -996,18 +1004,21 @@ export default function CharacterSheet() {
                                                 className="h-8 text-xs bg-black/40 border-primary/20"
                                                 value={presenceProfile.height}
                                                 onChange={(e) => setPresenceProfile({...presenceProfile, height: e.target.value})}
+                                                viewMode={!editingIdentity}
                                             />
                                             <ScionInput 
                                                 label="Eye Color" 
                                                 className="h-8 text-xs bg-black/40 border-primary/20"
                                                 value={presenceProfile.eyeColor}
                                                 onChange={(e) => setPresenceProfile({...presenceProfile, eyeColor: e.target.value})}
+                                                viewMode={!editingIdentity}
                                             />
                                             <ScionInput 
                                                 label="Hair Color" 
                                                 className="h-8 text-xs bg-black/40 border-primary/20"
                                                 value={presenceProfile.hairColor}
                                                 onChange={(e) => setPresenceProfile({...presenceProfile, hairColor: e.target.value})}
+                                                viewMode={!editingIdentity}
                                             />
                                          </div>
 
@@ -1017,12 +1028,14 @@ export default function CharacterSheet() {
                                                 className="h-8 text-xs bg-black/40 border-primary/20 text-[hsl(var(--highlight-blue))]"
                                                 value={presenceProfile.auraSignature}
                                                 onChange={(e) => setPresenceProfile({...presenceProfile, auraSignature: e.target.value})}
+                                                viewMode={!editingIdentity}
                                             />
                                             <ScionInput 
                                                 label="Scent / Essence" 
                                                 className="h-8 text-xs bg-black/40 border-primary/20"
                                                 value={presenceProfile.scent}
                                                 onChange={(e) => setPresenceProfile({...presenceProfile, scent: e.target.value})}
+                                                viewMode={!editingIdentity}
                                             />
                                          </div>
 
@@ -1031,6 +1044,7 @@ export default function CharacterSheet() {
                                             className="h-8 text-xs bg-black/40 border-primary/20"
                                             value={presenceProfile.fashion}
                                             onChange={(e) => setPresenceProfile({...presenceProfile, fashion: e.target.value})}
+                                            viewMode={!editingIdentity}
                                          />
 
                                          <ScionInput 
@@ -1038,6 +1052,7 @@ export default function CharacterSheet() {
                                             className="h-8 text-xs bg-black/40 border-primary/20"
                                             value={presenceProfile.distinguishingMark}
                                             onChange={(e) => setPresenceProfile({...presenceProfile, distinguishingMark: e.target.value})}
+                                            viewMode={!editingIdentity}
                                          />
                                          
                                          <ScionInput 
@@ -1046,6 +1061,7 @@ export default function CharacterSheet() {
                                             textarea
                                             value={presenceProfile.visualNotes}
                                             onChange={(e) => setPresenceProfile({...presenceProfile, visualNotes: e.target.value})}
+                                            viewMode={!editingIdentity}
                                          />
                                     </motion.div>
                                 )}
@@ -1072,6 +1088,7 @@ export default function CharacterSheet() {
                                          onChange={(e) => updateVirtue(idx, 'name', e.target.value)}
                                          className="bg-transparent border-none focus:ring-0 outline-none w-32 text-xs font-mythic uppercase tracking-widest text-primary/90 placeholder:text-primary/30" 
                                          placeholder={`VIRTUE 0${idx+1}`}
+                                         disabled={!editingVirtues}
                                        />
                                        <div className="h-[1px] w-full bg-gradient-to-r from-primary/30 to-transparent mt-0.5" />
                                    </div>
@@ -1084,6 +1101,7 @@ export default function CharacterSheet() {
                                           onChange={(v) => updateVirtue(idx, 'value', v)} 
                                           iconClassName="w-2.5 h-2.5 rotate-45 border-primary/40 group-hover:border-primary/70"
                                           activeClassName="bg-primary shadow-[0_0_8px_gold] scale-110"
+                                          readOnly={!editingVirtues}
                                        />
                                    </div>
                                </div>
@@ -1125,6 +1143,7 @@ export default function CharacterSheet() {
                                                 className="flex-1"
                                                 iconClassName="w-2 h-2 rounded-full border border-primary/30"
                                                 activeClassName="bg-primary shadow-[0_0_4px_gold] border-primary"
+                                                readOnly={!editingAttributes}
                                             />
                                             {/* Epic Toggle - Expanded to 10 slots */}
                                             <div className="flex gap-0.5 ml-auto">
@@ -1133,9 +1152,10 @@ export default function CharacterSheet() {
                                                     return (
                                                         <div 
                                                             key={e} 
-                                                            onClick={() => updateAttribute(category, idx, 'epic', attr.epic === e ? 0 : e)}
+                                                            onClick={() => editingAttributes && updateAttribute(category, idx, 'epic', attr.epic === e ? 0 : e)}
                                                             className={cn(
-                                                                "w-1.5 h-3 border border-primary/30 cursor-pointer transition-all hover:border-accent-foreground",
+                                                                "w-1.5 h-3 border border-primary/30 transition-all",
+                                                                editingAttributes ? "cursor-pointer hover:border-accent-foreground" : "cursor-default",
                                                                 attr.epic >= e ? "bg-accent-foreground shadow-[0_0_5px_var(--color-accent-foreground)]" : "bg-black/40"
                                                             )}
                                                             title={`Epic Rank ${e}`}
