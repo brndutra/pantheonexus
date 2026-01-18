@@ -1319,7 +1319,7 @@ export default function CharacterSheet() {
             <div className="col-span-12 md:col-span-4 flex flex-col gap-6">
                 
                 {/* CALLINGS MODULE - Compact Design */}
-                <MythicHUDFrame title="Divine Callings" icon={Crosshair} subHeader="ROLE SPECIALIZATIONS" isEditing={editingCombat} {...createEditHandlers(editingCombat, setEditingCombat)}>
+                <MythicHUDFrame title="Divine Callings" icon={Crosshair} subHeader="ROLE SPECIALIZATIONS" className="flex-1" isEditing={editingCombat} {...createEditHandlers(editingCombat, setEditingCombat)}>
                     <div className="space-y-1.5">
                         {callings.map((calling, idx) => (
                             <div key={idx} className="relative group">
@@ -1360,61 +1360,6 @@ export default function CharacterSheet() {
                             </div>
                         ))}
                     </div>
-                    
-                    {/* Nature Section - Compact inline */}
-                    <div className="mt-2 pt-2 border-t border-primary/15">
-                        <div className="relative group">
-                            <div className="absolute inset-0 bg-gradient-to-r from-[hsl(var(--highlight-purple))]/10 to-transparent border-l-2 border-[hsl(var(--highlight-purple))]/60" />
-                            <div className="relative z-10 px-3 py-1.5 flex items-center gap-2">
-                                <span className="text-[8px] uppercase tracking-widest text-muted-foreground font-tech shrink-0">NAT</span>
-                                <div className="flex-1 relative">
-                                    <input 
-                                        value={nature} 
-                                        onChange={(e) => setNature(e.target.value)}
-                                        onFocus={() => editingCombat && setNatureSearchOpen(true)}
-                                        onBlur={() => setTimeout(() => setNatureSearchOpen(false), 200)}
-                                        className="w-full text-sm font-mythic uppercase tracking-wider text-[hsl(var(--highlight-purple))] bg-transparent border-none p-0 h-auto focus:ring-0 outline-none placeholder:text-primary/30" 
-                                        placeholder="SELECT NATURE"
-                                        disabled={!editingCombat}
-                                    />
-                                    {/* Nature Tooltip on hover */}
-                                    {nature && !editingCombat && (() => {
-                                        const foundNature = availableNatures.find(n => n.name.toLowerCase() === nature.toLowerCase());
-                                        return foundNature?.description ? (
-                                            <div className="absolute left-0 top-full mt-2 p-2 bg-black/95 border border-primary/30 rounded-sm text-[10px] font-tech text-primary/70 max-w-[250px] opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none">
-                                                {foundNature.description}
-                                            </div>
-                                        ) : null;
-                                    })()}
-                                    {/* Autocomplete dropdown */}
-                                    {natureSearchOpen && editingCombat && (
-                                        <div className="absolute top-full left-0 right-0 mt-1 bg-black/95 border border-primary/30 rounded-sm max-h-40 overflow-y-auto z-50">
-                                            {availableNatures
-                                                .filter(n => n.name.toLowerCase().includes(nature.toLowerCase()))
-                                                .slice(0, 10)
-                                                .map(n => (
-                                                    <div
-                                                        key={n.id}
-                                                        onClick={() => {
-                                                            setNature(n.name);
-                                                            setNatureSearchOpen(false);
-                                                        }}
-                                                        className="w-full text-left px-2 py-1.5 text-xs font-tech text-primary/80 hover:bg-primary/20 hover:text-primary transition-colors cursor-pointer"
-                                                        title={n.description || ''}
-                                                    >
-                                                        <span className="block">{n.name}</span>
-                                                        {n.description && (
-                                                            <span className="block text-[9px] text-muted-foreground truncate">{n.description}</span>
-                                                        )}
-                                                    </div>
-                                                ))
-                                            }
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </MythicHUDFrame>
 
             </div>
@@ -1423,7 +1368,7 @@ export default function CharacterSheet() {
             <div className="col-span-12 md:col-span-4 flex flex-col gap-6">
 
                 {/* VIRTUES MODULE - Compact like Callings */}
-                <MythicHUDFrame title="Virtue Matrix" icon={Target} subHeader="MORAL COMPASS" isEditing={editingVirtues} {...createEditHandlers(editingVirtues, setEditingVirtues)}>
+                <MythicHUDFrame title="Virtue Matrix" icon={Target} subHeader="MORAL COMPASS" className="flex-1" isEditing={editingVirtues} {...createEditHandlers(editingVirtues, setEditingVirtues)}>
                     <div className="space-y-1.5">
                         {virtues.length === 0 ? (
                             <div className="text-center py-3">
@@ -1526,6 +1471,61 @@ export default function CharacterSheet() {
                             </>
                         )}
                     </div>
+                    
+                    {/* Nature Section - Moved from Callings */}
+                    <div className="mt-2 pt-2 border-t border-primary/15">
+                        <div className="relative group">
+                            <div className="absolute inset-0 bg-gradient-to-r from-[hsl(var(--highlight-purple))]/10 to-transparent border-l-2 border-[hsl(var(--highlight-purple))]/60" />
+                            <div className="relative z-10 px-3 py-1.5 flex items-center gap-2">
+                                <span className="text-[8px] uppercase tracking-widest text-muted-foreground font-tech shrink-0">NAT</span>
+                                <div className="flex-1 relative">
+                                    <input 
+                                        value={nature} 
+                                        onChange={(e) => setNature(e.target.value)}
+                                        onFocus={() => editingVirtues && setNatureSearchOpen(true)}
+                                        onBlur={() => setTimeout(() => setNatureSearchOpen(false), 200)}
+                                        className="w-full text-sm font-mythic uppercase tracking-wider text-[hsl(var(--highlight-purple))] bg-transparent border-none p-0 h-auto focus:ring-0 outline-none placeholder:text-primary/30" 
+                                        placeholder="SELECT NATURE"
+                                        disabled={!editingVirtues}
+                                    />
+                                    {/* Nature Tooltip on hover */}
+                                    {nature && !editingVirtues && (() => {
+                                        const foundNature = availableNatures.find(n => n.name.toLowerCase() === nature.toLowerCase());
+                                        return foundNature?.description ? (
+                                            <div className="absolute left-0 top-full mt-2 p-2 bg-black/95 border border-primary/30 rounded-sm text-[10px] font-tech text-primary/70 max-w-[250px] opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none">
+                                                {foundNature.description}
+                                            </div>
+                                        ) : null;
+                                    })()}
+                                    {/* Autocomplete dropdown */}
+                                    {natureSearchOpen && editingVirtues && (
+                                        <div className="absolute top-full left-0 right-0 mt-1 bg-black/95 border border-primary/30 rounded-sm max-h-40 overflow-y-auto z-50">
+                                            {availableNatures
+                                                .filter(n => n.name.toLowerCase().includes(nature.toLowerCase()))
+                                                .slice(0, 10)
+                                                .map(n => (
+                                                    <div
+                                                        key={n.id}
+                                                        onClick={() => {
+                                                            setNature(n.name);
+                                                            setNatureSearchOpen(false);
+                                                        }}
+                                                        className="w-full text-left px-2 py-1.5 text-xs font-tech text-primary/80 hover:bg-primary/20 hover:text-primary transition-colors cursor-pointer"
+                                                        title={n.description || ''}
+                                                    >
+                                                        <span className="block">{n.name}</span>
+                                                        {n.description && (
+                                                            <span className="block text-[9px] text-muted-foreground truncate">{n.description}</span>
+                                                        )}
+                                                    </div>
+                                                ))
+                                            }
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </MythicHUDFrame>
 
             </div>
@@ -1533,14 +1533,15 @@ export default function CharacterSheet() {
         </div> 
         {/* --- TOP 3-COLUMN GRID END --- */}
 
-        {/* VITALITY ROW - Full Width with 3 sections */}
+        {/* VITALITY ROW - 1/3 Vitality, 2/3 Offensive */}
         <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
 
-            {/* 1. VITALITY MONITOR - No edit mode needed, fields are always interactive */}
+            {/* 1. VITALITY MONITOR - Takes 1 column */}
             <MythicHUDFrame 
                 title="Vitality & Energy" 
                 icon={Activity} 
                 subHeader="BIOMETRICS & POOLS"
+                className="md:col-span-1"
             >
                     <div className="space-y-6">
                         {/* Legend & Aether Integrated */}
@@ -1677,6 +1678,73 @@ export default function CharacterSheet() {
                         </div>
                     </div>
                 </MythicHUDFrame>
+
+            {/* 2. OFFENSIVE CAPABILITIES - Takes 2 columns */}
+            <MythicHUDFrame title="Offensive Capabilities" icon={Sword} subHeader="WEAPONRY & ATTACK VECTORS" className="md:col-span-2" isEditing={editingEquipment} {...createEditHandlers(editingEquipment, setEditingEquipment)}>
+                <div className="space-y-3">
+                    {/* Weapons Table Header */}
+                    <div className="grid grid-cols-12 gap-1 text-[8px] uppercase tracking-widest text-muted-foreground border-b border-primary/10 pb-1 bg-primary/5 p-1.5 rounded-t-sm">
+                        <div className="col-span-5">Weapon</div>
+                        <div className="col-span-2 text-center">Acc</div>
+                        <div className="col-span-2 text-center">Dmg</div>
+                        <div className="col-span-3 text-right">Tags</div>
+                    </div>
+
+                    {/* Weapons List */}
+                    <div className="space-y-0.5 max-h-[200px] overflow-y-auto">
+                        {weapons.map((w, i) => (
+                            <div key={i} className="grid grid-cols-12 gap-1 text-[10px] font-tech text-primary/80 items-center p-1.5 hover:bg-primary/10 rounded-sm transition-colors border-l-2 border-transparent hover:border-primary group">
+                                <div className="col-span-5 font-bold truncate flex items-center gap-1">
+                                    <Crosshair className="w-2.5 h-2.5 text-primary/40" />
+                                    {w.name}
+                                </div>
+                                <div className="col-span-2 text-center text-muted-foreground">+{w.accuracy}</div>
+                                <div className="col-span-2 text-center text-red-400/70">+{w.damage}L</div>
+                                <div className="col-span-3 text-right text-[8px] uppercase opacity-70">{w.tags}</div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Add Weapon Mini-Form */}
+                    <div className="grid grid-cols-12 gap-1 pt-2 border-t border-primary/10 bg-black/40 p-1.5 rounded-sm">
+                        <div className="col-span-5">
+                            <input 
+                                value={newWeapon.name} 
+                                onChange={e => setNewWeapon({...newWeapon, name: e.target.value})}
+                                placeholder="Weapon..." 
+                                className="w-full bg-black/30 border border-primary/20 text-[10px] px-1.5 py-1 rounded-sm focus:border-primary text-primary placeholder:text-primary/20 outline-none"
+                            />
+                        </div>
+                        <div className="col-span-2">
+                             <input 
+                                value={newWeapon.accuracy} 
+                                onChange={e => setNewWeapon({...newWeapon, accuracy: e.target.value})}
+                                placeholder="Acc" 
+                                className="w-full bg-black/30 border border-primary/20 text-[10px] px-1 py-1 rounded-sm text-center text-primary placeholder:text-primary/20 outline-none"
+                            />
+                        </div>
+                        <div className="col-span-2">
+                             <input 
+                                value={newWeapon.damage} 
+                                onChange={e => setNewWeapon({...newWeapon, damage: e.target.value})}
+                                placeholder="Dmg" 
+                                className="w-full bg-black/30 border border-primary/20 text-[10px] px-1 py-1 rounded-sm text-center text-primary placeholder:text-primary/20 outline-none"
+                            />
+                        </div>
+                        <div className="col-span-3 flex items-center gap-1">
+                             <input 
+                                value={newWeapon.tags} 
+                                onChange={e => setNewWeapon({...newWeapon, tags: e.target.value})}
+                                placeholder="Tags" 
+                                className="w-full bg-black/30 border border-primary/20 text-[10px] px-1 py-1 rounded-sm text-primary placeholder:text-primary/20 outline-none"
+                            />
+                             <button onClick={addWeapon} className="p-1 bg-primary/20 hover:bg-primary/40 text-primary rounded-sm">
+                                <Plus className="w-2.5 h-2.5" />
+                             </button>
+                        </div>
+                    </div>
+                </div>
+            </MythicHUDFrame>
 
         </div> 
         {/* --- VITALITY ROW END --- */}
@@ -1827,8 +1895,8 @@ export default function CharacterSheet() {
         </div>
 
 
-        {/* BOTTOM SECTION: POWERS & GEAR (Full Width) */}
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* BOTTOM SECTION: POWERS (Full Width) */}
+        <div className="mt-6">
             
             {/* POWERS */}
             <MythicHUDFrame title="Supernatural Arsenal" icon={Zap} subHeader="KNACKS & BOONS" className="min-h-[300px]" isEditing={editingPowers} {...createEditHandlers(editingPowers, setEditingPowers)}>
@@ -1878,78 +1946,6 @@ export default function CharacterSheet() {
                              </div>
                          </div>
                      </div>
-                </div>
-            </MythicHUDFrame>
-
-            {/* GEAR */}
-            <MythicHUDFrame title="Offensive Capabilities" icon={Sword} subHeader="WEAPONRY & ATTACK VECTORS" className="min-h-[300px]" isEditing={editingEquipment} {...createEditHandlers(editingEquipment, setEditingEquipment)}>
-                <div className="space-y-4">
-                    {/* Weapons Table Header */}
-                    <div className="grid grid-cols-12 gap-2 text-[9px] uppercase tracking-widest text-muted-foreground border-b border-primary/10 pb-2 bg-primary/5 p-2 rounded-t-sm">
-                        <div className="col-span-4">Weapon Designation</div>
-                        <div className="col-span-2 text-center">Acc</div>
-                        <div className="col-span-2 text-center">Dmg</div>
-                        <div className="col-span-2 text-center">Def</div>
-                        <div className="col-span-2 text-right">Tags</div>
-                    </div>
-
-                    {/* Weapons List */}
-                    <div className="space-y-1">
-                        {weapons.map((w, i) => (
-                            <div key={i} className="grid grid-cols-12 gap-2 text-xs font-tech text-primary/80 items-center p-2 hover:bg-primary/10 rounded-sm transition-colors border-l-2 border-transparent hover:border-primary group relative overflow-hidden">
-                                {/* Hover Effect */}
-                                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-                                
-                                <div className="col-span-4 font-bold truncate relative z-10 flex items-center gap-2">
-                                    <Crosshair className="w-3 h-3 text-primary/40 group-hover:text-primary transition-colors" />
-                                    {w.name}
-                                </div>
-                                <div className="col-span-2 text-center text-muted-foreground relative z-10 group-hover:text-primary transition-colors">+{w.accuracy}</div>
-                                <div className="col-span-2 text-center text-muted-foreground relative z-10 group-hover:text-red-400 transition-colors">+{w.damage}L</div>
-                                <div className="col-span-2 text-center text-muted-foreground relative z-10 group-hover:text-primary transition-colors">+{w.defense}</div>
-                                <div className="col-span-2 text-right text-[9px] uppercase relative z-10 opacity-70 group-hover:opacity-100">{w.tags}</div>
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Add Weapon Mini-Form */}
-                    <div className="grid grid-cols-12 gap-2 pt-2 border-t border-primary/10 mt-auto bg-black/40 p-2 rounded-sm">
-                        <div className="col-span-4">
-                            <input 
-                                value={newWeapon.name} 
-                                onChange={e => setNewWeapon({...newWeapon, name: e.target.value})}
-                                placeholder="NEW WEAPON..." 
-                                className="w-full bg-black/30 border border-primary/20 text-xs px-2 py-1 rounded-sm focus:border-primary text-primary placeholder:text-primary/20 outline-none"
-                            />
-                        </div>
-                        <div className="col-span-2">
-                             <input 
-                                value={newWeapon.accuracy} 
-                                onChange={e => setNewWeapon({...newWeapon, accuracy: e.target.value})}
-                                placeholder="ACC" 
-                                className="w-full bg-black/30 border border-primary/20 text-xs px-1 py-1 rounded-sm text-center text-primary placeholder:text-primary/20 outline-none"
-                            />
-                        </div>
-                        <div className="col-span-2">
-                             <input 
-                                value={newWeapon.damage} 
-                                onChange={e => setNewWeapon({...newWeapon, damage: e.target.value})}
-                                placeholder="DMG" 
-                                className="w-full bg-black/30 border border-primary/20 text-xs px-1 py-1 rounded-sm text-center text-primary placeholder:text-primary/20 outline-none"
-                            />
-                        </div>
-                        <div className="col-span-3 flex items-center gap-2">
-                             <input 
-                                value={newWeapon.tags} 
-                                onChange={e => setNewWeapon({...newWeapon, tags: e.target.value})}
-                                placeholder="TAGS" 
-                                className="w-full bg-black/30 border border-primary/20 text-xs px-1 py-1 rounded-sm text-primary placeholder:text-primary/20 outline-none"
-                            />
-                             <button onClick={addWeapon} className="p-1 bg-primary/20 hover:bg-primary/40 text-primary rounded-sm shadow-[0_0_5px_rgba(212,175,55,0.2)]">
-                                <Plus className="w-3 h-3" />
-                             </button>
-                        </div>
-                    </div>
                 </div>
             </MythicHUDFrame>
 
