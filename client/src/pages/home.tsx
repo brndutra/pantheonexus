@@ -5,8 +5,8 @@ import { Shield, Scroll, LayoutGrid, BookOpen, Crown, ChevronRight, User, Star, 
 import { useCharacters, slugify } from "@/lib/characters-store";
 import textureBg from "@assets/generated_images/minimalist_gold_grid_background.png";
 import cornerOrnament from "@assets/generated_images/tech_mythic_corner_ornament.png";
-import darkGoldTexture from "@assets/generated_images/dark_gold_texture_background.png";
-import artNouveauFrame from "@assets/generated_images/tech_mythic_frame_border.png";
+import darkGoldTexture from "@assets/generated_images/digital_hieroglyph_dark_background.png";
+import artNouveauFrame from "@assets/generated_images/cyber_greek_ornate_frame.png";
 import {
   Carousel,
   CarouselContent,
@@ -32,9 +32,11 @@ export default function Home() {
       {/* Main Central Box */}
       <div className="relative z-20 max-w-6xl w-full mx-4 flex flex-col items-center">
         {/* Frame Decoration */}
-        <div className="absolute -inset-4 md:-inset-8 border border-primary/20 rounded-sm pointer-events-none opacity-50 hidden md:block" />
+        <div className="absolute -inset-4 md:-inset-8 pointer-events-none opacity-80 hidden md:block">
+            <img src={artNouveauFrame} alt="" className="w-full h-full object-fill drop-shadow-[0_0_15px_rgba(212,175,55,0.3)]" />
+        </div>
         
-        <div className="bg-black/80 backdrop-blur-xl border border-primary/30 p-8 md:p-12 rounded-sm shadow-[0_0_50px_rgba(212,175,55,0.15)] text-center relative overflow-hidden group w-full max-w-5xl">
+        <div className="bg-black/80 backdrop-blur-xl p-8 md:p-12 rounded-sm shadow-[0_0_50px_rgba(212,175,55,0.15)] text-center relative overflow-hidden group w-full max-w-5xl">
             
             {/* Animated Background Scanline */}
             <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_0%,rgba(212,175,55,0.05)_50%,transparent_100%)] h-[200%] w-full animate-scanline pointer-events-none opacity-30" />

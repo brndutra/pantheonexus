@@ -5,14 +5,15 @@ import { ArrowLeft, BookOpen, Search, Tag, Calendar, User } from "lucide-react";
 import { useArticles } from "@/lib/articles-store";
 import textureBg from "@assets/generated_images/minimalist_gold_grid_background.png";
 import cornerOrnament from "@assets/generated_images/tech_mythic_corner_ornament.png";
-import darkGoldTexture from "@assets/generated_images/dark_gold_texture_background.png";
+import darkGoldTexture from "@assets/generated_images/digital_hieroglyph_dark_background.png";
+import artNouveauFrame from "@assets/generated_images/cyber_greek_ornate_frame.png";
 
 const SectionFrame = ({ children, className }: { children: React.ReactNode, className?: string }) => (
-  <div className={cn("border border-primary/20 rounded-sm p-8 relative bg-black/60 backdrop-blur-md shadow-2xl overflow-hidden", className)}>
-    <img src={cornerOrnament} className="absolute top-0 left-0 w-12 h-12 opacity-30 rotate-0 pointer-events-none" alt="" />
-    <img src={cornerOrnament} className="absolute top-0 right-0 w-12 h-12 opacity-30 rotate-90 pointer-events-none" alt="" />
-    <img src={cornerOrnament} className="absolute bottom-0 right-0 w-12 h-12 opacity-30 rotate-180 pointer-events-none" alt="" />
-    <img src={cornerOrnament} className="absolute bottom-0 left-0 w-12 h-12 opacity-30 -rotate-90 pointer-events-none" alt="" />
+  <div className={cn("p-10 relative bg-black/60 backdrop-blur-md shadow-2xl overflow-hidden group", className)}>
+    {/* Full Frame Border */}
+    <div className="absolute inset-0 z-0 pointer-events-none opacity-60 group-hover:opacity-100 transition-opacity">
+        <img src={artNouveauFrame} className="w-full h-full object-fill" alt="" />
+    </div>
     <div className="relative z-10">{children}</div>
   </div>
 );
