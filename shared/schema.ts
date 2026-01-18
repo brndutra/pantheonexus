@@ -129,3 +129,126 @@ export const insertCharacterSchema = createInsertSchema(characters).omit({
 
 export type InsertCharacter = z.infer<typeof insertCharacterSchema>;
 export type Character = typeof characters.$inferSelect;
+
+// =====================
+// COMPENDIUM TABLES
+// =====================
+
+// Boons Table - Divine powers granted by gods
+export const boons = pgTable("boons", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  purview: text("purview").notNull(), // e.g., "Fire", "Sky", "Death", etc.
+  level: integer("level").notNull().default(1), // 1-10 for mortal, 11+ for divine
+  cost: text("cost").default(""), // Legend cost to activate
+  dicePool: text("dice_pool").default(""), // e.g., "Charisma + Presence"
+  description: text("description").default(""),
+  effect: text("effect").default(""),
+  duration: text("duration").default(""),
+  pantheon: text("pantheon").default(""), // If pantheon-specific
+  prerequisites: jsonb("prerequisites").default([]), // Required boons
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const insertBoonSchema = createInsertSchema(boons).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertBoon = z.infer<typeof insertBoonSchema>;
+export type Boon = typeof boons.$inferSelect;
+
+// Knacks Table - Epic Attribute powers
+export const knacks = pgTable("knacks", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  attribute: text("attribute").notNull(), // "Strength", "Dexterity", etc.
+  tier: integer("tier").notNull().default(1), // Minimum Epic level required
+  cost: text("cost").default(""), // Legend/Willpower cost
+  description: text("description").default(""),
+  effect: text("effect").default(""),
+  duration: text("duration").default(""),
+  prerequisites: jsonb("prerequisites").default([]),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const insertKnackSchema = createInsertSchema(knacks).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertKnack = z.infer<typeof insertKnackSchema>;
+export type Knack = typeof knacks.$inferSelect;
+
+// Callings Table - Scion roles/archetypes
+export const callings = pgTable("callings", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  description: text("description").default(""),
+  favoredPurviews: jsonb("favored_purviews").default([]), // Array of purview names
+  favoredAbilities: jsonb("favored_abilities").default([]), // Array of ability names
+  innateAbility: text("innate_ability").default(""), // Special ability granted
+  iconPath: text("icon_path").default(""),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const insertCallingSchema = createInsertSchema(callings).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertCalling = z.infer<typeof insertCallingSchema>;
+export type Calling = typeof callings.$inferSelect;
+
+// Natures Table - Character personality types
+export const natures = pgTable("natures", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  description: text("description").default(""),
+  willpowerRecovery: text("willpower_recovery").default(""), // How to regain Willpower
+  virtueBonus: text("virtue_bonus").default(""), // Related virtue
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const insertNatureSchema = createInsertSchema(natures).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertNature = z.infer<typeof insertNatureSchema>;
+export type Nature = typeof natures.$inferSelect;
+
+// Attacks Table - Predefined attack types/templates
+export const attacks = pgTable("attacks", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  type: text("type").notNull().default("melee"), // "melee", "ranged", "unarmed", "special"
+  accuracy: text("accuracy").default(""), // Dice pool modifier
+  damage: text("damage").default(""), // Damage calculation
+  damageType: text("damage_type").default("bashing"), // "bashing", "lethal", "aggravated"
+  range: text("range").default(""), // For ranged attacks
+  speed: integer("speed").default(5), // Action speed
+  defense: text("defense").default(""), // DV modifier when using
+  tags: jsonb("tags").default([]), // Special properties
+  requirements: text("requirements").default(""), // Attribute/ability requirements
+  description: text("description").default(""),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const insertAttackSchema = createInsertSchema(attacks).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertAttack = z.infer<typeof insertAttackSchema>;
+export type Attack = typeof attacks.$inferSelect;
