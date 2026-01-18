@@ -120,6 +120,7 @@ const MythicHUDFrame = ({
     action, 
     subHeader,
     variant = "default",
+    titleSize = "default",
     isEditing,
     onEdit,
     onSave,
@@ -133,6 +134,7 @@ const MythicHUDFrame = ({
     action?: React.ReactNode, 
     subHeader?: string,
     variant?: "default" | "minimal" | "cyber",
+    titleSize?: "default" | "large",
     isEditing?: boolean,
     onEdit?: () => void,
     onSave?: () => void,
@@ -161,7 +163,7 @@ const MythicHUDFrame = ({
                     </div>
                 )}
                 <div className="flex flex-col">
-                    {title && <h3 className="font-mythic text-lg text-primary tracking-widest uppercase text-shadow-glow">{title}</h3>}
+                    {title && <h3 className={cn("font-mythic text-primary tracking-widest uppercase text-shadow-glow", titleSize === "large" ? "text-xl" : "text-lg")}>{title}</h3>}
                     {subHeader && <span className="text-[9px] font-tech uppercase tracking-[0.2em] text-muted-foreground">{subHeader}</span>}
                 </div>
             </div>
@@ -1316,144 +1318,143 @@ export default function CharacterSheet() {
             {/* MIDDLE COLUMN: CALLINGS (Width 4) */}
             <div className="col-span-12 md:col-span-4 flex flex-col gap-6">
                 
-                {/* CALLINGS MODULE */}
+                {/* CALLINGS MODULE - Compact Design */}
                 <MythicHUDFrame title="Divine Callings" icon={Crosshair} subHeader="ROLE SPECIALIZATIONS" isEditing={editingCombat} {...createEditHandlers(editingCombat, setEditingCombat)}>
-                    <div className="space-y-3">
+                    <div className="space-y-1.5">
                         {callings.map((calling, idx) => (
-                            <div key={idx} className="relative">
-                                {/* Calling Card Background */}
+                            <div key={idx} className="relative group">
                                 <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent border-l-2 border-primary/60" />
                                 
-                                <div className="relative z-10 p-3 flex flex-col gap-2">
-                                    <div className="flex justify-between items-center">
-                                        <div className="flex flex-col">
-                                            <span className="text-[9px] uppercase tracking-widest text-muted-foreground font-tech">CALLING 0{idx+1}</span>
+                                <div className="relative z-10 px-3 py-2 flex items-center justify-between gap-2">
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-[8px] uppercase tracking-widest text-muted-foreground font-tech shrink-0">0{idx+1}</span>
                                             <ScionInput 
                                                 value={calling.name} 
                                                 onChange={(e) => updateCalling(idx, 'name', e.target.value)}
-                                                placeholder="SELECT CALLING"
-                                                className="text-base font-mythic uppercase tracking-wider text-primary bg-transparent border-none p-0 h-auto focus:ring-0 drop-shadow-md" 
+                                                placeholder="CALLING"
+                                                className="text-sm font-mythic uppercase tracking-wider text-primary bg-transparent border-none p-0 h-auto focus:ring-0 drop-shadow-md" 
                                                 viewMode={!editingCombat}
                                             />
                                         </div>
-                                        <div className="flex items-center bg-black/40 p-1 rounded-sm border border-primary/20">
-                                            <DotRating 
-                                                value={calling.value} 
-                                                max={5} 
-                                                onChange={(v) => updateCalling(idx, 'value', v)} 
-                                                iconClassName="w-2.5 h-2.5 rounded-sm border-primary/50"
-                                                activeClassName="bg-primary shadow-[0_0_6px_gold]"
-                                                readOnly={!editingCombat}
+                                        <div className="flex items-center gap-1.5 mt-0.5">
+                                            <span className="text-[8px] text-primary/40">»</span>
+                                            <ScionInput 
+                                                value={calling.title} 
+                                                onChange={(e) => updateCalling(idx, 'title', e.target.value)}
+                                                placeholder="Epithet..."
+                                                className="flex-1 text-[9px] font-code text-primary/60 bg-transparent border-none p-0 h-auto italic" 
+                                                viewMode={!editingCombat}
                                             />
                                         </div>
                                     </div>
-                                    
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-2 h-2 rounded-full bg-primary/30" />
-                                        <ScionInput 
-                                            value={calling.title} 
-                                            onChange={(e) => updateCalling(idx, 'title', e.target.value)}
-                                            placeholder="Enter Epithet / Title..."
-                                            className="flex-1 text-[10px] font-code text-primary/70 bg-transparent border-none p-0 h-auto italic" 
-                                            viewMode={!editingCombat}
-                                        />
-                                    </div>
+                                    <DotRating 
+                                        value={calling.value} 
+                                        max={5} 
+                                        onChange={(v) => updateCalling(idx, 'value', v)} 
+                                        iconClassName="w-2 h-2 rounded-sm border-primary/50"
+                                        activeClassName="bg-primary shadow-[0_0_4px_gold]"
+                                        readOnly={!editingCombat}
+                                    />
                                 </div>
                             </div>
                         ))}
                     </div>
-                    {/* Nature Section - Integrated with Callings */}
-                    <div className="mt-4 pt-3 border-t border-primary/20">
-                        <span className="text-[9px] uppercase tracking-widest text-muted-foreground font-tech block mb-2">NATURE ARCHETYPE</span>
-                        <div className="relative">
-                            <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent border-l-2 border-primary/60" />
-                            <div className="relative z-10 p-3 flex flex-col gap-2">
-                                <div className="flex justify-between items-center">
-                                    <div className="flex flex-col flex-1 relative">
-                                        <input 
-                                            value={nature} 
-                                            onChange={(e) => setNature(e.target.value)}
-                                            onFocus={() => editingCombat && setNatureSearchOpen(true)}
-                                            onBlur={() => setTimeout(() => setNatureSearchOpen(false), 200)}
-                                            className="text-base font-mythic uppercase tracking-wider text-primary bg-transparent border-none p-0 h-auto focus:ring-0 drop-shadow-md outline-none placeholder:text-primary/30" 
-                                            placeholder="SELECT NATURE"
-                                            disabled={!editingCombat}
-                                        />
-                                        {/* Nature Tooltip on hover */}
-                                        {nature && !editingCombat && (() => {
-                                            const foundNature = availableNatures.find(n => n.name.toLowerCase() === nature.toLowerCase());
-                                            return foundNature?.description ? (
-                                                <div className="absolute left-0 top-full mt-2 p-2 bg-black/95 border border-primary/30 rounded-sm text-[10px] font-tech text-primary/70 max-w-[250px] opacity-0 hover:opacity-100 transition-opacity z-50">
-                                                    {foundNature.description}
-                                                </div>
-                                            ) : null;
-                                        })()}
-                                        {/* Autocomplete dropdown */}
-                                        {natureSearchOpen && editingCombat && (
-                                            <div className="absolute top-full left-0 right-0 mt-1 bg-black/95 border border-primary/30 rounded-sm max-h-40 overflow-y-auto z-50">
-                                                {availableNatures
-                                                    .filter(n => n.name.toLowerCase().includes(nature.toLowerCase()))
-                                                    .slice(0, 10)
-                                                    .map(n => (
-                                                        <div
-                                                            key={n.id}
-                                                            onClick={() => {
-                                                                setNature(n.name);
-                                                                setNatureSearchOpen(false);
-                                                            }}
-                                                            className="w-full text-left px-2 py-1.5 text-xs font-tech text-primary/80 hover:bg-primary/20 hover:text-primary transition-colors cursor-pointer"
-                                                            title={n.description || ''}
-                                                        >
-                                                            <span className="block">{n.name}</span>
-                                                            {n.description && (
-                                                                <span className="block text-[9px] text-muted-foreground truncate">{n.description}</span>
-                                                            )}
-                                                        </div>
-                                                    ))
-                                                }
+                    
+                    {/* Nature Section - Compact inline */}
+                    <div className="mt-2 pt-2 border-t border-primary/15">
+                        <div className="relative group">
+                            <div className="absolute inset-0 bg-gradient-to-r from-[hsl(var(--highlight-purple))]/10 to-transparent border-l-2 border-[hsl(var(--highlight-purple))]/60" />
+                            <div className="relative z-10 px-3 py-1.5 flex items-center gap-2">
+                                <span className="text-[8px] uppercase tracking-widest text-muted-foreground font-tech shrink-0">NAT</span>
+                                <div className="flex-1 relative">
+                                    <input 
+                                        value={nature} 
+                                        onChange={(e) => setNature(e.target.value)}
+                                        onFocus={() => editingCombat && setNatureSearchOpen(true)}
+                                        onBlur={() => setTimeout(() => setNatureSearchOpen(false), 200)}
+                                        className="w-full text-sm font-mythic uppercase tracking-wider text-[hsl(var(--highlight-purple))] bg-transparent border-none p-0 h-auto focus:ring-0 outline-none placeholder:text-primary/30" 
+                                        placeholder="SELECT NATURE"
+                                        disabled={!editingCombat}
+                                    />
+                                    {/* Nature Tooltip on hover */}
+                                    {nature && !editingCombat && (() => {
+                                        const foundNature = availableNatures.find(n => n.name.toLowerCase() === nature.toLowerCase());
+                                        return foundNature?.description ? (
+                                            <div className="absolute left-0 top-full mt-2 p-2 bg-black/95 border border-primary/30 rounded-sm text-[10px] font-tech text-primary/70 max-w-[250px] opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none">
+                                                {foundNature.description}
                                             </div>
-                                        )}
-                                    </div>
+                                        ) : null;
+                                    })()}
+                                    {/* Autocomplete dropdown */}
+                                    {natureSearchOpen && editingCombat && (
+                                        <div className="absolute top-full left-0 right-0 mt-1 bg-black/95 border border-primary/30 rounded-sm max-h-40 overflow-y-auto z-50">
+                                            {availableNatures
+                                                .filter(n => n.name.toLowerCase().includes(nature.toLowerCase()))
+                                                .slice(0, 10)
+                                                .map(n => (
+                                                    <div
+                                                        key={n.id}
+                                                        onClick={() => {
+                                                            setNature(n.name);
+                                                            setNatureSearchOpen(false);
+                                                        }}
+                                                        className="w-full text-left px-2 py-1.5 text-xs font-tech text-primary/80 hover:bg-primary/20 hover:text-primary transition-colors cursor-pointer"
+                                                        title={n.description || ''}
+                                                    >
+                                                        <span className="block">{n.name}</span>
+                                                        {n.description && (
+                                                            <span className="block text-[9px] text-muted-foreground truncate">{n.description}</span>
+                                                        )}
+                                                    </div>
+                                                ))
+                                            }
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </MythicHUDFrame>
 
-                {/* VIRTUES MODULE - Styled like Callings */}
+            </div>
+
+            {/* RIGHT COLUMN: VIRTUES (Width 4) */}
+            <div className="col-span-12 md:col-span-4 flex flex-col gap-6">
+
+                {/* VIRTUES MODULE - Compact like Callings */}
                 <MythicHUDFrame title="Virtue Matrix" icon={Target} subHeader="MORAL COMPASS" isEditing={editingVirtues} {...createEditHandlers(editingVirtues, setEditingVirtues)}>
-                    <div className="space-y-3">
+                    <div className="space-y-1.5">
                         {virtues.length === 0 ? (
-                            <div className="text-center py-4">
-                                <p className="text-xs text-muted-foreground mb-3">Nenhuma virtude adicionada</p>
+                            <div className="text-center py-3">
+                                <p className="text-[10px] text-muted-foreground mb-2">Nenhuma virtude</p>
                                 {editingVirtues && (
                                     <button 
                                         onClick={() => addVirtue()}
-                                        className="flex items-center gap-2 mx-auto text-xs text-primary hover:text-primary/80 transition-colors"
+                                        className="flex items-center gap-1 mx-auto text-[10px] text-primary hover:text-primary/80 transition-colors"
                                     >
-                                        <Plus className="w-4 h-4" />
-                                        Adicionar Virtude
+                                        <Plus className="w-3 h-3" />
+                                        Adicionar
                                     </button>
                                 )}
                             </div>
                         ) : (
                             <>
                                 {virtues.map((virtue, idx) => (
-                                    <div key={virtue.id} className="relative">
-                                        {/* Virtue Card Background - Matching Callings Style */}
+                                    <div key={virtue.id} className="relative group">
                                         <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent border-l-2 border-primary/60" />
                                         
-                                        <div className="relative z-10 p-3 flex flex-col gap-2">
-                                            <div className="flex justify-between items-center">
-                                                <div className="flex flex-col flex-1 relative group/virtue">
-                                                    <span className="text-[9px] uppercase tracking-widest text-muted-foreground font-tech">VIRTUE 0{idx+1}</span>
+                                        <div className="relative z-10 px-3 py-2 flex items-center justify-between gap-2">
+                                            <div className="flex-1 min-w-0 relative group/virtue">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-[8px] uppercase tracking-widest text-muted-foreground font-tech shrink-0">0{idx+1}</span>
                                                     <input 
                                                         value={virtue.name} 
                                                         onChange={(e) => updateVirtue(idx, 'name', e.target.value)}
                                                         onFocus={() => editingVirtues && setVirtueSearchOpen(idx)}
                                                         onBlur={() => setTimeout(() => setVirtueSearchOpen(null), 200)}
-                                                        className="text-base font-mythic uppercase tracking-wider text-primary bg-transparent border-none p-0 h-auto focus:ring-0 drop-shadow-md outline-none placeholder:text-primary/30" 
-                                                        placeholder="SELECT VIRTUE"
+                                                        className="text-sm font-mythic uppercase tracking-wider text-primary bg-transparent border-none p-0 h-auto focus:ring-0 drop-shadow-md outline-none placeholder:text-primary/30" 
+                                                        placeholder="VIRTUE"
                                                         disabled={!editingVirtues}
                                                     />
                                                     {/* Description Tooltip on hover */}
@@ -1491,27 +1492,24 @@ export default function CharacterSheet() {
                                                         </div>
                                                     )}
                                                 </div>
-                                                
-                                                <div className="flex items-center gap-2">
-                                                    <div className="flex items-center bg-black/40 p-1 rounded-sm border border-primary/20">
-                                                        <DotRating 
-                                                            value={virtue.value} 
-                                                            max={5} 
-                                                            onChange={(v) => updateVirtue(idx, 'value', v)} 
-                                                            iconClassName="w-2.5 h-2.5 rounded-sm border-primary/50"
-                                                            activeClassName="bg-primary shadow-[0_0_6px_gold]"
-                                                            readOnly={!editingVirtues}
-                                                        />
-                                                    </div>
-                                                    {editingVirtues && (
-                                                        <button 
-                                                            onClick={() => removeVirtue(idx)}
-                                                            className="text-red-500/50 hover:text-red-500 transition-colors"
-                                                        >
-                                                            <X className="w-3 h-3" />
-                                                        </button>
-                                                    )}
-                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <DotRating 
+                                                    value={virtue.value} 
+                                                    max={5} 
+                                                    onChange={(v) => updateVirtue(idx, 'value', v)} 
+                                                    iconClassName="w-2 h-2 rounded-sm border-primary/50"
+                                                    activeClassName="bg-primary shadow-[0_0_4px_gold]"
+                                                    readOnly={!editingVirtues}
+                                                />
+                                                {editingVirtues && (
+                                                    <button 
+                                                        onClick={() => removeVirtue(idx)}
+                                                        className="text-red-500/50 hover:text-red-500 transition-colors"
+                                                    >
+                                                        <X className="w-3 h-3" />
+                                                    </button>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
@@ -1532,15 +1530,18 @@ export default function CharacterSheet() {
 
             </div>
 
-            {/* RIGHT COLUMN: ABILITIES & COMBAT (Width 4) */}
-            <div className="col-span-12 md:col-span-4 flex flex-col gap-6">
+        </div> 
+        {/* --- TOP 3-COLUMN GRID END --- */}
 
-                {/* 1. VITALITY MONITOR - No edit mode needed, fields are always interactive */}
-                <MythicHUDFrame 
-                    title="Vitality & Energy" 
-                    icon={Activity} 
-                    subHeader="BIOMETRICS & POOLS"
-                >
+        {/* VITALITY ROW - Full Width with 3 sections */}
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            {/* 1. VITALITY MONITOR - No edit mode needed, fields are always interactive */}
+            <MythicHUDFrame 
+                title="Vitality & Energy" 
+                icon={Activity} 
+                subHeader="BIOMETRICS & POOLS"
+            >
                     <div className="space-y-6">
                         {/* Legend & Aether Integrated */}
                         <div className="grid grid-cols-2 gap-3 pb-4 border-b border-primary/10">
@@ -1677,15 +1678,13 @@ export default function CharacterSheet() {
                     </div>
                 </MythicHUDFrame>
 
-            </div>
-
         </div> 
-        {/* --- GRID END --- */}
+        {/* --- VITALITY ROW END --- */}
 
         {/* ATTRIBUTES & ABILITIES ROW - 1/3 + 2/3 */}
         <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
             {/* ATTRIBUTES CORE - 1 column */}
-            <MythicHUDFrame title="Attributes Core" icon={Dna} subHeader="PHYSICAL / SOCIAL / MENTAL" className="md:col-span-1 flex flex-col" isEditing={editingAttributes} {...createEditHandlers(editingAttributes, setEditingAttributes)}>
+            <MythicHUDFrame title="Attributes Core" icon={Dna} subHeader="PHYSICAL / SOCIAL / MENTAL" className="md:col-span-1 flex flex-col" titleSize="large" isEditing={editingAttributes} {...createEditHandlers(editingAttributes, setEditingAttributes)}>
                 <div className="space-y-4 flex-1 flex flex-col justify-between">
                     {(Object.entries(attributes) as [AttributeCategory, Attribute[]][]).map(([category, attrs]) => (
                         <div key={category} className="space-y-1.5 relative flex-1">
@@ -1737,7 +1736,7 @@ export default function CharacterSheet() {
             </MythicHUDFrame>
 
             {/* ABILITIES SCROLL - 2 columns */}
-            <MythicHUDFrame title="Abilities Database" icon={Brain} subHeader="SKILL SET MATRIX" className="md:col-span-2 flex flex-col" isEditing={editingAbilities} {...createEditHandlers(editingAbilities, setEditingAbilities)}>
+            <MythicHUDFrame title="Abilities Database" icon={Brain} subHeader="SKILL SET MATRIX" className="md:col-span-2 flex flex-col" titleSize="large" isEditing={editingAbilities} {...createEditHandlers(editingAbilities, setEditingAbilities)}>
                 <div className="flex-1">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-1 h-full content-start">
                         {abilitiesSchema.map((schema) => {
