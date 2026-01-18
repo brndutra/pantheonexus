@@ -1590,48 +1590,44 @@ export default function CharacterSheet() {
         <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
             {/* ATTRIBUTES CORE - 1 column */}
             <MythicHUDFrame title="Attributes Core" icon={Dna} subHeader="PHYSICAL / SOCIAL / MENTAL" className="md:col-span-1 flex flex-col" isEditing={editingAttributes} {...createEditHandlers(editingAttributes, setEditingAttributes)}>
-                <div className="space-y-6 flex-1">
+                <div className="space-y-4 flex-1 flex flex-col justify-between">
                     {(Object.entries(attributes) as [AttributeCategory, Attribute[]][]).map(([category, attrs]) => (
-                        <div key={category} className="space-y-2 relative">
-                            <h4 className="text-[10px] font-mythic uppercase tracking-[0.3em] text-primary/50 border-b border-primary/10 pb-1 mb-2">
+                        <div key={category} className="space-y-1.5 relative flex-1">
+                            <h4 className="text-[11px] font-mythic uppercase tracking-[0.2em] text-primary/60 border-b border-primary/20 pb-1.5 mb-2">
                                 {category}
                             </h4>
                             {attrs.map((attr, idx) => (
-                                <div key={attr.name} className="flex flex-col gap-1 group">
-                                    <div className="flex justify-between items-end mb-0.5">
-                                        <span className="text-xs font-bold font-tech text-foreground uppercase tracking-wider flex items-center gap-1">
-                                            <span className="text-primary/40 text-[10px] w-4">{attr.rune}</span>
+                                <div key={attr.name} className="flex items-center justify-between gap-2 group py-1 px-1 hover:bg-primary/5 rounded-sm transition-colors">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-primary/50 text-[10px] w-4">{attr.rune}</span>
+                                        <span className="text-[11px] font-bold font-tech text-foreground uppercase tracking-wide">
                                             {attr.name}
                                         </span>
-                                        <div className="flex gap-2 text-[10px] font-mono text-primary/60">
-                                            <span>VAL: {attr.value}</span>
-                                            {attr.epic > 0 && <span className="text-accent-foreground">EPIC: {attr.epic}</span>}
-                                        </div>
                                     </div>
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-3">
                                         <DotRating 
                                             value={attr.value} 
                                             onChange={(v) => updateAttribute(category, idx, 'value', v)} 
-                                            max={10}
-                                            className="flex-1"
-                                            iconClassName="w-2.5 h-2.5 rounded-full border border-primary/30"
+                                            max={5}
+                                            iconClassName="w-2 h-2 rounded-full border border-primary/40"
                                             activeClassName="bg-primary shadow-[0_0_4px_gold] border-primary"
                                             readOnly={!editingAttributes}
                                         />
-                                        {/* Epic Toggle - Expanded to 10 slots */}
-                                        <div className="flex gap-0.5 ml-auto">
-                                            {Array.from({length: 10}).map((_, i) => {
+                                        <span className="text-xs font-mythic text-primary w-3 text-center">{attr.value}</span>
+                                        {/* Epic indicator */}
+                                        <div className="flex gap-0.5">
+                                            {Array.from({length: 5}).map((_, i) => {
                                                 const e = i + 1;
                                                 return (
                                                     <div 
                                                         key={e} 
                                                         onClick={() => editingAttributes && updateAttribute(category, idx, 'epic', attr.epic === e ? 0 : e)}
                                                         className={cn(
-                                                            "w-1.5 h-3 border border-primary/30 transition-all",
+                                                            "w-1.5 h-2.5 border border-accent-foreground/30 transition-all rounded-sm",
                                                             editingAttributes ? "cursor-pointer hover:border-accent-foreground" : "cursor-default",
-                                                            attr.epic >= e ? "bg-accent-foreground shadow-[0_0_5px_var(--color-accent-foreground)]" : "bg-black/40"
+                                                            attr.epic >= e ? "bg-accent-foreground shadow-[0_0_4px_cyan]" : "bg-black/40"
                                                         )}
-                                                        title={`Epic Rank ${e}`}
+                                                        title={`Epic ${e}`}
                                                     />
                                                 );
                                             })}
@@ -1646,27 +1642,27 @@ export default function CharacterSheet() {
 
             {/* ABILITIES SCROLL - 2 columns */}
             <MythicHUDFrame title="Abilities Database" icon={Brain} subHeader="SKILL SET MATRIX" className="md:col-span-2 flex flex-col" isEditing={editingAbilities} {...createEditHandlers(editingAbilities, setEditingAbilities)}>
-                <div className="flex-1 overflow-y-auto pr-2 scion-scrollbar custom-scroll-area">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-1 h-full content-start">
+                <div className="flex-1">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-1 h-full content-start">
                         {abilitiesSchema.map((schema) => {
                             const abilityName = schema.name;
                             const ability = abilities[abilityName] || { value: 0, sparks: 0, heritage: false, specialties: [] };
                             const isHeritage = ability.heritage;
                             return (
                                 <div key={abilityName} className={cn(
-                                    "flex items-center justify-between p-1.5 hover:bg-primary/5 rounded-sm transition-colors border border-transparent hover:border-primary/10 group",
-                                    (ability.value || 0) > 0 ? "opacity-100" : "opacity-60 hover:opacity-100",
-                                    isHeritage && "border-l-2 border-l-[hsl(var(--highlight-amber))]"
+                                    "flex items-center justify-between py-1.5 px-2 hover:bg-primary/5 rounded-sm transition-colors border-l-2 group",
+                                    (ability.value || 0) > 0 ? "opacity-100 border-l-primary/30" : "opacity-70 hover:opacity-100 border-l-transparent",
+                                    isHeritage && "border-l-[hsl(var(--highlight-amber))] bg-[hsl(var(--highlight-amber))]/5"
                                 )}>
                                     <div className="flex items-center gap-1.5 flex-1 min-w-0">
                                         {/* Heritage indicator - star icon */}
                                         {isHeritage && (
-                                            <Star className="w-2.5 h-2.5 text-[hsl(var(--highlight-amber))] fill-[hsl(var(--highlight-amber))] flex-shrink-0" />
+                                            <Star className="w-3 h-3 text-[hsl(var(--highlight-amber))] fill-[hsl(var(--highlight-amber))] flex-shrink-0" />
                                         )}
                                         <span className={cn(
-                                            "text-[10px] uppercase tracking-wider font-tech transition-colors truncate",
-                                            isHeritage ? "text-[hsl(var(--highlight-amber))]" : 
-                                            (ability.value || 0) > 0 ? "text-primary" : "text-muted-foreground group-hover:text-primary/70"
+                                            "text-[11px] uppercase tracking-wide font-tech transition-colors truncate",
+                                            isHeritage ? "text-[hsl(var(--highlight-amber))] font-bold" : 
+                                            (ability.value || 0) > 0 ? "text-foreground" : "text-muted-foreground group-hover:text-primary/70"
                                         )}>
                                             {abilityName}
                                         </span>
@@ -1680,7 +1676,7 @@ export default function CharacterSheet() {
                                                 )}
                                                 title="Toggle Heritage Favored"
                                             >
-                                                <Star className="w-2.5 h-2.5" />
+                                                <Star className="w-3 h-3" />
                                             </button>
                                         )}
                                     </div>
@@ -1705,15 +1701,15 @@ export default function CharacterSheet() {
                                             </div>
                                         ) : (
                                             <span className={cn(
-                                                "text-sm font-mythic w-4 text-center",
-                                                (ability.value || 0) > 0 ? "text-primary" : "text-muted-foreground/50"
+                                                "text-sm font-mythic w-5 text-center",
+                                                (ability.value || 0) > 0 ? "text-primary" : "text-muted-foreground/40"
                                             )}>{ability.value || 0}</span>
                                         )}
                                         {/* Sparks indicator */}
                                         {(ability.sparks || 0) > 0 && (
                                             <div className="flex items-center gap-0.5">
                                                 {Array.from({ length: ability.sparks || 0 }).map((_, i) => (
-                                                    <div key={i} className="w-1 h-1 rounded-full bg-accent-foreground shadow-[0_0_3px_cyan]" />
+                                                    <div key={i} className="w-1.5 h-1.5 rounded-full bg-accent-foreground shadow-[0_0_4px_cyan]" />
                                                 ))}
                                             </div>
                                         )}
