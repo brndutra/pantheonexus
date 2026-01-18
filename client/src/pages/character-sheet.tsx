@@ -777,6 +777,38 @@ export default function CharacterSheet() {
     const newHealth = [...healthDamage];
     newHealth[idx] = ((newHealth[idx] + 1) % 4) as DamageType;
     setHealthDamage(newHealth);
+    // Auto-save health damage to database
+    if (characterId) {
+      fetch(`/api/characters/${characterId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ healthDamage: newHealth })
+      });
+    }
+  };
+  
+  // Auto-save function for willpower current
+  const updateWillpowerCurrent = (newValue: number) => {
+    setWillpowerCurrent(newValue);
+    if (characterId) {
+      fetch(`/api/characters/${characterId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ willpowerCurrent: newValue })
+      });
+    }
+  };
+  
+  // Auto-save function for legend points current
+  const updateLegendPointsCurrent = (newValue: number) => {
+    setLegendPointsCurrent(newValue);
+    if (characterId) {
+      fetch(`/api/characters/${characterId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ legendPointsCurrent: newValue })
+      });
+    }
   };
 
   const addKnackFromDatabase = (knack: SupabaseKnack) => {
@@ -2037,7 +2069,7 @@ export default function CharacterSheet() {
                                  {Array.from({length: 10}).map((_, i) => (
                                      <button 
                                         key={i} 
-                                        onClick={() => setWillpowerCurrent(i < willpowerCurrent ? i : i + 1)}
+                                        onClick={() => updateWillpowerCurrent(i < willpowerCurrent ? i : i + 1)}
                                         className={cn(
                                             "h-1.5 w-full rounded-sm transition-all",
                                             i < willpowerCurrent ? "bg-primary shadow-[0_0_5px_gold]" : "bg-primary/10"
@@ -2103,9 +2135,9 @@ export default function CharacterSheet() {
                                                 key={i}
                                                 onClick={() => {
                                                     if (legendPointsCurrent === i + 1) {
-                                                        setLegendPointsCurrent(i); // Toggle off if clicking the last active one
+                                                        updateLegendPointsCurrent(i); // Toggle off if clicking the last active one
                                                     } else {
-                                                        setLegendPointsCurrent(i + 1);
+                                                        updateLegendPointsCurrent(i + 1);
                                                     }
                                                 }}
                                                 className={cn(
