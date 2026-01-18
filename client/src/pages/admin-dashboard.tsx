@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { cn } from "@/lib/utils";
 import { Plus, Trash2, Scroll, Shield, User, Star, LayoutGrid, FileText, Send } from "lucide-react";
 import { useArticles } from "@/lib/articles-store";
+import { useCharacters } from "@/lib/characters-store";
 import textureBg from "@assets/generated_images/minimalist_gold_grid_background.png";
 import cornerOrnament from "@assets/generated_images/mythological_corner_ornament.png";
 import darkGoldTexture from "@assets/generated_images/dark_gold_texture_background.png";
@@ -40,24 +41,11 @@ const ScionInput = ({ label, className, as: Component = "input", ...props }: Rea
   </div>
 );
 
-interface ScrollData {
-  id: number;
-  name: string;
-  player: string;
-  legend: number;
-  pantheon: string;
-  status: "active" | "archived";
-}
-
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<"scrolls" | "alleybrary">("scrolls");
 
   // Scrolls State
-  const [scrolls, setScrolls] = useState<ScrollData[]>([
-    { id: 1, name: "Victorious Sun", player: "Helios", legend: 4, pantheon: "Theoi", status: "active" },
-    { id: 2, name: "Storm Caller", player: "Thor", legend: 3, pantheon: "Aesir", status: "active" },
-    { id: 3, name: "Shadow Walker", player: "Anubis", legend: 5, pantheon: "Netjer", status: "active" },
-  ]);
+  const { characters: scrolls, addCharacter, deleteCharacter } = useCharacters();
 
   const [newScroll, setNewScroll] = useState({
     name: "",
@@ -78,24 +66,20 @@ export default function AdminDashboard() {
 
   const handleAddScroll = () => {
     if (newScroll.name && newScroll.player) {
-      setScrolls([
-        ...scrolls,
-        {
-          id: Date.now(),
+      addCharacter({
           name: newScroll.name,
           player: newScroll.player,
           legend: newScroll.legend,
           pantheon: newScroll.pantheon,
-          status: "active"
-        }
-      ]);
+      });
       setNewScroll({ name: "", player: "", legend: 1, pantheon: "" });
     }
   };
 
   const handleDeleteScroll = (id: number) => {
-    setScrolls(scrolls.filter(s => s.id !== id));
+    deleteCharacter(id);
   };
+
 
   const handlePublishArticle = () => {
       if (newArticle.title && newArticle.content) {
