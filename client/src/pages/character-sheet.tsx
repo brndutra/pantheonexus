@@ -3,8 +3,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { DotRating } from "@/components/ui/dot-rating";
 import { ScionInput } from "@/components/ui/scion-input";
 import { cn } from "@/lib/utils";
-import { Shield, Zap, Skull, Scroll, Activity, Cpu, Hexagon, Plus, Trash2 } from "lucide-react";
+import { Shield, Zap, Skull, Scroll, Activity, Cpu, Hexagon, Plus, Trash2, Crown, Heart, ChevronRight } from "lucide-react";
 import textureBg from "@assets/generated_images/ancient_mythology_meets_cyberpunk_texture.png";
+import virtueIcon from "@assets/generated_images/virtue_icon_gold_geometric.png";
+import crownIcon from "@assets/generated_images/legendary_title_crown_icon.png";
 
 // --- Types ---
 type AttributeCategory = "Physical" | "Social" | "Mental";
@@ -14,6 +16,18 @@ interface Attribute {
   name: AttributeName;
   value: number;
   epic: number;
+}
+
+interface Calling {
+  id: number;
+  name: string;
+  title: string;
+}
+
+interface Virtue {
+  id: number;
+  name: string;
+  value: number;
 }
 
 type DamageType = 0 | 1 | 2 | 3; // 0: None, 1: Bashing, 2: Lethal, 3: Aggravated
@@ -43,8 +57,6 @@ const ABILITIES = [
   "Investigation", "Larceny", "Marksmanship", "Medicine", "Melee", 
   "Occult", "Politics", "Presence", "Science", "Stealth", "Survival", "Thrown"
 ];
-
-const HEALTH_LEVELS = ["-0", "-1", "-1", "-2", "-2", "-4", "Incap"];
 
 // --- Components ---
 
@@ -100,15 +112,36 @@ export default function CharacterSheet() {
     ABILITIES.reduce((acc, curr) => ({ ...acc, [curr]: 0 }), {})
   );
   
+  const [callings, setCallings] = useState<Calling[]>([
+    { id: 1, name: "", title: "" },
+    { id: 2, name: "", title: "" },
+    { id: 3, name: "", title: "" },
+  ]);
+
+  const [virtues, setVirtues] = useState<Virtue[]>([
+    { id: 1, name: "Valor", value: 1 },
+    { id: 2, name: "Harmony", value: 1 },
+    { id: 3, name: "Order", value: 1 },
+    { id: 4, name: "Piety", value: 1 },
+    { id: 5, name: "", value: 1 },
+  ]);
+  
   const [legend, setLegend] = useState(2);
   const [willpower, setWillpower] = useState(5);
   const [willpowerTemp, setWillpowerTemp] = useState(5);
-  const [health, setHealth] = useState<DamageType[]>(new Array(HEALTH_LEVELS.length).fill(0));
+  
+  // Health State
+  // Default levels: -0, -1, -1, -2, -2, -4, Incap
+  // We allow adding extra -0 boxes
+  const [extraOxBody, setExtraOxBody] = useState(0);
+  const [healthDamage, setHealthDamage] = useState<DamageType[]>(new Array(7 + 10).fill(0)); // Buffer size for potentially many boxes
 
   const [knacks, setKnacks] = useState<string[]>([]);
   const [newKnack, setNewKnack] = useState("");
   const [boons, setBoons] = useState<string[]>([]);
   const [newBoon, setNewBoon] = useState("");
+
+  const [activeTitleIndex, setActiveTitleIndex] = useState<number | null>(null);
 
   // Handlers
   const updateAttribute = (cat: AttributeCategory, idx: number, field: 'value'|'epic', val: number) => {
@@ -117,10 +150,22 @@ export default function CharacterSheet() {
     setAttributes({ ...attributes, [cat]: newCat });
   };
 
+  const updateCalling = (index: number, field: keyof Calling, value: string) => {
+    const newCallings = [...callings];
+    newCallings[index] = { ...newCallings[index], [field]: value };
+    setCallings(newCallings);
+  };
+
+  const updateVirtue = (index: number, field: keyof Virtue, value: string | number) => {
+    const newVirtues = [...virtues];
+    newVirtues[index] = { ...newVirtues[index], [field]: value };
+    setVirtues(newVirtues);
+  };
+
   const toggleHealth = (idx: number) => {
-    const newHealth = [...health];
+    const newHealth = [...healthDamage];
     newHealth[idx] = ((newHealth[idx] + 1) % 4) as DamageType;
-    setHealth(newHealth);
+    setHealthDamage(newHealth);
   };
 
   const addKnack = () => {
@@ -136,6 +181,12 @@ export default function CharacterSheet() {
       setNewBoon("");
     }
   };
+
+  // Build current health levels array
+  const currentHealthLevels = [
+    ...Array(1 + extraOxBody).fill("-0"),
+    "-1", "-1", "-2", "-2", "-4", "Incap"
+  ];
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-hidden font-tech selection:bg-primary/30 relative">
@@ -173,7 +224,63 @@ export default function CharacterSheet() {
             <div className="flex gap-4 w-full md:w-auto">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
                 <ScionInput label="Name" placeholder="Enter Name..." />
-                <ScionInput label="Calling" placeholder="God/Hero..." />
+                
+                {/* Dynamic Callings Section */}
+                <div className="md:col-span-1 space-y-2 relative">
+                  <label className="block text-xs uppercase tracking-wider mb-1 font-mythic text-primary/80">
+                    Callings
+                  </label>
+                  {callings.map((calling, i) => (
+                    <div key={calling.id} className="relative group">
+                      <input 
+                        className="w-full bg-black/20 border-b-2 border-muted px-2 py-1 outline-none font-tech text-foreground focus:border-primary focus:bg-primary/5 transition-colors pr-8 text-sm"
+                        placeholder={`Calling ${i + 1}`}
+                        value={calling.name}
+                        onChange={(e) => updateCalling(i, 'name', e.target.value)}
+                      />
+                      <button 
+                         onClick={() => setActiveTitleIndex(activeTitleIndex === i ? null : i)}
+                         className={cn(
+                           "absolute right-1 top-1/2 -translate-y-1/2 transition-colors",
+                           calling.title ? "text-primary opacity-100" : "text-muted-foreground opacity-30 group-hover:opacity-100 hover:text-primary"
+                         )}
+                         title="Add Legendary Title"
+                      >
+                         <img src={crownIcon} alt="Title" className="w-4 h-4" />
+                      </button>
+                      
+                      <AnimatePresence>
+                        {activeTitleIndex === i && (
+                          <motion.div 
+                            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                            className="absolute z-50 left-0 top-full mt-2 w-64 bg-card border border-primary/30 p-2 shadow-xl rounded-sm backdrop-blur-md"
+                          >
+                             <div className="flex items-center gap-2 mb-1">
+                                <Crown className="w-3 h-3 text-primary" />
+                                <span className="text-[10px] uppercase tracking-widest text-primary">Legendary Title</span>
+                             </div>
+                             <input 
+                                autoFocus
+                                className="w-full bg-black/40 border border-white/10 px-2 py-1 text-sm text-foreground focus:border-primary/50 outline-none rounded-sm font-mythic"
+                                placeholder="The God-Slayer..."
+                                value={calling.title}
+                                onChange={(e) => updateCalling(i, 'title', e.target.value)}
+                             />
+                             <div className="absolute -top-1 left-4 w-2 h-2 bg-card border-t border-l border-primary/30 rotate-45" />
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                      {calling.title && activeTitleIndex !== i && (
+                        <div className="absolute top-full left-0 text-[10px] text-primary/70 font-mythic italic truncate w-full px-2 pointer-events-none">
+                          "{calling.title}"
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
                 <ScionInput label="Pantheon" placeholder="Aesir/Pesedjet..." />
                 <ScionInput label="Nature" placeholder="Personality..." />
               </div>
@@ -217,7 +324,7 @@ export default function CharacterSheet() {
               exit={{ opacity: 0, x: 10 }}
               className="grid grid-cols-1 md:grid-cols-12 gap-8"
             >
-              {/* Left Column: Attributes */}
+              {/* Left Column: Attributes & Abilities */}
               <div className="md:col-span-8 space-y-8">
                 <SectionFrame title="Attributes" icon={Hexagon}>
                   <div className="grid md:grid-cols-3 gap-8">
@@ -256,21 +363,46 @@ export default function CharacterSheet() {
                   </div>
                 </SectionFrame>
 
-                <SectionFrame title="Abilities" icon={Cpu}>
-                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-2">
-                      {ABILITIES.map(ability => (
-                        <div key={ability} className="flex justify-between items-center group hover:bg-white/5 p-1 rounded transition-colors">
-                           <span className="text-sm font-tech text-muted-foreground group-hover:text-primary transition-colors">{ability}</span>
-                           <DotRating 
-                              value={abilities[ability]} 
-                              max={5}
-                              className="scale-75 origin-right"
-                              onChange={(v) => setAbilities({...abilities, [ability]: v})}
-                           />
-                        </div>
-                      ))}
-                   </div>
-                </SectionFrame>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <SectionFrame title="Abilities" icon={Cpu} className="md:col-span-2">
+                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-2">
+                        {ABILITIES.map(ability => (
+                          <div key={ability} className="flex justify-between items-center group hover:bg-white/5 p-1 rounded transition-colors">
+                             <span className="text-sm font-tech text-muted-foreground group-hover:text-primary transition-colors">{ability}</span>
+                             <DotRating 
+                                value={abilities[ability]} 
+                                max={5}
+                                className="scale-75 origin-right"
+                                onChange={(v) => setAbilities({...abilities, [ability]: v})}
+                             />
+                          </div>
+                        ))}
+                     </div>
+                  </SectionFrame>
+                  
+                  {/* Virtues Section */}
+                  <SectionFrame title="Virtues" icon={Heart} className="md:col-span-2">
+                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+                        {virtues.map((virtue, idx) => (
+                           <div key={virtue.id} className="flex flex-col items-center gap-2 p-3 border border-white/5 bg-white/5 rounded relative group hover:border-primary/30 transition-colors">
+                              <img src={virtueIcon} alt="Virtue" className="w-8 h-8 opacity-50 group-hover:opacity-100 transition-opacity" />
+                              <input 
+                                className="w-full bg-transparent text-center font-mythic text-sm border-b border-transparent focus:border-primary outline-none"
+                                value={virtue.name}
+                                placeholder="Virtue Name"
+                                onChange={(e) => updateVirtue(idx, 'name', e.target.value)}
+                              />
+                              <DotRating 
+                                value={virtue.value} 
+                                max={5}
+                                className="scale-90"
+                                onChange={(v) => updateVirtue(idx, 'value', v)}
+                              />
+                           </div>
+                        ))}
+                     </div>
+                  </SectionFrame>
+                </div>
               </div>
 
               {/* Right Column: Vitals */}
@@ -312,19 +444,51 @@ export default function CharacterSheet() {
                    </div>
                 </SectionFrame>
 
-                <SectionFrame title="Health" icon={Skull}>
+                <SectionFrame 
+                  title="Health" 
+                  icon={Skull}
+                  action={
+                    <button 
+                      onClick={() => setExtraOxBody(prev => Math.min(prev + 1, 5))}
+                      className="text-[10px] flex items-center gap-1 border border-secondary/50 px-2 py-0.5 rounded hover:bg-secondary/10 text-secondary transition-colors"
+                      title="Add Ox-Body Level (-0)"
+                    >
+                      <Plus className="w-3 h-3" /> OxBody
+                    </button>
+                  }
+                >
                    <div className="space-y-2">
-                      {HEALTH_LEVELS.map((level, i) => (
+                      {currentHealthLevels.map((level, i) => (
                          <div key={i} className="flex items-center justify-between bg-black/40 p-2 rounded border border-white/5">
-                            <span className="font-code text-red-400">{level}</span>
-                            <div className="flex gap-2">
-                              {/* For simplicity in mockup, one box per level, but Scion has varied boxes. We'll use one interactive box for now */}
-                              <HealthBox status={health[i]} onClick={() => toggleHealth(i)} />
-                            </div>
+                            <span className={cn(
+                              "font-code w-12 text-right",
+                              level === "Incap" ? "text-red-500 font-bold" : "text-foreground/70"
+                            )}>
+                              {level}
+                            </span>
+                            <div className="flex-1 ml-4 border-b border-dashed border-white/10 mx-2" />
+                            <HealthBox status={healthDamage[i]} onClick={() => toggleHealth(i)} />
+                            
+                            {/* Remove button for extra ox-body levels only */}
+                            {i < extraOxBody && (
+                              <button 
+                                onClick={() => {
+                                  setExtraOxBody(prev => prev - 1);
+                                  // Shift damage down
+                                  const newDamage = [...healthDamage];
+                                  newDamage.splice(i, 1);
+                                  newDamage.push(0); // Add empty at end
+                                  setHealthDamage(newDamage);
+                                }}
+                                className="ml-2 text-destructive hover:text-white"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </button>
+                            )}
                          </div>
                       ))}
                    </div>
-                   <div className="mt-4 text-[10px] text-muted-foreground flex justify-between font-code">
+                   <div className="mt-4 text-[10px] text-muted-foreground flex justify-between font-code px-2">
                       <span>/ Bashing</span>
                       <span>X Lethal</span>
                       <span>* Aggravated</span>
