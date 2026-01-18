@@ -133,7 +133,7 @@ export default function AdminDashboard() {
                 </div>
             </div>
             <div className="flex gap-4">
-              <Link href="/character-sheet">
+              <Link href="/character-sheet/victorious-sun">
                 <button className="flex items-center gap-2 text-[10px] font-mythic uppercase tracking-widest text-primary border border-primary/30 px-3 py-1 hover:bg-primary/10 transition-colors rounded-sm">
                   <LayoutGrid className="w-3 h-3" /> Character Sheet
                 </button>

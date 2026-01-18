@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "wouter";
 import { cn } from "@/lib/utils";
 import { Shield, Scroll, LayoutGrid, BookOpen, Crown, ChevronRight, User, Star, Plus } from "lucide-react";
-import { useCharacters } from "@/lib/characters-store";
+import { useCharacters, slugify } from "@/lib/characters-store";
 import textureBg from "@assets/generated_images/minimalist_gold_grid_background.png";
 import cornerOrnament from "@assets/generated_images/mythological_corner_ornament.png";
 import darkGoldTexture from "@assets/generated_images/dark_gold_texture_background.png";
@@ -70,7 +70,7 @@ export default function Home() {
                     <CarouselContent className="-ml-4">
                        {characters.map((char) => (
                           <CarouselItem key={char.id} className="pl-4 md:basis-1/2 lg:basis-1/3">
-                             <Link href={`/character-sheet/${char.id}`}>
+                             <Link href={`/character-sheet/${slugify(char.name)}`}>
                                 <div className="group/card relative h-48 bg-black/40 border border-white/10 hover:border-primary/50 transition-all duration-500 rounded-sm overflow-hidden cursor-pointer hover:shadow-[0_0_20px_rgba(212,175,55,0.15)] hover:-translate-y-1">
                                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity" />
                                    

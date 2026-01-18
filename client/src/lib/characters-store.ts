@@ -18,6 +18,18 @@ const DEFAULT_CHARACTERS: CharacterScroll[] = [
   { id: 3, name: "Shadow Walker", player: "Anubis", legend: 5, pantheon: "Netjer", status: "active", path: "" },
 ];
 
+// Helper to convert name to URL-friendly slug
+export const slugify = (text: string) => {
+  return text
+    .toString()
+    .toLowerCase()
+    .replace(/\s+/g, '-')           // Replace spaces with -
+    .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+    .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+    .replace(/^-+/, '')             // Trim - from start of text
+    .replace(/-+$/, '');            // Trim - from end of text
+};
+
 export const useCharacters = () => {
   const [characters, setCharacters] = useState<CharacterScroll[]>([]);
 
@@ -49,5 +61,9 @@ export const useCharacters = () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
   };
 
-  return { characters, addCharacter, deleteCharacter };
+  const getCharacterBySlug = (slug: string) => {
+    return characters.find(c => slugify(c.name) === slug);
+  };
+
+  return { characters, addCharacter, deleteCharacter, getCharacterBySlug };
 };

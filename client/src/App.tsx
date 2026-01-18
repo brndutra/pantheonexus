@@ -13,7 +13,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
-      <Route path="/character-sheet/:id" component={CharacterSheet} />
+      <Route path="/character-sheet/:slug" component={CharacterSheet} />
       {/* Fallback for legacy links or direct access */}
       <Route path="/character-sheet" component={CharacterSheet} />
       <Route path="/admin" component={AdminDashboard} />
