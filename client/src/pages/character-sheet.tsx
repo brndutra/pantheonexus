@@ -875,22 +875,86 @@ export default function CharacterSheet() {
                  </SectionFrame>
               </div>
 
-              {/* Combat & Feats + Abilities in same row */}
-              <div className="md:col-span-12 grid grid-cols-1 xl:grid-cols-2 gap-4">
-                 
-                 {/* Combat & Feats */}
-                 <SectionFrame title="Combat & Feats" subHeader="Tactical Data" className="p-4 h-full">
-                    <div className="flex flex-col gap-4">
+              {/* Abilities Section */}
+              <div className="md:col-span-12">
+                 <SectionFrame title="Abilities" subHeader="Skill Matrix" className="p-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 px-2">
+                       {Object.values(abilities).map(ability => (
+                          <div key={ability.name} className="flex flex-col border border-white/5 bg-black/40 p-3 rounded-sm group hover:border-primary/40 transition-all duration-300 hover:shadow-[0_0_15px_rgba(212,175,55,0.1)]">
+                             <div className="flex justify-between items-center mb-2">
+                                <span className="text-xs font-tech text-foreground/90 uppercase tracking-wider font-bold group-hover:text-primary transition-colors">{ability.name}</span>
+                                <div className="flex items-center gap-1 bg-black/40 rounded px-1 border border-white/5">
+                                  <button onClick={() => updateAbilityValue(ability.name, ability.value - 1)} className="text-muted-foreground hover:text-white px-1 hover:bg-white/10 rounded transition-colors">
+                                    <Minus className="w-3 h-3" />
+                                  </button>
+                                  <span className="font-mythic text-primary text-xl w-8 text-center drop-shadow-[0_0_5px_rgba(212,175,55,0.4)]">{ability.value}</span>
+                                  <button onClick={() => updateAbilityValue(ability.name, ability.value + 1)} className="text-muted-foreground hover:text-white px-1 hover:bg-white/10 rounded transition-colors">
+                                    <Plus className="w-3 h-3" />
+                                  </button>
+                                </div>
+                             </div>
+
+                             {/* Specialties List */}
+                             <div className="space-y-1 mt-1 pt-2 border-t border-white/5">
+                               <AnimatePresence>
+                               {ability.specialties.map((spec, idx) => (
+                                 <motion.div 
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: 'auto' }}
+                                    exit={{ opacity: 0, height: 0 }}
+                                    key={idx} 
+                                    className="flex items-center gap-2 mb-1"
+                                 >
+                                    <div className="w-1.5 h-1.5 bg-primary/40 rotate-45" />
+                                    <input 
+                                      className="bg-transparent text-[10px] font-tech text-muted-foreground focus:text-primary outline-none flex-1 min-w-0 border-b border-transparent focus:border-primary/30 transition-colors"
+                                      placeholder="Specialty..."
+                                      value={spec.name}
+                                      onChange={(e) => updateSpecialty(ability.name, idx, 'name', e.target.value)}
+                                    />
+                                    <input 
+                                      className="bg-transparent text-[10px] font-mythic text-primary w-6 text-center outline-none border-b border-white/10 focus:border-primary"
+                                      value={spec.value}
+                                      onChange={(e) => updateSpecialty(ability.name, idx, 'value', parseInt(e.target.value) || 0)}
+                                    />
+                                    <button onClick={() => removeSpecialty(ability.name, idx)} className="text-destructive opacity-30 hover:opacity-100 transition-opacity">
+                                      <Trash2 className="w-3 h-3" />
+                                    </button>
+                                 </motion.div>
+                               ))}
+                               </AnimatePresence>
+                               <button 
+                                onClick={() => addSpecialty(ability.name)}
+                                className="flex items-center gap-1 text-[9px] text-muted-foreground/40 hover:text-primary mt-2 w-full justify-end uppercase tracking-wider transition-colors"
+                               >
+                                 <Plus className="w-3 h-3" /> Add Specialty
+                               </button>
+                             </div>
+                          </div>
+                       ))}
+                    </div>
+                 </SectionFrame>
+              </div>
+
+              {/* Combat & Feats Section */}
+              <div className="md:col-span-12">
+                 <SectionFrame title="Combat & Feats" subHeader="Tactical Data" className="p-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                        
                        {/* Defensive Values Row */}
-                       <div className="grid grid-cols-3 gap-4">
-                          <div className="space-y-1">
-                             <span className="text-[8px] uppercase tracking-widest text-primary/50 text-center block">Dodge DV</span>
-                             <div className="bg-black/40 border border-primary/30 text-center font-code text-lg py-1 text-primary">{dodgeDV}</div>
-                          </div>
-                          <div className="space-y-1">
-                             <span className="text-[8px] uppercase tracking-widest text-primary/50 text-center block">Parry DV</span>
-                             <div className="bg-black/40 border border-primary/30 text-center font-code text-lg py-1 text-primary">{parryDV}</div>
+                       <div className="space-y-4">
+                          <h4 className="text-[10px] uppercase tracking-[0.2em] font-mythic text-primary/70 mb-2 border-b border-primary/20 pb-2 flex items-center justify-between">
+                             Defense <Shield className="w-3 h-3 text-primary/40" />
+                          </h4>
+                          <div className="grid grid-cols-2 gap-4">
+                             <div className="space-y-1">
+                                <span className="text-[8px] uppercase tracking-widest text-primary/50 text-center block">Dodge DV</span>
+                                <div className="bg-black/40 border border-primary/30 text-center font-code text-lg py-1 text-primary">{dodgeDV}</div>
+                             </div>
+                             <div className="space-y-1">
+                                <span className="text-[8px] uppercase tracking-widest text-primary/50 text-center block">Parry DV</span>
+                                <div className="bg-black/40 border border-primary/30 text-center font-code text-lg py-1 text-primary">{parryDV}</div>
+                             </div>
                           </div>
                           <div className="space-y-1">
                              <span className="text-[8px] uppercase tracking-widest text-primary/50 text-center block">Join Battle</span>
@@ -899,8 +963,10 @@ export default function CharacterSheet() {
                        </div>
 
                        {/* Soak Row */}
-                       <div className="space-y-1">
-                          <h4 className="text-[9px] uppercase tracking-[0.2em] font-mythic text-primary/70 border-b border-primary/20 pb-1">Resilience</h4>
+                       <div className="space-y-4">
+                          <h4 className="text-[9px] uppercase tracking-[0.2em] font-mythic text-primary/70 mb-2 border-b border-primary/20 pb-2 flex items-center justify-between">
+                             Resilience <Hexagon className="w-3 h-3 text-primary/40" />
+                          </h4>
                           <div className="grid grid-cols-3 gap-2">
                              <div className="text-center bg-black/20 p-1 border border-white/5 rounded-sm">
                                 <span className="block text-[8px] text-muted-foreground uppercase">Bashing</span>
@@ -918,40 +984,17 @@ export default function CharacterSheet() {
                        </div>
 
                        {/* Movement Grid */}
-                       <div className="space-y-1">
-                          <h4 className="text-[9px] uppercase tracking-[0.2em] font-mythic text-primary/70 border-b border-primary/20 pb-1">Movement</h4>
-                          <div className="grid grid-cols-4 gap-2 text-[9px] font-code">
+                       <div className="space-y-4">
+                          <h4 className="text-[9px] uppercase tracking-[0.2em] font-mythic text-primary/70 mb-2 border-b border-primary/20 pb-2 flex items-center justify-between">
+                             Movement <Activity className="w-3 h-3 text-primary/40" />
+                          </h4>
+                          <div className="grid grid-cols-2 gap-4 text-[9px] font-code">
                              <div className="flex flex-col"><span className="text-muted-foreground">Move</span> <span className="text-foreground">{move} yds</span></div>
                              <div className="flex flex-col"><span className="text-muted-foreground">Dash</span> <span className="text-foreground">{dash} yds</span></div>
                              <div className="flex flex-col"><span className="text-muted-foreground">Jump V</span> <span className="text-foreground">{jumpVert} yds</span></div>
                              <div className="flex flex-col"><span className="text-muted-foreground">Jump H</span> <span className="text-foreground">{jumpHoriz} yds</span></div>
                           </div>
                        </div>
-                    </div>
-                 </SectionFrame>
-
-                 {/* Abilities Compact */}
-                 <SectionFrame title="Abilities" subHeader="Skill Matrix" className="p-4 h-full">
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 overflow-y-auto max-h-[300px] scion-scrollbar pr-2">
-                       {Object.values(abilities).map(ability => (
-                          <div key={ability.name} className="flex items-center justify-between border-b border-white/5 pb-1 group hover:border-primary/30 transition-colors">
-                             <div className="flex flex-col min-w-0">
-                                <span className="text-[10px] font-tech text-foreground/90 uppercase tracking-wider truncate group-hover:text-primary transition-colors">{ability.name}</span>
-                                {ability.specialties.length > 0 && (
-                                   <span className="text-[8px] text-primary/60 truncate">{ability.specialties.map(s => s.name).join(", ")}</span>
-                                )}
-                             </div>
-                             <div className="flex items-center gap-1">
-                                <button onClick={() => updateAbilityValue(ability.name, ability.value - 1)} className="text-muted-foreground hover:text-white hover:bg-white/10 rounded px-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                                  <Minus className="w-2 h-2" />
-                                </button>
-                                <span className="font-mythic text-primary text-sm w-4 text-center">{ability.value}</span>
-                                <button onClick={() => updateAbilityValue(ability.name, ability.value + 1)} className="text-muted-foreground hover:text-white hover:bg-white/10 rounded px-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                                  <Plus className="w-2 h-2" />
-                                </button>
-                             </div>
-                          </div>
-                       ))}
                     </div>
                  </SectionFrame>
               </div>
