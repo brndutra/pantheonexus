@@ -6,23 +6,24 @@ import { useArticles } from "@/lib/articles-store";
 import { useCharacters } from "@/lib/characters-store";
 import textureBg from "@assets/generated_images/minimalist_gold_grid_background.png";
 import cornerOrnament from "@assets/generated_images/tech_mythic_corner_ornament.png";
-import darkGoldTexture from "@assets/generated_images/dark_gold_texture_background.png";
+import darkGoldTexture from "@assets/generated_images/digital_hieroglyph_dark_background.png";
+import artNouveauFrame from "@assets/generated_images/cyber_greek_ornate_frame.png";
 
 // Reusing style components for consistency
 const SectionFrame = ({ children, title, className, subHeader }: { children: React.ReactNode, title: string, className?: string, subHeader?: string }) => (
-  <div className={cn("border-2 border-primary/20 rounded-sm p-6 relative bg-black/40 backdrop-blur-md shadow-2xl overflow-hidden h-full", className)}>
-    <img src={cornerOrnament} className="absolute top-0 left-0 w-16 h-16 opacity-30 rotate-0 pointer-events-none" alt="" />
-    <img src={cornerOrnament} className="absolute top-0 right-0 w-16 h-16 opacity-30 rotate-90 pointer-events-none" alt="" />
-    <img src={cornerOrnament} className="absolute bottom-0 right-0 w-16 h-16 opacity-30 rotate-180 pointer-events-none" alt="" />
-    <img src={cornerOrnament} className="absolute bottom-0 left-0 w-16 h-16 opacity-30 -rotate-90 pointer-events-none" alt="" />
+  <div className={cn("p-8 relative bg-black/40 backdrop-blur-md shadow-2xl overflow-hidden h-full group", className)}>
+    {/* Full Frame Border */}
+    <div className="absolute inset-0 z-0 pointer-events-none opacity-60 group-hover:opacity-100 transition-opacity">
+        <img src={artNouveauFrame} className="w-full h-full object-fill" alt="" />
+    </div>
 
-    <div className="flex justify-between items-start mb-6 border-b border-primary/30 pb-2 relative z-10">
+    <div className="flex justify-between items-start mb-6 border-b border-primary/30 pb-2 relative z-10 px-2">
        <div>
           <h3 className="font-mythic text-primary text-xl tracking-[0.15em] uppercase drop-shadow-md">{title}</h3>
           {subHeader && <p className="text-[10px] text-muted-foreground uppercase tracking-[0.2em] mt-1 font-tech">{subHeader}</p>}
        </div>
     </div>
-    <div className="relative z-10">
+    <div className="relative z-10 px-2">
       {children}
     </div>
   </div>
