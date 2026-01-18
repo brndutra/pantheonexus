@@ -497,7 +497,7 @@ export default function CharacterSheet() {
   // Available virtues from database for autocomplete
   const [availableVirtues, setAvailableVirtues] = useState<{id: string, name: string, description?: string}[]>([]);
   const [virtueSearchOpen, setVirtueSearchOpen] = useState<number | null>(null);
-  const [availableNatures, setAvailableNatures] = useState<{id: string, name: string, description?: string}[]>([]);
+  const [availableNatures, setAvailableNatures] = useState<{id?: string, nome: string, name?: string, description?: string, definition?: string, gatilho_forca_vontade?: string}[]>([]);
   const [natureSearchOpen, setNatureSearchOpen] = useState(false);
   
   // Fetch available virtues from API
@@ -571,6 +571,21 @@ export default function CharacterSheet() {
   const [innateOffensivesLoaded, setInnateOffensivesLoaded] = useState(false);
   const [offensiveSearch, setOffensiveSearch] = useState("");
   const [showOffensiveDropdown, setShowOffensiveDropdown] = useState(false);
+  const [showCustomOffensiveForm, setShowCustomOffensiveForm] = useState(false);
+  const [customOffensive, setCustomOffensive] = useState<Partial<Weapon>>({
+    name: '',
+    category: 'custom',
+    accuracy: 0,
+    attackAttribute: 'Dexterity',
+    attackAbility: 'Melee',
+    damage: '0L',
+    damageAttribute: 'Strength',
+    defense: 0,
+    range: null,
+    clip: null,
+    speed: 5,
+    tags: null
+  });
 
   const [activeTitleIndex, setActiveTitleIndex] = useState<number | null>(null);
 
@@ -783,13 +798,101 @@ export default function CharacterSheet() {
       speed: offensive.speed,
       tags: offensive.tags,
     };
-    setWeapons([...weapons, newWeapon]);
+    const newWeapons = [...weapons, newWeapon];
+    setWeapons(newWeapons);
+    saveOffensivesToScionsight(newWeapons);
     setOffensiveSearch("");
     setShowOffensiveDropdown(false);
   };
   
   const removeWeapon = (index: number) => {
-    setWeapons(weapons.filter((_, i) => i !== index));
+    const newWeapons = weapons.filter((_, i) => i !== index);
+    setWeapons(newWeapons);
+    // Save to scionsight
+    if (loadedCharacter?.id) {
+      fetch(`/api/scionsight/${loadedCharacter.id}/offensives`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ offensives: newWeapons })
+      });
+    }
+  };
+  
+  const saveOffensivesToScionsight = (weaponsList: Weapon[]) => {
+    if (loadedCharacter?.id) {
+      fetch(`/api/scionsight/${loadedCharacter.id}/offensives`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ offensives: weaponsList })
+      });
+    }
+  };
+  
+  const createCustomOffensive = async () => {
+    if (!customOffensive.name?.trim()) return;
+    
+    try {
+      // Save to offensives_custom table
+      const response = await fetch('/api/offensives-custom', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          offensive_name: customOffensive.name,
+          category: customOffensive.category || 'custom',
+          accuracy: customOffensive.accuracy || 0,
+          attack_attribute: customOffensive.attackAttribute || 'Dexterity',
+          attack_ability: customOffensive.attackAbility || 'Melee',
+          damage: customOffensive.damage || '0L',
+          damage_attribute: customOffensive.damageAttribute || 'Strength',
+          defense: customOffensive.defense || 0,
+          range: customOffensive.range,
+          clip: customOffensive.clip,
+          speed: customOffensive.speed || 5,
+          tags: customOffensive.tags,
+          scion_id: loadedCharacter?.id
+        })
+      });
+      
+      if (response.ok) {
+        // Add to local weapons list
+        const newWeapon: Weapon = {
+          name: customOffensive.name || '',
+          category: customOffensive.category || 'custom',
+          accuracy: customOffensive.accuracy || 0,
+          attackAttribute: customOffensive.attackAttribute || 'Dexterity',
+          attackAbility: customOffensive.attackAbility || 'Melee',
+          damage: customOffensive.damage || '0L',
+          damageAttribute: customOffensive.damageAttribute || 'Strength',
+          defense: customOffensive.defense || 0,
+          range: customOffensive.range || null,
+          clip: customOffensive.clip || null,
+          speed: customOffensive.speed || 5,
+          tags: customOffensive.tags || null
+        };
+        const newWeapons = [...weapons, newWeapon];
+        setWeapons(newWeapons);
+        saveOffensivesToScionsight(newWeapons);
+        
+        // Reset form
+        setCustomOffensive({
+          name: '',
+          category: 'custom',
+          accuracy: 0,
+          attackAttribute: 'Dexterity',
+          attackAbility: 'Melee',
+          damage: '0L',
+          damageAttribute: 'Strength',
+          defense: 0,
+          range: null,
+          clip: null,
+          speed: 5,
+          tags: null
+        });
+        setShowCustomOffensiveForm(false);
+      }
+    } catch (error) {
+      console.error('Failed to create custom offensive:', error);
+    }
   };
   
   // Filter offensives based on search (exclude innate since they're auto-added)
@@ -1740,10 +1843,14 @@ export default function CharacterSheet() {
                                     />
                                     {/* Nature Tooltip on hover */}
                                     {nature && !editingVirtues && (() => {
-                                        const foundNature = availableNatures.find(n => n.nome?.toLowerCase() === nature.toLowerCase());
-                                        return foundNature?.description ? (
+                                        const natureStr = String(nature || '');
+                                        const foundNature = availableNatures.find(n => n.nome?.toLowerCase() === natureStr.toLowerCase());
+                                        return foundNature?.definition ? (
                                             <div className="absolute left-0 top-full mt-2 p-2 bg-black/95 border border-primary/30 rounded-sm text-[10px] font-tech text-primary/70 max-w-[250px] opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none">
-                                                {foundNature.description}
+                                                <p>{foundNature.definition}</p>
+                                                {foundNature.gatilho_forca_vontade && (
+                                                    <p className="mt-1 text-accent-foreground/70">Gatilho: {foundNature.gatilho_forca_vontade}</p>
+                                                )}
                                             </div>
                                         ) : null;
                                     })()}
@@ -1751,21 +1858,21 @@ export default function CharacterSheet() {
                                     {natureSearchOpen && editingVirtues && (
                                         <div className="absolute top-full left-0 right-0 mt-1 bg-black/95 border border-primary/30 rounded-sm max-h-40 overflow-y-auto z-50">
                                             {availableNatures
-                                                .filter(n => n.name.toLowerCase().includes(nature.toLowerCase()))
+                                                .filter(n => n.nome?.toLowerCase().includes(String(nature || '').toLowerCase()))
                                                 .slice(0, 10)
-                                                .map(n => (
+                                                .map((n, idx) => (
                                                     <div
-                                                        key={n.id}
+                                                        key={n.nome + idx}
                                                         onClick={() => {
-                                                            setNature(n.name);
+                                                            setNature(n.nome);
                                                             setNatureSearchOpen(false);
                                                         }}
                                                         className="w-full text-left px-2 py-1.5 text-xs font-tech text-primary/80 hover:bg-primary/20 hover:text-primary transition-colors cursor-pointer"
-                                                        title={n.description || ''}
+                                                        title={n.definition || ''}
                                                     >
-                                                        <span className="block">{n.name}</span>
-                                                        {n.description && (
-                                                            <span className="block text-[9px] text-muted-foreground truncate">{n.description}</span>
+                                                        <span className="block">{n.nome}</span>
+                                                        {n.definition && (
+                                                            <span className="block text-[9px] text-muted-foreground truncate">{n.definition}</span>
                                                         )}
                                                     </div>
                                                 ))
@@ -1775,6 +1882,80 @@ export default function CharacterSheet() {
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    
+                    {/* Virtues Radar Chart */}
+                    <div className="mt-3 pt-3 border-t border-primary/15">
+                        <div className="flex justify-center">
+                            <ResponsiveContainer width="100%" height={180}>
+                                <RadarChart 
+                                    data={virtues.filter(v => v.name).map(v => ({
+                                        virtue: v.name.substring(0, 4).toUpperCase(),
+                                        value: v.value,
+                                        fullMark: 5
+                                    }))}
+                                    margin={{ top: 10, right: 30, bottom: 10, left: 30 }}
+                                >
+                                    <PolarGrid stroke="hsl(var(--primary) / 0.2)" />
+                                    <PolarAngleAxis 
+                                        dataKey="virtue" 
+                                        tick={{ 
+                                            fill: 'hsl(var(--primary))', 
+                                            fontSize: 9, 
+                                            fontFamily: 'Orbitron' 
+                                        }}
+                                    />
+                                    <PolarRadiusAxis 
+                                        angle={90} 
+                                        domain={[0, 5]} 
+                                        tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 8 }}
+                                        tickCount={6}
+                                    />
+                                    <RechartsRadar
+                                        name="Virtudes"
+                                        dataKey="value"
+                                        stroke="hsl(var(--highlight-purple))"
+                                        fill="hsl(var(--highlight-purple))"
+                                        fillOpacity={0.3}
+                                        strokeWidth={2}
+                                    />
+                                </RadarChart>
+                            </ResponsiveContainer>
+                        </div>
+                        <div className="flex flex-wrap justify-center gap-2 mt-2">
+                            {virtues.filter(v => v.name).map((v, i) => (
+                                <div key={i} className="flex items-center gap-1 text-[8px] font-tech text-primary/70 bg-black/30 px-1.5 py-0.5 rounded-sm border border-primary/10">
+                                    <span className="text-[hsl(var(--highlight-purple))]">{v.name}</span>
+                                    <span className="text-primary font-bold">{v.value}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    
+                    {/* Willpower Integrity - Moved here below Virtues */}
+                    <div className="mt-3 pt-3 border-t border-primary/15 space-y-2">
+                         <div className="flex justify-between items-center text-xs font-mythic uppercase text-primary/70">
+                             <span>Willpower Integrity</span>
+                             <span>{willpowerCurrent} / {willpower}</span>
+                         </div>
+                         <div className="p-2 bg-black/40 border border-primary/20 rounded-sm">
+                             <div className="flex justify-between gap-1 mb-2">
+                                <DotRating value={willpower} max={10} onChange={setWillpower} iconClassName="w-2 h-2" activeClassName="bg-primary" />
+                             </div>
+                             <div className="flex gap-1 justify-between">
+                                 {Array.from({length: 10}).map((_, i) => (
+                                     <button 
+                                        key={i} 
+                                        onClick={() => setWillpowerCurrent(i < willpowerCurrent ? i : i + 1)}
+                                        className={cn(
+                                            "h-1.5 w-full rounded-sm transition-all",
+                                            i < willpowerCurrent ? "bg-primary shadow-[0_0_5px_gold]" : "bg-primary/10"
+                                        )} 
+                                        disabled={i >= willpower}
+                                     />
+                                 ))}
+                             </div>
+                         </div>
                     </div>
                 </MythicHUDFrame>
 
@@ -1848,32 +2029,6 @@ export default function CharacterSheet() {
                                     </div>
                                 </div>
                             </div>
-                        </div>
-
-                        {/* Willpower */}
-                        <div className="space-y-2">
-                             <div className="flex justify-between items-center text-xs font-mythic uppercase text-primary/70">
-                                 <span>Willpower Integrity</span>
-                                 <span>{willpowerCurrent} / {willpower}</span>
-                             </div>
-                             <div className="p-2 bg-black/40 border border-primary/20 rounded-sm">
-                                 <div className="flex justify-between gap-1 mb-2">
-                                    <DotRating value={willpower} max={10} onChange={setWillpower} iconClassName="w-2 h-2" activeClassName="bg-primary" />
-                                 </div>
-                                 <div className="flex gap-1 justify-between">
-                                     {Array.from({length: 10}).map((_, i) => (
-                                         <button 
-                                            key={i} 
-                                            onClick={() => setWillpowerCurrent(i < willpowerCurrent ? i : i + 1)}
-                                            className={cn(
-                                                "h-1.5 w-full rounded-sm transition-all",
-                                                i < willpowerCurrent ? "bg-primary shadow-[0_0_5px_gold]" : "bg-primary/10"
-                                            )} 
-                                            disabled={i >= willpower}
-                                         />
-                                     ))}
-                                 </div>
-                             </div>
                         </div>
 
                         {/* Health Track */}
@@ -1978,7 +2133,125 @@ export default function CharacterSheet() {
                             <span className="px-1 py-0.5 bg-primary/10 rounded">U:{availableOffensives.unarmed.length}</span>
                             <span className="px-1 py-0.5 bg-primary/10 rounded">S:{availableOffensives.special.length}</span>
                         </div>
+                        {/* Add Custom Button */}
+                        <button 
+                            onClick={() => setShowCustomOffensiveForm(!showCustomOffensiveForm)}
+                            className="px-2 py-1 bg-accent/20 border border-accent/40 rounded text-[8px] text-accent-foreground hover:bg-accent/30 transition-colors shrink-0"
+                        >
+                            <Plus className="w-3 h-3 inline mr-1" />
+                            Custom
+                        </button>
                     </div>
+                    
+                    {/* Custom Offensive Form */}
+                    {showCustomOffensiveForm && (
+                        <div className="p-3 bg-black/60 border border-accent/30 rounded-sm space-y-2">
+                            <h6 className="text-[9px] uppercase tracking-wider text-accent-foreground font-bold mb-2">Criar Offensive Personalizado</h6>
+                            <div className="grid grid-cols-4 gap-2">
+                                <input 
+                                    value={customOffensive.name || ''}
+                                    onChange={e => setCustomOffensive({...customOffensive, name: e.target.value})}
+                                    placeholder="Nome da arma"
+                                    className="col-span-2 bg-black/40 border border-primary/20 text-[9px] px-2 py-1 rounded-sm text-primary placeholder:text-primary/30 outline-none"
+                                />
+                                <select 
+                                    value={customOffensive.category || 'custom'}
+                                    onChange={e => setCustomOffensive({...customOffensive, category: e.target.value})}
+                                    className="bg-black/40 border border-primary/20 text-[9px] px-1 py-1 rounded-sm text-primary outline-none"
+                                >
+                                    <option value="custom">Custom</option>
+                                    <option value="melee">Melee</option>
+                                    <option value="ranged">Ranged</option>
+                                    <option value="special">Special</option>
+                                </select>
+                                <input 
+                                    type="number"
+                                    value={customOffensive.accuracy || 0}
+                                    onChange={e => setCustomOffensive({...customOffensive, accuracy: parseInt(e.target.value) || 0})}
+                                    placeholder="Acc"
+                                    className="bg-black/40 border border-primary/20 text-[9px] px-2 py-1 rounded-sm text-primary placeholder:text-primary/30 outline-none text-center"
+                                />
+                            </div>
+                            <div className="grid grid-cols-4 gap-2">
+                                <select 
+                                    value={customOffensive.attackAttribute || 'Dexterity'}
+                                    onChange={e => setCustomOffensive({...customOffensive, attackAttribute: e.target.value})}
+                                    className="bg-black/40 border border-primary/20 text-[8px] px-1 py-1 rounded-sm text-cyan-400 outline-none"
+                                >
+                                    <option value="Strength">Strength</option>
+                                    <option value="Dexterity">Dexterity</option>
+                                    <option value="Stamina">Stamina</option>
+                                </select>
+                                <select 
+                                    value={customOffensive.attackAbility || 'Melee'}
+                                    onChange={e => setCustomOffensive({...customOffensive, attackAbility: e.target.value})}
+                                    className="bg-black/40 border border-primary/20 text-[8px] px-1 py-1 rounded-sm text-cyan-400 outline-none"
+                                >
+                                    <option value="Melee">Melee</option>
+                                    <option value="Brawl">Brawl</option>
+                                    <option value="Marksmanship">Marksmanship</option>
+                                    <option value="Thrown">Thrown</option>
+                                </select>
+                                <input 
+                                    value={customOffensive.damage || '0L'}
+                                    onChange={e => setCustomOffensive({...customOffensive, damage: e.target.value})}
+                                    placeholder="Dmg (ex: 4L)"
+                                    className="bg-black/40 border border-primary/20 text-[9px] px-2 py-1 rounded-sm text-red-400 placeholder:text-primary/30 outline-none text-center"
+                                />
+                                <select 
+                                    value={customOffensive.damageAttribute || 'Strength'}
+                                    onChange={e => setCustomOffensive({...customOffensive, damageAttribute: e.target.value})}
+                                    className="bg-black/40 border border-primary/20 text-[8px] px-1 py-1 rounded-sm text-orange-400 outline-none"
+                                >
+                                    <option value="Strength">Strength</option>
+                                    <option value="Dexterity">Dexterity</option>
+                                    <option value="None">None</option>
+                                </select>
+                            </div>
+                            <div className="grid grid-cols-5 gap-2">
+                                <input 
+                                    type="number"
+                                    value={customOffensive.defense || 0}
+                                    onChange={e => setCustomOffensive({...customOffensive, defense: parseInt(e.target.value) || 0})}
+                                    placeholder="Def"
+                                    className="bg-black/40 border border-primary/20 text-[9px] px-2 py-1 rounded-sm text-blue-400 placeholder:text-primary/30 outline-none text-center"
+                                />
+                                <input 
+                                    type="number"
+                                    value={customOffensive.speed || 5}
+                                    onChange={e => setCustomOffensive({...customOffensive, speed: parseInt(e.target.value) || 5})}
+                                    placeholder="Spd"
+                                    className="bg-black/40 border border-primary/20 text-[9px] px-2 py-1 rounded-sm text-primary placeholder:text-primary/30 outline-none text-center"
+                                />
+                                <input 
+                                    value={customOffensive.range || ''}
+                                    onChange={e => setCustomOffensive({...customOffensive, range: e.target.value || null})}
+                                    placeholder="Range"
+                                    className="bg-black/40 border border-primary/20 text-[9px] px-2 py-1 rounded-sm text-primary placeholder:text-primary/30 outline-none text-center"
+                                />
+                                <input 
+                                    value={customOffensive.tags || ''}
+                                    onChange={e => setCustomOffensive({...customOffensive, tags: e.target.value || null})}
+                                    placeholder="Tags"
+                                    className="col-span-2 bg-black/40 border border-primary/20 text-[9px] px-2 py-1 rounded-sm text-primary placeholder:text-primary/30 outline-none"
+                                />
+                            </div>
+                            <div className="flex justify-end gap-2 pt-1">
+                                <button 
+                                    onClick={() => setShowCustomOffensiveForm(false)}
+                                    className="px-3 py-1 text-[9px] text-muted-foreground hover:text-primary transition-colors"
+                                >
+                                    Cancelar
+                                </button>
+                                <button 
+                                    onClick={createCustomOffensive}
+                                    className="px-3 py-1 bg-accent/30 border border-accent/50 rounded text-[9px] text-accent-foreground hover:bg-accent/40 transition-colors"
+                                >
+                                    Criar & Adicionar
+                                </button>
+                            </div>
+                        </div>
+                    )}
 
                     {/* Weapons Table Header - 11 columns */}
                     <div className="grid grid-cols-[1.5fr_0.6fr_0.6fr_0.6fr_0.5fr_0.5fr_0.5fr_0.6fr_0.6fr_0.8fr_auto] gap-0.5 text-[6px] uppercase tracking-widest text-muted-foreground border-b border-primary/10 pb-1 bg-primary/5 p-1 rounded-t-sm">

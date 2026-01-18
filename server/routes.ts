@@ -624,6 +624,74 @@ export async function registerRoutes(
     }
   });
   
+  // Update scionsight offensives (selected weapons array)
+  app.patch("/api/scionsight/:scionId/offensives", async (req, res) => {
+    try {
+      const { scionId } = req.params;
+      const { offensives } = req.body;
+      
+      const { data, error } = await supabase
+        .from('scionsight')
+        .update({ offensives })
+        .eq('scion_id', scionId)
+        .select()
+        .single();
+      
+      if (error) throw error;
+      res.json(data);
+    } catch (error) {
+      console.error("Error updating offensives:", error);
+      res.status(500).json({ error: "Failed to update offensives" });
+    }
+  });
+  
+  // CUSTOM OFFENSIVES - Table for personalized weapons
+  app.get("/api/offensives-custom", async (req, res) => {
+    try {
+      const { data, error } = await supabase
+        .from('offensives_custom')
+        .select('*');
+      
+      if (error) throw error;
+      res.json(data || []);
+    } catch (error) {
+      console.error("Error fetching custom offensives:", error);
+      res.status(500).json({ error: "Failed to fetch custom offensives" });
+    }
+  });
+  
+  app.post("/api/offensives-custom", async (req, res) => {
+    try {
+      const { offensive_name, category, accuracy, attack_attribute, attack_ability, damage, damage_attribute, defense, range, clip, speed, tags, scion_id } = req.body;
+      
+      const { data, error } = await supabase
+        .from('offensives_custom')
+        .insert({
+          offensive_name,
+          category: category || 'custom',
+          accuracy: accuracy || 0,
+          attack_attribute: attack_attribute || 'Dexterity',
+          attack_ability: attack_ability || 'Melee',
+          damage: damage || '0L',
+          damage_attribute: damage_attribute || 'Strength',
+          defense: defense || 0,
+          range: range || null,
+          clip: clip || null,
+          speed: speed || 5,
+          tags: tags || null,
+          scion_id: scion_id || null
+        })
+        .select()
+        .single();
+      
+      if (error) throw error;
+      res.json(data);
+    } catch (error) {
+      console.error("Error creating custom offensive:", error);
+      res.status(500).json({ error: "Failed to create custom offensive" });
+    }
+  });
+  
   // KNACKS - Fetch from Supabase knacks table
   app.get("/api/supabase-knacks", async (req, res) => {
     try {
