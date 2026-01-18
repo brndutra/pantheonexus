@@ -1312,17 +1312,17 @@ export default function CharacterSheet() {
                     <div className="flex-1 overflow-y-auto pr-2 scion-scrollbar custom-scroll-area">
                         <div className="grid grid-cols-1 gap-1 h-full content-start">
                             {ABILITIES_LIST.map((abilityName) => {
-                                const ability = abilities[abilityName];
+                                const ability = abilities[abilityName] || { value: 0, specialties: [] };
                                 const isFavored = false; // Todo: Add favored logic
                                 return (
                                     <div key={abilityName} className={cn(
                                         "flex items-center justify-between p-2 hover:bg-primary/5 rounded-sm transition-colors border border-transparent hover:border-primary/10 group",
-                                        ability.value > 0 ? "opacity-100" : "opacity-60 hover:opacity-100"
+                                        (ability.value || 0) > 0 ? "opacity-100" : "opacity-60 hover:opacity-100"
                                     )}>
                                         <div className="flex items-center gap-2">
                                             <span className={cn(
                                                 "text-xs uppercase tracking-wider font-tech transition-colors",
-                                                ability.value > 0 ? "text-primary" : "text-muted-foreground group-hover:text-primary/70"
+                                                (ability.value || 0) > 0 ? "text-primary" : "text-muted-foreground group-hover:text-primary/70"
                                             )}>
                                                 {abilityName}
                                             </span>
@@ -1337,16 +1337,16 @@ export default function CharacterSheet() {
                                         
                                         <div className="flex flex-col items-end gap-1">
                                             <DotRating 
-                                                value={ability.value} 
+                                                value={ability.value || 0} 
                                                 max={5} 
                                                 onChange={(v) => updateAbilityValue(abilityName, v)}
                                                 iconClassName="w-1.5 h-1.5"
                                                 activeClassName="bg-primary"
                                             />
                                             {/* Specialties List */}
-                                            {ability.specialties.length > 0 && (
+                                            {(ability.specialties || []).length > 0 && (
                                                 <div className="flex flex-col gap-1 mt-1 items-end">
-                                                    {ability.specialties.map((spec, sIdx) => (
+                                                    {(ability.specialties || []).map((spec, sIdx) => (
                                                         <div key={sIdx} className="flex items-center gap-1">
                                                             <input 
                                                                 value={spec.name}
