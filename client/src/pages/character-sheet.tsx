@@ -878,24 +878,24 @@ export default function CharacterSheet() {
               {/* Abilities Section */}
               <div className="md:col-span-12">
                  <SectionFrame title="Abilities" subHeader="Skill Matrix" className="p-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 px-2">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 px-2">
                        {Object.values(abilities).map(ability => (
-                          <div key={ability.name} className="flex flex-col border border-white/5 bg-black/40 p-3 rounded-sm group hover:border-primary/40 transition-all duration-300 hover:shadow-[0_0_15px_rgba(212,175,55,0.1)]">
-                             <div className="flex justify-between items-center mb-2">
-                                <span className="text-xs font-tech text-foreground/90 uppercase tracking-wider font-bold group-hover:text-primary transition-colors">{ability.name}</span>
-                                <div className="flex items-center gap-1 bg-black/40 rounded px-1 border border-white/5">
-                                  <button onClick={() => updateAbilityValue(ability.name, ability.value - 1)} className="text-muted-foreground hover:text-white px-1 hover:bg-white/10 rounded transition-colors">
-                                    <Minus className="w-3 h-3" />
+                          <div key={ability.name} className="flex flex-col border border-white/5 bg-black/40 p-2 rounded-sm group hover:border-primary/40 transition-all duration-300 hover:shadow-[0_0_15px_rgba(212,175,55,0.1)]">
+                             <div className="flex justify-between items-center mb-1">
+                                <span className="text-[10px] font-tech text-foreground/90 uppercase tracking-wider font-bold group-hover:text-primary transition-colors truncate mr-1" title={ability.name}>{ability.name}</span>
+                                <div className="flex items-center gap-0.5 bg-black/40 rounded px-1 border border-white/5">
+                                  <button onClick={() => updateAbilityValue(ability.name, ability.value - 1)} className="text-muted-foreground hover:text-white px-0.5 hover:bg-white/10 rounded transition-colors">
+                                    <Minus className="w-2 h-2" />
                                   </button>
-                                  <span className="font-mythic text-primary text-xl w-8 text-center drop-shadow-[0_0_5px_rgba(212,175,55,0.4)]">{ability.value}</span>
-                                  <button onClick={() => updateAbilityValue(ability.name, ability.value + 1)} className="text-muted-foreground hover:text-white px-1 hover:bg-white/10 rounded transition-colors">
-                                    <Plus className="w-3 h-3" />
+                                  <span className="font-mythic text-primary text-sm w-4 text-center">{ability.value}</span>
+                                  <button onClick={() => updateAbilityValue(ability.name, ability.value + 1)} className="text-muted-foreground hover:text-white px-0.5 hover:bg-white/10 rounded transition-colors">
+                                    <Plus className="w-2 h-2" />
                                   </button>
                                 </div>
                              </div>
 
                              {/* Specialties List */}
-                             <div className="space-y-1 mt-1 pt-2 border-t border-white/5">
+                             <div className="space-y-0.5 mt-1 pt-1 border-t border-white/5">
                                <AnimatePresence>
                                {ability.specialties.map((spec, idx) => (
                                  <motion.div 
@@ -903,31 +903,31 @@ export default function CharacterSheet() {
                                     animate={{ opacity: 1, height: 'auto' }}
                                     exit={{ opacity: 0, height: 0 }}
                                     key={idx} 
-                                    className="flex items-center gap-2 mb-1"
+                                    className="flex items-center gap-1 mb-0.5"
                                  >
-                                    <div className="w-1.5 h-1.5 bg-primary/40 rotate-45" />
+                                    <div className="w-1 h-1 bg-primary/40 rotate-45" />
                                     <input 
-                                      className="bg-transparent text-[10px] font-tech text-muted-foreground focus:text-primary outline-none flex-1 min-w-0 border-b border-transparent focus:border-primary/30 transition-colors"
-                                      placeholder="Specialty..."
+                                      className="bg-transparent text-[9px] font-tech text-muted-foreground focus:text-primary outline-none flex-1 min-w-0 border-b border-transparent focus:border-primary/30 transition-colors py-0"
+                                      placeholder="Spec..."
                                       value={spec.name}
                                       onChange={(e) => updateSpecialty(ability.name, idx, 'name', e.target.value)}
                                     />
                                     <input 
-                                      className="bg-transparent text-[10px] font-mythic text-primary w-6 text-center outline-none border-b border-white/10 focus:border-primary"
+                                      className="bg-transparent text-[9px] font-mythic text-primary w-4 text-center outline-none border-b border-white/10 focus:border-primary py-0"
                                       value={spec.value}
                                       onChange={(e) => updateSpecialty(ability.name, idx, 'value', parseInt(e.target.value) || 0)}
                                     />
                                     <button onClick={() => removeSpecialty(ability.name, idx)} className="text-destructive opacity-30 hover:opacity-100 transition-opacity">
-                                      <Trash2 className="w-3 h-3" />
+                                      <Trash2 className="w-2 h-2" />
                                     </button>
                                  </motion.div>
                                ))}
                                </AnimatePresence>
                                <button 
                                 onClick={() => addSpecialty(ability.name)}
-                                className="flex items-center gap-1 text-[9px] text-muted-foreground/40 hover:text-primary mt-2 w-full justify-end uppercase tracking-wider transition-colors"
+                                className="flex items-center gap-1 text-[8px] text-muted-foreground/40 hover:text-primary mt-1 w-full justify-end uppercase tracking-wider transition-colors"
                                >
-                                 <Plus className="w-3 h-3" /> Add Specialty
+                                 <Plus className="w-2 h-2" />
                                </button>
                              </div>
                           </div>
@@ -1133,66 +1133,6 @@ export default function CharacterSheet() {
                  </SectionFrame>
               </div>
 
-              {/* Abilities Row */}
-              <div className="md:col-span-12">
-                 <SectionFrame title="Abilities" subHeader="Skill Matrix">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-2">
-                       {Object.values(abilities).map(ability => (
-                          <div key={ability.name} className="flex flex-col border border-white/5 bg-black/40 p-3 rounded-sm group hover:border-primary/40 transition-all duration-300 hover:shadow-[0_0_15px_rgba(212,175,55,0.1)]">
-                             <div className="flex justify-between items-center mb-2">
-                                <span className="text-xs font-tech text-foreground/90 uppercase tracking-wider font-bold group-hover:text-primary transition-colors">{ability.name}</span>
-                                <div className="flex items-center gap-1 bg-black/40 rounded px-1 border border-white/5">
-                                  <button onClick={() => updateAbilityValue(ability.name, ability.value - 1)} className="text-muted-foreground hover:text-white px-1 hover:bg-white/10 rounded transition-colors">
-                                    <Minus className="w-3 h-3" />
-                                  </button>
-                                  <span className="font-mythic text-primary text-xl w-8 text-center drop-shadow-[0_0_5px_rgba(212,175,55,0.4)]">{ability.value}</span>
-                                  <button onClick={() => updateAbilityValue(ability.name, ability.value + 1)} className="text-muted-foreground hover:text-white px-1 hover:bg-white/10 rounded transition-colors">
-                                    <Plus className="w-3 h-3" />
-                                  </button>
-                                </div>
-                             </div>
-
-                             {/* Specialties List */}
-                             <div className="space-y-1 mt-1 pt-2 border-t border-white/5">
-                               <AnimatePresence>
-                               {ability.specialties.map((spec, idx) => (
-                                 <motion.div 
-                                    initial={{ opacity: 0, height: 0 }}
-                                    animate={{ opacity: 1, height: 'auto' }}
-                                    exit={{ opacity: 0, height: 0 }}
-                                    key={idx} 
-                                    className="flex items-center gap-2 mb-1"
-                                 >
-                                    <div className="w-1.5 h-1.5 bg-primary/40 rotate-45" />
-                                    <input 
-                                      className="bg-transparent text-[10px] font-tech text-muted-foreground focus:text-primary outline-none flex-1 min-w-0 border-b border-transparent focus:border-primary/30 transition-colors"
-                                      placeholder="Specialty..."
-                                      value={spec.name}
-                                      onChange={(e) => updateSpecialty(ability.name, idx, 'name', e.target.value)}
-                                    />
-                                    <input 
-                                      className="bg-transparent text-[10px] font-mythic text-primary w-6 text-center outline-none border-b border-white/10 focus:border-primary"
-                                      value={spec.value}
-                                      onChange={(e) => updateSpecialty(ability.name, idx, 'value', parseInt(e.target.value) || 0)}
-                                    />
-                                    <button onClick={() => removeSpecialty(ability.name, idx)} className="text-destructive opacity-30 hover:opacity-100 transition-opacity">
-                                      <Trash2 className="w-3 h-3" />
-                                    </button>
-                                 </motion.div>
-                               ))}
-                               </AnimatePresence>
-                               <button 
-                                onClick={() => addSpecialty(ability.name)}
-                                className="flex items-center gap-1 text-[9px] text-muted-foreground/40 hover:text-primary mt-2 w-full justify-end uppercase tracking-wider transition-colors"
-                               >
-                                 <Plus className="w-3 h-3" /> Add Specialty
-                               </button>
-                             </div>
-                          </div>
-                       ))}
-                    </div>
-                 </SectionFrame>
-              </div>
 
               {/* Health Tracker - REMOVED since it is now combined with Pools */}
               
