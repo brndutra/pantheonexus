@@ -603,7 +603,6 @@ export default function CharacterSheet() {
   const [innateOffensivesLoaded, setInnateOffensivesLoaded] = useState(false);
   const [offensiveSearch, setOffensiveSearch] = useState("");
   const [showOffensiveDropdown, setShowOffensiveDropdown] = useState(false);
-  const [showCustomOffensiveForm, setShowCustomOffensiveForm] = useState(false);
   const [customOffensive, setCustomOffensive] = useState<Partial<Weapon>>({
     name: '',
     category: 'custom',
@@ -1818,6 +1817,48 @@ export default function CharacterSheet() {
 
                 {/* VIRTUES MODULE - Compact like Callings */}
                 <MythicHUDFrame title="Virtue Matrix" icon={Target} subHeader="MORAL COMPASS" className="flex-1" isEditing={editingVirtues} {...createEditHandlers(editingVirtues, setEditingVirtues)}>
+                    {/* Virtues Radar Chart - Always 5 points */}
+                    <div className="mb-3 pb-3 border-b border-primary/15">
+                        <div className="flex justify-center">
+                            <ResponsiveContainer width="100%" height={160}>
+                                <RadarChart 
+                                    data={[
+                                        { virtue: virtues[0]?.name?.substring(0, 4).toUpperCase() || 'V1', value: virtues[0]?.value || 0 },
+                                        { virtue: virtues[1]?.name?.substring(0, 4).toUpperCase() || 'V2', value: virtues[1]?.value || 0 },
+                                        { virtue: virtues[2]?.name?.substring(0, 4).toUpperCase() || 'V3', value: virtues[2]?.value || 0 },
+                                        { virtue: virtues[3]?.name?.substring(0, 4).toUpperCase() || 'V4', value: virtues[3]?.value || 0 },
+                                        { virtue: virtues[4]?.name?.substring(0, 4).toUpperCase() || 'V5', value: virtues[4]?.value || 0 },
+                                    ]}
+                                    margin={{ top: 10, right: 25, bottom: 10, left: 25 }}
+                                >
+                                    <PolarGrid stroke="hsl(var(--primary) / 0.15)" strokeDasharray="3 3" />
+                                    <PolarAngleAxis 
+                                        dataKey="virtue" 
+                                        tick={{ 
+                                            fill: 'hsl(var(--primary) / 0.7)', 
+                                            fontSize: 8, 
+                                            fontFamily: 'Orbitron' 
+                                        }}
+                                    />
+                                    <PolarRadiusAxis 
+                                        angle={90} 
+                                        domain={[0, 5]} 
+                                        tick={false}
+                                        axisLine={false}
+                                    />
+                                    <RechartsRadar
+                                        name="Virtudes"
+                                        dataKey="value"
+                                        stroke="hsl(var(--primary))"
+                                        fill="hsl(var(--primary))"
+                                        fillOpacity={0.25}
+                                        strokeWidth={2}
+                                    />
+                                </RadarChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </div>
+                    
                     <div className="space-y-1.5">
                         {virtues.length === 0 ? (
                             <div className="text-center py-3">
@@ -1979,54 +2020,6 @@ export default function CharacterSheet() {
                                     )}
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    
-                    {/* Virtues Radar Chart */}
-                    <div className="mt-3 pt-3 border-t border-primary/15">
-                        <div className="flex justify-center">
-                            <ResponsiveContainer width="100%" height={180}>
-                                <RadarChart 
-                                    data={virtues.filter(v => v.name).map(v => ({
-                                        virtue: v.name.substring(0, 4).toUpperCase(),
-                                        value: v.value,
-                                        fullMark: 5
-                                    }))}
-                                    margin={{ top: 10, right: 30, bottom: 10, left: 30 }}
-                                >
-                                    <PolarGrid stroke="hsl(var(--primary) / 0.2)" />
-                                    <PolarAngleAxis 
-                                        dataKey="virtue" 
-                                        tick={{ 
-                                            fill: 'hsl(var(--primary))', 
-                                            fontSize: 9, 
-                                            fontFamily: 'Orbitron' 
-                                        }}
-                                    />
-                                    <PolarRadiusAxis 
-                                        angle={90} 
-                                        domain={[0, 5]} 
-                                        tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 8 }}
-                                        tickCount={6}
-                                    />
-                                    <RechartsRadar
-                                        name="Virtudes"
-                                        dataKey="value"
-                                        stroke="hsl(var(--highlight-purple))"
-                                        fill="hsl(var(--highlight-purple))"
-                                        fillOpacity={0.3}
-                                        strokeWidth={2}
-                                    />
-                                </RadarChart>
-                            </ResponsiveContainer>
-                        </div>
-                        <div className="flex flex-wrap justify-center gap-2 mt-2">
-                            {virtues.filter(v => v.name).map((v, i) => (
-                                <div key={i} className="flex items-center gap-1 text-[8px] font-tech text-primary/70 bg-black/30 px-1.5 py-0.5 rounded-sm border border-primary/10">
-                                    <span className="text-[hsl(var(--highlight-purple))]">{v.name}</span>
-                                    <span className="text-primary font-bold">{v.value}</span>
-                                </div>
-                            ))}
                         </div>
                     </div>
                     
@@ -2231,125 +2224,7 @@ export default function CharacterSheet() {
                             <span className="px-1 py-0.5 bg-primary/10 rounded">U:{availableOffensives.unarmed.length}</span>
                             <span className="px-1 py-0.5 bg-primary/10 rounded">S:{availableOffensives.special.length}</span>
                         </div>
-                        {/* Add Custom Button */}
-                        <button 
-                            onClick={() => setShowCustomOffensiveForm(!showCustomOffensiveForm)}
-                            className="px-2 py-1 bg-accent/20 border border-accent/40 rounded text-[8px] text-accent-foreground hover:bg-accent/30 transition-colors shrink-0"
-                        >
-                            <Plus className="w-3 h-3 inline mr-1" />
-                            Custom
-                        </button>
                     </div>
-                    
-                    {/* Custom Offensive Form */}
-                    {showCustomOffensiveForm && (
-                        <div className="p-3 bg-black/60 border border-accent/30 rounded-sm space-y-2">
-                            <h6 className="text-[9px] uppercase tracking-wider text-accent-foreground font-bold mb-2">Criar Offensive Personalizado</h6>
-                            <div className="grid grid-cols-4 gap-2">
-                                <input 
-                                    value={customOffensive.name || ''}
-                                    onChange={e => setCustomOffensive({...customOffensive, name: e.target.value})}
-                                    placeholder="Nome da arma"
-                                    className="col-span-2 bg-black/40 border border-primary/20 text-[9px] px-2 py-1 rounded-sm text-primary placeholder:text-primary/30 outline-none"
-                                />
-                                <select 
-                                    value={customOffensive.category || 'custom'}
-                                    onChange={e => setCustomOffensive({...customOffensive, category: e.target.value})}
-                                    className="bg-black/40 border border-primary/20 text-[9px] px-1 py-1 rounded-sm text-primary outline-none"
-                                >
-                                    <option value="custom">Custom</option>
-                                    <option value="melee">Melee</option>
-                                    <option value="ranged">Ranged</option>
-                                    <option value="special">Special</option>
-                                </select>
-                                <input 
-                                    type="number"
-                                    value={customOffensive.accuracy || 0}
-                                    onChange={e => setCustomOffensive({...customOffensive, accuracy: parseInt(e.target.value) || 0})}
-                                    placeholder="Acc"
-                                    className="bg-black/40 border border-primary/20 text-[9px] px-2 py-1 rounded-sm text-primary placeholder:text-primary/30 outline-none text-center"
-                                />
-                            </div>
-                            <div className="grid grid-cols-4 gap-2">
-                                <select 
-                                    value={customOffensive.attackAttribute || 'Dexterity'}
-                                    onChange={e => setCustomOffensive({...customOffensive, attackAttribute: e.target.value})}
-                                    className="bg-black/40 border border-primary/20 text-[8px] px-1 py-1 rounded-sm text-cyan-400 outline-none"
-                                >
-                                    <option value="Strength">Strength</option>
-                                    <option value="Dexterity">Dexterity</option>
-                                    <option value="Stamina">Stamina</option>
-                                </select>
-                                <select 
-                                    value={customOffensive.attackAbility || 'Melee'}
-                                    onChange={e => setCustomOffensive({...customOffensive, attackAbility: e.target.value})}
-                                    className="bg-black/40 border border-primary/20 text-[8px] px-1 py-1 rounded-sm text-cyan-400 outline-none"
-                                >
-                                    <option value="Melee">Melee</option>
-                                    <option value="Brawl">Brawl</option>
-                                    <option value="Marksmanship">Marksmanship</option>
-                                    <option value="Thrown">Thrown</option>
-                                </select>
-                                <input 
-                                    value={customOffensive.damage || '0L'}
-                                    onChange={e => setCustomOffensive({...customOffensive, damage: e.target.value})}
-                                    placeholder="Dmg (ex: 4L)"
-                                    className="bg-black/40 border border-primary/20 text-[9px] px-2 py-1 rounded-sm text-red-400 placeholder:text-primary/30 outline-none text-center"
-                                />
-                                <select 
-                                    value={customOffensive.damageAttribute || 'Strength'}
-                                    onChange={e => setCustomOffensive({...customOffensive, damageAttribute: e.target.value})}
-                                    className="bg-black/40 border border-primary/20 text-[8px] px-1 py-1 rounded-sm text-orange-400 outline-none"
-                                >
-                                    <option value="Strength">Strength</option>
-                                    <option value="Dexterity">Dexterity</option>
-                                    <option value="None">None</option>
-                                </select>
-                            </div>
-                            <div className="grid grid-cols-5 gap-2">
-                                <input 
-                                    type="number"
-                                    value={customOffensive.defense || 0}
-                                    onChange={e => setCustomOffensive({...customOffensive, defense: parseInt(e.target.value) || 0})}
-                                    placeholder="Def"
-                                    className="bg-black/40 border border-primary/20 text-[9px] px-2 py-1 rounded-sm text-blue-400 placeholder:text-primary/30 outline-none text-center"
-                                />
-                                <input 
-                                    type="number"
-                                    value={customOffensive.speed || 5}
-                                    onChange={e => setCustomOffensive({...customOffensive, speed: parseInt(e.target.value) || 5})}
-                                    placeholder="Spd"
-                                    className="bg-black/40 border border-primary/20 text-[9px] px-2 py-1 rounded-sm text-primary placeholder:text-primary/30 outline-none text-center"
-                                />
-                                <input 
-                                    value={customOffensive.range || ''}
-                                    onChange={e => setCustomOffensive({...customOffensive, range: e.target.value || null})}
-                                    placeholder="Range"
-                                    className="bg-black/40 border border-primary/20 text-[9px] px-2 py-1 rounded-sm text-primary placeholder:text-primary/30 outline-none text-center"
-                                />
-                                <input 
-                                    value={customOffensive.tags || ''}
-                                    onChange={e => setCustomOffensive({...customOffensive, tags: e.target.value || null})}
-                                    placeholder="Tags"
-                                    className="col-span-2 bg-black/40 border border-primary/20 text-[9px] px-2 py-1 rounded-sm text-primary placeholder:text-primary/30 outline-none"
-                                />
-                            </div>
-                            <div className="flex justify-end gap-2 pt-1">
-                                <button 
-                                    onClick={() => setShowCustomOffensiveForm(false)}
-                                    className="px-3 py-1 text-[9px] text-muted-foreground hover:text-primary transition-colors"
-                                >
-                                    Cancelar
-                                </button>
-                                <button 
-                                    onClick={createCustomOffensive}
-                                    className="px-3 py-1 bg-accent/30 border border-accent/50 rounded text-[9px] text-accent-foreground hover:bg-accent/40 transition-colors"
-                                >
-                                    Criar & Adicionar
-                                </button>
-                            </div>
-                        </div>
-                    )}
 
                     {/* Weapons Table Header - 11 columns */}
                     <div className="grid grid-cols-[1.5fr_0.6fr_0.6fr_0.6fr_0.5fr_0.5fr_0.5fr_0.6fr_0.6fr_0.8fr_auto] gap-0.5 text-[6px] uppercase tracking-widest text-muted-foreground border-b border-primary/10 pb-1 bg-primary/5 p-1 rounded-t-sm">
@@ -2367,37 +2242,117 @@ export default function CharacterSheet() {
                     </div>
 
                     {/* Weapons List */}
-                    <div className="space-y-0 max-h-[160px] overflow-y-auto">
-                        {weapons.length === 0 ? (
-                            <div className="text-[10px] text-muted-foreground text-center py-3 italic">
-                                Nenhuma arma equipada. Use a busca acima.
-                            </div>
-                        ) : (
-                            weapons.map((w, i) => (
-                                <div key={i} className="grid grid-cols-[1.5fr_0.6fr_0.6fr_0.6fr_0.5fr_0.5fr_0.5fr_0.6fr_0.6fr_0.8fr_auto] gap-0.5 text-[8px] font-tech text-primary/80 items-center p-0.5 hover:bg-primary/10 transition-colors border-l-2 border-transparent hover:border-primary group">
-                                    <div className="font-bold truncate flex items-center gap-1">
-                                        <Crosshair className="w-2 h-2 text-primary/40 shrink-0" />
-                                        <span className="truncate">{w.name}</span>
-                                        <span className="text-[6px] text-muted-foreground/50 uppercase shrink-0">({w.category?.slice(0,3)})</span>
-                                    </div>
-                                    <div className="text-center text-cyan-400/70 text-[7px]">{w.attackAttribute || "-"}</div>
-                                    <div className="text-center text-cyan-400/70 text-[7px]">{w.attackAbility || "-"}</div>
-                                    <div className="text-center text-muted-foreground">{w.accuracy >= 0 ? `+${w.accuracy}` : w.accuracy}</div>
-                                    <div className="text-center text-orange-400/70 text-[7px]">{w.damageAttribute || "-"}</div>
-                                    <div className="text-center text-red-400/70">{w.damage}</div>
-                                    <div className="text-center text-blue-400/70">{w.defense >= 0 ? `+${w.defense}` : w.defense}</div>
-                                    <div className="text-center text-muted-foreground">{w.speed}</div>
-                                    <div className="text-center text-muted-foreground/60">{w.range || "-"}</div>
-                                    <div className="text-center text-[6px] uppercase opacity-60 truncate">{w.tags || "-"}</div>
-                                    <button 
-                                        onClick={() => removeWeapon(i)}
-                                        className="w-4 h-4 flex items-center justify-center text-red-400/50 hover:text-red-400 hover:bg-red-400/10 rounded-sm transition-colors opacity-0 group-hover:opacity-100"
-                                    >
-                                        <Trash2 className="w-2.5 h-2.5" />
-                                    </button>
+                    <div className="space-y-0 max-h-[200px] overflow-y-auto">
+                        {weapons.map((w, i) => (
+                            <div key={i} className="grid grid-cols-[1.5fr_0.6fr_0.6fr_0.6fr_0.5fr_0.5fr_0.5fr_0.6fr_0.6fr_0.8fr_auto] gap-0.5 text-[8px] font-tech text-primary/80 items-center p-0.5 hover:bg-primary/10 transition-colors border-l-2 border-transparent hover:border-primary group">
+                                <div className="font-bold truncate flex items-center gap-1">
+                                    <Crosshair className="w-2 h-2 text-primary/40 shrink-0" />
+                                    <span className="truncate">{w.name}</span>
+                                    <span className="text-[6px] text-muted-foreground/50 uppercase shrink-0">({w.category?.slice(0,3)})</span>
                                 </div>
-                            ))
-                        )}
+                                <div className="text-center text-cyan-400/70 text-[7px]">{w.attackAttribute || "-"}</div>
+                                <div className="text-center text-cyan-400/70 text-[7px]">{w.attackAbility || "-"}</div>
+                                <div className="text-center text-muted-foreground">{w.accuracy >= 0 ? `+${w.accuracy}` : w.accuracy}</div>
+                                <div className="text-center text-orange-400/70 text-[7px]">{w.damageAttribute || "-"}</div>
+                                <div className="text-center text-red-400/70">{w.damage}</div>
+                                <div className="text-center text-blue-400/70">{w.defense >= 0 ? `+${w.defense}` : w.defense}</div>
+                                <div className="text-center text-muted-foreground">{w.speed}</div>
+                                <div className="text-center text-muted-foreground/60">{w.range || "-"}</div>
+                                <div className="text-center text-[6px] uppercase opacity-60 truncate">{w.tags || "-"}</div>
+                                <button 
+                                    onClick={() => removeWeapon(i)}
+                                    className="w-4 h-4 flex items-center justify-center text-red-400/50 hover:text-red-400 hover:bg-red-400/10 rounded-sm transition-colors opacity-0 group-hover:opacity-100"
+                                >
+                                    <Trash2 className="w-2.5 h-2.5" />
+                                </button>
+                            </div>
+                        ))}
+                        
+                        {/* Empty Row for Custom Offensive */}
+                        <div className="grid grid-cols-[1.5fr_0.6fr_0.6fr_0.6fr_0.5fr_0.5fr_0.5fr_0.6fr_0.6fr_0.8fr_auto] gap-0.5 text-[8px] font-tech items-center p-0.5 border-l-2 border-accent/30 bg-accent/5">
+                            <input 
+                                value={customOffensive.name || ''}
+                                onChange={e => setCustomOffensive({...customOffensive, name: e.target.value})}
+                                placeholder="Nova arma..."
+                                className="bg-transparent border-b border-primary/20 text-[8px] px-1 py-0.5 text-primary placeholder:text-primary/30 outline-none focus:border-primary"
+                            />
+                            <select 
+                                value={customOffensive.attackAttribute || 'Dexterity'}
+                                onChange={e => setCustomOffensive({...customOffensive, attackAttribute: e.target.value})}
+                                className="bg-transparent border-b border-primary/20 text-[7px] text-center text-cyan-400/70 outline-none"
+                            >
+                                <option value="Strength">Str</option>
+                                <option value="Dexterity">Dex</option>
+                            </select>
+                            <select 
+                                value={customOffensive.attackAbility || 'Melee'}
+                                onChange={e => setCustomOffensive({...customOffensive, attackAbility: e.target.value})}
+                                className="bg-transparent border-b border-primary/20 text-[7px] text-center text-cyan-400/70 outline-none"
+                            >
+                                <option value="Melee">Melee</option>
+                                <option value="Brawl">Brawl</option>
+                                <option value="Marksmanship">Marks</option>
+                                <option value="Thrown">Throw</option>
+                            </select>
+                            <input 
+                                type="number"
+                                value={customOffensive.accuracy || 0}
+                                onChange={e => setCustomOffensive({...customOffensive, accuracy: parseInt(e.target.value) || 0})}
+                                className="bg-transparent border-b border-primary/20 text-[8px] text-center text-muted-foreground outline-none w-full"
+                            />
+                            <select 
+                                value={customOffensive.damageAttribute || 'Strength'}
+                                onChange={e => setCustomOffensive({...customOffensive, damageAttribute: e.target.value})}
+                                className="bg-transparent border-b border-primary/20 text-[7px] text-center text-orange-400/70 outline-none"
+                            >
+                                <option value="Strength">Str</option>
+                                <option value="Dexterity">Dex</option>
+                                <option value="None">-</option>
+                            </select>
+                            <input 
+                                value={customOffensive.damage || '0L'}
+                                onChange={e => setCustomOffensive({...customOffensive, damage: e.target.value})}
+                                placeholder="0L"
+                                className="bg-transparent border-b border-primary/20 text-[8px] text-center text-red-400/70 outline-none w-full"
+                            />
+                            <input 
+                                type="number"
+                                value={customOffensive.defense || 0}
+                                onChange={e => setCustomOffensive({...customOffensive, defense: parseInt(e.target.value) || 0})}
+                                className="bg-transparent border-b border-primary/20 text-[8px] text-center text-blue-400/70 outline-none w-full"
+                            />
+                            <input 
+                                type="number"
+                                value={customOffensive.speed || 5}
+                                onChange={e => setCustomOffensive({...customOffensive, speed: parseInt(e.target.value) || 5})}
+                                className="bg-transparent border-b border-primary/20 text-[8px] text-center text-muted-foreground outline-none w-full"
+                            />
+                            <input 
+                                value={customOffensive.range || ''}
+                                onChange={e => setCustomOffensive({...customOffensive, range: e.target.value || null})}
+                                placeholder="-"
+                                className="bg-transparent border-b border-primary/20 text-[8px] text-center text-muted-foreground/60 outline-none w-full"
+                            />
+                            <input 
+                                value={customOffensive.tags || ''}
+                                onChange={e => setCustomOffensive({...customOffensive, tags: e.target.value || null})}
+                                placeholder="-"
+                                className="bg-transparent border-b border-primary/20 text-[6px] text-center text-muted-foreground/60 outline-none w-full"
+                            />
+                            <button 
+                                onClick={createCustomOffensive}
+                                disabled={!customOffensive.name?.trim()}
+                                className={cn(
+                                    "w-4 h-4 flex items-center justify-center rounded-sm transition-colors",
+                                    customOffensive.name?.trim() 
+                                        ? "text-green-400 hover:text-green-300 hover:bg-green-400/10" 
+                                        : "text-muted-foreground/30 cursor-not-allowed"
+                                )}
+                                title="Salvar arma customizada"
+                            >
+                                <Check className="w-2.5 h-2.5" />
+                            </button>
+                        </div>
                     </div>
                 </div>
             </MythicHUDFrame>
