@@ -6,6 +6,7 @@ import { Link, useRoute } from "wouter";
 import { cn } from "@/lib/utils";
 import { Shield, Zap, Skull, Scroll, Activity, Cpu, Hexagon, Plus, Trash2, Crown, Heart, Radar, Minus, Upload, Image as ImageIcon, X, FileText, User, LayoutGrid, ArrowLeft } from "lucide-react";
 import { useCharacters, slugify } from "@/lib/characters-store";
+import { useCompendium } from "@/lib/compendium-store";
 import {
   RadarChart,
   PolarGrid,
@@ -150,6 +151,7 @@ const HealthBox = ({ status, onClick }: { status: DamageType, onClick: () => voi
 export default function CharacterSheet() {
   const [match, params] = useRoute("/character-sheet/:slug");
   const { getCharacterBySlug } = useCharacters();
+  const { callings: compendiumCallings, natures: compendiumNatures, virtues: compendiumVirtues } = useCompendium();
   const [activeTab, setActiveTab] = useState<"sheet" | "powers" | "bio">("sheet");
   const [idCardTab, setIdCardTab] = useState<"identity" | "psychic" | "presence">("identity");
   
@@ -603,41 +605,57 @@ export default function CharacterSheet() {
 
                 {/* COMBINED SECTION: Callings, Nature, Virtues */}
                 <SectionFrame title="Essence & Nature" subHeader="Divine Matrix" className="p-4">
-                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
-                      {/* Vertical Dividers */}
-                      <div className="absolute left-1/3 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-primary/20 to-transparent hidden md:block" />
-                      <div className="absolute right-1/3 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-primary/20 to-transparent hidden md:block" />
+                   {/* Datalists for Autocomplete */}
+                   <datalist id="calling-options">
+                      {compendiumCallings.map(c => <option key={c.id} value={c.name} />)}
+                   </datalist>
+                   <datalist id="nature-options">
+                      {compendiumNatures.map(n => <option key={n.id} value={n.name} />)}
+                   </datalist>
+                   <datalist id="virtue-options">
+                      {compendiumVirtues.map(v => <option key={v.id} value={v.name} />)}
+                   </datalist>
 
-                      {/* Callings */}
-                      <div className="space-y-2">
-                         <h4 className="text-[9px] uppercase tracking-[0.2em] font-mythic text-primary/70 mb-1 border-b border-primary/20 pb-1 flex items-center justify-between">
+                   <div className="grid grid-cols-1 md:grid-cols-12 gap-6 relative">
+                      {/* Vertical Dividers */}
+                      <div className="absolute left-1/3 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-primary/20 to-transparent hidden md:block opacity-0" />
+                      <div className="absolute right-1/3 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-primary/20 to-transparent hidden md:block opacity-0" />
+
+                      {/* Callings - Full Row */}
+                      <div className="md:col-span-12 space-y-2 border-b border-primary/20 pb-4 mb-2">
+                         <h4 className="text-[9px] uppercase tracking-[0.2em] font-mythic text-primary/70 mb-1 flex items-center justify-between">
                             Callings <Crown className="w-3 h-3 text-primary/40" />
                          </h4>
-                         <div className="flex flex-col gap-2">
+                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                            {callings.map((c, i) => (
-                             <div key={i} className="flex items-center gap-2 group">
-                                <div className="w-1 h-1 bg-primary/50 rotate-45 group-hover:bg-primary transition-colors" />
-                                <input 
-                                  className="bg-transparent w-full outline-none font-tech text-foreground placeholder:text-muted-foreground/20 text-sm focus:text-primary transition-colors"
-                                  placeholder={`Calling ${i+1}`}
-                                  value={c.name}
-                                  onChange={(e) => updateCalling(i, 'name', e.target.value)}
-                                />
-                                <div className="flex items-center gap-1">
+                             <div key={i} className="flex flex-col gap-1 group relative">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-1 h-1 bg-primary/50 rotate-45 group-hover:bg-primary transition-colors" />
+                                    <input 
+                                      className="bg-transparent w-full outline-none font-tech text-foreground placeholder:text-muted-foreground/20 text-sm focus:text-primary transition-colors border-b border-transparent focus:border-primary/30"
+                                      placeholder={`Calling ${i+1}`}
+                                      value={c.name}
+                                      onChange={(e) => updateCalling(i, 'name', e.target.value)}
+                                      list="calling-options"
+                                    />
+                                    <button 
+                                      onClick={() => setActiveTitleIndex(activeTitleIndex === i ? null : i)}
+                                      className={cn("opacity-30 hover:opacity-100 transition-opacity", c.title && "text-primary opacity-100 drop-shadow-[0_0_5px_gold]")}
+                                    >
+                                       <Crown className="w-3 h-3" />
+                                    </button>
+                                </div>
+                                <div className="flex items-center gap-1 pl-3">
                                     <DotRating value={c.value} max={5} className="scale-75" onChange={(v) => updateCalling(i, 'value', v)} />
                                     <span className="font-mythic text-primary text-[10px] w-3 text-center">{c.value}</span>
                                 </div>
-                                <button 
-                                  onClick={() => setActiveTitleIndex(activeTitleIndex === i ? null : i)}
-                                  className={cn("opacity-30 hover:opacity-100 transition-opacity", c.title && "text-primary opacity-100 drop-shadow-[0_0_5px_gold]")}
-                                >
-                                   <Crown className="w-3 h-3" />
-                                </button>
+                                
+                                {/* Title Popover */}
                                 <AnimatePresence>
                                   {activeTitleIndex === i && (
                                     <motion.div 
                                       initial={{ opacity: 0, scale: 0.9, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 10 }}
-                                      className="absolute left-0 mt-6 z-50 bg-black/90 border border-primary p-3 w-48 shadow-[0_0_30px_rgba(0,0,0,0.8)] backdrop-blur-xl rounded-sm"
+                                      className="absolute left-0 top-full mt-2 z-50 bg-black/90 border border-primary p-3 w-48 shadow-[0_0_30px_rgba(0,0,0,0.8)] backdrop-blur-xl rounded-sm"
                                     >
                                        <div className="text-[9px] uppercase tracking-widest text-muted-foreground mb-1">Legendary Title</div>
                                        <input 
@@ -656,28 +674,29 @@ export default function CharacterSheet() {
                       </div>
 
                       {/* Nature */}
-                      <div className="space-y-2">
+                      <div className="md:col-span-4 space-y-2">
                          <h4 className="text-[9px] uppercase tracking-[0.2em] font-mythic text-primary/70 mb-1 border-b border-primary/20 pb-1 flex items-center justify-between">
                             Nature <User className="w-3 h-3 text-primary/40" />
                          </h4>
                          <div className="pt-1">
-                           <ScionInput placeholder="ARCHETYPE" className="text-center text-lg font-mythic text-primary/90" />
+                           <ScionInput placeholder="ARCHETYPE" className="text-center text-lg font-mythic text-primary/90" list="nature-options" />
                          </div>
                       </div>
 
                       {/* Virtues */}
-                      <div className="space-y-2">
+                      <div className="md:col-span-8 space-y-2 md:border-l md:border-primary/20 md:pl-6">
                          <h4 className="text-[9px] uppercase tracking-[0.2em] font-mythic text-primary/70 mb-1 border-b border-primary/20 pb-1 flex items-center justify-between">
                             Virtues <Heart className="w-3 h-3 text-primary/40" />
                          </h4>
-                         <div className="space-y-2">
+                         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
                             {virtues.map((virtue, idx) => (
                                <div key={idx} className="flex justify-between items-center group">
                                   <input 
-                                     className="bg-transparent font-tech text-xs text-muted-foreground group-hover:text-primary transition-colors outline-none w-20 uppercase tracking-wider"
+                                     className="bg-transparent font-tech text-xs text-muted-foreground group-hover:text-primary transition-colors outline-none w-24 uppercase tracking-wider border-b border-transparent focus:border-primary/30"
                                      value={virtue.name}
                                      onChange={(e) => updateVirtue(idx, 'name', e.target.value)}
                                      placeholder="VIRTUE"
+                                     list="virtue-options"
                                   />
                                   <div className="flex items-center gap-1">
                                     <DotRating value={virtue.value} max={5} className="scale-75" onChange={(v) => updateVirtue(idx, 'value', v)} />

@@ -42,20 +42,22 @@ const ScionInput = ({ label, className, as: Component = "input", ...props }: Rea
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<"scrolls" | "alleybrary" | "compendium">("scrolls");
-  const [compendiumTab, setCompendiumTab] = useState<"knacks" | "boons" | "virtues" | "natures">("knacks");
+  const [compendiumTab, setCompendiumTab] = useState<"knacks" | "boons" | "virtues" | "natures" | "callings">("knacks");
 
   // Compendium State
   const { 
     knacks, addKnack, deleteKnack,
     boons, addBoon, deleteBoon,
     virtues, addVirtue, deleteVirtue,
-    natures, addNature, deleteNature
+    natures, addNature, deleteNature,
+    callings, addCalling, deleteCalling
   } = useCompendium();
 
   const [newKnack, setNewKnack] = useState({ name: "", description: "", epicAttribute: "", prerequisite: "" });
   const [newBoon, setNewBoon] = useState({ name: "", purview: "", level: 1, cost: "", type: "", description: "" });
   const [newVirtue, setNewVirtue] = useState({ name: "", description: "" });
   const [newNature, setNewNature] = useState({ name: "", description: "" });
+  const [newCalling, setNewCalling] = useState({ name: "", description: "" });
 
   const handleAddKnack = () => {
     if (newKnack.name && newKnack.description) {
@@ -82,6 +84,13 @@ export default function AdminDashboard() {
     if (newNature.name && newNature.description) {
       addNature(newNature);
       setNewNature({ name: "", description: "" });
+    }
+  };
+
+  const handleAddCalling = () => {
+    if (newCalling.name && newCalling.description) {
+      addCalling(newCalling);
+      setNewCalling({ name: "", description: "" });
     }
   };
 
@@ -227,7 +236,8 @@ export default function AdminDashboard() {
                          { id: "knacks", label: "Knacks", icon: Zap },
                          { id: "boons", label: "Boons", icon: Star },
                          { id: "virtues", label: "Virtues", icon: Shield },
-                         { id: "natures", label: "Natures", icon: Heart }
+                         { id: "natures", label: "Natures", icon: Heart },
+                         { id: "callings", label: "Callings", icon: Crown }
                      ].map((tab) => (
                          <button
                             key={tab.id}
@@ -300,6 +310,16 @@ export default function AdminDashboard() {
                                 <button onClick={handleAddNature} className="w-full mt-2 bg-primary/10 hover:bg-primary/20 border border-primary/40 text-primary py-2 px-4 rounded-sm flex items-center justify-center gap-2 uppercase tracking-widest font-mythic text-xs"><Plus className="w-3 h-3" /> Add Nature</button>
                              </div>
                         )}
+                        {compendiumTab === "callings" && (
+                             <div className="space-y-4">
+                                <ScionInput label="Calling Name" placeholder="e.g. Warrior" value={newCalling.name} onChange={e => setNewCalling({...newCalling, name: e.target.value})} />
+                                <div className="flex flex-col gap-1 w-full">
+                                    <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic">Description</label>
+                                    <textarea className="bg-black/20 border border-white/10 rounded-sm px-3 py-2 text-sm font-tech text-foreground outline-none focus:border-primary/50 h-24 resize-none" value={newCalling.description} onChange={e => setNewCalling({...newCalling, description: e.target.value})} />
+                                </div>
+                                <button onClick={handleAddCalling} className="w-full mt-2 bg-primary/10 hover:bg-primary/20 border border-primary/40 text-primary py-2 px-4 rounded-sm flex items-center justify-center gap-2 uppercase tracking-widest font-mythic text-xs"><Plus className="w-3 h-3" /> Add Calling</button>
+                             </div>
+                        )}
                     </SectionFrame>
                 </div>
 
@@ -338,14 +358,14 @@ export default function AdminDashboard() {
                                     </div>
                                 </div>
                             ))}
-                            {(compendiumTab === "virtues" ? virtues : compendiumTab === "natures" ? natures : []).map((item: any) => (
+                            {(compendiumTab === "virtues" ? virtues : compendiumTab === "natures" ? natures : compendiumTab === "callings" ? callings : []).map((item: any) => (
                                 <div key={item.id} className="p-3 bg-black/30 border border-white/5 rounded-sm hover:border-primary/30 group">
                                     <div className="flex justify-between items-start">
                                         <div>
                                             <h4 className="font-mythic text-primary text-sm">{item.name}</h4>
                                             <p className="text-xs text-muted-foreground/80 font-serif mt-1">{item.description}</p>
                                         </div>
-                                        <button onClick={() => compendiumTab === "virtues" ? deleteVirtue(item.id) : deleteNature(item.id)} className="text-destructive/50 hover:text-destructive"><Trash2 className="w-3 h-3" /></button>
+                                        <button onClick={() => compendiumTab === "virtues" ? deleteVirtue(item.id) : compendiumTab === "natures" ? deleteNature(item.id) : deleteCalling(item.id)} className="text-destructive/50 hover:text-destructive"><Trash2 className="w-3 h-3" /></button>
                                     </div>
                                 </div>
                             ))}
@@ -354,7 +374,8 @@ export default function AdminDashboard() {
                             {((compendiumTab === "knacks" && knacks.length === 0) || 
                               (compendiumTab === "boons" && boons.length === 0) ||
                               (compendiumTab === "virtues" && virtues.length === 0) ||
-                              (compendiumTab === "natures" && natures.length === 0)) && (
+                              (compendiumTab === "natures" && natures.length === 0) ||
+                              (compendiumTab === "callings" && callings.length === 0)) && (
                                 <div className="text-center py-8 text-muted-foreground/50 font-tech text-xs uppercase tracking-widest border border-dashed border-white/10">
                                     No records found in this registry.
                                 </div>
