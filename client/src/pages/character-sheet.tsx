@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { DotRating } from "@/components/ui/dot-rating";
 import { ScionInput } from "@/components/ui/scion-input";
 import { cn } from "@/lib/utils";
-import { Shield, Zap, Skull, Scroll, Activity, Cpu, Hexagon, Plus, Trash2, Crown, Heart, Radar, Minus } from "lucide-react";
+import { Shield, Zap, Skull, Scroll, Activity, Cpu, Hexagon, Plus, Trash2, Crown, Heart, Radar, Minus, Upload, Image as ImageIcon, X } from "lucide-react";
 import {
   RadarChart,
   PolarGrid,
@@ -160,7 +160,22 @@ export default function CharacterSheet() {
 
   const [activeTitleIndex, setActiveTitleIndex] = useState<number | null>(null);
 
+  // Portrait State
+  const [portrait, setPortrait] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   // Handlers
+  const handlePortraitUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPortrait(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const updateAttribute = (cat: AttributeCategory, idx: number, field: 'value'|'epic', val: number) => {
     const newCat = [...attributes[cat]];
     newCat[idx] = { ...newCat[idx], [field]: val };
@@ -273,31 +288,70 @@ export default function CharacterSheet() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
             <div className="md:col-span-8 space-y-6">
                 
-                {/* ID CARD HEADER - Identity & Genesis */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                   {/* 1) Identity Section */}
-                   <SectionFrame title="Identity" subHeader="Designation Profile" className="h-full">
-                      <div className="space-y-4">
-                         <ScionInput label="Designation (Name)" placeholder="CHARACTER NAME" className="text-lg" />
-                         <ScionInput label="Pantheon" placeholder="PANTHEON" />
-                         <ScionInput label="Heritage" placeholder="DIVINE PARENT / PATRON" />
-                      </div>
-                   </SectionFrame>
+                {/* ID CARD HEADER - Combined */}
+                <SectionFrame title="ID Card" subHeader="Designation & Genesis Records" className="h-full">
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+                        {/* Portrait Column */}
+                        <div className="md:col-span-3 flex flex-col gap-2">
+                             <div 
+                                className="aspect-[3/4] border-2 border-thin-gold/50 rounded-sm bg-black/40 relative overflow-hidden group cursor-pointer transition-all hover:border-primary/50"
+                                onClick={() => fileInputRef.current?.click()}
+                             >
+                                {portrait ? (
+                                    <>
+                                        <img src={portrait} alt="Scion Portrait" className="w-full h-full object-cover" />
+                                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                            <span className="text-xs uppercase tracking-widest text-primary font-mythic">Change</span>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground/30 group-hover:text-primary/50 transition-colors">
+                                        <ImageIcon className="w-8 h-8 mb-2" />
+                                        <span className="text-[9px] uppercase tracking-widest text-center px-2">Upload Portrait</span>
+                                    </div>
+                                )}
+                                <input 
+                                    type="file" 
+                                    ref={fileInputRef} 
+                                    className="hidden" 
+                                    accept="image/*"
+                                    onChange={handlePortraitUpload}
+                                />
+                             </div>
+                             {portrait && (
+                                 <button 
+                                    onClick={() => setPortrait(null)}
+                                    className="text-[9px] uppercase tracking-widest text-destructive hover:text-red-400 flex items-center justify-center gap-1"
+                                 >
+                                     <X className="w-3 h-3" /> Remove
+                                 </button>
+                             )}
+                        </div>
 
-                   {/* 4) Genesis Data Section */}
-                   <SectionFrame title="Genesis Data" subHeader="Origin Records" className="h-full">
-                      <div className="space-y-4">
-                         <div className="grid grid-cols-2 gap-4">
-                            <ScionInput label="Date of Birth" placeholder="DD/MM/AAAA" />
-                            <ScionInput label="Nationality" placeholder="NATIONALITY" />
-                         </div>
-                         <div className="grid grid-cols-2 gap-4">
-                            <ScionInput label="Origin City" placeholder="CITY" />
-                            <ScionInput label="State" placeholder="STATE/UF" />
-                         </div>
-                      </div>
-                   </SectionFrame>
-                </div>
+                        {/* Data Column */}
+                        <div className="md:col-span-9 flex flex-col gap-6 justify-center">
+                            {/* Identity Fields */}
+                            <div className="space-y-4">
+                                <ScionInput label="Designation (Name)" placeholder="CHARACTER NAME" className="text-xl md:text-2xl" />
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <ScionInput label="Pantheon" placeholder="PANTHEON" />
+                                    <ScionInput label="Heritage" placeholder="DIVINE PARENT / PATRON" />
+                                </div>
+                            </div>
+
+                            {/* Divider */}
+                            <div className="h-px bg-thin-gold/30 w-full" />
+
+                            {/* Genesis Fields */}
+                            <div className="grid grid-cols-2 gap-4">
+                                <ScionInput label="Date of Birth" placeholder="DD/MM/AAAA" />
+                                <ScionInput label="Nationality" placeholder="NATIONALITY" />
+                                <ScionInput label="Origin City" placeholder="CITY" />
+                                <ScionInput label="State" placeholder="STATE/UF" />
+                            </div>
+                        </div>
+                    </div>
+                </SectionFrame>
 
                 {/* COMBINED SECTION: Callings, Nature, Virtues */}
                 <SectionFrame title="Essence & Nature" subHeader="Divine Matrix" className="min-h-[250px]">
