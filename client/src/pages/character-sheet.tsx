@@ -4,7 +4,7 @@ import { DotRating } from "@/components/ui/dot-rating";
 import { ScionInput } from "@/components/ui/scion-input";
 import { Link, useRoute } from "wouter";
 import { cn } from "@/lib/utils";
-import { Shield, Zap, Skull, Scroll, Activity, Cpu, Hexagon, Plus, Trash2, Crown, Heart, Radar, Minus, Upload, Image as ImageIcon, X, FileText, User, LayoutGrid, ArrowLeft, Target, Sword, Crosshair, Fingerprint, Dna, Brain, Pencil, Check, Loader2, Star } from "lucide-react";
+import { Shield, Zap, Skull, Scroll, Activity, Cpu, Hexagon, Plus, Trash2, Crown, Heart, Radar, Minus, Upload, Image as ImageIcon, X, FileText, User, LayoutGrid, ArrowLeft, Target, Sword, Crosshair, Fingerprint, Dna, Brain, Pencil, Check, Loader2, Star, Flame } from "lucide-react";
 import { useCharacter, useUpdateCharacter } from "@/lib/use-characters";
 import { useCompendium } from "@/lib/compendium-store";
 import { Button } from "@/components/ui/button";
@@ -120,6 +120,15 @@ interface CharacterKnack {
   attribute: string;
   description: string;
   type: string;
+}
+
+interface ScionsightData {
+  scion_id: string;
+  legend_level: number;
+  legend_pool_current: number | null;
+  legend_pool_total: number;
+  willpower_pool_current: number;
+  willpower_pool_total: number;
 }
 
 // --- Data ---
@@ -431,6 +440,19 @@ export default function CharacterSheet() {
       if (loadedCharacter.professionalProfile && typeof loadedCharacter.professionalProfile === 'object') {
         setProfessionalProfile(loadedCharacter.professionalProfile as any);
       }
+      
+      // Fetch scionsight data from Supabase
+      if (loadedCharacter.id) {
+        fetch(`/api/scionsight/${loadedCharacter.id}`)
+          .then(res => res.json())
+          .then(data => {
+            if (data && data.scion_id) {
+              setScionsight(data);
+              setLegendPoolCurrent(data.legend_pool_current || 0);
+            }
+          })
+          .catch(err => console.error('Failed to fetch scionsight:', err));
+      }
     }
   }, [loadedCharacter]);
 
@@ -531,6 +553,10 @@ export default function CharacterSheet() {
   const [availableKnacks, setAvailableKnacks] = useState<SupabaseKnack[]>([]);
   const [knackSearch, setKnackSearch] = useState("");
   const [showKnackDropdown, setShowKnackDropdown] = useState(false);
+  
+  // Scionsight data from Supabase
+  const [scionsight, setScionsight] = useState<ScionsightData | null>(null);
+  const [legendPoolCurrent, setLegendPoolCurrent] = useState(0);
   const [boons, setBoons] = useState<string[]>([]);
   const [newBoon, setNewBoon] = useState("");
 
@@ -1513,6 +1539,78 @@ export default function CharacterSheet() {
                         ))}
                     </div>
                 </MythicHUDFrame>
+                
+                {/* LEGEND MODULE */}
+                <MythicHUDFrame title="Legend" icon={Flame} subHeader="DIVINE POWER" className="mt-4">
+                    <div className="space-y-3">
+                        {/* Legend Level (Read-only, from Supabase Admin) */}
+                        <div className="flex items-center justify-between p-2 bg-black/40 border-l-2 border-primary/60">
+                            <div className="flex items-center gap-2">
+                                <Flame className="w-4 h-4 text-primary/60" />
+                                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-tech">Legend Level</span>
+                            </div>
+                            <span className="text-xl font-mythic text-primary drop-shadow-[0_0_10px_gold]">
+                                {scionsight?.legend_level || 1}
+                            </span>
+                        </div>
+                        
+                        {/* Legend Pool: Current / Total (Level²) */}
+                        <div className="p-2 bg-black/40 border-l-2 border-[hsl(var(--highlight-orange))]/60">
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-tech">Legend Pool</span>
+                                <span className="text-[8px] text-muted-foreground">(Level² = {scionsight?.legend_pool_total || 1})</span>
+                            </div>
+                            <div className="flex items-center justify-center gap-3">
+                                {/* Current (Editable by Scion) */}
+                                <div className="flex items-center gap-2">
+                                    <button 
+                                        onClick={() => {
+                                            const newVal = Math.max(0, legendPoolCurrent - 1);
+                                            setLegendPoolCurrent(newVal);
+                                            if (loadedCharacter?.id) {
+                                                fetch(`/api/scionsight/${loadedCharacter.id}/legend-current`, {
+                                                    method: 'PATCH',
+                                                    headers: { 'Content-Type': 'application/json' },
+                                                    body: JSON.stringify({ legend_pool_current: newVal })
+                                                });
+                                            }
+                                        }}
+                                        className="w-6 h-6 flex items-center justify-center rounded bg-black/60 border border-primary/30 text-primary hover:bg-primary/20 transition-colors"
+                                    >
+                                        <Minus className="w-3 h-3" />
+                                    </button>
+                                    <span className="text-2xl font-mythic text-[hsl(var(--highlight-orange))] min-w-[60px] text-center drop-shadow-[0_0_8px_orange]">
+                                        {legendPoolCurrent}
+                                    </span>
+                                    <button 
+                                        onClick={() => {
+                                            const legendTotal = scionsight?.legend_pool_total || Math.pow(scionsight?.legend_level || 1, 2);
+                                            const newVal = Math.min(legendTotal, legendPoolCurrent + 1);
+                                            setLegendPoolCurrent(newVal);
+                                            if (loadedCharacter?.id) {
+                                                fetch(`/api/scionsight/${loadedCharacter.id}/legend-current`, {
+                                                    method: 'PATCH',
+                                                    headers: { 'Content-Type': 'application/json' },
+                                                    body: JSON.stringify({ legend_pool_current: newVal })
+                                                });
+                                            }
+                                        }}
+                                        className="w-6 h-6 flex items-center justify-center rounded bg-black/60 border border-primary/30 text-primary hover:bg-primary/20 transition-colors"
+                                    >
+                                        <Plus className="w-3 h-3" />
+                                    </button>
+                                </div>
+                                
+                                <span className="text-xl text-muted-foreground">/</span>
+                                
+                                {/* Total (from Supabase, calculated as Legend²) */}
+                                <span className="text-2xl font-mythic text-primary/60">
+                                    {scionsight?.legend_pool_total || Math.pow(scionsight?.legend_level || 1, 2)}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </MythicHUDFrame>
 
             </div>
 
@@ -1642,7 +1740,7 @@ export default function CharacterSheet() {
                                     />
                                     {/* Nature Tooltip on hover */}
                                     {nature && !editingVirtues && (() => {
-                                        const foundNature = availableNatures.find(n => n.name.toLowerCase() === nature.toLowerCase());
+                                        const foundNature = availableNatures.find(n => n.nome?.toLowerCase() === nature.toLowerCase());
                                         return foundNature?.description ? (
                                             <div className="absolute left-0 top-full mt-2 p-2 bg-black/95 border border-primary/30 rounded-sm text-[10px] font-tech text-primary/70 max-w-[250px] opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none">
                                                 {foundNature.description}

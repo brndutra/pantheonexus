@@ -585,6 +585,45 @@ export async function registerRoutes(
     }
   });
   
+  // SCIONSIGHT - Fetch legend data from Supabase scionsight table
+  app.get("/api/scionsight/:scionId", async (req, res) => {
+    try {
+      const { scionId } = req.params;
+      const { data, error } = await supabase
+        .from('scionsight')
+        .select('*')
+        .eq('scion_id', scionId)
+        .single();
+      
+      if (error && error.code !== 'PGRST116') throw error; // PGRST116 is "not found"
+      res.json(data || null);
+    } catch (error) {
+      console.error("Error fetching scionsight:", error);
+      res.status(500).json({ error: "Failed to fetch scionsight" });
+    }
+  });
+  
+  // Update scionsight legend_pool_current
+  app.patch("/api/scionsight/:scionId/legend-current", async (req, res) => {
+    try {
+      const { scionId } = req.params;
+      const { legend_pool_current } = req.body;
+      
+      const { data, error } = await supabase
+        .from('scionsight')
+        .update({ legend_pool_current })
+        .eq('scion_id', scionId)
+        .select()
+        .single();
+      
+      if (error) throw error;
+      res.json(data);
+    } catch (error) {
+      console.error("Error updating legend pool:", error);
+      res.status(500).json({ error: "Failed to update legend pool" });
+    }
+  });
+  
   // KNACKS - Fetch from Supabase knacks table
   app.get("/api/supabase-knacks", async (req, res) => {
     try {
