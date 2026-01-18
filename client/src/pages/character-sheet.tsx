@@ -97,11 +97,12 @@ const ABILITIES_LIST = [
 // --- Components ---
 
 const SectionFrame = ({ children, title, className, icon: Icon, action, subHeader }: { children: React.ReactNode, title: string, className?: string, icon?: any, action?: React.ReactNode, subHeader?: string }) => (
-  <div className={cn("p-8 relative bg-black/40 backdrop-blur-md shadow-2xl overflow-hidden group", className)}>
-    {/* Full Frame Border */}
-    <div className="absolute inset-0 z-0 pointer-events-none opacity-60 group-hover:opacity-100 transition-opacity">
-        <img src={artNouveauFrame} className="w-full h-full object-fill" alt="" />
-    </div>
+  <div className={cn("p-8 frame-ethereal rounded-sm group", className)}>
+    {/* CSS Corner Accents */}
+    <div className="frame-corner-tl" />
+    <div className="frame-corner-tr" />
+    <div className="frame-corner-bl" />
+    <div className="frame-corner-br" />
 
     {/* Header Line */}
     <div className="flex justify-between items-start mb-6 border-b border-primary/30 pb-2 relative z-10 px-2">
@@ -394,17 +395,10 @@ export default function CharacterSheet() {
   const legendPoolTotal = legend * legend;
 
   return (
-    <div 
-      className="min-h-screen bg-black text-foreground overflow-x-hidden font-tech selection:bg-primary/30 relative"
-      style={{
-        backgroundImage: `url(${darkGoldTexture})`,
-        backgroundSize: 'cover',
-        backgroundAttachment: 'fixed',
-      }}
-    >
-      
-      {/* Vignette Overlay */}
-      <div className="fixed inset-0 pointer-events-none z-10 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.7)_90%)]" />
+    <div className="min-h-screen bg-mythic-void text-foreground overflow-x-hidden font-tech selection:bg-primary/30 relative">
+      <div className="fixed inset-0 pointer-events-none z-10 overlay-vignette opacity-70" />
+      <div className="fixed inset-0 pointer-events-none z-10 overlay-scanline opacity-20" />
+      <div className="fixed inset-0 pointer-events-none z-10 overlay-noise opacity-30 mix-blend-overlay" />
 
       {/* Main Container */}
       <div className="relative z-20 container mx-auto p-4 md:p-8 max-w-7xl">
