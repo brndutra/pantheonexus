@@ -496,6 +496,22 @@ export async function registerRoutes(
     }
   });
   
+  // VIRTUES - Fetch from Supabase virtues_reference table
+  app.get("/api/virtues", async (req, res) => {
+    try {
+      const { data, error } = await supabase
+        .from('virtues_reference')
+        .select('*')
+        .order('name');
+      
+      if (error) throw error;
+      res.json(data || []);
+    } catch (error) {
+      console.error("Error fetching virtues:", error);
+      res.status(500).json({ error: "Failed to fetch virtues" });
+    }
+  });
+  
   // ATTACKS
   app.get("/api/attacks", async (req, res) => {
     try {
