@@ -21,8 +21,11 @@ export async function registerRoutes(
       
       let attributesCreated = 0;
       let abilitiesCreated = 0;
+      let scionsightCreated = 0;
+      const errors: string[] = [];
       
       for (const scroll of scrolls || []) {
+        // Create scion_attributes row
         const { data: existingAttr } = await supabase
           .from('scion_attributes')
           .select('id')
@@ -51,9 +54,14 @@ export async function registerRoutes(
             attribute_epic_intelligence: 0,
             attribute_epic_wits: 0
           });
-          if (!attrError) attributesCreated++;
+          if (attrError) {
+            errors.push(`Attr ${scroll.name}: ${attrError.message}`);
+          } else {
+            attributesCreated++;
+          }
         }
         
+        // Create scion_abilities row
         const { data: existingAbil } = await supabase
           .from('scion_abilities')
           .select('id')
@@ -64,14 +72,51 @@ export async function registerRoutes(
           const { error: abilError } = await supabase.from('scion_abilities').insert({
             scion_id: scroll.id
           });
-          if (!abilError) abilitiesCreated++;
+          if (abilError) {
+            errors.push(`Abil ${scroll.name}: ${abilError.message}`);
+          } else {
+            abilitiesCreated++;
+          }
+        }
+        
+        // Create scionsight row
+        const { data: existingScion } = await supabase
+          .from('scionsight')
+          .select('id')
+          .eq('scion_id', scroll.id)
+          .single();
+        
+        if (!existingScion) {
+          const { error: scionError } = await supabase.from('scionsight').insert({
+            scion_id: scroll.id,
+            legend_level: 1,
+            legend_pool_total: 1,
+            willpower_pool_total: 5,
+            willpower_pool_current: 5
+          });
+          if (scionError) {
+            errors.push(`Scionsight ${scroll.name}: ${scionError.message}`);
+          } else {
+            scionsightCreated++;
+          }
         }
       }
       
+      // Get counts of existing rows
+      const { count: attrCount } = await supabase.from('scion_attributes').select('*', { count: 'exact', head: true });
+      const { count: abilCount } = await supabase.from('scion_abilities').select('*', { count: 'exact', head: true });
+      const { count: scionCount } = await supabase.from('scionsight').select('*', { count: 'exact', head: true });
+      
       res.json({
         success: true,
-        message: `Created ${attributesCreated} attribute rows and ${abilitiesCreated} ability rows`,
-        totalCharacters: scrolls?.length || 0
+        message: `Created ${attributesCreated} attribute rows, ${abilitiesCreated} ability rows, ${scionsightCreated} scionsight rows`,
+        totalCharacters: scrolls?.length || 0,
+        existingCounts: {
+          scion_attributes: attrCount,
+          scion_abilities: abilCount,
+          scionsight: scionCount
+        },
+        errors: errors.length > 0 ? errors : undefined
       });
     } catch (error) {
       console.error("Migration error:", error);
