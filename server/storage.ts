@@ -243,13 +243,13 @@ export class SupabaseStorage implements IStorage {
   }
 
   private normalizeVirtues(virtues: any, ss: any): any[] {
-    if (ss.virtue_1) {
+    if (ss.virtue_1 || ss.virtue_5_name) {
       return [
         { id: 1, name: ss.virtue_1 || "Valor", value: ss.virtue_1_rating || 1 },
         { id: 2, name: ss.virtue_2 || "Harmony", value: ss.virtue_2_rating || 1 },
         { id: 3, name: ss.virtue_3 || "Order", value: ss.virtue_3_rating || 1 },
         { id: 4, name: ss.virtue_4 || "Piety", value: ss.virtue_4_rating || 1 },
-        { id: 5, name: "", value: 1 }
+        { id: 5, name: ss.virtue_5_name || "", value: ss.virtue_5_rating || 1 }
       ];
     }
     
@@ -574,6 +574,10 @@ export class SupabaseStorage implements IStorage {
       if (virtues[3]) {
         result.virtue_4 = virtues[3].name || "";
         result.virtue_4_rating = virtues[3].value || 1;
+      }
+      if (virtues[4]) {
+        result.virtue_5_name = virtues[4].name || "";
+        result.virtue_5_rating = virtues[4].value || 1;
       }
     }
     

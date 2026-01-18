@@ -120,6 +120,43 @@ export async function registerRoutes(
     }
   });
   
+  // Get scion_abilities schema (column names for abilities list)
+  app.get("/api/abilities-schema", async (req, res) => {
+    try {
+      // Fetch one row to get column names
+      const { data, error } = await supabase
+        .from('scion_abilities')
+        .select('*')
+        .limit(1);
+      
+      if (error) throw error;
+      
+      if (data && data.length > 0) {
+        // Extract column names, filter out id, scion_id, created_at, updated_at
+        // Also filter to only get _rating columns, then extract base ability name
+        const excludeColumns = ['id', 'scion_id', 'created_at', 'updated_at'];
+        const ratingColumns = Object.keys(data[0])
+          .filter(col => !excludeColumns.includes(col) && col.endsWith('_rating') && !col.includes('specialties') && !col.includes('sparks'));
+        
+        const abilityNames = ratingColumns.map(col => {
+          // Remove ability_ prefix and _rating suffix, then convert to title case
+          // e.g., "ability_academicos_rating" -> "Academicos"
+          const baseName = col.replace('ability_', '').replace('_rating', '');
+          return baseName.split('_').map(word => 
+            word.charAt(0).toUpperCase() + word.slice(1)
+          ).join(' ');
+        });
+        
+        res.json({ abilities: abilityNames, raw_columns: ratingColumns });
+      } else {
+        res.json({ abilities: [] });
+      }
+    } catch (error) {
+      console.error("Error fetching abilities schema:", error);
+      res.status(500).json({ error: "Failed to fetch abilities schema" });
+    }
+  });
+
   // Character routes
   
   // Get all characters
