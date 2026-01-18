@@ -457,41 +457,59 @@ export default function CharacterSheet() {
      fullMark: 10
   }));
 
-  // Combat & Physics Calculations
+  // Combat & Physics Calculations (Updated)
   const getAttributeTotal = (name: AttributeName) => {
     let attr: Attribute | undefined;
     for (const cat of Object.values(attributes)) {
       attr = cat.find(a => a.name === name);
       if (attr) break;
     }
-    return attr ? attr.value + attr.epic : 0; // Using simplified total for now
+    return attr ? attr.value + attr.epic : 0; 
+  };
+  
+  const getAttributeEpic = (name: AttributeName) => {
+    let attr: Attribute | undefined;
+    for (const cat of Object.values(attributes)) {
+      attr = cat.find(a => a.name === name);
+      if (attr) break;
+    }
+    return attr ? attr.epic : 0;
   };
 
   const getAbilityValue = (name: string) => abilities[name]?.value || 0;
 
-  const joinBattle = getAttributeTotal("Wits") + getAbilityValue("Awareness");
-  const dodgeDV = Math.ceil((getAttributeTotal("Dexterity") + getAbilityValue("Athletics") + legend) / 2);
-  const parryDV = Math.ceil((getAttributeTotal("Dexterity") + Math.max(getAbilityValue("Melee"), getAbilityValue("Brawl"))) / 2); // Simplified weapon defense
-  const armedDV = Math.ceil((getAttributeTotal("Strength") + getAbilityValue("Melee")) / 2);
-
-  const staminaTotal = getAttributeTotal("Stamina");
-  const armorSoak = 0; // Placeholder until Armor is implemented properly
-  const bashingSoak = staminaTotal + armorSoak;
-  const lethalSoak = Math.floor(staminaTotal / 2) + armorSoak;
-  const aggSoak = armorSoak;
-
-  const move = getAttributeTotal("Dexterity") + 6;
-  const dash = getAttributeTotal("Dexterity") + 12;
-  
-  const jumpVert = getAttributeTotal("Strength") + getAbilityValue("Athletics");
-  const jumpHoriz = (getAttributeTotal("Strength") + getAbilityValue("Athletics")) * 2;
-  
-  const strengthTotal = getAttributeTotal("Strength");
-  const lift = strengthTotal * 50; // Simplified calculation (lbs)
-  const throwRange = strengthTotal * 10; // Simplified calculation (yards)
-
-  // Aether Calculation (Now controlled via state)
+  // Legend Pool Calculation (Scion 1st Edition: Legend ^ 2)
   const legendPoolTotal = legend * legend;
+  const [legendPointsCurrent, setLegendPointsCurrent] = useState(legendPoolTotal);
+
+  // Combat Stats (Scion 1st Ed)
+  // DV = [(Dexterity + Athletics + Legend) / 2]
+  const dodgeDV = Math.ceil((getAttributeTotal("Dexterity") + getAbilityValue("Athletics") + legend) / 2);
+  // Parry DV = [(Dexterity + Brawl/Melee + Weapon Defense) / 2]
+  const parryDV = Math.ceil((getAttributeTotal("Dexterity") + Math.max(getAbilityValue("Melee"), getAbilityValue("Brawl"))) / 2); 
+  
+  // Soak (Scion 1st Ed)
+  // Bashing Soak = Stamina + Epic Stamina
+  // Lethal Soak = RoundDown(Stamina / 2) + Epic Stamina
+  // Aggravated Soak = Epic Stamina
+  // + Armor values added later
+  const staminaVal = getAttributeTotal("Stamina") - getAttributeEpic("Stamina"); // Base Stamina
+  const epicStamina = getAttributeEpic("Stamina");
+  
+  const baseBashingSoak = staminaVal + epicStamina;
+  const baseLethalSoak = Math.floor(staminaVal / 2) + epicStamina;
+  const baseAggSoak = epicStamina;
+
+  const [armorList, setArmorList] = useState<{name: string, soakB: number, soakL: number, soakA: number, mobility: number, fatigue: number}[]>([]);
+  
+  // Calculate total soak with armor
+  const totalBashingSoak = baseBashingSoak + armorList.reduce((acc, curr) => acc + curr.soakB, 0);
+  const totalLethalSoak = baseLethalSoak + armorList.reduce((acc, curr) => acc + curr.soakL, 0);
+  const totalAggSoak = baseAggSoak + armorList.reduce((acc, curr) => acc + curr.soakA, 0);
+
+  // New State for Feats / Merits (if separate from Knacks)
+  const [feats, setFeats] = useState<{name: string, type: string, cost: string, desc: string}[]>([]);
+  const [newFeat, setNewFeat] = useState({name: "", type: "", cost: "", desc: ""});
 
   return (
     <div className="min-h-screen bg-mythic-void text-foreground overflow-x-hidden font-tech selection:bg-primary/30 relative">
@@ -999,45 +1017,55 @@ export default function CharacterSheet() {
             <div className="col-span-12 md:col-span-4 flex flex-col gap-6">
 
                 {/* 1. VITALITY MONITOR */}
-                <MythicHUDFrame title="Vitality & Energy" icon={Activity} subHeader="BIOMETRICS & POOLS">
+                <MythicHUDFrame 
+                    title="Vitality & Energy" 
+                    icon={Activity} 
+                    subHeader="BIOMETRICS & POOLS"
+                    isEditing={editModes.vitality}
+                    onToggleEdit={() => toggleEdit('vitality')}
+                >
                     <div className="space-y-6">
                         {/* Legend & Aether Integrated */}
                         <div className="grid grid-cols-2 gap-3 pb-4 border-b border-primary/10">
                             {/* Legend Module */}
-                            <div className="bg-black/60 border border-[hsl(var(--highlight-amber))]/30 p-3 relative overflow-hidden group rounded-sm shadow-[0_0_15px_rgba(255,160,0,0.1)]">
+                            <div className="bg-black/60 border border-[hsl(var(--highlight-amber))]/30 p-3 relative overflow-hidden group rounded-sm shadow-[0_0_15px_rgba(255,160,0,0.1)] col-span-2">
                                 <div className="absolute inset-0 bg-[hsl(var(--highlight-amber))]/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                <h4 className="text-[10px] font-mythic tracking-widest text-[hsl(var(--highlight-amber))] mb-1 flex items-center gap-2">
-                                    <Crown className="w-3 h-3" /> LEGEND
-                                </h4>
-                                <div className="flex items-end justify-between mt-2">
-                                    <span className="text-4xl font-mythic text-[hsl(var(--highlight-amber))] drop-shadow-[0_0_10px_orange] leading-none">{legend}</span>
-                                    <div className="text-right">
-                                        <div className="text-[9px] text-muted-foreground uppercase">Pool</div>
-                                        <div className="text-lg font-code font-bold text-primary/80">{legendPoolTotal}</div>
+                                <div className="flex justify-between items-center mb-2">
+                                    <h4 className="text-[10px] font-mythic tracking-widest text-[hsl(var(--highlight-amber))] flex items-center gap-2">
+                                        <Crown className="w-3 h-3" /> LEGEND RANK
+                                    </h4>
+                                    <div className="flex items-center gap-2">
+                                         <span className="text-[9px] text-muted-foreground uppercase">PERMANENT:</span>
+                                         <span className="text-xl font-mythic text-[hsl(var(--highlight-amber))] drop-shadow-[0_0_10px_orange] leading-none">{legend}</span>
                                     </div>
                                 </div>
-                            </div>
-
-                            {/* Aether Module */}
-                            <div className="bg-black/60 border border-[hsl(var(--highlight-blue))]/30 p-3 relative overflow-hidden group rounded-sm shadow-[0_0_15px_rgba(0,200,255,0.1)]">
-                                <div className="absolute inset-0 bg-[hsl(var(--highlight-blue))]/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                <h4 className="text-[10px] font-mythic tracking-widest text-[hsl(var(--highlight-blue))] mb-1 flex items-center gap-2">
-                                    <Zap className="w-3 h-3" /> AETHER
-                                </h4>
-                                <div className="flex items-center justify-center mt-1 relative h-12">
-                                     <svg className="w-12 h-12 -rotate-90 filter drop-shadow-[0_0_5px_cyan]">
-                                        <circle cx="24" cy="24" r="20" stroke="#333" strokeWidth="3" fill="transparent" />
-                                        <circle 
-                                          cx="24" cy="24" r="20" 
-                                          stroke="hsl(var(--highlight-blue))" 
-                                          strokeWidth="3" 
-                                          fill="transparent" 
-                                          strokeDasharray={`${2 * Math.PI * 20}`}
-                                          strokeDashoffset={`${2 * Math.PI * 20 * (1 - aetherPercentage/100)}`}
-                                          strokeLinecap="round"
-                                        />
-                                     </svg>
-                                     <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-[hsl(var(--highlight-blue))]">{aetherPercentage}%</span>
+                                
+                                {/* Legend Pool Tracker - Boxes */}
+                                <div className="space-y-1">
+                                    <div className="flex justify-between items-end">
+                                        <span className="text-[9px] font-tech text-muted-foreground uppercase tracking-widest">LEGEND POOL ({legendPointsCurrent}/{legendPoolTotal})</span>
+                                    </div>
+                                    <div className="flex flex-wrap gap-1">
+                                        {Array.from({ length: legendPoolTotal }).map((_, i) => (
+                                            <button
+                                                key={i}
+                                                onClick={() => {
+                                                    if (legendPointsCurrent === i + 1) {
+                                                        setLegendPointsCurrent(i); // Toggle off if clicking the last active one
+                                                    } else {
+                                                        setLegendPointsCurrent(i + 1);
+                                                    }
+                                                }}
+                                                className={cn(
+                                                    "w-3 h-3 border transition-all duration-300 relative overflow-hidden",
+                                                    i < legendPointsCurrent 
+                                                        ? "bg-[hsl(var(--highlight-amber))] border-[hsl(var(--highlight-amber))] shadow-[0_0_5px_orange]" 
+                                                        : "bg-transparent border-primary/20 hover:border-[hsl(var(--highlight-amber))]/50"
+                                                )}
+                                                style={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)" }} // Standard square for points
+                                            />
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1086,6 +1114,28 @@ export default function CharacterSheet() {
                                      </div>
                                  ))}
                              </div>
+                        </div>
+
+                        {/* Feats & Merits Section */}
+                        <div className="space-y-2 pt-2 border-t border-primary/10">
+                             <div className="flex justify-between items-center">
+                                <h5 className="text-[10px] font-mythic uppercase text-primary/70">Feats & Merits</h5>
+                                <button className="text-[10px] text-primary hover:text-white border border-primary/30 px-2 py-0.5 rounded-sm hover:bg-primary/20 transition-colors">+ ADD</button>
+                             </div>
+                            {feats.length === 0 ? (
+                                <div className="text-[10px] text-muted-foreground/40 italic text-center py-2 border border-dashed border-primary/10 rounded-sm">
+                                    NO FEATS RECORDED
+                                </div>
+                            ) : (
+                                <div className="space-y-1">
+                                    {feats.map((feat, i) => (
+                                        <div key={i} className="flex justify-between items-center text-[10px] bg-black/40 p-2 border border-primary/10 rounded-sm">
+                                            <span className="text-primary font-bold">{feat.name}</span>
+                                            <span className="text-muted-foreground">{feat.cost}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
 
                         {/* Combat Derived Stats - Compact Grid */}
