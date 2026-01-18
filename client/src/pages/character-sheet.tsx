@@ -2542,7 +2542,7 @@ export default function CharacterSheet() {
         <div className="mt-6">
             
             {/* POWERS */}
-            <MythicHUDFrame title="Supernatural Arsenal" icon={Zap} subHeader="KNACKS & BOONS" className="min-h-[300px]" isEditing={editingPowers} {...createEditHandlers(editingPowers, setEditingPowers)}>
+            <MythicHUDFrame title="Supernatural Arsenal" icon={Zap} subHeader="KNACKS & BOONS" className="min-h-[300px]">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                      {/* Knacks Column */}
                      <div>
