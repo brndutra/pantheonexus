@@ -1590,36 +1590,36 @@ export default function CharacterSheet() {
         <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
             {/* ATTRIBUTES CORE - 1 column */}
             <MythicHUDFrame title="Attributes Core" icon={Dna} subHeader="PHYSICAL / SOCIAL / MENTAL" className="md:col-span-1 flex flex-col" isEditing={editingAttributes} {...createEditHandlers(editingAttributes, setEditingAttributes)}>
-                <div className="space-y-8 flex-1">
+                <div className="space-y-6 flex-1">
                     {(Object.entries(attributes) as [AttributeCategory, Attribute[]][]).map(([category, attrs]) => (
-                        <div key={category} className="space-y-3 relative">
-                            <h4 className="text-xs font-mythic uppercase tracking-[0.3em] text-primary/50 border-b border-primary/10 pb-2 mb-3">
+                        <div key={category} className="space-y-2 relative">
+                            <h4 className="text-[10px] font-mythic uppercase tracking-[0.3em] text-primary/50 border-b border-primary/10 pb-1 mb-2">
                                 {category}
                             </h4>
                             {attrs.map((attr, idx) => (
-                                <div key={attr.name} className="flex flex-col gap-2 group py-1">
-                                    <div className="flex justify-between items-end mb-1">
-                                        <span className="text-sm font-bold font-tech text-foreground uppercase tracking-wider flex items-center gap-2">
-                                            <span className="text-primary/40 text-xs w-5">{attr.rune}</span>
+                                <div key={attr.name} className="flex flex-col gap-1 group">
+                                    <div className="flex justify-between items-end mb-0.5">
+                                        <span className="text-xs font-bold font-tech text-foreground uppercase tracking-wider flex items-center gap-1">
+                                            <span className="text-primary/40 text-[10px] w-4">{attr.rune}</span>
                                             {attr.name}
                                         </span>
-                                        <div className="flex gap-2 text-xs font-mono text-primary/60">
+                                        <div className="flex gap-2 text-[10px] font-mono text-primary/60">
                                             <span>VAL: {attr.value}</span>
                                             {attr.epic > 0 && <span className="text-accent-foreground">EPIC: {attr.epic}</span>}
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-3">
+                                    <div className="flex items-center gap-2">
                                         <DotRating 
                                             value={attr.value} 
                                             onChange={(v) => updateAttribute(category, idx, 'value', v)} 
                                             max={10}
                                             className="flex-1"
-                                            iconClassName="w-3 h-3 rounded-full border border-primary/30"
-                                            activeClassName="bg-primary shadow-[0_0_6px_gold] border-primary"
+                                            iconClassName="w-2.5 h-2.5 rounded-full border border-primary/30"
+                                            activeClassName="bg-primary shadow-[0_0_4px_gold] border-primary"
                                             readOnly={!editingAttributes}
                                         />
                                         {/* Epic Toggle - Expanded to 10 slots */}
-                                        <div className="flex gap-1 ml-auto">
+                                        <div className="flex gap-0.5 ml-auto">
                                             {Array.from({length: 10}).map((_, i) => {
                                                 const e = i + 1;
                                                 return (
@@ -1627,7 +1627,7 @@ export default function CharacterSheet() {
                                                         key={e} 
                                                         onClick={() => editingAttributes && updateAttribute(category, idx, 'epic', attr.epic === e ? 0 : e)}
                                                         className={cn(
-                                                            "w-2 h-4 border border-primary/30 transition-all",
+                                                            "w-1.5 h-3 border border-primary/30 transition-all",
                                                             editingAttributes ? "cursor-pointer hover:border-accent-foreground" : "cursor-default",
                                                             attr.epic >= e ? "bg-accent-foreground shadow-[0_0_5px_var(--color-accent-foreground)]" : "bg-black/40"
                                                         )}
@@ -1647,24 +1647,24 @@ export default function CharacterSheet() {
             {/* ABILITIES SCROLL - 2 columns */}
             <MythicHUDFrame title="Abilities Database" icon={Brain} subHeader="SKILL SET MATRIX" className="md:col-span-2 flex flex-col" isEditing={editingAbilities} {...createEditHandlers(editingAbilities, setEditingAbilities)}>
                 <div className="flex-1 overflow-y-auto pr-2 scion-scrollbar custom-scroll-area">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-1 h-full content-start">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-1 h-full content-start">
                         {abilitiesSchema.map((schema) => {
                             const abilityName = schema.name;
                             const ability = abilities[abilityName] || { value: 0, sparks: 0, heritage: false, specialties: [] };
                             const isHeritage = ability.heritage;
                             return (
                                 <div key={abilityName} className={cn(
-                                    "flex items-center justify-between p-2 hover:bg-primary/5 rounded-sm transition-colors border border-transparent hover:border-primary/10 group",
+                                    "flex items-center justify-between p-1.5 hover:bg-primary/5 rounded-sm transition-colors border border-transparent hover:border-primary/10 group",
                                     (ability.value || 0) > 0 ? "opacity-100" : "opacity-60 hover:opacity-100",
                                     isHeritage && "border-l-2 border-l-[hsl(var(--highlight-amber))]"
                                 )}>
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-1.5 flex-1 min-w-0">
                                         {/* Heritage indicator - star icon */}
                                         {isHeritage && (
-                                            <Star className="w-3 h-3 text-[hsl(var(--highlight-amber))] fill-[hsl(var(--highlight-amber))]" />
+                                            <Star className="w-2.5 h-2.5 text-[hsl(var(--highlight-amber))] fill-[hsl(var(--highlight-amber))] flex-shrink-0" />
                                         )}
                                         <span className={cn(
-                                            "text-xs uppercase tracking-wider font-tech transition-colors",
+                                            "text-[10px] uppercase tracking-wider font-tech transition-colors truncate",
                                             isHeritage ? "text-[hsl(var(--highlight-amber))]" : 
                                             (ability.value || 0) > 0 ? "text-primary" : "text-muted-foreground group-hover:text-primary/70"
                                         )}>
@@ -1675,67 +1675,45 @@ export default function CharacterSheet() {
                                             <button 
                                                 onClick={() => updateAbilityHeritage(abilityName, !ability.heritage)}
                                                 className={cn(
-                                                    "opacity-0 group-hover:opacity-100 transition-opacity",
+                                                    "opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0",
                                                     isHeritage ? "text-[hsl(var(--highlight-amber))]" : "text-muted-foreground/40 hover:text-[hsl(var(--highlight-amber))]"
                                                 )}
                                                 title="Toggle Heritage Favored"
                                             >
-                                                <Star className="w-3 h-3" />
-                                            </button>
-                                        )}
-                                        {/* Add specialty button */}
-                                        {editingAbilities && (
-                                            <button 
-                                                onClick={() => addSpecialty(abilityName)}
-                                                className="opacity-0 group-hover:opacity-100 text-primary/40 hover:text-primary transition-opacity"
-                                            >
-                                                <Plus className="w-3 h-3" />
+                                                <Star className="w-2.5 h-2.5" />
                                             </button>
                                         )}
                                     </div>
                                     
-                                    <div className="flex flex-col items-end gap-1">
-                                        {/* Main ability dots */}
-                                        <DotRating 
-                                            value={ability.value || 0} 
-                                            max={5} 
-                                            onChange={(v) => updateAbilityValue(abilityName, v)}
-                                            iconClassName="w-1.5 h-1.5"
-                                            activeClassName="bg-primary"
-                                            readOnly={!editingAbilities}
-                                        />
-                                        {/* Sparks - small dots that evolve ability */}
-                                        <div className="flex items-center gap-0.5">
-                                            <span className="text-[8px] text-muted-foreground/50 mr-1">SPARKS</span>
-                                            {Array.from({ length: 5 }).map((_, i) => (
-                                                <button
-                                                    key={i}
-                                                    onClick={() => editingAbilities && updateAbilitySparks(abilityName, i < (ability.sparks || 0) ? i : i + 1)}
-                                                    disabled={!editingAbilities}
-                                                    className={cn(
-                                                        "w-1 h-1 rounded-full border transition-all",
-                                                        i < (ability.sparks || 0) 
-                                                            ? "bg-accent-foreground border-accent-foreground shadow-[0_0_3px_cyan]" 
-                                                            : "bg-transparent border-muted-foreground/30",
-                                                        editingAbilities && "hover:border-accent-foreground cursor-pointer"
-                                                    )}
-                                                />
-                                            ))}
-                                        </div>
-                                        {/* Specialties List */}
-                                        {(ability.specialties || []).length > 0 && (
-                                            <div className="flex flex-col gap-1 mt-1 items-end">
-                                                {(ability.specialties || []).map((spec, sIdx) => (
-                                                    <div key={sIdx} className="flex items-center gap-1">
-                                                        <input 
-                                                            value={spec.name}
-                                                            onChange={(e) => updateSpecialty(abilityName, sIdx, 'name', e.target.value)}
-                                                            placeholder="Specialty"
-                                                            className="text-[9px] bg-transparent border-b border-primary/20 w-20 text-right focus:border-primary outline-none text-primary/70"
-                                                            disabled={!editingAbilities}
-                                                        />
-                                                        {editingAbilities && <button onClick={() => removeSpecialty(abilityName, sIdx)} className="text-red-500/50 hover:text-red-500"><X className="w-2 h-2" /></button>}
-                                                    </div>
+                                    <div className="flex items-center gap-2 flex-shrink-0">
+                                        {/* Ability value as number */}
+                                        {editingAbilities ? (
+                                            <div className="flex items-center gap-1">
+                                                <button 
+                                                    onClick={() => updateAbilityValue(abilityName, Math.max(0, (ability.value || 0) - 1))}
+                                                    className="text-primary/40 hover:text-primary"
+                                                >
+                                                    <Minus className="w-3 h-3" />
+                                                </button>
+                                                <span className="text-sm font-mythic text-primary w-4 text-center">{ability.value || 0}</span>
+                                                <button 
+                                                    onClick={() => updateAbilityValue(abilityName, Math.min(5, (ability.value || 0) + 1))}
+                                                    className="text-primary/40 hover:text-primary"
+                                                >
+                                                    <Plus className="w-3 h-3" />
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <span className={cn(
+                                                "text-sm font-mythic w-4 text-center",
+                                                (ability.value || 0) > 0 ? "text-primary" : "text-muted-foreground/50"
+                                            )}>{ability.value || 0}</span>
+                                        )}
+                                        {/* Sparks indicator */}
+                                        {(ability.sparks || 0) > 0 && (
+                                            <div className="flex items-center gap-0.5">
+                                                {Array.from({ length: ability.sparks || 0 }).map((_, i) => (
+                                                    <div key={i} className="w-1 h-1 rounded-full bg-accent-foreground shadow-[0_0_3px_cyan]" />
                                                 ))}
                                             </div>
                                         )}
