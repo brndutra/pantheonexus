@@ -16,7 +16,7 @@ export default function Home() {
 
   return (
     <div 
-      className="min-h-screen bg-black text-foreground overflow-hidden font-tech selection:bg-primary/30 relative flex items-center justify-center bg-grid-gold"
+      className="min-h-screen bg-mythic-void text-foreground overflow-hidden font-tech selection:bg-primary/30 relative flex items-center justify-center"
     >
       {/* Aesthetic Overlays */}
       <div className="fixed inset-0 pointer-events-none z-10 overlay-vignette" />

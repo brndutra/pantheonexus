@@ -8,12 +8,12 @@ import { useCompendium } from "@/lib/compendium-store";
 
 // Reusing style components for consistency
 const SectionFrame = ({ children, title, className, subHeader }: { children: React.ReactNode, title: string, className?: string, subHeader?: string }) => (
-  <div className={cn("p-8 relative bg-black/90 border border-primary/20 backdrop-blur-md shadow-2xl overflow-hidden h-full group rounded-lg", className)}>
+  <div className={cn("p-8 frame-ethereal rounded-sm h-full group", className)}>
     {/* CSS Corner Accents */}
-    <div className="absolute top-0 left-0 w-8 h-8 border-t border-l border-primary/50 rounded-tl-sm" />
-    <div className="absolute top-0 right-0 w-8 h-8 border-t border-r border-primary/50 rounded-tr-sm" />
-    <div className="absolute bottom-0 left-0 w-8 h-8 border-b border-l border-primary/50 rounded-bl-sm" />
-    <div className="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-primary/50 rounded-br-sm" />
+    <div className="frame-corner-tl" />
+    <div className="frame-corner-tr" />
+    <div className="frame-corner-bl" />
+    <div className="frame-corner-br" />
 
     <div className="flex justify-between items-start mb-6 border-b border-primary/20 pb-2 relative z-10 px-2">
        <div>
@@ -152,10 +152,10 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div 
-      className="min-h-screen bg-black text-foreground overflow-x-hidden font-tech selection:bg-primary/30 relative bg-grid-gold"
-    >
-      <div className="fixed inset-0 pointer-events-none z-10 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.8)_90%)]" />
+    <div className="min-h-screen bg-mythic-void text-foreground overflow-x-hidden font-tech selection:bg-primary/30 relative">
+      <div className="fixed inset-0 pointer-events-none z-10 overlay-vignette opacity-70" />
+      <div className="fixed inset-0 pointer-events-none z-10 overlay-scanline opacity-20" />
+      <div className="fixed inset-0 pointer-events-none z-10 overlay-noise opacity-30 mix-blend-overlay" />
 
       <div className="relative z-20 container mx-auto p-4 md:p-8 max-w-7xl">
         {/* Header */}
