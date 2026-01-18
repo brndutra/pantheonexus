@@ -350,7 +350,8 @@ export default function CharacterSheet() {
   const joinBattle = getAttributeTotal("Wits") + getAbilityValue("Awareness");
   const dodgeDV = Math.ceil((getAttributeTotal("Dexterity") + getAbilityValue("Athletics") + legend) / 2);
   const parryDV = Math.ceil((getAttributeTotal("Dexterity") + Math.max(getAbilityValue("Melee"), getAbilityValue("Brawl"))) / 2); // Simplified weapon defense
-  
+  const armedDV = Math.ceil((getAttributeTotal("Strength") + getAbilityValue("Melee")) / 2);
+
   const staminaTotal = getAttributeTotal("Stamina");
   const armorSoak = 0; // Placeholder until Armor is implemented properly
   const bashingSoak = staminaTotal + armorSoak;
@@ -946,7 +947,7 @@ export default function CharacterSheet() {
                           <h4 className="text-[10px] uppercase tracking-[0.2em] font-mythic text-primary/70 mb-2 border-b border-primary/20 pb-2 flex items-center justify-between">
                              Defense <Shield className="w-3 h-3 text-primary/40" />
                           </h4>
-                          <div className="grid grid-cols-2 gap-4">
+                          <div className="grid grid-cols-3 gap-2">
                              <div className="space-y-1">
                                 <span className="text-[8px] uppercase tracking-widest text-primary/50 text-center block">Dodge DV</span>
                                 <div className="bg-black/40 border border-primary/30 text-center font-code text-lg py-1 text-primary">{dodgeDV}</div>
@@ -954,6 +955,10 @@ export default function CharacterSheet() {
                              <div className="space-y-1">
                                 <span className="text-[8px] uppercase tracking-widest text-primary/50 text-center block">Parry DV</span>
                                 <div className="bg-black/40 border border-primary/30 text-center font-code text-lg py-1 text-primary">{parryDV}</div>
+                             </div>
+                             <div className="space-y-1">
+                                <span className="text-[8px] uppercase tracking-widest text-primary/50 text-center block">Armed DV</span>
+                                <div className="bg-black/40 border border-primary/30 text-center font-code text-lg py-1 text-primary">{armedDV}</div>
                              </div>
                           </div>
                           <div className="space-y-1">
@@ -993,6 +998,8 @@ export default function CharacterSheet() {
                              <div className="flex flex-col"><span className="text-muted-foreground">Dash</span> <span className="text-foreground">{dash} yds</span></div>
                              <div className="flex flex-col"><span className="text-muted-foreground">Jump V</span> <span className="text-foreground">{jumpVert} yds</span></div>
                              <div className="flex flex-col"><span className="text-muted-foreground">Jump H</span> <span className="text-foreground">{jumpHoriz} yds</span></div>
+                             <div className="flex flex-col"><span className="text-muted-foreground">Lift</span> <span className="text-foreground">{lift} lbs</span></div>
+                             <div className="flex flex-col"><span className="text-muted-foreground">Throw</span> <span className="text-foreground">{throwRange} yds</span></div>
                           </div>
                        </div>
                     </div>
