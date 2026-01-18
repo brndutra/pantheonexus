@@ -2825,11 +2825,11 @@ export default function CharacterSheet() {
                                      <select
                                          value={knackAttributeFilter}
                                          onChange={e => setKnackAttributeFilter(e.target.value)}
-                                         className="bg-black/30 border border-primary/20 text-[9px] px-2 py-1.5 rounded-sm focus:border-primary text-primary outline-none"
+                                         className="bg-black border border-primary/20 text-[9px] px-2 py-1.5 rounded-sm focus:border-primary text-primary outline-none"
                                      >
-                                         <option value="all">Todos Atributos</option>
+                                         <option value="all" className="bg-black text-primary">Todos Atributos</option>
                                          {knackAttributes.map(attr => (
-                                             <option key={attr} value={attr}>{attr}</option>
+                                             <option key={attr} value={attr} className="bg-black text-primary">{attr}</option>
                                          ))}
                                      </select>
                                      <input 
@@ -2944,11 +2944,11 @@ export default function CharacterSheet() {
                                      <select
                                          value={boonPurviewFilter}
                                          onChange={e => setBoonPurviewFilter(e.target.value)}
-                                         className="bg-black/30 border border-accent/20 text-[9px] px-2 py-1.5 rounded-sm focus:border-accent text-accent-foreground outline-none"
+                                         className="bg-black border border-accent/20 text-[9px] px-2 py-1.5 rounded-sm focus:border-accent text-accent-foreground outline-none"
                                      >
-                                         <option value="all">Todos Purviews</option>
+                                         <option value="all" className="bg-black text-primary">Todos Purviews</option>
                                          {boonPurviews.map(purview => (
-                                             <option key={purview} value={purview}>{purview}</option>
+                                             <option key={purview} value={purview} className="bg-black text-primary">{purview}</option>
                                          ))}
                                      </select>
                                      <input 
