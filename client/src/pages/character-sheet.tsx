@@ -1589,8 +1589,8 @@ export default function CharacterSheet() {
         {/* ATTRIBUTES & ABILITIES ROW - 1/3 + 2/3 */}
         <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* ATTRIBUTES CORE - 1 column */}
-            <MythicHUDFrame title="Attributes Core" icon={Dna} subHeader="PHYSICAL / SOCIAL / MENTAL" className="md:col-span-1" isEditing={editingAttributes} {...createEditHandlers(editingAttributes, setEditingAttributes)}>
-                <div className="space-y-6">
+            <MythicHUDFrame title="Attributes Core" icon={Dna} subHeader="PHYSICAL / SOCIAL / MENTAL" className="md:col-span-1 h-[600px] flex flex-col" isEditing={editingAttributes} {...createEditHandlers(editingAttributes, setEditingAttributes)}>
+                <div className="space-y-6 flex-1 overflow-y-auto scion-scrollbar">
                     {(Object.entries(attributes) as [AttributeCategory, Attribute[]][]).map(([category, attrs]) => (
                         <div key={category} className="space-y-2 relative">
                             <h4 className="text-[10px] font-mythic uppercase tracking-[0.3em] text-primary/50 border-b border-primary/10 pb-1 mb-2">
@@ -1645,7 +1645,7 @@ export default function CharacterSheet() {
             </MythicHUDFrame>
 
             {/* ABILITIES SCROLL - 2 columns */}
-            <MythicHUDFrame title="Abilities Database" icon={Brain} subHeader="SKILL SET MATRIX" className="md:col-span-2 min-h-[500px] flex flex-col" isEditing={editingAbilities} {...createEditHandlers(editingAbilities, setEditingAbilities)}>
+            <MythicHUDFrame title="Abilities Database" icon={Brain} subHeader="SKILL SET MATRIX" className="md:col-span-2 h-[600px] flex flex-col" isEditing={editingAbilities} {...createEditHandlers(editingAbilities, setEditingAbilities)}>
                 <div className="flex-1 overflow-y-auto pr-2 scion-scrollbar custom-scroll-area">
                     <div className="grid grid-cols-1 gap-1 h-full content-start">
                         {abilitiesSchema.map((schema) => {
