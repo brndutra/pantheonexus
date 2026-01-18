@@ -363,14 +363,14 @@ export default function CharacterSheet() {
                 
                 {/* ID CARD */}
                 <SectionFrame title="ID Card" subHeader="Designation & Genesis Records">
-                    <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-6 h-[420px]">
                         {/* Portrait Column */}
-                        <div className="md:col-span-3 flex flex-col gap-2 relative">
+                        <div className="md:col-span-3 flex flex-col gap-2 relative h-full">
                             {/* Decorative Frame for Portrait */}
                              <div className="absolute -inset-1 border border-primary/20 pointer-events-none" />
                              
                              <div 
-                                className="aspect-[3/4] border border-primary/30 bg-black/60 relative overflow-hidden group cursor-pointer transition-all hover:border-primary shadow-inner"
+                                className="h-full w-full border border-primary/30 bg-black/60 relative overflow-hidden group cursor-pointer transition-all hover:border-primary shadow-inner"
                                 onClick={() => fileInputRef.current?.click()}
                              >
                                 {portrait ? (
@@ -397,17 +397,17 @@ export default function CharacterSheet() {
                              {portrait && (
                                  <button 
                                     onClick={() => setPortrait(null)}
-                                    className="text-[9px] uppercase tracking-widest text-destructive/70 hover:text-red-400 flex items-center justify-center gap-1 py-1 transition-colors"
+                                    className="absolute bottom-2 left-0 right-0 text-[9px] uppercase tracking-widest text-destructive/70 hover:text-red-400 flex items-center justify-center gap-1 py-1 transition-colors bg-black/80"
                                  >
-                                     <X className="w-3 h-3" /> Clear Visual
+                                     <X className="w-3 h-3" /> Clear
                                  </button>
                              )}
                         </div>
 
                         {/* Data Column */}
-                        <div className="md:col-span-9 flex flex-col gap-4 justify-center pl-4 border-l border-primary/10 relative min-h-[300px]">
+                        <div className="md:col-span-9 flex flex-col gap-4 justify-start pl-4 border-l border-primary/10 relative h-full overflow-hidden">
                             {/* ID Card Internal Navigation */}
-                            <div className="flex gap-4 mb-2 border-b border-primary/20 pb-2">
+                            <div className="flex gap-4 mb-2 border-b border-primary/20 pb-2 flex-shrink-0">
                                {['identity', 'psychic', 'presence'].map((tab) => (
                                   <button
                                     key={tab}
@@ -425,85 +425,87 @@ export default function CharacterSheet() {
                                ))}
                             </div>
 
-                            <AnimatePresence mode="wait">
-                                {idCardTab === 'identity' && (
-                                    <motion.div 
-                                      key="identity"
-                                      initial={{ opacity: 0, x: -10 }}
-                                      animate={{ opacity: 1, x: 0 }}
-                                      exit={{ opacity: 0, x: 10 }}
-                                      className="space-y-6"
-                                    >
-                                        {/* Identity Fields */}
-                                        <div className="space-y-4">
-                                            <ScionInput label="Designation (Name)" placeholder="CHARACTER NAME" className="text-2xl md:text-3xl font-mythic text-primary drop-shadow-[0_0_10px_rgba(212,175,55,0.3)]" />
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                                <ScionInput label="Pantheon" placeholder="PANTHEON" />
-                                                <ScionInput label="Heritage" placeholder="DIVINE PARENT / PATRON" />
+                            <div className="flex-1 overflow-y-auto scion-scrollbar pr-2">
+                                <AnimatePresence mode="wait">
+                                    {idCardTab === 'identity' && (
+                                        <motion.div 
+                                          key="identity"
+                                          initial={{ opacity: 0, x: -10 }}
+                                          animate={{ opacity: 1, x: 0 }}
+                                          exit={{ opacity: 0, x: 10 }}
+                                          className="space-y-6"
+                                        >
+                                            {/* Identity Fields */}
+                                            <div className="space-y-4">
+                                                <ScionInput label="Designation (Name)" placeholder="CHARACTER NAME" className="text-2xl md:text-3xl font-mythic text-primary drop-shadow-[0_0_10px_rgba(212,175,55,0.3)]" />
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                    <ScionInput label="Pantheon" placeholder="PANTHEON" />
+                                                    <ScionInput label="Heritage" placeholder="DIVINE PARENT / PATRON" />
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        {/* Divider with Ornament */}
-                                        <div className="flex items-center gap-4 opacity-50">
-                                           <div className="h-px bg-primary/30 flex-1" />
-                                           <img src={divineDivider} className="h-4 w-auto" alt="" />
-                                           <div className="h-px bg-primary/30 flex-1" />
-                                        </div>
+                                            {/* Divider with Ornament */}
+                                            <div className="flex items-center gap-4 opacity-50">
+                                               <div className="h-px bg-primary/30 flex-1" />
+                                               <img src={divineDivider} className="h-4 w-auto" alt="" />
+                                               <div className="h-px bg-primary/30 flex-1" />
+                                            </div>
 
-                                        {/* Genesis Fields */}
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <ScionInput label="Date of Birth" placeholder="DD/MM/AAAA" />
-                                            <ScionInput label="Nationality" placeholder="NATIONALITY" />
-                                            <ScionInput label="Origin City" placeholder="CITY" />
-                                            <ScionInput label="State" placeholder="STATE/UF" />
-                                        </div>
-                                    </motion.div>
-                                )}
+                                            {/* Genesis Fields */}
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <ScionInput label="Date of Birth" placeholder="DD/MM/AAAA" />
+                                                <ScionInput label="Nationality" placeholder="NATIONALITY" />
+                                                <ScionInput label="Origin City" placeholder="CITY" />
+                                                <ScionInput label="State" placeholder="STATE/UF" />
+                                            </div>
+                                        </motion.div>
+                                    )}
 
-                                {idCardTab === 'psychic' && (
-                                   <motion.div 
-                                      key="psychic"
-                                      initial={{ opacity: 0, x: -10 }}
-                                      animate={{ opacity: 1, x: 0 }}
-                                      exit={{ opacity: 0, x: 10 }}
-                                      className="space-y-4 overflow-y-auto max-h-[300px] pr-2 scion-scrollbar"
-                                   >
-                                      <div className="grid grid-cols-2 gap-4">
-                                         <ScionInput label="Temperament" placeholder="Dominant Emotion" value={psychicProfile.temperament} onChange={(e) => setPsychicProfile({...psychicProfile, temperament: e.target.value})} />
-                                         <ScionInput label="Cognitive Type" placeholder="Thought Pattern" value={psychicProfile.cognitiveType} onChange={(e) => setPsychicProfile({...psychicProfile, cognitiveType: e.target.value})} />
-                                      </div>
-                                      <div className="grid grid-cols-2 gap-4">
-                                          <ScionInput label="Major Arcana" placeholder="Archetype" value={psychicProfile.majorArcana} onChange={(e) => setPsychicProfile({...psychicProfile, majorArcana: e.target.value})} />
-                                          <ScionInput label="Keywords" placeholder="Key Terms" value={psychicProfile.keywords} onChange={(e) => setPsychicProfile({...psychicProfile, keywords: e.target.value})} />
-                                      </div>
-                                      <div className="space-y-1">
-                                         <label className="text-[9px] uppercase tracking-widest text-primary/70 font-mythic">Deep Analysis</label>
-                                         <textarea className="w-full bg-black/20 border border-white/10 rounded-sm p-2 text-xs font-tech text-foreground outline-none focus:border-primary/50 min-h-[60px]" placeholder="Analysis..." value={psychicProfile.analysis} onChange={(e) => setPsychicProfile({...psychicProfile, analysis: e.target.value})} />
-                                      </div>
-                                   </motion.div>
-                                )}
+                                    {idCardTab === 'psychic' && (
+                                       <motion.div 
+                                          key="psychic"
+                                          initial={{ opacity: 0, x: -10 }}
+                                          animate={{ opacity: 1, x: 0 }}
+                                          exit={{ opacity: 0, x: 10 }}
+                                          className="space-y-4 pb-4"
+                                       >
+                                          <div className="grid grid-cols-2 gap-4">
+                                             <ScionInput label="Temperament" placeholder="Dominant Emotion" value={psychicProfile.temperament} onChange={(e) => setPsychicProfile({...psychicProfile, temperament: e.target.value})} />
+                                             <ScionInput label="Cognitive Type" placeholder="Thought Pattern" value={psychicProfile.cognitiveType} onChange={(e) => setPsychicProfile({...psychicProfile, cognitiveType: e.target.value})} />
+                                          </div>
+                                          <div className="grid grid-cols-2 gap-4">
+                                              <ScionInput label="Major Arcana" placeholder="Archetype" value={psychicProfile.majorArcana} onChange={(e) => setPsychicProfile({...psychicProfile, majorArcana: e.target.value})} />
+                                              <ScionInput label="Keywords" placeholder="Key Terms" value={psychicProfile.keywords} onChange={(e) => setPsychicProfile({...psychicProfile, keywords: e.target.value})} />
+                                          </div>
+                                          <div className="space-y-1">
+                                             <label className="text-[9px] uppercase tracking-widest text-primary/70 font-mythic">Deep Analysis</label>
+                                             <textarea className="w-full bg-black/20 border border-white/10 rounded-sm p-2 text-xs font-tech text-foreground outline-none focus:border-primary/50 min-h-[60px]" placeholder="Analysis..." value={psychicProfile.analysis} onChange={(e) => setPsychicProfile({...psychicProfile, analysis: e.target.value})} />
+                                          </div>
+                                       </motion.div>
+                                    )}
 
-                                {idCardTab === 'presence' && (
-                                   <motion.div 
-                                      key="presence"
-                                      initial={{ opacity: 0, x: -10 }}
-                                      animate={{ opacity: 1, x: 0 }}
-                                      exit={{ opacity: 0, x: 10 }}
-                                      className="space-y-4 overflow-y-auto max-h-[300px] pr-2 scion-scrollbar"
-                                   >
-                                       <div className="grid grid-cols-3 gap-3">
-                                          <ScionInput label="Height" placeholder="Height" value={presenceProfile.height} onChange={(e) => setPresenceProfile({...presenceProfile, height: e.target.value})} />
-                                          <ScionInput label="Eyes" placeholder="Color" value={presenceProfile.eyeColor} onChange={(e) => setPresenceProfile({...presenceProfile, eyeColor: e.target.value})} />
-                                          <ScionInput label="Hair" placeholder="Color" value={presenceProfile.hairColor} onChange={(e) => setPresenceProfile({...presenceProfile, hairColor: e.target.value})} />
-                                       </div>
-                                       <div className="grid grid-cols-2 gap-4">
-                                           <ScionInput label="Aura" placeholder="Signature" value={presenceProfile.auraSignature} onChange={(e) => setPresenceProfile({...presenceProfile, auraSignature: e.target.value})} />
-                                           <ScionInput label="Scent" placeholder="Essence" value={presenceProfile.scent} onChange={(e) => setPresenceProfile({...presenceProfile, scent: e.target.value})} />
-                                       </div>
-                                       <ScionInput label="Distinguishing Mark" placeholder="Feature" value={presenceProfile.distinguishingMark} onChange={(e) => setPresenceProfile({...presenceProfile, distinguishingMark: e.target.value})} />
-                                   </motion.div>
-                                )}
-                            </AnimatePresence>
+                                    {idCardTab === 'presence' && (
+                                       <motion.div 
+                                          key="presence"
+                                          initial={{ opacity: 0, x: -10 }}
+                                          animate={{ opacity: 1, x: 0 }}
+                                          exit={{ opacity: 0, x: 10 }}
+                                          className="space-y-4 pb-4"
+                                       >
+                                           <div className="grid grid-cols-3 gap-3">
+                                              <ScionInput label="Height" placeholder="Height" value={presenceProfile.height} onChange={(e) => setPresenceProfile({...presenceProfile, height: e.target.value})} />
+                                              <ScionInput label="Eyes" placeholder="Color" value={presenceProfile.eyeColor} onChange={(e) => setPresenceProfile({...presenceProfile, eyeColor: e.target.value})} />
+                                              <ScionInput label="Hair" placeholder="Color" value={presenceProfile.hairColor} onChange={(e) => setPresenceProfile({...presenceProfile, hairColor: e.target.value})} />
+                                           </div>
+                                           <div className="grid grid-cols-2 gap-4">
+                                               <ScionInput label="Aura" placeholder="Signature" value={presenceProfile.auraSignature} onChange={(e) => setPresenceProfile({...presenceProfile, auraSignature: e.target.value})} />
+                                               <ScionInput label="Scent" placeholder="Essence" value={presenceProfile.scent} onChange={(e) => setPresenceProfile({...presenceProfile, scent: e.target.value})} />
+                                           </div>
+                                           <ScionInput label="Distinguishing Mark" placeholder="Feature" value={presenceProfile.distinguishingMark} onChange={(e) => setPresenceProfile({...presenceProfile, distinguishingMark: e.target.value})} />
+                                       </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
                         </div>
                     </div>
                 </SectionFrame>
