@@ -349,26 +349,12 @@ export default function CharacterSheet() {
             </div>
         </div>
         
-        {/* Navigation Tabs */}
+        {/* Navigation Tabs - REMOVED since everything is on one page */}
+        {/* 
         <div className="flex justify-center mb-8 gap-4 sticky top-4 z-50">
-           <div className="flex bg-black/80 border border-primary/30 p-1 rounded-full backdrop-blur-md shadow-lg">
-             {['sheet', 'powers'].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab as any)}
-                  className={cn(
-                    "px-8 py-2 rounded-full text-xs font-mythic uppercase tracking-widest transition-all duration-300",
-                    activeTab === tab 
-                      ? "bg-primary text-black font-bold shadow-[0_0_15px_rgba(212,175,55,0.6)]" 
-                      : "text-muted-foreground hover:text-white"
-                  )}
-                >
-                  {tab === 'sheet' && <span className="flex items-center gap-2"><Scroll className="w-3 h-3"/> Scroll Data</span>}
-                  {tab === 'powers' && <span className="flex items-center gap-2"><Zap className="w-3 h-3"/> Arsenal</span>}
-                </button>
-             ))}
-           </div>
-        </div>
+           ...
+        </div> 
+        */}
 
         {/* TOP IDENTITY BLOCK */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
@@ -745,16 +731,9 @@ export default function CharacterSheet() {
         </div>
 
         {/* Content Area */}
-        <AnimatePresence mode="wait">
-          {activeTab === "sheet" && (
-            <motion.div 
-              key="sheet"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-              className="grid grid-cols-1 md:grid-cols-12 gap-6"
-            >
+        <div className="space-y-6">
+          {/* Main Sheet Content */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
               
               {/* MAIN ATTRIBUTES GRID + RADAR */}
               <div className="md:col-span-12">
@@ -908,182 +887,101 @@ export default function CharacterSheet() {
 
               {/* Health Tracker - REMOVED since it is now combined with Pools */}
               
-            </motion.div>
-          )}
+          </div>
 
-          {activeTab === "bio" && (
-            <motion.div 
-              key="bio"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-              className="grid grid-cols-1 gap-6"
-            >
-               {/* Psychic Profile */}
-               <div className="space-y-6">
-                  <SectionFrame title="Psychic Profile" subHeader="Mind & Soul Analysis" className="h-full">
-                     <div className="space-y-6">
-                        <div className="grid grid-cols-2 gap-6">
-                           <ScionInput 
-                              label="Temperament" 
-                              placeholder="Dominant Emotion" 
-                              value={psychicProfile.temperament}
-                              onChange={(e) => setPsychicProfile({...psychicProfile, temperament: e.target.value})}
-                           />
-                           <ScionInput 
-                              label="Cognitive Type" 
-                              placeholder="Thought Pattern" 
-                              value={psychicProfile.cognitiveType}
-                              onChange={(e) => setPsychicProfile({...psychicProfile, cognitiveType: e.target.value})}
-                           />
-                        </div>
-                        <ScionInput 
-                           label="Major Arcana" 
-                           placeholder="Archetype" 
-                           value={psychicProfile.majorArcana}
-                           onChange={(e) => setPsychicProfile({...psychicProfile, majorArcana: e.target.value})}
-                        />
-                        <ScionInput 
-                           label="Keywords" 
-                           placeholder="Key Terms" 
-                           value={psychicProfile.keywords}
-                           onChange={(e) => setPsychicProfile({...psychicProfile, keywords: e.target.value})}
-                        />
-                        
-                        <div className="space-y-2">
-                           <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic block">Deep Analysis</label>
-                           <textarea 
-                              className="w-full bg-black/40 border border-white/10 rounded-sm p-3 text-sm font-tech text-foreground outline-none focus:border-primary/50 min-h-[100px] resize-none"
-                              placeholder="Psychological Analysis..."
-                              value={psychicProfile.analysis}
-                              onChange={(e) => setPsychicProfile({...psychicProfile, analysis: e.target.value})}
-                           />
-                        </div>
+          {/* ARSENAL SECTION - Now integrated into the main flow */}
+          <div className="pt-8 border-t border-primary/20">
+             <SectionFrame title="Arsenal" subHeader="Divine Powers & Abilities">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 min-h-[300px]">
+                    {/* Knacks */}
+                    <div className="space-y-4">
+                       <h4 className="text-[10px] uppercase tracking-[0.2em] font-mythic text-primary/70 mb-2 border-b border-primary/20 pb-2 flex items-center justify-between">
+                          Knacks <Cpu className="w-3 h-3 text-primary/40" />
+                       </h4>
+                       <div className="space-y-2">
+                          <AnimatePresence>
+                             {knacks.map((knack, idx) => (
+                                <motion.div 
+                                   initial={{ opacity: 0, height: 0 }}
+                                   animate={{ opacity: 1, height: 'auto' }}
+                                   exit={{ opacity: 0, height: 0 }}
+                                   key={idx} 
+                                   className="flex items-center justify-between bg-black/40 border border-white/5 p-2 rounded-sm group hover:border-primary/30 transition-colors"
+                                >
+                                   <span className="font-tech text-sm text-foreground/90">{knack}</span>
+                                   <button 
+                                      onClick={() => setKnacks(prev => prev.filter((_, i) => i !== idx))}
+                                      className="text-destructive/50 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                                   >
+                                      <Trash2 className="w-3 h-3" />
+                                   </button>
+                                </motion.div>
+                             ))}
+                          </AnimatePresence>
+                          <div className="flex gap-2 pt-2">
+                             <input 
+                                className="flex-1 bg-black/20 border border-white/10 rounded-sm px-3 py-1.5 text-xs font-tech text-foreground outline-none focus:border-primary/50 placeholder:text-muted-foreground/30"
+                                placeholder="New Knack..."
+                                value={newKnack}
+                                onChange={(e) => setNewKnack(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && addKnack()}
+                             />
+                             <button 
+                                onClick={addKnack}
+                                className="bg-primary/10 hover:bg-primary/20 border border-primary/30 text-primary px-3 rounded-sm flex items-center justify-center transition-colors"
+                             >
+                                <Plus className="w-3 h-3" />
+                             </button>
+                          </div>
+                       </div>
+                    </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                           <div className="space-y-2">
-                              <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic block">Strengths</label>
-                              <textarea 
-                                 className="w-full bg-black/40 border border-white/10 rounded-sm p-3 text-sm font-tech text-foreground outline-none focus:border-primary/50 min-h-[80px] resize-none"
-                                 placeholder="Psychological Strengths..."
-                                 value={psychicProfile.strengths}
-                                 onChange={(e) => setPsychicProfile({...psychicProfile, strengths: e.target.value})}
-                              />
-                           </div>
-                           <div className="space-y-2">
-                              <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic block">Weaknesses</label>
-                              <textarea 
-                                 className="w-full bg-black/40 border border-white/10 rounded-sm p-3 text-sm font-tech text-foreground outline-none focus:border-primary/50 min-h-[80px] resize-none"
-                                 placeholder="Vulnerabilities..."
-                                 value={psychicProfile.weaknesses}
-                                 onChange={(e) => setPsychicProfile({...psychicProfile, weaknesses: e.target.value})}
-                              />
-                           </div>
-                           <div className="space-y-2">
-                              <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic block">Behaviors</label>
-                              <textarea 
-                                 className="w-full bg-black/40 border border-white/10 rounded-sm p-3 text-sm font-tech text-foreground outline-none focus:border-primary/50 min-h-[80px] resize-none"
-                                 placeholder="Recurrent Patterns..."
-                                 value={psychicProfile.behaviors}
-                                 onChange={(e) => setPsychicProfile({...psychicProfile, behaviors: e.target.value})}
-                              />
-                           </div>
-                        </div>
-                     </div>
-                  </SectionFrame>
-               </div>
-
-               {/* Presence Profile */}
-               <div className="space-y-6">
-                  <SectionFrame title="Presence Profile" subHeader="Appearance & Aura" className="h-full">
-                     <div className="space-y-6">
-                        <div className="grid grid-cols-3 gap-4">
-                           <ScionInput 
-                              label="Height" 
-                              placeholder="Height" 
-                              value={presenceProfile.height}
-                              onChange={(e) => setPresenceProfile({...presenceProfile, height: e.target.value})}
-                           />
-                           <ScionInput 
-                              label="Eye Color" 
-                              placeholder="Eyes" 
-                              value={presenceProfile.eyeColor}
-                              onChange={(e) => setPresenceProfile({...presenceProfile, eyeColor: e.target.value})}
-                           />
-                           <ScionInput 
-                              label="Hair Color" 
-                              placeholder="Hair" 
-                              value={presenceProfile.hairColor}
-                              onChange={(e) => setPresenceProfile({...presenceProfile, hairColor: e.target.value})}
-                           />
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                           <ScionInput 
-                              label="Aura Signature" 
-                              placeholder="Vibration/Feeling" 
-                              value={presenceProfile.auraSignature}
-                              onChange={(e) => setPresenceProfile({...presenceProfile, auraSignature: e.target.value})}
-                           />
-                            <ScionInput 
-                              label="Scent / Essence" 
-                              placeholder="Olfactory Impression" 
-                              value={presenceProfile.scent}
-                              onChange={(e) => setPresenceProfile({...presenceProfile, scent: e.target.value})}
-                           />
-                        </div>
-                        <ScionInput 
-                           label="Distinguishing Mark" 
-                           placeholder="Notable Feature" 
-                           value={presenceProfile.distinguishingMark}
-                           onChange={(e) => setPresenceProfile({...presenceProfile, distinguishingMark: e.target.value})}
-                        />
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                           <div className="space-y-2">
-                              <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic block">Fashion & Style</label>
-                              <textarea 
-                                 className="w-full bg-black/40 border border-white/10 rounded-sm p-3 text-sm font-tech text-foreground outline-none focus:border-primary/50 min-h-[100px] resize-none"
-                                 placeholder="Dress Style & Presentation..."
-                                 value={presenceProfile.fashion}
-                                 onChange={(e) => setPresenceProfile({...presenceProfile, fashion: e.target.value})}
-                              />
-                           </div>
-
-                           <div className="space-y-2">
-                              <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic block">Visual Notes</label>
-                              <textarea 
-                                 className="w-full bg-black/40 border border-white/10 rounded-sm p-3 text-sm font-tech text-foreground outline-none focus:border-primary/50 min-h-[100px] resize-none"
-                                 placeholder="Additional Visual Observations..."
-                                 value={presenceProfile.visualNotes}
-                                 onChange={(e) => setPresenceProfile({...presenceProfile, visualNotes: e.target.value})}
-                              />
-                           </div>
-                        </div>
-                     </div>
-                  </SectionFrame>
-               </div>
-            </motion.div>
-          )}
-
-          {activeTab === "powers" && (
-             <motion.div
-                key="powers"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="text-center py-20"
-             >
-                <div className="inline-block border border-primary/30 p-8 bg-black/40 backdrop-blur-sm rounded-sm">
-                   <Zap className="w-12 h-12 text-primary mx-auto mb-4 opacity-50" />
-                   <h3 className="text-xl font-mythic text-primary mb-2">ARSENAL UNDER CONSTRUCTION</h3>
-                   <p className="text-muted-foreground font-tech">Divine powers database initializing...</p>
+                    {/* Boons */}
+                    <div className="space-y-4">
+                       <h4 className="text-[10px] uppercase tracking-[0.2em] font-mythic text-primary/70 mb-2 border-b border-primary/20 pb-2 flex items-center justify-between">
+                          Boons <Zap className="w-3 h-3 text-primary/40" />
+                       </h4>
+                       <div className="space-y-2">
+                          <AnimatePresence>
+                             {boons.map((boon, idx) => (
+                                <motion.div 
+                                   initial={{ opacity: 0, height: 0 }}
+                                   animate={{ opacity: 1, height: 'auto' }}
+                                   exit={{ opacity: 0, height: 0 }}
+                                   key={idx} 
+                                   className="flex items-center justify-between bg-black/40 border border-white/5 p-2 rounded-sm group hover:border-primary/30 transition-colors"
+                                >
+                                   <span className="font-tech text-sm text-foreground/90">{boon}</span>
+                                   <button 
+                                      onClick={() => setBoons(prev => prev.filter((_, i) => i !== idx))}
+                                      className="text-destructive/50 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                                   >
+                                      <Trash2 className="w-3 h-3" />
+                                   </button>
+                                </motion.div>
+                             ))}
+                          </AnimatePresence>
+                          <div className="flex gap-2 pt-2">
+                             <input 
+                                className="flex-1 bg-black/20 border border-white/10 rounded-sm px-3 py-1.5 text-xs font-tech text-foreground outline-none focus:border-primary/50 placeholder:text-muted-foreground/30"
+                                placeholder="New Boon..."
+                                value={newBoon}
+                                onChange={(e) => setNewBoon(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && addBoon()}
+                             />
+                             <button 
+                                onClick={addBoon}
+                                className="bg-primary/10 hover:bg-primary/20 border border-primary/30 text-primary px-3 rounded-sm flex items-center justify-center transition-colors"
+                             >
+                                <Plus className="w-3 h-3" />
+                             </button>
+                          </div>
+                       </div>
+                    </div>
                 </div>
-             </motion.div>
-          )}
-
-        </AnimatePresence>
+             </SectionFrame>
+          </div>
+        </div>
       </div>
     </div>
   );
