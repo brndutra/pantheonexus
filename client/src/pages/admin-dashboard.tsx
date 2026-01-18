@@ -373,7 +373,7 @@ export default function AdminDashboard() {
             </div>
         )}
 
-        {activeTab === "scrolls" ? (
+        {activeTab === "scrolls" && (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
             {/* Create New Scroll Panel */}
@@ -479,7 +479,9 @@ export default function AdminDashboard() {
             </div>
 
             </div>
-        ) : activeTab === "alleybrary" ? (
+        )}
+        
+        {activeTab === "alleybrary" && (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                  {/* Publish Article Panel */}
                  <div className="lg:col-span-5">
