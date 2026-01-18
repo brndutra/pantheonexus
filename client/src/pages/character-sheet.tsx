@@ -4,7 +4,7 @@ import { DotRating } from "@/components/ui/dot-rating";
 import { ScionInput } from "@/components/ui/scion-input";
 import { Link, useRoute } from "wouter";
 import { cn } from "@/lib/utils";
-import { Shield, Zap, Skull, Scroll, Activity, Cpu, Hexagon, Plus, Trash2, Crown, Heart, Radar, Minus, Upload, Image as ImageIcon, X, FileText, User, LayoutGrid, ArrowLeft, Target, Sword, Crosshair, Fingerprint, Dna, Brain, Save } from "lucide-react";
+import { Shield, Zap, Skull, Scroll, Activity, Cpu, Hexagon, Plus, Trash2, Crown, Heart, Radar, Minus, Upload, Image as ImageIcon, X, FileText, User, LayoutGrid, ArrowLeft, Target, Sword, Crosshair, Fingerprint, Dna, Brain, Pencil, Check, Loader2 } from "lucide-react";
 import { useCharacter, useUpdateCharacter } from "@/lib/use-characters";
 import { useCompendium } from "@/lib/compendium-store";
 import { Button } from "@/components/ui/button";
@@ -110,7 +110,10 @@ const MythicHUDFrame = ({
     subHeader,
     variant = "default",
     isEditing,
-    onToggleEdit
+    onEdit,
+    onSave,
+    onCancel,
+    isLoading
 }: {  
     children: React.ReactNode, 
     title?: string, 
@@ -120,9 +123,12 @@ const MythicHUDFrame = ({
     subHeader?: string,
     variant?: "default" | "minimal" | "cyber",
     isEditing?: boolean,
-    onToggleEdit?: () => void
+    onEdit?: () => void,
+    onSave?: () => void,
+    onCancel?: () => void,
+    isLoading?: boolean
 }) => (
-  <div className={cn("relative group", className)}>
+  <div className={cn("relative group", isEditing && "ring-1 ring-primary/50", className)}>
     {/* Frame Background */}
     <div className="absolute inset-0 bg-black/40 backdrop-blur-md border border-primary/20" 
          style={{ clipPath: "polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%)" }} />
@@ -149,31 +155,59 @@ const MythicHUDFrame = ({
                 </div>
             </div>
             
-            <div className="flex items-center gap-3">
-                {onToggleEdit && (
-                    <button 
-                       onClick={onToggleEdit}
-                       className={cn(
-                           "flex items-center gap-1.5 px-2 py-1 text-[9px] font-tech uppercase tracking-widest transition-all rounded-sm border",
-                           isEditing 
-                             ? "text-primary border-primary/50 bg-primary/10 shadow-[0_0_10px_rgba(212,175,55,0.2)]" 
-                             : "text-muted-foreground/50 border-primary/10 hover:text-primary hover:border-primary/30"
-                       )}
-                    >
-                        {isEditing ? (
-                           <>
-                             <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse shadow-[0_0_5px_green]" />
-                             EDIT MODE
-                           </>
-                        ) : (
-                           <>
-                             <span className="w-1.5 h-1.5 rounded-full bg-primary/20" />
-                             LOCKED
-                           </>
-                        )}
-                    </button>
-                )}
-                {action && <div className="flex items-center">{action}</div>}
+            <div className="flex items-center gap-2">
+                <AnimatePresence mode="wait">
+                    {onEdit && !isEditing && (
+                        <motion.button 
+                            key="edit-btn"
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.8 }}
+                            onClick={onEdit}
+                            data-testid="button-edit-section"
+                            className="h-6 w-6 p-1 rounded-full border border-primary/30 hover:border-primary hover:bg-primary/10 hover:shadow-[0_0_10px_rgba(212,175,55,0.2)] text-primary transition-all flex items-center justify-center"
+                            title="Edit"
+                        >
+                            <Pencil size={12} />
+                        </motion.button>
+                    )}
+                    {isEditing && (
+                        <motion.div 
+                            key="edit-actions"
+                            initial={{ opacity: 0, x: 10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: 10 }}
+                            className="flex gap-2"
+                        >
+                            <button 
+                                onClick={onSave}
+                                disabled={isLoading}
+                                data-testid="button-save-section"
+                                className="h-6 px-3 bg-black/40 border border-green-500/50 text-green-400 hover:bg-green-900/20 hover:text-green-300 hover:border-green-400 font-tech uppercase text-[10px] tracking-wider rounded-sm flex items-center gap-1 transition-all disabled:opacity-50"
+                            >
+                                {isLoading ? <Loader2 size={10} className="animate-spin" /> : <><Check size={10} /> Save</>}
+                            </button>
+                            <button 
+                                onClick={onCancel}
+                                disabled={isLoading}
+                                data-testid="button-cancel-edit"
+                                className="h-6 px-3 bg-black/40 border border-red-500/50 text-red-400 hover:bg-red-900/20 hover:text-red-300 hover:border-red-400 font-tech uppercase text-[10px] tracking-wider rounded-sm flex items-center gap-1 transition-all disabled:opacity-50"
+                            >
+                                <X size={10} /> Cancel
+                            </button>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+                
+                {/* Status Indicator */}
+                <div 
+                    className={cn(
+                        "w-1.5 h-1.5 rotate-45 border border-primary ml-1 transition-all duration-500",
+                        isEditing ? "bg-green-400 border-green-400 shadow-[0_0_8px_green]" : "bg-transparent opacity-50"
+                    )} 
+                />
+                
+                {action && <div className="flex items-center ml-2">{action}</div>}
             </div>
         </div>
     )}
@@ -236,18 +270,6 @@ export default function CharacterSheet() {
   const [activeTab, setActiveTab] = useState<"sheet" | "powers" | "bio">("sheet");
   const [idCardTab, setIdCardTab] = useState<"identity" | "psychic" | "presence">("identity");
   
-  // Edit Mode State
-  const [editModes, setEditModes] = useState<Record<string, boolean>>({
-     identity: false,
-     vitality: false,
-     attributes: false,
-     abilities: false,
-     virtues: false
-  });
-
-  const toggleEdit = (section: string) => {
-     setEditModes(prev => ({ ...prev, [section]: !prev[section] }));
-  };
   
   // State
   const [attributes, setAttributes] = useState(DEFAULT_ATTRIBUTES);
@@ -589,6 +611,16 @@ export default function CharacterSheet() {
   const [feats, setFeats] = useState<{name: string, type: string, cost: string, desc: string}[]>([]);
   const [newFeat, setNewFeat] = useState({name: "", type: "", cost: "", desc: ""});
 
+  // Edit mode states for each section
+  const [editingIdentity, setEditingIdentity] = useState(false);
+  const [editingAttributes, setEditingAttributes] = useState(false);
+  const [editingAbilities, setEditingAbilities] = useState(false);
+  const [editingVirtues, setEditingVirtues] = useState(false);
+  const [editingCombat, setEditingCombat] = useState(false);
+  const [editingPowers, setEditingPowers] = useState(false);
+  const [editingEquipment, setEditingEquipment] = useState(false);
+  const [editingVitality, setEditingVitality] = useState(false);
+
   // Save function to persist character changes to database
   const handleSave = () => {
     if (!characterId) return;
@@ -625,6 +657,19 @@ export default function CharacterSheet() {
       },
     });
   };
+
+  // Loading state for saving
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Create edit handlers for each section
+  const createEditHandlers = (isEditing: boolean, setEditing: (v: boolean) => void) => ({
+    onEdit: () => setEditing(true),
+    onSave: () => {
+      handleSave();
+      setEditing(false);
+    },
+    onCancel: () => setEditing(false),
+  });
 
   // Loading state
   if (isLoading) {
@@ -682,13 +727,6 @@ export default function CharacterSheet() {
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button 
-                    onClick={handleSave}
-                    data-testid="button-save"
-                    className="flex items-center gap-2 text-[10px] font-mythic uppercase tracking-widest text-primary border border-primary/30 px-3 py-1 hover:bg-primary/10 transition-colors rounded-sm hover:shadow-[0_0_10px_rgba(212,175,55,0.2)] group"
-                  >
-                    <Save className="w-3 h-3" /> SAVE CHARACTER
-                  </button>
                   <Link href="/">
                     <button className="flex items-center gap-2 text-[10px] font-mythic uppercase tracking-widest text-primary border border-primary/30 px-3 py-1 hover:bg-primary/10 transition-colors rounded-sm hover:shadow-[0_0_10px_rgba(212,175,55,0.2)] group">
                       <ArrowLeft className="w-3 h-3 group-hover:-translate-x-1 transition-transform" /> TERMINATE SESSION
@@ -705,7 +743,7 @@ export default function CharacterSheet() {
             <div className="col-span-12 md:col-span-4 flex flex-col gap-6">
                 
                 {/* 1. IDENTITY MODULE */}
-                <MythicHUDFrame title="Identity Matrix" icon={Fingerprint} subHeader="SUBJECT DESIGNATION" className="h-auto">
+                <MythicHUDFrame title="Identity Matrix" icon={Fingerprint} subHeader="SUBJECT DESIGNATION" className="h-auto" isEditing={editingIdentity} {...createEditHandlers(editingIdentity, setEditingIdentity)}>
                      <div className="flex flex-col gap-4">
                          {/* Portrait + Name */}
                          <div className="relative h-[450px] w-full border border-primary/20 bg-black/50 overflow-hidden group">
@@ -758,7 +796,7 @@ export default function CharacterSheet() {
                                         value={scionName} 
                                         onChange={(e) => setScionName(e.target.value)}
                                         className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
-                                        viewMode={!editModes.identity}
+                                        viewMode={!editingIdentity}
                                      />
                                  </div>
                                  
@@ -768,7 +806,7 @@ export default function CharacterSheet() {
                                         value={scionPantheon} 
                                         onChange={(e) => setScionPantheon(e.target.value)}
                                         className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
-                                        viewMode={!editModes.identity}
+                                        viewMode={!editingIdentity}
                                         list="pantheons-list"
                                      />
                                      <datalist id="pantheons-list">
@@ -788,7 +826,7 @@ export default function CharacterSheet() {
                                         value={divineParent} 
                                         onChange={(e) => setDivineParent(e.target.value)}
                                         className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-[hsl(var(--highlight-amber))]" 
-                                        viewMode={!editModes.identity}
+                                        viewMode={!editingIdentity}
                                      />
                                  </div>
 
@@ -798,7 +836,7 @@ export default function CharacterSheet() {
                                         placeholder="SELECT NATURE" 
                                         className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
                                         list="natures-list"
-                                        viewMode={!editModes.identity}
+                                        viewMode={!editingIdentity}
                                      />
                                      <datalist id="natures-list">
                                         {compendiumNatures.map((n: any) => (
@@ -813,7 +851,7 @@ export default function CharacterSheet() {
                                         value={dateOfBirth} 
                                         onChange={(e) => setDateOfBirth(e.target.value)}
                                         className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
-                                        viewMode={!editModes.identity}
+                                        viewMode={!editingIdentity}
                                         type="date"
                                      />
                                  </div>
@@ -824,7 +862,7 @@ export default function CharacterSheet() {
                                         value={nationality} 
                                         onChange={(e) => setNationality(e.target.value)}
                                         className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
-                                        viewMode={!editModes.identity}
+                                        viewMode={!editingIdentity}
                                      />
                                  </div>
 
@@ -834,7 +872,7 @@ export default function CharacterSheet() {
                                         value={cityOfOrigin} 
                                         onChange={(e) => setCityOfOrigin(e.target.value)}
                                         className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
-                                        viewMode={!editModes.identity}
+                                        viewMode={!editingIdentity}
                                      />
                                  </div>
 
@@ -844,7 +882,7 @@ export default function CharacterSheet() {
                                         value={stateRegion} 
                                         onChange={(e) => setStateRegion(e.target.value)}
                                         className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
-                                        viewMode={!editModes.identity}
+                                        viewMode={!editingIdentity}
                                      />
                                  </div>
                              </div>
@@ -1020,7 +1058,7 @@ export default function CharacterSheet() {
                 {/* MOVED TO VITALITY MONITOR */}
 
                 {/* 3. VIRTUES MODULE */}
-                <MythicHUDFrame title="Virtue Matrix" icon={Target} subHeader="MORAL COMPASS ALIGNMENT">
+                <MythicHUDFrame title="Virtue Matrix" icon={Target} subHeader="MORAL COMPASS ALIGNMENT" isEditing={editingVirtues} {...createEditHandlers(editingVirtues, setEditingVirtues)}>
                     <div className="space-y-3">
                         {virtues.map((virtue, idx) => (
                            <div key={idx} className="relative group">
@@ -1060,7 +1098,7 @@ export default function CharacterSheet() {
             <div className="col-span-12 md:col-span-4 flex flex-col gap-6">
 
                 {/* 1. ATTRIBUTES CORE */}
-                <MythicHUDFrame title="Attributes Core" icon={Dna} subHeader="PHYSICAL / SOCIAL / MENTAL">
+                <MythicHUDFrame title="Attributes Core" icon={Dna} subHeader="PHYSICAL / SOCIAL / MENTAL" isEditing={editingAttributes} {...createEditHandlers(editingAttributes, setEditingAttributes)}>
                     <div className="space-y-6">
                         {(Object.entries(attributes) as [AttributeCategory, Attribute[]][]).map(([category, attrs]) => (
                             <div key={category} className="space-y-2 relative">
@@ -1114,7 +1152,7 @@ export default function CharacterSheet() {
                 </MythicHUDFrame>
                 
                 {/* 2. CALLINGS MODULE */}
-                <MythicHUDFrame title="Divine Callings" icon={Crosshair} subHeader="ROLE SPECIALIZATIONS">
+                <MythicHUDFrame title="Divine Callings" icon={Crosshair} subHeader="ROLE SPECIALIZATIONS" isEditing={editingCombat} {...createEditHandlers(editingCombat, setEditingCombat)}>
                     <div className="space-y-3">
                         {callings.map((calling, idx) => (
                             <div key={idx} className="relative">
@@ -1168,8 +1206,8 @@ export default function CharacterSheet() {
                     title="Vitality & Energy" 
                     icon={Activity} 
                     subHeader="BIOMETRICS & POOLS"
-                    isEditing={editModes.vitality}
-                    onToggleEdit={() => toggleEdit('vitality')}
+                    isEditing={editingVitality}
+                    {...createEditHandlers(editingVitality, setEditingVitality)}
                 >
                     <div className="space-y-6">
                         {/* Legend & Aether Integrated */}
@@ -1308,7 +1346,7 @@ export default function CharacterSheet() {
                 </MythicHUDFrame>
 
                 {/* 2. ABILITIES SCROLL */}
-                <MythicHUDFrame title="Abilities Database" icon={Brain} subHeader="SKILL SET MATRIX" className="flex-1 min-h-[500px] flex flex-col">
+                <MythicHUDFrame title="Abilities Database" icon={Brain} subHeader="SKILL SET MATRIX" className="flex-1 min-h-[500px] flex flex-col" isEditing={editingAbilities} {...createEditHandlers(editingAbilities, setEditingAbilities)}>
                     <div className="flex-1 overflow-y-auto pr-2 scion-scrollbar custom-scroll-area">
                         <div className="grid grid-cols-1 gap-1 h-full content-start">
                             {ABILITIES_LIST.map((abilityName) => {
@@ -1377,7 +1415,7 @@ export default function CharacterSheet() {
         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
             
             {/* POWERS */}
-            <MythicHUDFrame title="Supernatural Arsenal" icon={Zap} subHeader="KNACKS & BOONS" className="min-h-[300px]">
+            <MythicHUDFrame title="Supernatural Arsenal" icon={Zap} subHeader="KNACKS & BOONS" className="min-h-[300px]" isEditing={editingPowers} {...createEditHandlers(editingPowers, setEditingPowers)}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                      {/* Knacks Column */}
                      <div>
@@ -1428,7 +1466,7 @@ export default function CharacterSheet() {
             </MythicHUDFrame>
 
             {/* GEAR */}
-            <MythicHUDFrame title="Offensive Capabilities" icon={Sword} subHeader="WEAPONRY & ATTACK VECTORS" className="min-h-[300px]">
+            <MythicHUDFrame title="Offensive Capabilities" icon={Sword} subHeader="WEAPONRY & ATTACK VECTORS" className="min-h-[300px]" isEditing={editingEquipment} {...createEditHandlers(editingEquipment, setEditingEquipment)}>
                 <div className="space-y-4">
                     {/* Weapons Table Header */}
                     <div className="grid grid-cols-12 gap-2 text-[9px] uppercase tracking-widest text-muted-foreground border-b border-primary/10 pb-2 bg-primary/5 p-2 rounded-t-sm">
