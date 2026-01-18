@@ -61,6 +61,9 @@ interface Weapon {
   overwhelming: string;
   minStr: string;
   tags: string;
+  attribute: string;
+  ability: string;
+  damageAttribute: string;
 }
 
 // --- Data ---
@@ -185,7 +188,7 @@ export default function CharacterSheet() {
 
   const [weapons, setWeapons] = useState<Weapon[]>([]);
   const [newWeapon, setNewWeapon] = useState<Weapon>({
-     name: "", accuracy: "", damage: "", defense: "", overwhelming: "", minStr: "", tags: ""
+     name: "", accuracy: "", damage: "", defense: "", overwhelming: "", minStr: "", tags: "", attribute: "", ability: "", damageAttribute: ""
   });
 
   const [activeTitleIndex, setActiveTitleIndex] = useState<number | null>(null);
@@ -311,7 +314,7 @@ export default function CharacterSheet() {
   const addWeapon = () => {
      if (newWeapon.name.trim()) {
         setWeapons([...weapons, newWeapon]);
-        setNewWeapon({ name: "", accuracy: "", damage: "", defense: "", overwhelming: "", minStr: "", tags: "" });
+        setNewWeapon({ name: "", accuracy: "", damage: "", defense: "", overwhelming: "", minStr: "", tags: "", attribute: "", ability: "", damageAttribute: "" });
      }
   };
 
@@ -952,12 +955,13 @@ export default function CharacterSheet() {
                        {/* Weapons Header */}
                        <div className="grid grid-cols-12 gap-2 text-[9px] uppercase tracking-widest text-primary/60 font-mythic border-b border-primary/20 pb-2 px-2">
                           <div className="col-span-3">Weapon</div>
+                          <div className="col-span-2 text-center">Pool (Attr + Abil)</div>
                           <div className="col-span-1 text-center">Acc</div>
-                          <div className="col-span-1 text-center">Dmg</div>
+                          <div className="col-span-1 text-center">Dmg (Attr)</div>
                           <div className="col-span-1 text-center">Def</div>
                           <div className="col-span-1 text-center">Ovw</div>
-                          <div className="col-span-3 text-center">Tags</div>
-                          <div className="col-span-2 text-right">Action</div>
+                          <div className="col-span-2 text-center">Tags</div>
+                          <div className="col-span-1 text-right">Action</div>
                        </div>
                        
                        {/* Weapons List */}
@@ -972,12 +976,19 @@ export default function CharacterSheet() {
                                    className="grid grid-cols-12 gap-2 items-center bg-black/40 border border-white/5 p-2 rounded-sm group hover:border-primary/30 transition-colors"
                                 >
                                    <div className="col-span-3 font-tech text-foreground">{w.name}</div>
+                                   <div className="col-span-2 font-code text-xs text-muted-foreground text-center flex flex-col justify-center">
+                                       <span>{w.attribute}</span>
+                                       <span className="text-[8px] opacity-60">+ {w.ability}</span>
+                                   </div>
                                    <div className="col-span-1 font-code text-primary text-center">+{w.accuracy}</div>
-                                   <div className="col-span-1 font-code text-destructive text-center">+{w.damage}</div>
+                                   <div className="col-span-1 font-code text-destructive text-center flex flex-col justify-center">
+                                       <span>+{w.damage}</span>
+                                       <span className="text-[8px] text-muted-foreground opacity-60">({w.damageAttribute})</span>
+                                   </div>
                                    <div className="col-span-1 font-code text-primary text-center">+{w.defense}</div>
                                    <div className="col-span-1 font-code text-muted-foreground text-center">{w.overwhelming}</div>
-                                   <div className="col-span-3 font-tech text-[10px] text-muted-foreground text-center truncate">{w.tags}</div>
-                                   <div className="col-span-2 flex justify-end">
+                                   <div className="col-span-2 font-tech text-[10px] text-muted-foreground text-center truncate">{w.tags}</div>
+                                   <div className="col-span-1 flex justify-end">
                                       <button 
                                          onClick={() => setWeapons(prev => prev.filter((_, idx) => idx !== i))}
                                          className="text-destructive/50 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
@@ -990,13 +1001,27 @@ export default function CharacterSheet() {
                           </AnimatePresence>
                           
                           {/* New Weapon Input Row */}
-                          <div className="grid grid-cols-12 gap-2 pt-2 items-center">
+                          <div className="grid grid-cols-12 gap-2 pt-2 items-start">
                              <div className="col-span-3">
                                 <input 
                                    className="w-full bg-black/20 border border-white/10 rounded-sm px-2 py-1 text-xs font-tech text-foreground outline-none focus:border-primary/50 placeholder:text-muted-foreground/30"
                                    placeholder="Name..."
                                    value={newWeapon.name}
                                    onChange={(e) => setNewWeapon({...newWeapon, name: e.target.value})}
+                                />
+                             </div>
+                             <div className="col-span-2 flex flex-col gap-1">
+                                <input 
+                                   className="w-full bg-black/20 border border-white/10 rounded-sm px-1 py-1 text-[9px] font-code text-center text-muted-foreground outline-none focus:border-primary/50 placeholder:text-muted-foreground/30 uppercase"
+                                   placeholder="ATTR"
+                                   value={newWeapon.attribute}
+                                   onChange={(e) => setNewWeapon({...newWeapon, attribute: e.target.value})}
+                                />
+                                <input 
+                                   className="w-full bg-black/20 border border-white/10 rounded-sm px-1 py-1 text-[9px] font-code text-center text-muted-foreground outline-none focus:border-primary/50 placeholder:text-muted-foreground/30 uppercase"
+                                   placeholder="ABIL"
+                                   value={newWeapon.ability}
+                                   onChange={(e) => setNewWeapon({...newWeapon, ability: e.target.value})}
                                 />
                              </div>
                              <div className="col-span-1">
@@ -1007,12 +1032,18 @@ export default function CharacterSheet() {
                                    onChange={(e) => setNewWeapon({...newWeapon, accuracy: e.target.value})}
                                 />
                              </div>
-                             <div className="col-span-1">
+                             <div className="col-span-1 flex flex-col gap-1">
                                 <input 
                                    className="w-full bg-black/20 border border-white/10 rounded-sm px-1 py-1 text-xs font-code text-center text-destructive outline-none focus:border-primary/50 placeholder:text-muted-foreground/30"
                                    placeholder="+0L"
                                    value={newWeapon.damage}
                                    onChange={(e) => setNewWeapon({...newWeapon, damage: e.target.value})}
+                                />
+                                <input 
+                                   className="w-full bg-black/20 border border-white/10 rounded-sm px-1 py-1 text-[9px] font-code text-center text-muted-foreground outline-none focus:border-primary/50 placeholder:text-muted-foreground/30 uppercase"
+                                   placeholder="ATTR"
+                                   value={newWeapon.damageAttribute}
+                                   onChange={(e) => setNewWeapon({...newWeapon, damageAttribute: e.target.value})}
                                 />
                              </div>
                              <div className="col-span-1">
@@ -1031,7 +1062,7 @@ export default function CharacterSheet() {
                                    onChange={(e) => setNewWeapon({...newWeapon, overwhelming: e.target.value})}
                                 />
                              </div>
-                             <div className="col-span-3">
+                             <div className="col-span-2">
                                 <input 
                                    className="w-full bg-black/20 border border-white/10 rounded-sm px-2 py-1 text-xs font-tech text-muted-foreground outline-none focus:border-primary/50 placeholder:text-muted-foreground/30"
                                    placeholder="Tags..."
@@ -1039,12 +1070,12 @@ export default function CharacterSheet() {
                                    onChange={(e) => setNewWeapon({...newWeapon, tags: e.target.value})}
                                 />
                              </div>
-                             <div className="col-span-2 flex justify-end">
+                             <div className="col-span-1 flex justify-end">
                                 <button 
                                    onClick={addWeapon}
                                    className="bg-primary/10 hover:bg-primary/20 border border-primary/30 text-primary px-3 py-1 rounded-sm flex items-center justify-center transition-colors text-xs uppercase tracking-wider w-full"
                                 >
-                                   <Plus className="w-3 h-3 mr-1" /> Add
+                                   <Plus className="w-3 h-3" />
                                 </button>
                              </div>
                           </div>
