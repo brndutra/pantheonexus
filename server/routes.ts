@@ -518,13 +518,109 @@ export async function registerRoutes(
       const { data, error } = await supabase
         .from('list_nature')
         .select('*')
-        .order('name');
+        .order('nome');
       
       if (error) throw error;
       res.json(data || []);
     } catch (error) {
       console.error("Error fetching natures:", error);
       res.status(500).json({ error: "Failed to fetch natures" });
+    }
+  });
+  
+  // OFFENSIVES - Fetch from Supabase offensives tables (melee, ranged, unarmed, special)
+  app.get("/api/offensives/melee", async (req, res) => {
+    try {
+      const { data, error } = await supabase
+        .from('offensives_meelee')
+        .select('*');
+      
+      if (error) throw error;
+      res.json(data || []);
+    } catch (error) {
+      console.error("Error fetching melee offensives:", error);
+      res.status(500).json({ error: "Failed to fetch melee offensives" });
+    }
+  });
+  
+  app.get("/api/offensives/ranged", async (req, res) => {
+    try {
+      const { data, error } = await supabase
+        .from('offensives_ranged')
+        .select('*');
+      
+      if (error) throw error;
+      res.json(data || []);
+    } catch (error) {
+      console.error("Error fetching ranged offensives:", error);
+      res.status(500).json({ error: "Failed to fetch ranged offensives" });
+    }
+  });
+  
+  app.get("/api/offensives/unarmed", async (req, res) => {
+    try {
+      const { data, error } = await supabase
+        .from('offensives_unarmed')
+        .select('*');
+      
+      if (error) throw error;
+      res.json(data || []);
+    } catch (error) {
+      console.error("Error fetching unarmed offensives:", error);
+      res.status(500).json({ error: "Failed to fetch unarmed offensives" });
+    }
+  });
+  
+  app.get("/api/offensives/special", async (req, res) => {
+    try {
+      const { data, error } = await supabase
+        .from('offensives_special')
+        .select('*');
+      
+      if (error) throw error;
+      res.json(data || []);
+    } catch (error) {
+      console.error("Error fetching special offensives:", error);
+      res.status(500).json({ error: "Failed to fetch special offensives" });
+    }
+  });
+  
+  // Innate offensives endpoint
+  app.get("/api/offensives/innate", async (req, res) => {
+    try {
+      const { data, error } = await supabase
+        .from('offensives_innate')
+        .select('*');
+      
+      if (error) throw error;
+      res.json(data || []);
+    } catch (error) {
+      console.error("Error fetching innate offensives:", error);
+      res.status(500).json({ error: "Failed to fetch innate offensives" });
+    }
+  });
+  
+  // Combined offensives endpoint
+  app.get("/api/offensives", async (req, res) => {
+    try {
+      const [melee, ranged, unarmed, special, innate] = await Promise.all([
+        supabase.from('offensives_meelee').select('*'),
+        supabase.from('offensives_ranged').select('*'),
+        supabase.from('offensives_unarmed').select('*'),
+        supabase.from('offensives_special').select('*'),
+        supabase.from('offensives_innate').select('*'),
+      ]);
+      
+      res.json({
+        melee: melee.data || [],
+        ranged: ranged.data || [],
+        unarmed: unarmed.data || [],
+        special: special.data || [],
+        innate: innate.data || [],
+      });
+    } catch (error) {
+      console.error("Error fetching all offensives:", error);
+      res.status(500).json({ error: "Failed to fetch offensives" });
     }
   });
   

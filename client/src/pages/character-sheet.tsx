@@ -72,15 +72,32 @@ type DamageType = 0 | 1 | 2 | 3; // 0: None, 1: Bashing, 2: Lethal, 3: Aggravate
 
 interface Weapon {
   name: string;
-  accuracy: string;
+  category: string;
+  accuracy: number;
+  attackAttribute: string;
+  attackAbility: string;
   damage: string;
-  defense: string;
-  overwhelming: string;
-  minStr: string;
-  tags: string;
-  attribute: string;
-  ability: string;
   damageAttribute: string;
+  defense: number;
+  range: string | null;
+  clip: string | null;
+  speed: number;
+  tags: string | null;
+}
+
+interface SupabaseOffensive {
+  offensive_name: string;
+  category: string;
+  accuracy: number;
+  attack_attribute: string;
+  attack_ability: string;
+  damage: string;
+  damage_attribute: string;
+  defense: number;
+  range: string | null;
+  clip: string | null;
+  speed: number;
+  tags: string | null;
 }
 
 // --- Data ---
@@ -459,6 +476,16 @@ export default function CharacterSheet() {
         }
       })
       .catch(err => console.error('Failed to fetch natures:', err));
+      
+    // Fetch available offensives from Supabase
+    fetch('/api/offensives')
+      .then(res => res.json())
+      .then(data => {
+        if (data && typeof data === 'object') {
+          setAvailableOffensives(data);
+        }
+      })
+      .catch(err => console.error('Failed to fetch offensives:', err));
   }, []);
 
   const [willpower, setWillpower] = useState(5);
@@ -474,9 +501,16 @@ export default function CharacterSheet() {
   const [newBoon, setNewBoon] = useState("");
 
   const [weapons, setWeapons] = useState<Weapon[]>([]);
-  const [newWeapon, setNewWeapon] = useState<Weapon>({
-     name: "", accuracy: "", damage: "", defense: "", overwhelming: "", minStr: "", tags: "", attribute: "", ability: "", damageAttribute: ""
-  });
+  const [availableOffensives, setAvailableOffensives] = useState<{
+    melee: SupabaseOffensive[];
+    ranged: SupabaseOffensive[];
+    unarmed: SupabaseOffensive[];
+    special: SupabaseOffensive[];
+    innate: SupabaseOffensive[];
+  }>({ melee: [], ranged: [], unarmed: [], special: [], innate: [] });
+  const [innateOffensivesLoaded, setInnateOffensivesLoaded] = useState(false);
+  const [offensiveSearch, setOffensiveSearch] = useState("");
+  const [showOffensiveDropdown, setShowOffensiveDropdown] = useState(false);
 
   const [activeTitleIndex, setActiveTitleIndex] = useState<number | null>(null);
 
@@ -653,12 +687,44 @@ export default function CharacterSheet() {
     }
   };
 
-  const addWeapon = () => {
-     if (newWeapon.name.trim()) {
-        setWeapons([...weapons, newWeapon]);
-        setNewWeapon({ name: "", accuracy: "", damage: "", defense: "", overwhelming: "", minStr: "", tags: "", attribute: "", ability: "", damageAttribute: "" });
-     }
+  const addOffensiveFromDatabase = (offensive: SupabaseOffensive) => {
+    const newWeapon: Weapon = {
+      name: offensive.offensive_name,
+      category: offensive.category,
+      accuracy: offensive.accuracy,
+      attackAttribute: offensive.attack_attribute,
+      attackAbility: offensive.attack_ability,
+      damage: offensive.damage,
+      damageAttribute: offensive.damage_attribute,
+      defense: offensive.defense,
+      range: offensive.range,
+      clip: offensive.clip,
+      speed: offensive.speed,
+      tags: offensive.tags,
+    };
+    setWeapons([...weapons, newWeapon]);
+    setOffensiveSearch("");
+    setShowOffensiveDropdown(false);
   };
+  
+  const removeWeapon = (index: number) => {
+    setWeapons(weapons.filter((_, i) => i !== index));
+  };
+  
+  // Filter offensives based on search (exclude innate since they're auto-added)
+  const allOffensives = [
+    ...availableOffensives.melee,
+    ...availableOffensives.ranged,
+    ...availableOffensives.unarmed,
+    ...availableOffensives.special,
+  ];
+  
+  const filteredOffensives = offensiveSearch.length > 0
+    ? allOffensives.filter(o => 
+        o.offensive_name.toLowerCase().includes(offensiveSearch.toLowerCase()) ||
+        o.category.toLowerCase().includes(offensiveSearch.toLowerCase())
+      )
+    : allOffensives;
 
   // Build current health levels array
   const currentHealthLevels = [
@@ -835,6 +901,34 @@ export default function CharacterSheet() {
       }
     };
   }, [legend, legendPointsCurrent, willpower, willpowerCurrent, extraOxBody, healthDamage, portrait, characterId]);
+  
+  // Auto-add innate offensives when loaded
+  useEffect(() => {
+    if (availableOffensives.innate && availableOffensives.innate.length > 0 && !innateOffensivesLoaded) {
+      const innateWeapons: Weapon[] = availableOffensives.innate.map(o => ({
+        name: o.offensive_name,
+        category: o.category || 'innate',
+        accuracy: o.accuracy || 0,
+        attackAttribute: o.attack_attribute || '',
+        attackAbility: o.attack_ability || '',
+        damage: o.damage || '',
+        damageAttribute: o.damage_attribute || '',
+        defense: o.defense || 0,
+        range: o.range,
+        clip: o.clip,
+        speed: o.speed || 0,
+        tags: o.tags,
+      }));
+      
+      // Only add innate offensives if not already present
+      setWeapons(prev => {
+        const existingNames = new Set(prev.map(w => w.name));
+        const newInnate = innateWeapons.filter(w => !existingNames.has(w.name));
+        return [...newInnate, ...prev];
+      });
+      setInnateOffensivesLoaded(true);
+    }
+  }, [availableOffensives.innate, innateOffensivesLoaded]);
 
   // Create edit handlers for each section
   const createEditHandlers = (isEditing: boolean, setEditing: (v: boolean) => void) => ({
@@ -1694,67 +1788,110 @@ export default function CharacterSheet() {
                 </MythicHUDFrame>
 
             {/* 2. OFFENSIVE CAPABILITIES - Takes 2 columns */}
-            <MythicHUDFrame title="Offensive Capabilities" icon={Sword} subHeader="WEAPONRY & ATTACK VECTORS" className="md:col-span-2" isEditing={editingEquipment} {...createEditHandlers(editingEquipment, setEditingEquipment)}>
+            <MythicHUDFrame title="Offensive Capabilities" icon={Sword} subHeader="WEAPONRY & ATTACK VECTORS" className="md:col-span-2">
                 <div className="space-y-3">
                     {/* Weapons Table Header */}
-                    <div className="grid grid-cols-12 gap-1 text-[8px] uppercase tracking-widest text-muted-foreground border-b border-primary/10 pb-1 bg-primary/5 p-1.5 rounded-t-sm">
-                        <div className="col-span-5">Weapon</div>
-                        <div className="col-span-2 text-center">Acc</div>
-                        <div className="col-span-2 text-center">Dmg</div>
-                        <div className="col-span-3 text-right">Tags</div>
+                    <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr_1fr_auto] gap-1 text-[7px] uppercase tracking-widest text-muted-foreground border-b border-primary/10 pb-1 bg-primary/5 p-1.5 rounded-t-sm">
+                        <div>Weapon</div>
+                        <div className="text-center">Acc</div>
+                        <div className="text-center">Dmg</div>
+                        <div className="text-center">Def</div>
+                        <div className="text-center">Spd</div>
+                        <div className="text-center">Range</div>
+                        <div className="text-center">Tags</div>
+                        <div className="w-5"></div>
                     </div>
 
                     {/* Weapons List */}
-                    <div className="space-y-0.5 max-h-[200px] overflow-y-auto">
-                        {weapons.map((w, i) => (
-                            <div key={i} className="grid grid-cols-12 gap-1 text-[10px] font-tech text-primary/80 items-center p-1.5 hover:bg-primary/10 rounded-sm transition-colors border-l-2 border-transparent hover:border-primary group">
-                                <div className="col-span-5 font-bold truncate flex items-center gap-1">
-                                    <Crosshair className="w-2.5 h-2.5 text-primary/40" />
-                                    {w.name}
-                                </div>
-                                <div className="col-span-2 text-center text-muted-foreground">+{w.accuracy}</div>
-                                <div className="col-span-2 text-center text-red-400/70">+{w.damage}L</div>
-                                <div className="col-span-3 text-right text-[8px] uppercase opacity-70">{w.tags}</div>
+                    <div className="space-y-0.5 max-h-[180px] overflow-y-auto">
+                        {weapons.length === 0 ? (
+                            <div className="text-[10px] text-muted-foreground text-center py-3 italic">
+                                Nenhuma arma equipada. Use a busca abaixo para adicionar.
                             </div>
-                        ))}
+                        ) : (
+                            weapons.map((w, i) => (
+                                <div key={i} className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr_1fr_auto] gap-1 text-[9px] font-tech text-primary/80 items-center p-1 hover:bg-primary/10 rounded-sm transition-colors border-l-2 border-transparent hover:border-primary group">
+                                    <div className="font-bold truncate flex items-center gap-1">
+                                        <Crosshair className="w-2.5 h-2.5 text-primary/40 shrink-0" />
+                                        <span className="truncate">{w.name}</span>
+                                        <span className="text-[7px] text-muted-foreground/60 uppercase shrink-0">({w.category?.slice(0,3)})</span>
+                                    </div>
+                                    <div className="text-center text-muted-foreground">{w.accuracy >= 0 ? `+${w.accuracy}` : w.accuracy}</div>
+                                    <div className="text-center text-red-400/70">{w.damage}</div>
+                                    <div className="text-center text-blue-400/70">{w.defense >= 0 ? `+${w.defense}` : w.defense}</div>
+                                    <div className="text-center text-muted-foreground">{w.speed}</div>
+                                    <div className="text-center text-muted-foreground/60">{w.range || "-"}</div>
+                                    <div className="text-center text-[7px] uppercase opacity-70">{w.tags || "-"}</div>
+                                    <button 
+                                        onClick={() => removeWeapon(i)}
+                                        className="w-5 h-5 flex items-center justify-center text-red-400/50 hover:text-red-400 hover:bg-red-400/10 rounded-sm transition-colors opacity-0 group-hover:opacity-100"
+                                    >
+                                        <Trash2 className="w-3 h-3" />
+                                    </button>
+                                </div>
+                            ))
+                        )}
                     </div>
 
-                    {/* Add Weapon Mini-Form */}
-                    <div className="grid grid-cols-12 gap-1 pt-2 border-t border-primary/10 bg-black/40 p-1.5 rounded-sm">
-                        <div className="col-span-5">
-                            <input 
-                                value={newWeapon.name} 
-                                onChange={e => setNewWeapon({...newWeapon, name: e.target.value})}
-                                placeholder="Weapon..." 
-                                className="w-full bg-black/30 border border-primary/20 text-[10px] px-1.5 py-1 rounded-sm focus:border-primary text-primary placeholder:text-primary/20 outline-none"
-                            />
+                    {/* Search Offensives */}
+                    <div className="pt-2 border-t border-primary/10 relative">
+                        <div className="flex items-center gap-2">
+                            <div className="relative flex-1">
+                                <input 
+                                    value={offensiveSearch}
+                                    onChange={e => {
+                                        setOffensiveSearch(e.target.value);
+                                        setShowOffensiveDropdown(true);
+                                    }}
+                                    onFocus={() => setShowOffensiveDropdown(true)}
+                                    placeholder="Buscar armas do compêndio..." 
+                                    className="w-full bg-black/30 border border-primary/20 text-[10px] px-2 py-1.5 rounded-sm focus:border-primary text-primary placeholder:text-primary/30 outline-none"
+                                />
+                                {showOffensiveDropdown && filteredOffensives.length > 0 && (
+                                    <div className="absolute top-full left-0 right-0 mt-1 bg-black/95 border border-primary/30 rounded-sm max-h-[200px] overflow-y-auto z-50 shadow-xl">
+                                        {filteredOffensives.slice(0, 15).map((o, i) => (
+                                            <button
+                                                key={`${o.offensive_name}-${i}`}
+                                                onClick={() => addOffensiveFromDatabase(o)}
+                                                className="w-full text-left px-2 py-1.5 text-[9px] font-tech hover:bg-primary/20 transition-colors flex items-center justify-between gap-2 border-b border-primary/10 last:border-0"
+                                            >
+                                                <div className="flex items-center gap-2">
+                                                    <Crosshair className="w-3 h-3 text-primary/50" />
+                                                    <span className="text-primary font-bold">{o.offensive_name}</span>
+                                                    <span className="text-[7px] text-muted-foreground uppercase px-1 py-0.5 bg-primary/10 rounded">{o.category}</span>
+                                                </div>
+                                                <div className="flex items-center gap-2 text-muted-foreground">
+                                                    <span>Acc: {o.accuracy >= 0 ? `+${o.accuracy}` : o.accuracy}</span>
+                                                    <span className="text-red-400/70">Dmg: {o.damage}</span>
+                                                    <span>Spd: {o.speed}</span>
+                                                </div>
+                                            </button>
+                                        ))}
+                                        {filteredOffensives.length > 15 && (
+                                            <div className="px-2 py-1 text-[8px] text-muted-foreground text-center">
+                                                +{filteredOffensives.length - 15} mais resultados...
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                            {showOffensiveDropdown && (
+                                <button 
+                                    onClick={() => {
+                                        setShowOffensiveDropdown(false);
+                                        setOffensiveSearch("");
+                                    }}
+                                    className="p-1.5 text-muted-foreground hover:text-primary transition-colors"
+                                >
+                                    <X className="w-3 h-3" />
+                                </button>
+                            )}
                         </div>
-                        <div className="col-span-2">
-                             <input 
-                                value={newWeapon.accuracy} 
-                                onChange={e => setNewWeapon({...newWeapon, accuracy: e.target.value})}
-                                placeholder="Acc" 
-                                className="w-full bg-black/30 border border-primary/20 text-[10px] px-1 py-1 rounded-sm text-center text-primary placeholder:text-primary/20 outline-none"
-                            />
-                        </div>
-                        <div className="col-span-2">
-                             <input 
-                                value={newWeapon.damage} 
-                                onChange={e => setNewWeapon({...newWeapon, damage: e.target.value})}
-                                placeholder="Dmg" 
-                                className="w-full bg-black/30 border border-primary/20 text-[10px] px-1 py-1 rounded-sm text-center text-primary placeholder:text-primary/20 outline-none"
-                            />
-                        </div>
-                        <div className="col-span-3 flex items-center gap-1">
-                             <input 
-                                value={newWeapon.tags} 
-                                onChange={e => setNewWeapon({...newWeapon, tags: e.target.value})}
-                                placeholder="Tags" 
-                                className="w-full bg-black/30 border border-primary/20 text-[10px] px-1 py-1 rounded-sm text-primary placeholder:text-primary/20 outline-none"
-                            />
-                             <button onClick={addWeapon} className="p-1 bg-primary/20 hover:bg-primary/40 text-primary rounded-sm">
-                                <Plus className="w-2.5 h-2.5" />
-                             </button>
+                        <div className="flex gap-2 mt-2 text-[8px] text-muted-foreground">
+                            <span className="px-1.5 py-0.5 bg-primary/10 rounded">Melee: {availableOffensives.melee.length}</span>
+                            <span className="px-1.5 py-0.5 bg-primary/10 rounded">Ranged: {availableOffensives.ranged.length}</span>
+                            <span className="px-1.5 py-0.5 bg-primary/10 rounded">Unarmed: {availableOffensives.unarmed.length}</span>
+                            <span className="px-1.5 py-0.5 bg-primary/10 rounded">Special: {availableOffensives.special.length}</span>
                         </div>
                     </div>
                 </div>
