@@ -107,8 +107,10 @@ const MythicHUDFrame = ({
     icon: Icon, 
     action, 
     subHeader,
-    variant = "default"
-}: { 
+    variant = "default",
+    isEditing,
+    onToggleEdit
+}: {  
     children: React.ReactNode, 
     title?: string, 
     className?: string, 
