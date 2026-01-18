@@ -687,22 +687,20 @@ export async function registerRoutes(
     }
   });
   
-  // Get boons from Supabase (combining boons, boons_capitals, and boons_specials)
+  // Get boons from Supabase (combining boons_capitals and boons_specials only)
   app.get("/api/supabase-boons", async (req, res) => {
     try {
-      // Fetch from all three tables in parallel
-      const [boonsResult, capitalsResult, specialsResult] = await Promise.all([
-        supabase.from('boons').select('*').order('purview').order('level'),
+      // Fetch from boons_capitals and boons_specials only
+      const [capitalsResult, specialsResult] = await Promise.all([
         supabase.from('boons_capitals').select('*').order('purview').order('level'),
         supabase.from('boons_specials').select('*').order('purview').order('level')
       ]);
       
-      const boons = boonsResult.data || [];
       const capitals = (capitalsResult.data || []).map((b: any) => ({ ...b, type: 'capital' }));
       const specials = (specialsResult.data || []).map((b: any) => ({ ...b, type: 'special' }));
       
-      // Combine all boons
-      const allBoons = [...boons, ...capitals, ...specials];
+      // Combine capitals and specials
+      const allBoons = [...capitals, ...specials];
       
       res.json(allBoons);
     } catch (error) {
@@ -791,19 +789,17 @@ export async function registerRoutes(
   // Combined offensives endpoint
   app.get("/api/offensives", async (req, res) => {
     try {
-      const [melee, ranged, unarmed, special, innate] = await Promise.all([
+      const [melee, ranged, firearms, innate] = await Promise.all([
         supabase.from('offensives_meelee').select('*'),
         supabase.from('offensives_ranged').select('*'),
-        supabase.from('offensives_unarmed').select('*'),
-        supabase.from('offensives_special').select('*'),
+        supabase.from('offensives_firearms').select('*'),
         supabase.from('offensives_innate').select('*'),
       ]);
       
       res.json({
         melee: melee.data || [],
         ranged: ranged.data || [],
-        unarmed: unarmed.data || [],
-        special: special.data || [],
+        firearms: firearms.data || [],
         innate: innate.data || [],
       });
     } catch (error) {
