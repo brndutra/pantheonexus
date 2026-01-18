@@ -133,6 +133,7 @@ const HealthBox = ({ status, onClick }: { status: DamageType, onClick: () => voi
 
 export default function CharacterSheet() {
   const [activeTab, setActiveTab] = useState<"sheet" | "powers" | "bio">("sheet");
+  const [idCardTab, setIdCardTab] = useState<"identity" | "psychic" | "presence">("identity");
   
   // State
   const [attributes, setAttributes] = useState(DEFAULT_ATTRIBUTES);
@@ -399,30 +400,105 @@ export default function CharacterSheet() {
                         </div>
 
                         {/* Data Column */}
-                        <div className="md:col-span-9 flex flex-col gap-6 justify-center pl-4 border-l border-primary/10">
-                            {/* Identity Fields */}
-                            <div className="space-y-4">
-                                <ScionInput label="Designation (Name)" placeholder="CHARACTER NAME" className="text-2xl md:text-3xl font-mythic text-primary drop-shadow-[0_0_10px_rgba(212,175,55,0.3)]" />
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <ScionInput label="Pantheon" placeholder="PANTHEON" />
-                                    <ScionInput label="Heritage" placeholder="DIVINE PARENT / PATRON" />
-                                </div>
+                        <div className="md:col-span-9 flex flex-col gap-4 justify-center pl-4 border-l border-primary/10 relative min-h-[300px]">
+                            {/* ID Card Internal Navigation */}
+                            <div className="flex gap-4 mb-2 border-b border-primary/20 pb-2">
+                               {['identity', 'psychic', 'presence'].map((tab) => (
+                                  <button
+                                    key={tab}
+                                    onClick={() => setIdCardTab(tab as any)}
+                                    className={cn(
+                                      "text-[10px] uppercase tracking-[0.2em] font-mythic transition-colors pb-1 relative",
+                                      idCardTab === tab ? "text-primary" : "text-muted-foreground hover:text-primary/70"
+                                    )}
+                                  >
+                                    {tab}
+                                    {idCardTab === tab && (
+                                       <motion.div layoutId="idTabIndicator" className="absolute bottom-0 left-0 right-0 h-px bg-primary shadow-[0_0_5px_gold]" />
+                                    )}
+                                  </button>
+                               ))}
                             </div>
 
-                            {/* Divider with Ornament */}
-                            <div className="flex items-center gap-4 opacity-50">
-                               <div className="h-px bg-primary/30 flex-1" />
-                               <img src={divineDivider} className="h-4 w-auto" alt="" />
-                               <div className="h-px bg-primary/30 flex-1" />
-                            </div>
+                            <AnimatePresence mode="wait">
+                                {idCardTab === 'identity' && (
+                                    <motion.div 
+                                      key="identity"
+                                      initial={{ opacity: 0, x: -10 }}
+                                      animate={{ opacity: 1, x: 0 }}
+                                      exit={{ opacity: 0, x: 10 }}
+                                      className="space-y-6"
+                                    >
+                                        {/* Identity Fields */}
+                                        <div className="space-y-4">
+                                            <ScionInput label="Designation (Name)" placeholder="CHARACTER NAME" className="text-2xl md:text-3xl font-mythic text-primary drop-shadow-[0_0_10px_rgba(212,175,55,0.3)]" />
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                <ScionInput label="Pantheon" placeholder="PANTHEON" />
+                                                <ScionInput label="Heritage" placeholder="DIVINE PARENT / PATRON" />
+                                            </div>
+                                        </div>
 
-                            {/* Genesis Fields */}
-                            <div className="grid grid-cols-2 gap-4">
-                                <ScionInput label="Date of Birth" placeholder="DD/MM/AAAA" />
-                                <ScionInput label="Nationality" placeholder="NATIONALITY" />
-                                <ScionInput label="Origin City" placeholder="CITY" />
-                                <ScionInput label="State" placeholder="STATE/UF" />
-                            </div>
+                                        {/* Divider with Ornament */}
+                                        <div className="flex items-center gap-4 opacity-50">
+                                           <div className="h-px bg-primary/30 flex-1" />
+                                           <img src={divineDivider} className="h-4 w-auto" alt="" />
+                                           <div className="h-px bg-primary/30 flex-1" />
+                                        </div>
+
+                                        {/* Genesis Fields */}
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <ScionInput label="Date of Birth" placeholder="DD/MM/AAAA" />
+                                            <ScionInput label="Nationality" placeholder="NATIONALITY" />
+                                            <ScionInput label="Origin City" placeholder="CITY" />
+                                            <ScionInput label="State" placeholder="STATE/UF" />
+                                        </div>
+                                    </motion.div>
+                                )}
+
+                                {idCardTab === 'psychic' && (
+                                   <motion.div 
+                                      key="psychic"
+                                      initial={{ opacity: 0, x: -10 }}
+                                      animate={{ opacity: 1, x: 0 }}
+                                      exit={{ opacity: 0, x: 10 }}
+                                      className="space-y-4 overflow-y-auto max-h-[300px] pr-2 scion-scrollbar"
+                                   >
+                                      <div className="grid grid-cols-2 gap-4">
+                                         <ScionInput label="Temperament" placeholder="Dominant Emotion" value={psychicProfile.temperament} onChange={(e) => setPsychicProfile({...psychicProfile, temperament: e.target.value})} />
+                                         <ScionInput label="Cognitive Type" placeholder="Thought Pattern" value={psychicProfile.cognitiveType} onChange={(e) => setPsychicProfile({...psychicProfile, cognitiveType: e.target.value})} />
+                                      </div>
+                                      <div className="grid grid-cols-2 gap-4">
+                                          <ScionInput label="Major Arcana" placeholder="Archetype" value={psychicProfile.majorArcana} onChange={(e) => setPsychicProfile({...psychicProfile, majorArcana: e.target.value})} />
+                                          <ScionInput label="Keywords" placeholder="Key Terms" value={psychicProfile.keywords} onChange={(e) => setPsychicProfile({...psychicProfile, keywords: e.target.value})} />
+                                      </div>
+                                      <div className="space-y-1">
+                                         <label className="text-[9px] uppercase tracking-widest text-primary/70 font-mythic">Deep Analysis</label>
+                                         <textarea className="w-full bg-black/20 border border-white/10 rounded-sm p-2 text-xs font-tech text-foreground outline-none focus:border-primary/50 min-h-[60px]" placeholder="Analysis..." value={psychicProfile.analysis} onChange={(e) => setPsychicProfile({...psychicProfile, analysis: e.target.value})} />
+                                      </div>
+                                   </motion.div>
+                                )}
+
+                                {idCardTab === 'presence' && (
+                                   <motion.div 
+                                      key="presence"
+                                      initial={{ opacity: 0, x: -10 }}
+                                      animate={{ opacity: 1, x: 0 }}
+                                      exit={{ opacity: 0, x: 10 }}
+                                      className="space-y-4 overflow-y-auto max-h-[300px] pr-2 scion-scrollbar"
+                                   >
+                                       <div className="grid grid-cols-3 gap-3">
+                                          <ScionInput label="Height" placeholder="Height" value={presenceProfile.height} onChange={(e) => setPresenceProfile({...presenceProfile, height: e.target.value})} />
+                                          <ScionInput label="Eyes" placeholder="Color" value={presenceProfile.eyeColor} onChange={(e) => setPresenceProfile({...presenceProfile, eyeColor: e.target.value})} />
+                                          <ScionInput label="Hair" placeholder="Color" value={presenceProfile.hairColor} onChange={(e) => setPresenceProfile({...presenceProfile, hairColor: e.target.value})} />
+                                       </div>
+                                       <div className="grid grid-cols-2 gap-4">
+                                           <ScionInput label="Aura" placeholder="Signature" value={presenceProfile.auraSignature} onChange={(e) => setPresenceProfile({...presenceProfile, auraSignature: e.target.value})} />
+                                           <ScionInput label="Scent" placeholder="Essence" value={presenceProfile.scent} onChange={(e) => setPresenceProfile({...presenceProfile, scent: e.target.value})} />
+                                       </div>
+                                       <ScionInput label="Distinguishing Mark" placeholder="Feature" value={presenceProfile.distinguishingMark} onChange={(e) => setPresenceProfile({...presenceProfile, distinguishingMark: e.target.value})} />
+                                   </motion.div>
+                                )}
+                            </AnimatePresence>
                         </div>
                     </div>
                 </SectionFrame>
@@ -555,8 +631,8 @@ export default function CharacterSheet() {
                    </div>
                 </div>
 
-                {/* Pools Section */}
-                <SectionFrame title="Pools" subHeader="Resource Management" className="flex-1">
+                {/* Pools & Health Section Combined */}
+                <SectionFrame title="Resources & Vitality" subHeader="Power & Biometric Status" className="flex-1 min-h-[400px]">
                    <div className="space-y-8 py-2">
                       {/* Legend Points */}
                       <div className="space-y-3">
@@ -599,6 +675,52 @@ export default function CharacterSheet() {
                             ))}
                          </div>
                       </div>
+
+                      {/* Divider */}
+                      <div className="flex items-center gap-4 opacity-30 py-2">
+                         <div className="h-px bg-primary/30 flex-1" />
+                         <Activity className="w-4 h-4 text-primary" />
+                         <div className="h-px bg-primary/30 flex-1" />
+                      </div>
+
+                      {/* Health Tracker Integrated */}
+                      <div className="space-y-4">
+                          <div className="flex justify-between items-center">
+                             <h4 className="text-[10px] uppercase tracking-[0.2em] font-mythic text-primary/70">Health Monitor</h4>
+                             <button 
+                                onClick={() => setExtraOxBody(prev => Math.min(prev + 1, 5))}
+                                className="text-[9px] border border-primary/30 px-2 py-0.5 hover:bg-primary/10 text-primary transition-colors uppercase tracking-wider rounded-sm"
+                             >
+                                + OxBody
+                             </button>
+                          </div>
+                          
+                          <div className="flex flex-wrap gap-4 justify-center items-end">
+                             {currentHealthLevels.map((level, i) => (
+                                <div key={i} className="flex flex-col items-center gap-2 group relative">
+                                   <HealthBox status={healthDamage[i]} onClick={() => toggleHealth(i)} />
+                                   <span className={cn(
+                                      "font-code text-[9px] uppercase tracking-wider transition-all duration-300",
+                                      level === "Incap" ? "text-red-500 font-bold" : "text-muted-foreground group-hover:text-primary"
+                                   )}>
+                                      {level}
+                                   </span>
+                                   {i < extraOxBody && (
+                                      <button onClick={() => {
+                                         setExtraOxBody(prev => prev - 1);
+                                         const newDamage = [...healthDamage];
+                                         newDamage.splice(i, 1);
+                                         newDamage.push(0); 
+                                         setHealthDamage(newDamage);
+                                      }} className="absolute -top-3 -right-2 text-destructive hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                                         <Trash2 className="w-3 h-3" />
+                                      </button>
+                                   )}
+                                </div>
+                             ))}
+                          </div>
+                      </div>
+
                    </div>
                 </SectionFrame>
             </div>
@@ -766,52 +888,8 @@ export default function CharacterSheet() {
                  </SectionFrame>
               </div>
 
-              {/* Health Tracker */}
-              <div className="md:col-span-12">
-                 <SectionFrame 
-                    title="Health Monitor" 
-                    subHeader="Biometric Status" 
-                    action={
-                        <button 
-                          onClick={() => setExtraOxBody(prev => Math.min(prev + 1, 5))}
-                          className="text-[10px] border border-primary/30 px-3 py-1 hover:bg-primary/10 text-primary transition-colors uppercase tracking-wider rounded-sm"
-                        >
-                          + OxBody
-                        </button>
-                    }
-                  >
-                    <div className="flex flex-wrap gap-6 justify-center md:justify-start items-end mt-6 pb-2">
-                       {currentHealthLevels.map((level, i) => (
-                          <div key={i} className="flex flex-col items-center gap-3 group relative">
-                             {/* Connector Line */}
-                             {i < currentHealthLevels.length - 1 && (
-                                 <div className="absolute top-3 left-1/2 w-full h-px bg-primary/20 -z-10" />
-                             )}
-                             
-                             <HealthBox status={healthDamage[i]} onClick={() => toggleHealth(i)} />
-                             <span className={cn(
-                                "font-code text-[10px] uppercase tracking-widest transition-all duration-300",
-                                level === "Incap" ? "text-red-500 font-bold" : "text-muted-foreground group-hover:text-primary"
-                             )}>
-                                {level}
-                             </span>
-                             {i < extraOxBody && (
-                                <button onClick={() => {
-                                   setExtraOxBody(prev => prev - 1);
-                                   const newDamage = [...healthDamage];
-                                   newDamage.splice(i, 1);
-                                   newDamage.push(0); 
-                                   setHealthDamage(newDamage);
-                                }} className="absolute -top-4 text-destructive hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity">
-                                   <Trash2 className="w-3 h-3" />
-                                </button>
-                             )}
-                          </div>
-                       ))}
-                    </div>
-                 </SectionFrame>
-              </div>
-
+              {/* Health Tracker - REMOVED since it is now combined with Pools */}
+              
             </motion.div>
           )}
 
@@ -822,10 +900,10 @@ export default function CharacterSheet() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
-              className="grid grid-cols-1 md:grid-cols-12 gap-6"
+              className="grid grid-cols-1 gap-6"
             >
                {/* Psychic Profile */}
-               <div className="md:col-span-6 space-y-6">
+               <div className="space-y-6">
                   <SectionFrame title="Psychic Profile" subHeader="Mind & Soul Analysis" className="h-full">
                      <div className="space-y-6">
                         <div className="grid grid-cols-2 gap-6">
@@ -865,7 +943,7 @@ export default function CharacterSheet() {
                            />
                         </div>
 
-                        <div className="grid grid-cols-1 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                            <div className="space-y-2">
                               <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic block">Strengths</label>
                               <textarea 
@@ -899,7 +977,7 @@ export default function CharacterSheet() {
                </div>
 
                {/* Presence Profile */}
-               <div className="md:col-span-6 space-y-6">
+               <div className="space-y-6">
                   <SectionFrame title="Presence Profile" subHeader="Appearance & Aura" className="h-full">
                      <div className="space-y-6">
                         <div className="grid grid-cols-3 gap-4">
@@ -923,18 +1001,20 @@ export default function CharacterSheet() {
                            />
                         </div>
 
-                        <ScionInput 
-                           label="Aura Signature" 
-                           placeholder="Vibration/Feeling" 
-                           value={presenceProfile.auraSignature}
-                           onChange={(e) => setPresenceProfile({...presenceProfile, auraSignature: e.target.value})}
-                        />
-                         <ScionInput 
-                           label="Scent / Essence" 
-                           placeholder="Olfactory Impression" 
-                           value={presenceProfile.scent}
-                           onChange={(e) => setPresenceProfile({...presenceProfile, scent: e.target.value})}
-                        />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                           <ScionInput 
+                              label="Aura Signature" 
+                              placeholder="Vibration/Feeling" 
+                              value={presenceProfile.auraSignature}
+                              onChange={(e) => setPresenceProfile({...presenceProfile, auraSignature: e.target.value})}
+                           />
+                            <ScionInput 
+                              label="Scent / Essence" 
+                              placeholder="Olfactory Impression" 
+                              value={presenceProfile.scent}
+                              onChange={(e) => setPresenceProfile({...presenceProfile, scent: e.target.value})}
+                           />
+                        </div>
                         <ScionInput 
                            label="Distinguishing Mark" 
                            placeholder="Notable Feature" 
@@ -942,24 +1022,26 @@ export default function CharacterSheet() {
                            onChange={(e) => setPresenceProfile({...presenceProfile, distinguishingMark: e.target.value})}
                         />
 
-                        <div className="space-y-2">
-                           <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic block">Fashion & Style</label>
-                           <textarea 
-                              className="w-full bg-black/40 border border-white/10 rounded-sm p-3 text-sm font-tech text-foreground outline-none focus:border-primary/50 min-h-[100px] resize-none"
-                              placeholder="Dress Style & Presentation..."
-                              value={presenceProfile.fashion}
-                              onChange={(e) => setPresenceProfile({...presenceProfile, fashion: e.target.value})}
-                           />
-                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                           <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic block">Fashion & Style</label>
+                              <textarea 
+                                 className="w-full bg-black/40 border border-white/10 rounded-sm p-3 text-sm font-tech text-foreground outline-none focus:border-primary/50 min-h-[100px] resize-none"
+                                 placeholder="Dress Style & Presentation..."
+                                 value={presenceProfile.fashion}
+                                 onChange={(e) => setPresenceProfile({...presenceProfile, fashion: e.target.value})}
+                              />
+                           </div>
 
-                        <div className="space-y-2">
-                           <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic block">Visual Notes</label>
-                           <textarea 
-                              className="w-full bg-black/40 border border-white/10 rounded-sm p-3 text-sm font-tech text-foreground outline-none focus:border-primary/50 min-h-[200px] resize-none"
-                              placeholder="Additional Visual Observations..."
-                              value={presenceProfile.visualNotes}
-                              onChange={(e) => setPresenceProfile({...presenceProfile, visualNotes: e.target.value})}
-                           />
+                           <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic block">Visual Notes</label>
+                              <textarea 
+                                 className="w-full bg-black/40 border border-white/10 rounded-sm p-3 text-sm font-tech text-foreground outline-none focus:border-primary/50 min-h-[100px] resize-none"
+                                 placeholder="Additional Visual Observations..."
+                                 value={presenceProfile.visualNotes}
+                                 onChange={(e) => setPresenceProfile({...presenceProfile, visualNotes: e.target.value})}
+                              />
+                           </div>
                         </div>
                      </div>
                   </SectionFrame>
