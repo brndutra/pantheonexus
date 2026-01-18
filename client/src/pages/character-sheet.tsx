@@ -126,9 +126,8 @@ const MythicHUDFrame = ({
     <div className="absolute -top-[1px] -left-[1px] w-4 h-4 border-t-2 border-l-2 border-primary/60" />
     <div className="absolute -top-[1px] -right-[1px] w-4 h-4 border-t-2 border-r-2 border-primary/60" />
     <div className="absolute -bottom-[1px] -left-[1px] w-4 h-4 border-b-2 border-l-2 border-primary/60" />
-    <div className="absolute bottom-0 right-0 w-8 h-8 opacity-50">
-        <img src={cornerTech} className="w-full h-full object-contain rotate-180 brightness-150 sepia-[.5] hue-rotate-[-30deg]" alt="corner" />
-    </div>
+    <div className="absolute bottom-[0px] right-[0px] w-6 h-6 border-b-2 border-r-2 border-primary/60" />
+    <div className="absolute bottom-[2px] right-[2px] w-2 h-2 bg-primary/40" />
 
     {/* Header Section */}
     {(title || Icon) && (
@@ -537,19 +536,31 @@ export default function CharacterSheet() {
                          </div>
                          
                          {/* Secondary Identity Data */}
-                         <div className="space-y-2 p-2 border border-primary/10 bg-primary/5 rounded-sm">
-                             <div className="grid grid-cols-2 gap-4">
+                         <div className="space-y-2 p-2 border border-primary/10 bg-primary/5 rounded-sm relative overflow-hidden">
+                             {/* Background Data Stream */}
+                             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/diagmonds-light.png')] opacity-10" />
+                             
+                             <div className="grid grid-cols-2 gap-4 relative z-10">
                                  <div>
                                      <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">Player ID</label>
                                      <ScionInput 
                                         value={scionPlayer} 
                                         onChange={(e) => setScionPlayer(e.target.value)}
-                                        className="h-6 text-xs bg-black/40 border-primary/20 focus:border-primary/50" 
+                                        className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
                                      />
                                  </div>
                                  <div>
-                                     <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">Nature</label>
-                                     <ScionInput placeholder="NATURE" className="h-6 text-xs bg-black/40 border-primary/20 focus:border-primary/50" />
+                                     <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">Nature Archetype</label>
+                                     <ScionInput 
+                                        placeholder="SELECT NATURE" 
+                                        className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
+                                        list="natures-list"
+                                     />
+                                     <datalist id="natures-list">
+                                        {compendiumNatures.map((n: any) => (
+                                            <option key={n.id} value={n.name} />
+                                        ))}
+                                     </datalist>
                                  </div>
                              </div>
                          </div>
@@ -600,26 +611,34 @@ export default function CharacterSheet() {
 
                 {/* 3. VIRTUES MODULE */}
                 <MythicHUDFrame title="Virtue Matrix" icon={Target} subHeader="MORAL COMPASS ALIGNMENT">
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                         {virtues.map((virtue, idx) => (
-                           <div key={idx} className="flex flex-col gap-1">
-                               <div className="flex justify-between items-center text-xs uppercase tracking-wider text-primary/80 font-mythic">
-                                   <input 
-                                     value={virtue.name} 
-                                     onChange={(e) => updateVirtue(idx, 'name', e.target.value)}
-                                     className="bg-transparent border-b border-transparent focus:border-primary outline-none w-32" 
-                                     placeholder={`VIRTUE 0${idx+1}`}
-                                   />
-                                   <span className="text-primary">{virtue.value}</span>
+                           <div key={idx} className="relative group">
+                               {/* Tech Background for Virtue Row */}
+                               <div className="absolute inset-0 bg-primary/5 skew-x-[-10deg] border border-primary/10 group-hover:border-primary/30 transition-colors" />
+                               
+                               <div className="relative z-10 flex items-center justify-between p-2 pl-4">
+                                   <div className="flex flex-col">
+                                       <input 
+                                         value={virtue.name} 
+                                         onChange={(e) => updateVirtue(idx, 'name', e.target.value)}
+                                         className="bg-transparent border-none focus:ring-0 outline-none w-32 text-xs font-mythic uppercase tracking-widest text-primary/90 placeholder:text-primary/30" 
+                                         placeholder={`VIRTUE 0${idx+1}`}
+                                       />
+                                       <div className="h-[1px] w-full bg-gradient-to-r from-primary/30 to-transparent mt-0.5" />
+                                   </div>
+                                   
+                                   <div className="flex items-center gap-3">
+                                       <span className="text-sm font-bold font-code text-primary opacity-50 group-hover:opacity-100 transition-opacity">{virtue.value}</span>
+                                       <DotRating 
+                                          value={virtue.value} 
+                                          max={5} 
+                                          onChange={(v) => updateVirtue(idx, 'value', v)} 
+                                          iconClassName="w-2.5 h-2.5 rotate-45 border-primary/40 group-hover:border-primary/70"
+                                          activeClassName="bg-primary shadow-[0_0_8px_gold] scale-110"
+                                       />
+                                   </div>
                                </div>
-                               <DotRating 
-                                  value={virtue.value} 
-                                  max={5} 
-                                  onChange={(v) => updateVirtue(idx, 'value', v)} 
-                                  className="justify-between" 
-                                  iconClassName="w-3 h-3 border-primary/50"
-                                  activeClassName="bg-primary shadow-[0_0_5px_gold]"
-                               />
                            </div>
                         ))}
                     </div>
@@ -659,18 +678,22 @@ export default function CharacterSheet() {
                                                 iconClassName="w-2 h-2 rounded-full border border-primary/30"
                                                 activeClassName="bg-primary shadow-[0_0_4px_gold] border-primary"
                                             />
-                                            {/* Epic Toggle - Simplified visual */}
-                                            <div className="flex gap-0.5">
-                                                {[1,2,3].map(e => (
-                                                    <div 
-                                                        key={e} 
-                                                        onClick={() => updateAttribute(category, idx, 'epic', attr.epic === e ? 0 : e)}
-                                                        className={cn(
-                                                            "w-2 h-4 border border-primary/30 cursor-pointer transition-all",
-                                                            attr.epic >= e ? "bg-accent shadow-[0_0_5px_red]" : "bg-black/40"
-                                                        )}
-                                                    />
-                                                ))}
+                                            {/* Epic Toggle - Expanded to 10 slots */}
+                                            <div className="flex gap-0.5 ml-auto">
+                                                {Array.from({length: 10}).map((_, i) => {
+                                                    const e = i + 1;
+                                                    return (
+                                                        <div 
+                                                            key={e} 
+                                                            onClick={() => updateAttribute(category, idx, 'epic', attr.epic === e ? 0 : e)}
+                                                            className={cn(
+                                                                "w-1.5 h-3 border border-primary/30 cursor-pointer transition-all hover:border-accent-foreground",
+                                                                attr.epic >= e ? "bg-accent-foreground shadow-[0_0_5px_var(--color-accent-foreground)]" : "bg-black/40"
+                                                            )}
+                                                            title={`Epic Rank ${e}`}
+                                                        />
+                                                    );
+                                                })}
                                             </div>
                                         </div>
                                     </div>
@@ -682,34 +705,43 @@ export default function CharacterSheet() {
                 
                 {/* 2. CALLINGS MODULE */}
                 <MythicHUDFrame title="Divine Callings" icon={Crosshair} subHeader="ROLE SPECIALIZATIONS">
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                         {callings.map((calling, idx) => (
-                            <div key={idx} className="p-3 bg-black/20 border border-primary/10 hover:border-primary/40 transition-colors group relative">
-                                <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-primary/0 group-hover:border-primary/50 transition-colors" />
-                                <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-primary/0 group-hover:border-primary/50 transition-colors" />
+                            <div key={idx} className="relative">
+                                {/* Calling Card Background */}
+                                <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent border-l-2 border-primary/60" />
                                 
-                                <div className="flex flex-col gap-2">
-                                    <div className="flex justify-between items-start">
+                                <div className="relative z-10 p-3 flex flex-col gap-2">
+                                    <div className="flex justify-between items-center">
+                                        <div className="flex flex-col">
+                                            <span className="text-[9px] uppercase tracking-widest text-muted-foreground font-tech">CALLING 0{idx+1}</span>
+                                            <ScionInput 
+                                                value={calling.name} 
+                                                onChange={(e) => updateCalling(idx, 'name', e.target.value)}
+                                                placeholder="SELECT CALLING"
+                                                className="text-base font-mythic uppercase tracking-wider text-primary bg-transparent border-none p-0 h-auto focus:ring-0 drop-shadow-md" 
+                                            />
+                                        </div>
+                                        <div className="flex items-center bg-black/40 p-1 rounded-sm border border-primary/20">
+                                            <DotRating 
+                                                value={calling.value} 
+                                                max={5} 
+                                                onChange={(v) => updateCalling(idx, 'value', v)} 
+                                                iconClassName="w-2.5 h-2.5 rounded-sm border-primary/50"
+                                                activeClassName="bg-primary shadow-[0_0_6px_gold]"
+                                            />
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-2 h-2 rounded-full bg-primary/30" />
                                         <ScionInput 
-                                            value={calling.name} 
-                                            onChange={(e) => updateCalling(idx, 'name', e.target.value)}
-                                            placeholder={`CALLING 0${idx+1}`}
-                                            className="text-sm font-mythic uppercase tracking-widest text-primary bg-transparent border-none p-0 h-auto focus:ring-0" 
-                                        />
-                                        <DotRating 
-                                            value={calling.value} 
-                                            max={5} 
-                                            onChange={(v) => updateCalling(idx, 'value', v)} 
-                                            iconClassName="w-2 h-2 rounded-sm"
-                                            activeClassName="bg-primary"
+                                            value={calling.title} 
+                                            onChange={(e) => updateCalling(idx, 'title', e.target.value)}
+                                            placeholder="Enter Epithet / Title..."
+                                            className="flex-1 text-[10px] font-code text-primary/70 bg-transparent border-none p-0 h-auto italic" 
                                         />
                                     </div>
-                                    <ScionInput 
-                                        value={calling.title} 
-                                        onChange={(e) => updateCalling(idx, 'title', e.target.value)}
-                                        placeholder="Enter Title/Epithet..."
-                                        className="text-[10px] font-tech text-muted-foreground bg-transparent border-none p-0 h-auto italic" 
-                                    />
                                 </div>
                             </div>
                         ))}
@@ -913,10 +945,10 @@ export default function CharacterSheet() {
             </MythicHUDFrame>
 
             {/* GEAR */}
-            <MythicHUDFrame title="Armory & Assets" icon={Sword} subHeader="WEAPONRY LOGISTICS" className="min-h-[300px]">
+            <MythicHUDFrame title="Offensive Capabilities" icon={Sword} subHeader="WEAPONRY & ATTACK VECTORS" className="min-h-[300px]">
                 <div className="space-y-4">
                     {/* Weapons Table Header */}
-                    <div className="grid grid-cols-12 gap-2 text-[9px] uppercase tracking-widest text-muted-foreground border-b border-primary/10 pb-2">
+                    <div className="grid grid-cols-12 gap-2 text-[9px] uppercase tracking-widest text-muted-foreground border-b border-primary/10 pb-2 bg-primary/5 p-2 rounded-t-sm">
                         <div className="col-span-4">Weapon Designation</div>
                         <div className="col-span-2 text-center">Acc</div>
                         <div className="col-span-2 text-center">Dmg</div>
@@ -927,24 +959,30 @@ export default function CharacterSheet() {
                     {/* Weapons List */}
                     <div className="space-y-1">
                         {weapons.map((w, i) => (
-                            <div key={i} className="grid grid-cols-12 gap-2 text-xs font-tech text-primary/80 items-center p-2 hover:bg-primary/5 rounded-sm transition-colors border-l border-transparent hover:border-primary/50">
-                                <div className="col-span-4 font-bold truncate">{w.name}</div>
-                                <div className="col-span-2 text-center text-muted-foreground">+{w.accuracy}</div>
-                                <div className="col-span-2 text-center text-muted-foreground">+{w.damage}L</div>
-                                <div className="col-span-2 text-center text-muted-foreground">+{w.defense}</div>
-                                <div className="col-span-2 text-right text-[9px] uppercase">{w.tags}</div>
+                            <div key={i} className="grid grid-cols-12 gap-2 text-xs font-tech text-primary/80 items-center p-2 hover:bg-primary/10 rounded-sm transition-colors border-l-2 border-transparent hover:border-primary group relative overflow-hidden">
+                                {/* Hover Effect */}
+                                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                                
+                                <div className="col-span-4 font-bold truncate relative z-10 flex items-center gap-2">
+                                    <Crosshair className="w-3 h-3 text-primary/40 group-hover:text-primary transition-colors" />
+                                    {w.name}
+                                </div>
+                                <div className="col-span-2 text-center text-muted-foreground relative z-10 group-hover:text-primary transition-colors">+{w.accuracy}</div>
+                                <div className="col-span-2 text-center text-muted-foreground relative z-10 group-hover:text-red-400 transition-colors">+{w.damage}L</div>
+                                <div className="col-span-2 text-center text-muted-foreground relative z-10 group-hover:text-primary transition-colors">+{w.defense}</div>
+                                <div className="col-span-2 text-right text-[9px] uppercase relative z-10 opacity-70 group-hover:opacity-100">{w.tags}</div>
                             </div>
                         ))}
                     </div>
 
                     {/* Add Weapon Mini-Form */}
-                    <div className="grid grid-cols-12 gap-2 pt-2 border-t border-primary/10 mt-auto">
+                    <div className="grid grid-cols-12 gap-2 pt-2 border-t border-primary/10 mt-auto bg-black/40 p-2 rounded-sm">
                         <div className="col-span-4">
                             <input 
                                 value={newWeapon.name} 
                                 onChange={e => setNewWeapon({...newWeapon, name: e.target.value})}
                                 placeholder="NEW WEAPON..." 
-                                className="w-full bg-black/30 border border-primary/20 text-xs px-2 py-1 rounded-sm focus:border-primary"
+                                className="w-full bg-black/30 border border-primary/20 text-xs px-2 py-1 rounded-sm focus:border-primary text-primary placeholder:text-primary/20 outline-none"
                             />
                         </div>
                         <div className="col-span-2">
@@ -952,7 +990,7 @@ export default function CharacterSheet() {
                                 value={newWeapon.accuracy} 
                                 onChange={e => setNewWeapon({...newWeapon, accuracy: e.target.value})}
                                 placeholder="ACC" 
-                                className="w-full bg-black/30 border border-primary/20 text-xs px-1 py-1 rounded-sm text-center"
+                                className="w-full bg-black/30 border border-primary/20 text-xs px-1 py-1 rounded-sm text-center text-primary placeholder:text-primary/20 outline-none"
                             />
                         </div>
                         <div className="col-span-2">
@@ -960,7 +998,7 @@ export default function CharacterSheet() {
                                 value={newWeapon.damage} 
                                 onChange={e => setNewWeapon({...newWeapon, damage: e.target.value})}
                                 placeholder="DMG" 
-                                className="w-full bg-black/30 border border-primary/20 text-xs px-1 py-1 rounded-sm text-center"
+                                className="w-full bg-black/30 border border-primary/20 text-xs px-1 py-1 rounded-sm text-center text-primary placeholder:text-primary/20 outline-none"
                             />
                         </div>
                         <div className="col-span-3 flex items-center gap-2">
@@ -968,9 +1006,9 @@ export default function CharacterSheet() {
                                 value={newWeapon.tags} 
                                 onChange={e => setNewWeapon({...newWeapon, tags: e.target.value})}
                                 placeholder="TAGS" 
-                                className="w-full bg-black/30 border border-primary/20 text-xs px-1 py-1 rounded-sm"
+                                className="w-full bg-black/30 border border-primary/20 text-xs px-1 py-1 rounded-sm text-primary placeholder:text-primary/20 outline-none"
                             />
-                             <button onClick={addWeapon} className="p-1 bg-primary/20 hover:bg-primary/40 text-primary rounded-sm">
+                             <button onClick={addWeapon} className="p-1 bg-primary/20 hover:bg-primary/40 text-primary rounded-sm shadow-[0_0_5px_rgba(212,175,55,0.2)]">
                                 <Plus className="w-3 h-3" />
                              </button>
                         </div>
