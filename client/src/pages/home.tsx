@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "wouter";
 import { cn } from "@/lib/utils";
 import { Shield, BookOpen, Crown, ChevronRight, User, Plus } from "lucide-react";
-import { useCharacters, slugify } from "@/lib/characters-store";
+import { useCharacters, slugify } from "@/lib/use-characters";
 import {
   Carousel,
   CarouselContent,
@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/carousel";
 
 export default function Home() {
-  const { characters } = useCharacters();
+  const { data: characters = [], isLoading } = useCharacters();
 
   return (
     <div 
@@ -50,7 +50,11 @@ export default function Home() {
             {/* Decoration Lines */}
            <div className="absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent -z-10" />
 
-           {characters.length > 0 ? (
+           {isLoading ? (
+             <div className="h-64 flex items-center justify-center">
+                <p className="font-tech text-sm text-muted-foreground uppercase tracking-widest">Loading characters...</p>
+             </div>
+           ) : characters.length > 0 ? (
              <Carousel
                 opts={{
                   align: "center",
@@ -61,13 +65,13 @@ export default function Home() {
                 <CarouselContent className="-ml-4 py-10">
                    {characters.map((char) => (
                       <CarouselItem key={char.id} className="pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/4">
-                         <Link href={`/character-sheet/${slugify(char.name)}`}>
+                         <Link href={`/character-sheet/${char.id}`}>
                             <div className="group/card relative h-[450px] bg-black/80 border border-primary/20 transition-all duration-500 rounded-sm overflow-hidden cursor-pointer hover:shadow-[0_0_30px_rgba(212,175,55,0.2)] hover:-translate-y-4 hover:border-primary hover:z-10">
                                
                                {/* Portrait Image */}
                                <div className="absolute inset-0 z-0">
-                                   {char.path ? (
-                                       <img src={char.path} alt={char.name} className="w-full h-full object-cover opacity-60 group-hover/card:opacity-100 transition-all duration-500 group-hover/card:scale-110 filter grayscale group-hover/card:grayscale-0" />
+                                   {char.portrait ? (
+                                       <img src={char.portrait} alt={char.name} className="w-full h-full object-cover opacity-60 group-hover/card:opacity-100 transition-all duration-500 group-hover/card:scale-110 filter grayscale group-hover/card:grayscale-0" />
                                    ) : (
                                        <div className="w-full h-full bg-gradient-to-b from-zinc-800 to-black opacity-50" />
                                    )}
@@ -86,12 +90,12 @@ export default function Home() {
                                   </div>
 
                                   <h3 className="font-mythic text-2xl text-white group-hover/card:text-primary transition-colors tracking-widest uppercase mb-1 drop-shadow-md">{char.name}</h3>
-                                  <p className="text-xs font-tech text-primary/80 uppercase tracking-[0.2em] mb-4">{char.pantheon} Pantheon</p>
+                                  <p className="text-xs font-tech text-primary/80 uppercase tracking-[0.2em] mb-4">{char.pantheon || "Unknown"} Pantheon</p>
                                   
                                   {/* Hidden details that slide up or fade in */}
                                   <div className="h-0 group-hover/card:h-auto overflow-hidden transition-all duration-500 opacity-0 group-hover/card:opacity-100 flex flex-col items-center gap-2">
                                      <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-code uppercase bg-black/50 px-2 py-1 rounded-sm border border-white/5">
-                                        <User className="w-3 h-3" /> {char.player}
+                                        <User className="w-3 h-3" /> {char.player || "Unknown"}
                                      </div>
                                      <div className="text-[10px] text-primary font-mythic tracking-widest uppercase">
                                          Legend {char.legend}
