@@ -1130,7 +1130,7 @@ export default function CharacterSheet() {
      fullMark: 10
   }));
 
-  // Combat & Physics Calculations (Updated - with safety checks)
+  // Combat & Physics Calculations (Updated - with safety checks and proper type conversion)
   const getAttributeTotal = (name: AttributeName) => {
     let attr: Attribute | undefined;
     for (const cat of Object.values(attributes || {})) {
@@ -1139,7 +1139,20 @@ export default function CharacterSheet() {
         if (attr) break;
       }
     }
-    return attr ? (attr.value || 0) + (attr.epic || 0) : 0; 
+    const baseVal = Number(attr?.value) || 0;
+    const epicVal = Number(attr?.epic) || 0;
+    return baseVal + epicVal; 
+  };
+  
+  const getAttributeBase = (name: AttributeName) => {
+    let attr: Attribute | undefined;
+    for (const cat of Object.values(attributes || {})) {
+      if (Array.isArray(cat)) {
+        attr = cat.find(a => a && a.name === name);
+        if (attr) break;
+      }
+    }
+    return Number(attr?.value) || 0;
   };
   
   const getAttributeEpic = (name: AttributeName) => {
@@ -1150,10 +1163,10 @@ export default function CharacterSheet() {
         if (attr) break;
       }
     }
-    return attr ? (attr.epic || 0) : 0;
+    return Number(attr?.epic) || 0;
   };
 
-  const getAbilityValue = (name: string) => abilities[name]?.value || 0;
+  const getAbilityValue = (name: string) => Number(abilities[name]?.value) || 0;
 
   // Legend Pool Calculation (Scion 1st Edition: Legend ^ 2)
   const legendPoolTotal = legend * legend;
@@ -1192,14 +1205,14 @@ export default function CharacterSheet() {
   const liftCapacity = strengthTotal * 50; // lbs base 
   
   // Soak (Scion 1st Ed - Regras do usuário)
-  // Bashing Soak = Vitalidade (Stamina base)
-  // Lethal Soak = Vitalidade / 2 (arredondado para baixo)
+  // Bashing Soak = Vitalidade (Stamina base, SEM Epic)
+  // Lethal Soak = Vitalidade / 2 (arredondado para baixo, SEM Epic)
   // Aggravated Soak = Apenas Armadura (0 sem armadura)
-  const staminaVal = getAttributeTotal("Stamina") - getAttributeEpic("Stamina"); // Vitalidade base
+  const staminaBase = getAttributeBase("Stamina"); // Apenas Stamina base
   const epicStamina = getAttributeEpic("Stamina");
   
-  const baseBashingSoak = staminaVal; // Apenas Vitalidade
-  const baseLethalSoak = Math.floor(staminaVal / 2); // Vitalidade / 2
+  const baseBashingSoak = staminaBase; // Apenas Vitalidade base
+  const baseLethalSoak = Math.floor(staminaBase / 2); // Vitalidade base / 2
   const baseAggSoak = 0; // Apenas armadura
 
   const [armorList, setArmorList] = useState<{name: string, soakB: number, soakL: number, soakA: number, mobility: number, fatigue: number}[]>([]);
