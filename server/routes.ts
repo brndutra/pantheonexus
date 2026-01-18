@@ -12,6 +12,73 @@ export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
+  
+  // Migration endpoint to create rows in scion_attributes and scion_abilities
+  app.post("/api/migrate/create-character-rows", async (req, res) => {
+    try {
+      const { data: scrolls, error: scrollsError } = await supabase.from('scrolls').select('id, name');
+      if (scrollsError) throw scrollsError;
+      
+      let attributesCreated = 0;
+      let abilitiesCreated = 0;
+      
+      for (const scroll of scrolls || []) {
+        const { data: existingAttr } = await supabase
+          .from('scion_attributes')
+          .select('id')
+          .eq('scion_id', scroll.id)
+          .single();
+        
+        if (!existingAttr) {
+          const { error: attrError } = await supabase.from('scion_attributes').insert({
+            scion_id: scroll.id,
+            attribute_strength: 1,
+            attribute_dexterity: 1,
+            attribute_stamina: 1,
+            attribute_charisma: 1,
+            attribute_manipulation: 1,
+            attribute_appearance: 1,
+            attribute_perception: 1,
+            attribute_intelligence: 1,
+            attribute_wits: 1,
+            attribute_epic_strength: 0,
+            attribute_epic_dexterity: 0,
+            attribute_epic_stamina: 0,
+            attribute_epic_charisma: 0,
+            attribute_epic_manipulation: 0,
+            attribute_epic_appearance: 0,
+            attribute_epic_perception: 0,
+            attribute_epic_intelligence: 0,
+            attribute_epic_wits: 0
+          });
+          if (!attrError) attributesCreated++;
+        }
+        
+        const { data: existingAbil } = await supabase
+          .from('scion_abilities')
+          .select('id')
+          .eq('scion_id', scroll.id)
+          .single();
+        
+        if (!existingAbil) {
+          const { error: abilError } = await supabase.from('scion_abilities').insert({
+            scion_id: scroll.id
+          });
+          if (!abilError) abilitiesCreated++;
+        }
+      }
+      
+      res.json({
+        success: true,
+        message: `Created ${attributesCreated} attribute rows and ${abilitiesCreated} ability rows`,
+        totalCharacters: scrolls?.length || 0
+      });
+    } catch (error) {
+      console.error("Migration error:", error);
+      res.status(500).json({ error: "Migration failed", details: String(error) });
+    }
+  });
+  
   // Character routes
   
   // Get all characters
