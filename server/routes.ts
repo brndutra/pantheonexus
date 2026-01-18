@@ -692,15 +692,30 @@ export async function registerRoutes(
     try {
       // Fetch from boons_capitals and boons_specials only
       const [capitalsResult, specialsResult] = await Promise.all([
-        supabase.from('boons_capitals').select('*').order('purview').order('level'),
-        supabase.from('boons_specials').select('*').order('purview').order('level')
+        supabase.from('boons_capitals').select('*').order('purview'),
+        supabase.from('boons_specials').select('*').order('purview')
       ]);
       
-      const capitals = (capitalsResult.data || []).map((b: any) => ({ ...b, type: 'capital' }));
-      const specials = (specialsResult.data || []).map((b: any) => ({ ...b, type: 'special' }));
+      // Log errors if any
+      if (capitalsResult.error) console.error("Error fetching boons_capitals:", capitalsResult.error);
+      if (specialsResult.error) console.error("Error fetching boons_specials:", specialsResult.error);
+      
+      // Map the data - use 'name' field or 'boon_name' if 'name' doesn't exist
+      const capitals = (capitalsResult.data || []).map((b: any) => ({ 
+        ...b, 
+        name: b.name || b.boon_name || b.nome,
+        type: 'capital' 
+      }));
+      const specials = (specialsResult.data || []).map((b: any) => ({ 
+        ...b, 
+        name: b.name || b.boon_name || b.nome,
+        type: 'special' 
+      }));
       
       // Combine capitals and specials
       const allBoons = [...capitals, ...specials];
+      
+      console.log(`Boons loaded: ${capitals.length} capitals, ${specials.length} specials`);
       
       res.json(allBoons);
     } catch (error) {

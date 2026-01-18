@@ -1085,13 +1085,37 @@ export default function CharacterSheet() {
   const legendPoolTotal = legend * legend;
   const [legendPointsCurrent, setLegendPointsCurrent] = useState(legendPoolTotal);
 
-  // Combat Stats (Scion 1st Ed)
-  // Join Battle = Wits + Awareness
-  const joinBattle = getAttributeTotal("Wits") + getAbilityValue("Awareness");
-  // DV = [(Dexterity + Athletics + Legend) / 2]
-  const dodgeDV = Math.ceil((getAttributeTotal("Dexterity") + getAbilityValue("Athletics") + legend) / 2);
-  // Parry DV = [(Dexterity + Brawl/Melee + Weapon Defense) / 2]
-  const parryDV = Math.ceil((getAttributeTotal("Dexterity") + Math.max(getAbilityValue("Melee"), getAbilityValue("Brawl"))) / 2); 
+  // Combat Stats (Scion 1st Ed - Portuguese ability names used)
+  // Join Battle = Raciocínio (Wits) + Prontidão (Awareness)
+  const joinBattle = getAttributeTotal("Wits") + getAbilityValue("Prontidão");
+  
+  // Dodge DV = (Destreza + Atletismo + Lenda) / 2
+  const dodgeDV = Math.floor((getAttributeTotal("Dexterity") + getAbilityValue("Atletismo") + legend) / 2);
+  
+  // Parry DV = (Destreza + Briga ou Armas Brancas) / 2
+  const parryDV = Math.floor((getAttributeTotal("Dexterity") + Math.max(getAbilityValue("Armas Brancas"), getAbilityValue("Briga"))) / 2);
+  
+  // Armed DV = (Força + Hoplomaquia) / 2 + Defesa da arma equipada
+  const armedDVBase = Math.floor((getAttributeTotal("Strength") + getAbilityValue("Hoplomaquia")) / 2);
+  // Add weapon defense from first equipped weapon (if any)
+  const equippedWeaponDefense = weapons.length > 0 ? (weapons[0].defense || 0) : 0;
+  const armedDV = armedDVBase + equippedWeaponDefense;
+  
+  // Movement & Feats (Scion 1st Ed)
+  const dexterityTotal = getAttributeTotal("Dexterity");
+  const strengthTotal = getAttributeTotal("Strength");
+  const athleticsValue = getAbilityValue("Atletismo");
+  
+  // Move = Dexterity + 6 yards
+  const moveSpeed = dexterityTotal + 6;
+  // Dash = Dexterity + 12 yards  
+  const dashSpeed = dexterityTotal + 12;
+  // Vertical Jump = (Strength + Athletics) / 2 feet
+  const verticalJump = Math.floor((strengthTotal + athleticsValue) / 2);
+  // Horizontal Jump = Strength + Athletics feet
+  const horizontalJump = strengthTotal + athleticsValue;
+  // Lift capacity based on Strength (simplified)
+  const liftCapacity = strengthTotal * 50; // lbs base 
   
   // Soak (Scion 1st Ed)
   // Bashing Soak = Stamina + Epic Stamina
@@ -2150,18 +2174,42 @@ export default function CharacterSheet() {
                         </div>
 
                         {/* Combat Derived Stats - Compact Grid */}
-                        <div className="grid grid-cols-3 gap-2 pt-2 border-t border-primary/10">
+                        <div className="grid grid-cols-2 gap-2 pt-2 border-t border-primary/10">
                             <div className="bg-black/40 p-2 flex justify-between items-center border-l-2 border-primary/40">
-                                <span className="text-[9px] uppercase tracking-wider text-muted-foreground">Dodge DV</span>
-                                <span className="font-mythic text-primary">{dodgeDV}</span>
+                                <span className="text-[8px] uppercase tracking-wider text-muted-foreground">Dodge DV</span>
+                                <span className="font-mythic text-primary text-sm">{dodgeDV}</span>
                             </div>
                             <div className="bg-black/40 p-2 flex justify-between items-center border-l-2 border-primary/40">
-                                <span className="text-[9px] uppercase tracking-wider text-muted-foreground">Parry DV</span>
-                                <span className="font-mythic text-primary">{parryDV}</span>
+                                <span className="text-[8px] uppercase tracking-wider text-muted-foreground">Parry DV</span>
+                                <span className="font-mythic text-primary text-sm">{parryDV}</span>
+                            </div>
+                            <div className="bg-black/40 p-2 flex justify-between items-center border-l-2 border-[hsl(var(--highlight-amber))]/40">
+                                <span className="text-[8px] uppercase tracking-wider text-muted-foreground">Armed DV</span>
+                                <span className="font-mythic text-[hsl(var(--highlight-amber))] text-sm">{armedDV}</span>
                             </div>
                             <div className="bg-black/40 p-2 flex justify-between items-center border-l-2 border-primary/40">
-                                <span className="text-[9px] uppercase tracking-wider text-muted-foreground">Join Battle</span>
-                                <span className="font-mythic text-primary">{joinBattle}</span>
+                                <span className="text-[8px] uppercase tracking-wider text-muted-foreground">Join Battle</span>
+                                <span className="font-mythic text-primary text-sm">{joinBattle}</span>
+                            </div>
+                        </div>
+                        
+                        {/* Movement & Feats */}
+                        <div className="grid grid-cols-2 gap-2 pt-2 border-t border-primary/10">
+                            <div className="bg-black/40 p-1.5 flex justify-between items-center border-l-2 border-cyan-500/40">
+                                <span className="text-[7px] uppercase tracking-wider text-muted-foreground">Move</span>
+                                <span className="font-tech text-cyan-400 text-xs">{moveSpeed}m</span>
+                            </div>
+                            <div className="bg-black/40 p-1.5 flex justify-between items-center border-l-2 border-cyan-500/40">
+                                <span className="text-[7px] uppercase tracking-wider text-muted-foreground">Dash</span>
+                                <span className="font-tech text-cyan-400 text-xs">{dashSpeed}m</span>
+                            </div>
+                            <div className="bg-black/40 p-1.5 flex justify-between items-center border-l-2 border-green-500/40">
+                                <span className="text-[7px] uppercase tracking-wider text-muted-foreground">Jump V/H</span>
+                                <span className="font-tech text-green-400 text-xs">{verticalJump}/{horizontalJump}m</span>
+                            </div>
+                            <div className="bg-black/40 p-1.5 flex justify-between items-center border-l-2 border-orange-500/40">
+                                <span className="text-[7px] uppercase tracking-wider text-muted-foreground">Lift</span>
+                                <span className="font-tech text-orange-400 text-xs">{liftCapacity}kg</span>
                             </div>
                         </div>
                     </div>
@@ -2758,7 +2806,7 @@ export default function CharacterSheet() {
                                                  </div>
                                                  <div className="flex items-center gap-2 text-[9px] text-muted-foreground mt-0.5">
                                                      <span className="px-1 py-0.5 bg-accent/20 rounded">{b.purview}</span>
-                                                     <span className="px-1 py-0.5 bg-accent/20 rounded">Nível {b.level}</span>
+                                                     <span className="px-1 py-0.5 bg-accent/20 rounded">Tier {b.tier || b.level || '-'}</span>
                                                  </div>
                                                  <p className="text-[9px] text-muted-foreground/70 mt-1 line-clamp-2">{b.description}</p>
                                              </div>
@@ -2814,7 +2862,7 @@ export default function CharacterSheet() {
                                                          <div className="flex items-center gap-2 text-[8px] text-muted-foreground mt-0.5">
                                                              <span>{b.purview}</span>
                                                              <span>•</span>
-                                                             <span>Lvl {b.level}</span>
+                                                             <span>T{b.tier || b.level || '-'}</span>
                                                          </div>
                                                      </div>
                                                  </button>
