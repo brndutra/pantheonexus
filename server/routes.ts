@@ -43,7 +43,7 @@ export async function registerRoutes(
             attribute_appearance: 1,
             attribute_perception: 1,
             attribute_intelligence: 1,
-            attribute_wits: 1,
+            attribute_wit: 1,
             attribute_epic_strength: 0,
             attribute_epic_dexterity: 0,
             attribute_epic_stamina: 0,
@@ -52,7 +52,7 @@ export async function registerRoutes(
             attribute_epic_appearance: 0,
             attribute_epic_perception: 0,
             attribute_epic_intelligence: 0,
-            attribute_epic_wits: 0
+            attribute_epic_wit: 0
           });
           if (attrError) {
             errors.push(`Attr ${scroll.name}: ${attrError.message}`);
@@ -88,11 +88,7 @@ export async function registerRoutes(
         
         if (!existingScion) {
           const { error: scionError } = await supabase.from('scionsight').insert({
-            scion_id: scroll.id,
-            legend_level: 1,
-            legend_pool_total: 1,
-            willpower_pool_total: 5,
-            willpower_pool_current: 5
+            scion_id: scroll.id
           });
           if (scionError) {
             errors.push(`Scionsight ${scroll.name}: ${scionError.message}`);

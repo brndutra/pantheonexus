@@ -306,7 +306,7 @@ export class SupabaseStorage implements IStorage {
       Mental: [
         { name: "Perception", value: sa.attribute_perception || 1, epic: sa.attribute_epic_perception || 0, rune: "ᚷ" },
         { name: "Intelligence", value: sa.attribute_intelligence || 1, epic: sa.attribute_epic_intelligence || 0, rune: "ᚹ" },
-        { name: "Wits", value: sa.attribute_wits || 1, epic: sa.attribute_epic_wits || 0, rune: "ᚺ" }
+        { name: "Wits", value: sa.attribute_wit || 1, epic: sa.attribute_epic_wit || 0, rune: "ᚺ" }
       ]
     };
   }
@@ -347,7 +347,7 @@ export class SupabaseStorage implements IStorage {
       
       if (per) { result.attribute_perception = per.value; result.attribute_epic_perception = per.epic || 0; }
       if (int) { result.attribute_intelligence = int.value; result.attribute_epic_intelligence = int.epic || 0; }
-      if (wit) { result.attribute_wits = wit.value; result.attribute_epic_wits = wit.epic || 0; }
+      if (wit) { result.attribute_wit = wit.value; result.attribute_epic_wit = wit.epic || 0; }
     }
     
     return result;
