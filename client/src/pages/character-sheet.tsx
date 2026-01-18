@@ -1705,14 +1705,23 @@ export default function CharacterSheet() {
                                                 (ability.value || 0) > 0 ? "text-primary" : "text-muted-foreground/40"
                                             )}>{ability.value || 0}</span>
                                         )}
-                                        {/* Sparks indicator */}
-                                        {(ability.sparks || 0) > 0 && (
-                                            <div className="flex items-center gap-0.5">
-                                                {Array.from({ length: ability.sparks || 0 }).map((_, i) => (
-                                                    <div key={i} className="w-1.5 h-1.5 rounded-full bg-accent-foreground shadow-[0_0_4px_cyan]" />
-                                                ))}
-                                            </div>
-                                        )}
+                                        {/* Sparks indicator - always show 5 dots */}
+                                        <div className="flex items-center gap-0.5">
+                                            {Array.from({ length: 5 }).map((_, i) => (
+                                                <button
+                                                    key={i}
+                                                    onClick={() => editingAbilities && updateAbilitySparks(abilityName, i < (ability.sparks || 0) ? i : i + 1)}
+                                                    disabled={!editingAbilities}
+                                                    className={cn(
+                                                        "w-1.5 h-1.5 rounded-full border transition-all",
+                                                        i < (ability.sparks || 0) 
+                                                            ? "bg-accent-foreground border-accent-foreground shadow-[0_0_4px_cyan]" 
+                                                            : "bg-transparent border-muted-foreground/30",
+                                                        editingAbilities && "hover:border-accent-foreground cursor-pointer"
+                                                    )}
+                                                />
+                                            ))}
+                                        </div>
                                     </div>
                                 </div>
                             );
