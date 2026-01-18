@@ -6,12 +6,16 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import CharacterSheet from "@/pages/character-sheet";
 import AdminDashboard from "@/pages/admin-dashboard";
+import Alleybrary from "@/pages/alleybrary";
+import Home from "@/pages/home";
 
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={CharacterSheet} />
+      <Route path="/" component={Home} />
+      <Route path="/character-sheet" component={CharacterSheet} />
       <Route path="/admin" component={AdminDashboard} />
+      <Route path="/alleybrary" component={Alleybrary} />
       <Route component={NotFound} />
     </Switch>
   );

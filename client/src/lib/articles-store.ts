@@ -1,0 +1,69 @@
+import { useState, useEffect } from 'react';
+
+export interface Article {
+  id: number;
+  title: string;
+  summary: string;
+  content: string;
+  author: string;
+  date: string;
+  tags: string[];
+}
+
+const STORAGE_KEY = 'pantheonexus_articles';
+
+export const useArticles = () => {
+  const [articles, setArticles] = useState<Article[]>([]);
+
+  // Load from local storage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      setArticles(JSON.parse(saved));
+    } else {
+      // Default mock data
+      const defaults: Article[] = [
+        {
+          id: 1,
+          title: "The Veil Weakens",
+          summary: "Reports of increased Titanactivity in the lower boroughs.",
+          content: "Recent scion activity suggests a thinning of the Veil near the East River. Be on guard for manifestations.",
+          author: "Admin",
+          date: "2026-01-15",
+          tags: ["Alert", "Titans"]
+        },
+        {
+            id: 2,
+            title: "New Safehouse Locations",
+            summary: "Updated list of neutral grounds for meeting.",
+            content: "Three new neutral grounds have been sanctioned by the Council. See the encrypted map for details.",
+            author: "Oracle",
+            date: "2026-01-10",
+            tags: ["Logistics", "Safehouse"]
+          }
+      ];
+      setArticles(defaults);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(defaults));
+    }
+  }, []);
+
+  const addArticle = (article: Omit<Article, 'id' | 'date'>) => {
+    const newArticle = {
+      ...article,
+      id: Date.now(),
+      date: new Date().toISOString().split('T')[0]
+    };
+    
+    const updated = [newArticle, ...articles];
+    setArticles(updated);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+  };
+
+  const deleteArticle = (id: number) => {
+    const updated = articles.filter(a => a.id !== id);
+    setArticles(updated);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+  };
+
+  return { articles, addArticle, deleteArticle };
+};
