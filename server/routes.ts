@@ -135,19 +135,30 @@ export async function registerRoutes(
         // Extract column names, filter out id, scion_id, created_at, updated_at
         // Also filter to only get _rating columns, then extract base ability name
         const excludeColumns = ['id', 'scion_id', 'created_at', 'updated_at'];
-        const ratingColumns = Object.keys(data[0])
-          .filter(col => !excludeColumns.includes(col) && col.endsWith('_rating') && !col.includes('specialties') && !col.includes('sparks'));
+        const allColumns = Object.keys(data[0]).filter(col => !excludeColumns.includes(col));
         
-        const abilityNames = ratingColumns.map(col => {
-          // Remove ability_ prefix and _rating suffix, then convert to title case
-          // e.g., "ability_academicos_rating" -> "Academicos"
-          const baseName = col.replace('ability_', '').replace('_rating', '');
-          return baseName.split('_').map(word => 
+        // Find base ability names from _rating columns (excluding specialties and sparks)
+        const ratingColumns = allColumns.filter(col => 
+          col.endsWith('_rating') && !col.includes('specialties') && !col.includes('sparks')
+        );
+        
+        // Build ability info with sparks and heritage columns
+        const abilities = ratingColumns.map(col => {
+          const baseName = col.replace('_rating', '');
+          const displayName = baseName.replace('ability_', '').split('_').map(word => 
             word.charAt(0).toUpperCase() + word.slice(1)
           ).join(' ');
+          
+          return {
+            name: displayName,
+            ratingColumn: col,
+            sparksColumn: baseName + '_sparks_rating',
+            heritageColumn: baseName + '_heritage_fav',
+            specialtiesColumn: baseName + '_specialties_rating'
+          };
         });
         
-        res.json({ abilities: abilityNames, raw_columns: ratingColumns });
+        res.json({ abilities, raw_columns: ratingColumns });
       } else {
         res.json({ abilities: [] });
       }
