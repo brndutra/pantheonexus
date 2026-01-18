@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { DotRating } from "@/components/ui/dot-rating";
 import { ScionInput } from "@/components/ui/scion-input";
 import { cn } from "@/lib/utils";
-import { Shield, Zap, Skull, Scroll, Activity, Cpu, Hexagon, Plus, Trash2, Crown, Heart, Radar, Minus, Upload, Image as ImageIcon, X } from "lucide-react";
+import { Shield, Zap, Skull, Scroll, Activity, Cpu, Hexagon, Plus, Trash2, Crown, Heart, Radar, Minus, Upload, Image as ImageIcon, X, FileText, User } from "lucide-react";
 import {
   RadarChart,
   PolarGrid,
@@ -16,6 +16,11 @@ import {
 import virtueIcon from "@assets/generated_images/virtue_icon_gold_geometric.png";
 import crownIcon from "@assets/generated_images/legendary_title_crown_icon.png";
 import textureBg from "@assets/generated_images/minimalist_gold_grid_background.png";
+import cornerOrnament from "@assets/generated_images/mythological_corner_ornament.png";
+import artNouveauFrame from "@assets/generated_images/art_nouveau_gold_border_frame.png";
+import darkGoldTexture from "@assets/generated_images/dark_gold_texture_background.png";
+import divineDivider from "@assets/generated_images/divine_divider_line.png";
+
 
 // --- Types ---
 type AttributeCategory = "Physical" | "Social" | "Mental";
@@ -77,19 +82,27 @@ const ABILITIES_LIST = [
 // --- Components ---
 
 const SectionFrame = ({ children, title, className, icon: Icon, action, subHeader }: { children: React.ReactNode, title: string, className?: string, icon?: any, action?: React.ReactNode, subHeader?: string }) => (
-  <div className={cn("border border-thin-gold rounded-sm p-6 relative bg-card/30 backdrop-blur-sm shadow-lg", className)}>
+  <div className={cn("border-2 border-primary/20 rounded-sm p-6 relative bg-black/40 backdrop-blur-md shadow-2xl overflow-hidden", className)}>
+    {/* Corner Ornaments */}
+    <img src={cornerOrnament} className="absolute top-0 left-0 w-16 h-16 opacity-30 rotate-0 pointer-events-none" alt="" />
+    <img src={cornerOrnament} className="absolute top-0 right-0 w-16 h-16 opacity-30 rotate-90 pointer-events-none" alt="" />
+    <img src={cornerOrnament} className="absolute bottom-0 right-0 w-16 h-16 opacity-30 rotate-180 pointer-events-none" alt="" />
+    <img src={cornerOrnament} className="absolute bottom-0 left-0 w-16 h-16 opacity-30 -rotate-90 pointer-events-none" alt="" />
+
     {/* Header Line */}
-    <div className="flex justify-between items-start mb-6 border-b border-thin-gold/30 pb-2">
+    <div className="flex justify-between items-start mb-6 border-b border-primary/30 pb-2 relative z-10">
        <div>
-          <h3 className="font-mythic text-primary text-xl tracking-[0.1em] uppercase">{title}</h3>
-          {subHeader && <p className="text-[10px] text-muted-foreground uppercase tracking-widest mt-1">{subHeader}</p>}
+          <h3 className="font-mythic text-primary text-xl tracking-[0.15em] uppercase drop-shadow-md">{title}</h3>
+          {subHeader && <p className="text-[10px] text-muted-foreground uppercase tracking-[0.2em] mt-1 font-tech">{subHeader}</p>}
        </div>
        <div className="flex items-center gap-2">
          {action}
-         {Icon && <Icon className="w-4 h-4 text-primary/50" />}
+         {Icon && <Icon className="w-5 h-5 text-primary/60" />}
        </div>
     </div>
-    {children}
+    <div className="relative z-10">
+      {children}
+    </div>
   </div>
 );
 
@@ -97,8 +110,9 @@ const HealthBox = ({ status, onClick }: { status: DamageType, onClick: () => voi
   return (
     <button 
       onClick={onClick}
-      className="w-5 h-5 md:w-6 md:h-6 border border-muted-foreground/40 rounded-[1px] bg-black/50 flex items-center justify-center hover:border-primary transition-colors focus:outline-none"
+      className="w-5 h-5 md:w-6 md:h-6 border border-muted-foreground/40 rounded-[1px] bg-black/50 flex items-center justify-center hover:border-primary transition-colors focus:outline-none relative overflow-hidden group"
     >
+      <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity" />
       {status === 1 && <div className="w-full h-[1px] bg-primary/70 rotate-45" />}
       {status === 2 && (
         <div className="relative w-full h-full flex items-center justify-center">
@@ -108,9 +122,9 @@ const HealthBox = ({ status, onClick }: { status: DamageType, onClick: () => voi
       )}
       {status === 3 && (
         <div className="relative w-full h-full flex items-center justify-center">
-          <div className="absolute w-full h-[1px] bg-red-600 rotate-45" />
-          <div className="absolute w-full h-[1px] bg-red-600 -rotate-45" />
-          <div className="absolute w-[1px] h-full bg-red-600" />
+          <div className="absolute w-full h-[1px] bg-red-600 rotate-45 shadow-[0_0_5px_red]" />
+          <div className="absolute w-full h-[1px] bg-red-600 -rotate-45 shadow-[0_0_5px_red]" />
+          <div className="absolute w-[1px] h-full bg-red-600 shadow-[0_0_5px_red]" />
         </div>
       )}
     </button>
@@ -300,14 +314,43 @@ export default function CharacterSheet() {
   const legendPoolTotal = legend * legend;
 
   return (
-    <div className="min-h-screen bg-background text-foreground overflow-x-hidden font-tech selection:bg-primary/30 relative bg-grid-gold">
+    <div 
+      className="min-h-screen bg-black text-foreground overflow-x-hidden font-tech selection:bg-primary/30 relative"
+      style={{
+        backgroundImage: `url(${darkGoldTexture})`,
+        backgroundSize: 'cover',
+        backgroundAttachment: 'fixed',
+      }}
+    >
       
       {/* Vignette Overlay */}
-      <div className="fixed inset-0 pointer-events-none z-10 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.8)_100%)]" />
+      <div className="fixed inset-0 pointer-events-none z-10 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.7)_90%)]" />
 
       {/* Main Container */}
-      <div className="relative z-20 container mx-auto p-4 md:p-12 max-w-7xl">
+      <div className="relative z-20 container mx-auto p-4 md:p-8 max-w-7xl">
         
+        {/* Navigation Tabs */}
+        <div className="flex justify-center mb-8 gap-4 sticky top-4 z-50">
+           <div className="flex bg-black/80 border border-primary/30 p-1 rounded-full backdrop-blur-md shadow-lg">
+             {['sheet', 'bio', 'powers'].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab as any)}
+                  className={cn(
+                    "px-6 py-2 rounded-full text-xs font-mythic uppercase tracking-widest transition-all duration-300",
+                    activeTab === tab 
+                      ? "bg-primary text-black font-bold shadow-[0_0_15px_rgba(212,175,55,0.6)]" 
+                      : "text-muted-foreground hover:text-white"
+                  )}
+                >
+                  {tab === 'sheet' && <span className="flex items-center gap-2"><Activity className="w-3 h-3"/> Interface</span>}
+                  {tab === 'bio' && <span className="flex items-center gap-2"><User className="w-3 h-3"/> Dossier</span>}
+                  {tab === 'powers' && <span className="flex items-center gap-2"><Zap className="w-3 h-3"/> Arsenal</span>}
+                </button>
+             ))}
+           </div>
+        </div>
+
         {/* TOP IDENTITY BLOCK */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
             <div className="md:col-span-8 space-y-6">
@@ -316,22 +359,25 @@ export default function CharacterSheet() {
                 <SectionFrame title="ID Card" subHeader="Designation & Genesis Records" className="h-full">
                     <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
                         {/* Portrait Column */}
-                        <div className="md:col-span-3 flex flex-col gap-2">
+                        <div className="md:col-span-3 flex flex-col gap-2 relative">
+                            {/* Decorative Frame for Portrait */}
+                             <div className="absolute -inset-1 border border-primary/20 pointer-events-none" />
+                             
                              <div 
-                                className="aspect-[3/4] border-2 border-thin-gold/50 rounded-sm bg-black/40 relative overflow-hidden group cursor-pointer transition-all hover:border-primary/50"
+                                className="aspect-[3/4] border border-primary/30 bg-black/60 relative overflow-hidden group cursor-pointer transition-all hover:border-primary shadow-inner"
                                 onClick={() => fileInputRef.current?.click()}
                              >
                                 {portrait ? (
                                     <>
-                                        <img src={portrait} alt="Scion Portrait" className="w-full h-full object-cover" />
-                                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                            <span className="text-xs uppercase tracking-widest text-primary font-mythic">Change</span>
+                                        <img src={portrait} alt="Scion Portrait" className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
+                                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+                                            <span className="text-xs uppercase tracking-widest text-primary font-mythic border border-primary px-3 py-1">Change</span>
                                         </div>
                                     </>
                                 ) : (
-                                    <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground/30 group-hover:text-primary/50 transition-colors">
-                                        <ImageIcon className="w-8 h-8 mb-2" />
-                                        <span className="text-[9px] uppercase tracking-widest text-center px-2">Upload Portrait</span>
+                                    <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground/30 group-hover:text-primary/60 transition-colors">
+                                        <ImageIcon className="w-12 h-12 mb-3 opacity-50" />
+                                        <span className="text-[10px] uppercase tracking-widest text-center px-4 font-mythic">Upload Visual</span>
                                     </div>
                                 )}
                                 <input 
@@ -345,26 +391,30 @@ export default function CharacterSheet() {
                              {portrait && (
                                  <button 
                                     onClick={() => setPortrait(null)}
-                                    className="text-[9px] uppercase tracking-widest text-destructive hover:text-red-400 flex items-center justify-center gap-1"
+                                    className="text-[9px] uppercase tracking-widest text-destructive/70 hover:text-red-400 flex items-center justify-center gap-1 py-1 transition-colors"
                                  >
-                                     <X className="w-3 h-3" /> Remove
+                                     <X className="w-3 h-3" /> Clear Visual
                                  </button>
                              )}
                         </div>
 
                         {/* Data Column */}
-                        <div className="md:col-span-9 flex flex-col gap-6 justify-center">
+                        <div className="md:col-span-9 flex flex-col gap-6 justify-center pl-4 border-l border-primary/10">
                             {/* Identity Fields */}
                             <div className="space-y-4">
-                                <ScionInput label="Designation (Name)" placeholder="CHARACTER NAME" className="text-xl md:text-2xl" />
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <ScionInput label="Designation (Name)" placeholder="CHARACTER NAME" className="text-2xl md:text-3xl font-mythic text-primary drop-shadow-[0_0_10px_rgba(212,175,55,0.3)]" />
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <ScionInput label="Pantheon" placeholder="PANTHEON" />
                                     <ScionInput label="Heritage" placeholder="DIVINE PARENT / PATRON" />
                                 </div>
                             </div>
 
-                            {/* Divider */}
-                            <div className="h-px bg-thin-gold/30 w-full" />
+                            {/* Divider with Ornament */}
+                            <div className="flex items-center gap-4 opacity-50">
+                               <div className="h-px bg-primary/30 flex-1" />
+                               <img src={divineDivider} className="h-4 w-auto" alt="" />
+                               <div className="h-px bg-primary/30 flex-1" />
+                            </div>
 
                             {/* Genesis Fields */}
                             <div className="grid grid-cols-2 gap-4">
@@ -379,35 +429,43 @@ export default function CharacterSheet() {
 
                 {/* COMBINED SECTION: Callings, Nature, Virtues */}
                 <SectionFrame title="Essence & Nature" subHeader="Divine Matrix" className="min-h-[250px]">
-                   <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                   <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+                      {/* Vertical Dividers */}
+                      <div className="absolute left-1/3 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-primary/20 to-transparent hidden md:block" />
+                      <div className="absolute right-1/3 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-primary/20 to-transparent hidden md:block" />
+
                       {/* Callings */}
                       <div className="space-y-4">
-                         <h4 className="text-[10px] uppercase tracking-[0.2em] font-mythic text-primary/70 mb-2 border-b border-thin-gold/30 pb-1">Callings</h4>
-                         <div className="flex flex-col gap-3">
+                         <h4 className="text-[10px] uppercase tracking-[0.2em] font-mythic text-primary/70 mb-2 border-b border-primary/20 pb-2 flex items-center justify-between">
+                            Callings <Crown className="w-3 h-3 text-primary/40" />
+                         </h4>
+                         <div className="flex flex-col gap-4">
                            {callings.map((c, i) => (
-                             <div key={i} className="flex items-center gap-2">
+                             <div key={i} className="flex items-center gap-2 group">
+                                <div className="w-1 h-1 bg-primary/50 rotate-45 group-hover:bg-primary transition-colors" />
                                 <input 
-                                  className="bg-transparent w-full outline-none font-tech text-foreground placeholder:text-muted-foreground/20 text-sm"
+                                  className="bg-transparent w-full outline-none font-tech text-foreground placeholder:text-muted-foreground/20 text-sm focus:text-primary transition-colors"
                                   placeholder={`Calling ${i+1}`}
                                   value={c.name}
                                   onChange={(e) => updateCalling(i, 'name', e.target.value)}
                                 />
                                 <button 
                                   onClick={() => setActiveTitleIndex(activeTitleIndex === i ? null : i)}
-                                  className={cn("opacity-50 hover:opacity-100 transition-opacity", c.title && "text-primary opacity-100")}
+                                  className={cn("opacity-30 hover:opacity-100 transition-opacity", c.title && "text-primary opacity-100 drop-shadow-[0_0_5px_gold]")}
                                 >
                                    <Crown className="w-3 h-3" />
                                 </button>
                                 <AnimatePresence>
                                   {activeTitleIndex === i && (
                                     <motion.div 
-                                      initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}
-                                      className="absolute left-0 mt-6 z-50 bg-black border border-primary p-2 w-48 shadow-2xl"
+                                      initial={{ opacity: 0, scale: 0.9, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 10 }}
+                                      className="absolute left-0 mt-8 z-50 bg-black/90 border border-primary p-3 w-48 shadow-[0_0_30px_rgba(0,0,0,0.8)] backdrop-blur-xl rounded-sm"
                                     >
+                                       <div className="text-[9px] uppercase tracking-widest text-muted-foreground mb-1">Legendary Title</div>
                                        <input 
                                           autoFocus
-                                          className="w-full bg-transparent text-primary font-mythic text-sm outline-none placeholder:text-primary/30"
-                                          placeholder="Legendary Title"
+                                          className="w-full bg-transparent text-primary font-mythic text-sm outline-none placeholder:text-primary/30 border-b border-primary/30 pb-1"
+                                          placeholder="Title..."
                                           value={c.title}
                                           onChange={(e) => updateCalling(i, 'title', e.target.value)}
                                        />
@@ -421,18 +479,24 @@ export default function CharacterSheet() {
 
                       {/* Nature */}
                       <div className="space-y-4">
-                         <h4 className="text-[10px] uppercase tracking-[0.2em] font-mythic text-primary/70 mb-2 border-b border-thin-gold/30 pb-1">Nature</h4>
-                         <ScionInput placeholder="NATURE ARCHETYPE" />
+                         <h4 className="text-[10px] uppercase tracking-[0.2em] font-mythic text-primary/70 mb-2 border-b border-primary/20 pb-2 flex items-center justify-between">
+                            Nature <User className="w-3 h-3 text-primary/40" />
+                         </h4>
+                         <div className="pt-2">
+                           <ScionInput placeholder="ARCHETYPE" className="text-center text-xl font-mythic text-primary/90" />
+                         </div>
                       </div>
 
                       {/* Virtues */}
                       <div className="space-y-4">
-                         <h4 className="text-[10px] uppercase tracking-[0.2em] font-mythic text-primary/70 mb-2 border-b border-thin-gold/30 pb-1">Virtues</h4>
-                         <div className="space-y-2">
+                         <h4 className="text-[10px] uppercase tracking-[0.2em] font-mythic text-primary/70 mb-2 border-b border-primary/20 pb-2 flex items-center justify-between">
+                            Virtues <Heart className="w-3 h-3 text-primary/40" />
+                         </h4>
+                         <div className="space-y-3">
                             {virtues.map((virtue, idx) => (
                                <div key={idx} className="flex justify-between items-center group">
                                   <input 
-                                     className="bg-transparent font-tech text-xs text-muted-foreground group-hover:text-primary transition-colors outline-none w-20 uppercase"
+                                     className="bg-transparent font-tech text-xs text-muted-foreground group-hover:text-primary transition-colors outline-none w-24 uppercase tracking-wider"
                                      value={virtue.name}
                                      onChange={(e) => updateVirtue(idx, 'name', e.target.value)}
                                      placeholder="VIRTUE"
@@ -449,80 +513,87 @@ export default function CharacterSheet() {
             {/* Right Column: Legend & Aether Status */}
             <div className="md:col-span-4 flex flex-col gap-6">
                 {/* Legend Rank Block */}
-                <div className="flex-1 border border-thin-gold p-6 bg-card/50 backdrop-blur-sm rounded-sm flex flex-col items-center justify-center relative overflow-hidden">
-                   <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,gold_0%,transparent_70%)]" />
-                   <h2 className="text-3xl font-mythic text-primary tracking-tighter z-10 mb-4">LEGEND</h2>
+                <div className="flex-1 border-2 border-primary/30 p-6 bg-black/60 backdrop-blur-md rounded-sm flex flex-col items-center justify-center relative overflow-hidden shadow-[0_0_30px_rgba(212,175,55,0.1)]">
+                   <img src={artNouveauFrame} className="absolute inset-0 w-full h-full opacity-30 mix-blend-overlay pointer-events-none" alt="" />
+                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.1)_0%,transparent_70%)]" />
                    
-                   <div className="flex items-center gap-6 z-10">
+                   <h2 className="text-4xl font-mythic text-primary tracking-tighter z-10 mb-6 drop-shadow-[0_0_10px_gold]">LEGEND</h2>
+                   
+                   <div className="flex items-center gap-8 z-10">
                       <div className="flex flex-col items-center">
-                         <div className="w-20 h-20 border-2 border-primary flex items-center justify-center bg-black/50 text-5xl font-mythic text-primary shadow-[0_0_20px_rgba(212,175,55,0.3)]">
+                         <div className="w-24 h-24 border-2 border-primary flex items-center justify-center bg-black/80 text-6xl font-mythic text-primary shadow-[0_0_30px_rgba(212,175,55,0.4)] relative">
+                            {/* Inner Border */}
+                            <div className="absolute inset-1 border border-primary/30" />
                             {legend}
                          </div>
-                         <span className="text-[10px] tracking-[0.2em] text-muted-foreground mt-2 uppercase">Rank</span>
+                         <span className="text-[10px] tracking-[0.3em] text-primary/60 mt-3 uppercase font-bold">Rank</span>
                       </div>
                       
                       {/* Aether Percentage Display */}
                       <div className="flex flex-col items-center">
-                         <div className="w-20 h-20 border border-thin-gold/50 rounded-full flex items-center justify-center bg-black/30 relative">
+                         <div className="w-24 h-24 rounded-full flex items-center justify-center bg-black/40 relative">
                             {/* SVG Circle for Progress */}
-                            <svg className="absolute inset-0 w-full h-full -rotate-90">
-                               <circle cx="40" cy="40" r="36" stroke="#333" strokeWidth="4" fill="transparent" />
+                            <svg className="absolute inset-0 w-full h-full -rotate-90 drop-shadow-[0_0_10px_rgba(212,175,55,0.3)]">
+                               <circle cx="48" cy="48" r="42" stroke="#1a1a1a" strokeWidth="4" fill="transparent" />
                                <circle 
-                                 cx="40" cy="40" r="36" 
+                                 cx="48" cy="48" r="42" 
                                  stroke="#d4af37" 
                                  strokeWidth="4" 
                                  fill="transparent" 
-                                 strokeDasharray={`${2 * Math.PI * 36}`}
-                                 strokeDashoffset={`${2 * Math.PI * 36 * (1 - aetherPercentage/100)}`}
+                                 strokeDasharray={`${2 * Math.PI * 42}`}
+                                 strokeDashoffset={`${2 * Math.PI * 42 * (1 - aetherPercentage/100)}`}
+                                 strokeLinecap="round"
                                  className="transition-all duration-1000 ease-out"
                                />
                             </svg>
-                            <span className="font-code text-xl text-primary">{aetherPercentage}%</span>
+                            <div className="flex flex-col items-center">
+                                <span className="font-code text-2xl text-primary font-bold">{aetherPercentage}%</span>
+                            </div>
                          </div>
-                         <span className="text-[10px] tracking-[0.2em] text-muted-foreground mt-2 uppercase">Aether</span>
+                         <span className="text-[10px] tracking-[0.3em] text-primary/60 mt-3 uppercase font-bold">Aether</span>
                       </div>
                    </div>
                 </div>
 
                 {/* Pools Section */}
                 <SectionFrame title="Pools" subHeader="Resource Management" className="flex-1">
-                   <div className="space-y-6">
+                   <div className="space-y-8 py-2">
                       {/* Legend Points */}
-                      <div className="space-y-2">
-                         <div className="flex justify-between text-xs font-mythic text-primary/80 uppercase">
+                      <div className="space-y-3">
+                         <div className="flex justify-between text-xs font-mythic text-primary/90 uppercase tracking-widest">
                             <span>Legend Points</span>
-                            <span>{legendCurrent} / {legendPoolTotal}</span>
+                            <span className="font-code text-primary">{legendCurrent} / {legendPoolTotal}</span>
                          </div>
-                         <div className="h-2 bg-black/50 border border-thin-gold/30 rounded-sm overflow-hidden relative">
+                         <div className="h-3 bg-black/80 border border-primary/30 rounded-full overflow-hidden relative shadow-inner">
                             <div 
-                              className="absolute top-0 left-0 h-full bg-primary/60" 
+                              className="absolute top-0 left-0 h-full bg-gradient-to-r from-primary/60 to-primary" 
                               style={{ width: `${(legendCurrent / legendPoolTotal) * 100}%` }}
                             />
                          </div>
                          <div className="flex gap-1 justify-between">
-                            <button onClick={() => setLegendCurrent(Math.max(0, legendCurrent - 1))} className="px-2 py-0.5 border border-white/10 text-[10px] hover:bg-white/10">-</button>
-                            <button onClick={() => setLegendCurrent(Math.min(legendPoolTotal, legendCurrent + 1))} className="px-2 py-0.5 border border-white/10 text-[10px] hover:bg-white/10">+</button>
+                            <button onClick={() => setLegendCurrent(Math.max(0, legendCurrent - 1))} className="w-8 h-6 flex items-center justify-center border border-primary/20 text-[10px] hover:bg-primary/10 hover:border-primary text-primary transition-colors rounded-sm">-</button>
+                            <button onClick={() => setLegendCurrent(Math.min(legendPoolTotal, legendCurrent + 1))} className="w-8 h-6 flex items-center justify-center border border-primary/20 text-[10px] hover:bg-primary/10 hover:border-primary text-primary transition-colors rounded-sm">+</button>
                          </div>
                       </div>
 
                       {/* Willpower */}
-                      <div className="space-y-2">
-                         <div className="flex justify-between text-xs font-mythic text-primary/80 uppercase">
+                      <div className="space-y-3">
+                         <div className="flex justify-between text-xs font-mythic text-primary/90 uppercase tracking-widest">
                             <span>Willpower</span>
-                            <span>{willpowerCurrent} / {willpower}</span>
+                            <span className="font-code text-primary">{willpowerCurrent} / {willpower}</span>
                          </div>
-                         <div className="flex justify-between items-center mb-1">
-                            <DotRating value={willpower} max={10} onChange={setWillpower} className="scale-75 origin-left" />
+                         <div className="flex justify-between items-center mb-1 px-1">
+                            <DotRating value={willpower} max={10} onChange={setWillpower} className="scale-90 origin-left" />
                          </div>
-                         <div className="grid grid-cols-10 gap-0.5">
+                         <div className="grid grid-cols-10 gap-1 px-1">
                             {Array.from({length: 10}).map((_, i) => (
                                <div 
                                  key={i}
                                  onClick={() => setWillpowerCurrent(i + 1 === willpowerCurrent ? 0 : i + 1)}
                                  className={cn(
-                                   "h-3 border border-thin-gold/40 cursor-pointer transition-colors",
-                                   i < willpowerCurrent ? "bg-primary" : "bg-transparent",
-                                   i >= willpower && "opacity-20 pointer-events-none" // Disable dots beyond permanent rating
+                                   "h-4 border border-primary/30 cursor-pointer transition-all duration-300 rounded-[1px]",
+                                   i < willpowerCurrent ? "bg-primary shadow-[0_0_8px_rgba(212,175,55,0.5)] border-primary" : "bg-transparent hover:bg-primary/10",
+                                   i >= willpower && "opacity-10 pointer-events-none border-none bg-white/5" // Disable dots beyond permanent rating
                                  )}
                                />
                             ))}
@@ -538,9 +609,10 @@ export default function CharacterSheet() {
           {activeTab === "sheet" && (
             <motion.div 
               key="sheet"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
               className="grid grid-cols-1 md:grid-cols-12 gap-6"
             >
               
@@ -550,21 +622,22 @@ export default function CharacterSheet() {
                     <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                        
                        {/* Left 3 Cols: Attributes List */}
-                       <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-0 md:divide-x divide-thin-gold/30">
+                       <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-0 md:divide-x divide-primary/10">
                            {(Object.entries(attributes) as [AttributeCategory, Attribute[]][]).map(([category, attrs]) => (
-                              <div key={category} className="px-4 first:pl-0 last:pr-0 py-4 md:py-0">
-                                 <h4 className="text-center font-code text-muted-foreground text-[10px] uppercase tracking-[0.3em] mb-6">
-                                    {category}
+                              <div key={category} className="px-6 first:pl-0 last:pr-0 py-4 md:py-0">
+                                 <h4 className="text-center font-mythic text-primary/60 text-xs uppercase tracking-[0.4em] mb-8 relative">
+                                    <span className="bg-black/40 px-2 relative z-10">{category}</span>
+                                    <div className="absolute top-1/2 left-10 right-10 h-px bg-primary/10 -z-0" />
                                  </h4>
                                  <div className="space-y-8">
                                     {attrs.map((attr, idx) => (
                                        <div key={attr.name} className="space-y-2 group">
                                           <div className="flex items-center justify-between mb-1">
                                              <div className="flex items-center gap-3">
-                                                <span className="text-primary font-mythic text-lg opacity-60 group-hover:opacity-100 transition-opacity w-4 text-center">{attr.rune}</span>
-                                                <span className="font-tech text-lg text-foreground tracking-wide">{attr.name}</span>
+                                                <span className="text-primary font-mythic text-xl opacity-60 group-hover:opacity-100 transition-opacity w-6 text-center drop-shadow-[0_0_5px_rgba(212,175,55,0.5)]">{attr.rune}</span>
+                                                <span className="font-tech text-lg text-foreground tracking-wide group-hover:text-primary transition-colors">{attr.name}</span>
                                              </div>
-                                             <span className="text-[9px] text-muted-foreground font-code">{attr.name.substring(0,3).toUpperCase()}</span>
+                                             <span className="text-[9px] text-muted-foreground font-code opacity-50">{attr.name.substring(0,3).toUpperCase()}</span>
                                           </div>
                                           
                                           {/* Max 10 Dots, wrapping enabled in component */}
@@ -577,14 +650,17 @@ export default function CharacterSheet() {
                                           
                                           {/* Epic Dots - Subtle */}
                                           {attr.value >= 1 && (
-                                             <div className="flex justify-end pt-1 opacity-40 hover:opacity-100 transition-opacity">
-                                                <DotRating 
-                                                   value={attr.epic} 
-                                                   max={5} 
-                                                   variant="tech"
-                                                   className="scale-75 gap-0.5"
-                                                   onChange={(v) => updateAttribute(category, idx, 'epic', v)} 
-                                                />
+                                             <div className="flex justify-end pt-2 opacity-50 hover:opacity-100 transition-opacity">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-[9px] uppercase tracking-wider text-primary/50">Epic</span>
+                                                    <DotRating 
+                                                    value={attr.epic} 
+                                                    max={5} 
+                                                    variant="tech"
+                                                    className="scale-75 gap-0.5"
+                                                    onChange={(v) => updateAttribute(category, idx, 'epic', v)} 
+                                                    />
+                                                </div>
                                              </div>
                                           )}
                                        </div>
@@ -595,11 +671,11 @@ export default function CharacterSheet() {
                        </div>
 
                        {/* Right Col: Radar Chart */}
-                       <div className="lg:col-span-1 flex flex-col justify-center border-l border-thin-gold/30 pl-8">
+                       <div className="lg:col-span-1 flex flex-col justify-center border-l border-primary/10 pl-8 relative">
                           <h4 className="text-center font-code text-muted-foreground text-[10px] uppercase tracking-[0.3em] mb-4">
                              Radar Analysis
                           </h4>
-                          <div className="w-full h-[250px] relative">
+                          <div className="w-full h-[300px] relative">
                              <ResponsiveContainer width="100%" height="100%">
                                 <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
                                    <PolarGrid stroke="#333" />
@@ -611,13 +687,17 @@ export default function CharacterSheet() {
                                       stroke="#d4af37"
                                       strokeWidth={2}
                                       fill="#d4af37"
-                                      fillOpacity={0.15}
+                                      fillOpacity={0.2}
                                       isAnimationActive={true}
                                    />
                                 </RadarChart>
                              </ResponsiveContainer>
                              {/* Center Decor */}
-                             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-primary rounded-full shadow-[0_0_10px_gold]" />
+                             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-primary rounded-full shadow-[0_0_15px_gold]" />
+                             
+                             {/* Decorative Circles */}
+                             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 border border-primary/10 rounded-full pointer-events-none" />
+                             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 border border-primary/10 rounded-full pointer-events-none" />
                           </div>
                        </div>
 
@@ -628,46 +708,54 @@ export default function CharacterSheet() {
               {/* Abilities Row */}
               <div className="md:col-span-12">
                  <SectionFrame title="Abilities" subHeader="Skill Matrix">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-2">
                        {Object.values(abilities).map(ability => (
-                          <div key={ability.name} className="flex flex-col border border-white/5 bg-black/20 p-2 rounded-sm group hover:border-primary/30 transition-colors">
-                             <div className="flex justify-between items-center mb-1">
-                                <span className="text-xs font-tech text-foreground/90 uppercase tracking-wider">{ability.name}</span>
-                                <div className="flex items-center gap-1">
-                                  <button onClick={() => updateAbilityValue(ability.name, ability.value - 1)} className="text-muted-foreground hover:text-white px-1">
+                          <div key={ability.name} className="flex flex-col border border-white/5 bg-black/40 p-3 rounded-sm group hover:border-primary/40 transition-all duration-300 hover:shadow-[0_0_15px_rgba(212,175,55,0.1)]">
+                             <div className="flex justify-between items-center mb-2">
+                                <span className="text-xs font-tech text-foreground/90 uppercase tracking-wider font-bold group-hover:text-primary transition-colors">{ability.name}</span>
+                                <div className="flex items-center gap-1 bg-black/40 rounded px-1 border border-white/5">
+                                  <button onClick={() => updateAbilityValue(ability.name, ability.value - 1)} className="text-muted-foreground hover:text-white px-1 hover:bg-white/10 rounded transition-colors">
                                     <Minus className="w-3 h-3" />
                                   </button>
-                                  <span className="font-mythic text-primary text-lg w-6 text-center">{ability.value}</span>
-                                  <button onClick={() => updateAbilityValue(ability.name, ability.value + 1)} className="text-muted-foreground hover:text-white px-1">
+                                  <span className="font-mythic text-primary text-xl w-8 text-center drop-shadow-[0_0_5px_rgba(212,175,55,0.4)]">{ability.value}</span>
+                                  <button onClick={() => updateAbilityValue(ability.name, ability.value + 1)} className="text-muted-foreground hover:text-white px-1 hover:bg-white/10 rounded transition-colors">
                                     <Plus className="w-3 h-3" />
                                   </button>
                                 </div>
                              </div>
 
                              {/* Specialties List */}
-                             <div className="space-y-1 mt-1 border-t border-white/5 pt-1">
+                             <div className="space-y-1 mt-1 pt-2 border-t border-white/5">
+                               <AnimatePresence>
                                {ability.specialties.map((spec, idx) => (
-                                 <div key={idx} className="flex items-center gap-1">
-                                    <div className="w-1.5 h-1.5 border-l border-b border-primary/40 rounded-bl-sm" />
+                                 <motion.div 
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: 'auto' }}
+                                    exit={{ opacity: 0, height: 0 }}
+                                    key={idx} 
+                                    className="flex items-center gap-2 mb-1"
+                                 >
+                                    <div className="w-1.5 h-1.5 bg-primary/40 rotate-45" />
                                     <input 
-                                      className="bg-transparent text-[10px] font-tech text-muted-foreground focus:text-primary outline-none flex-1 min-w-0"
+                                      className="bg-transparent text-[10px] font-tech text-muted-foreground focus:text-primary outline-none flex-1 min-w-0 border-b border-transparent focus:border-primary/30 transition-colors"
                                       placeholder="Specialty..."
                                       value={spec.name}
                                       onChange={(e) => updateSpecialty(ability.name, idx, 'name', e.target.value)}
                                     />
                                     <input 
-                                      className="bg-transparent text-[10px] font-mythic text-primary w-4 text-center outline-none border-b border-white/10 focus:border-primary"
+                                      className="bg-transparent text-[10px] font-mythic text-primary w-6 text-center outline-none border-b border-white/10 focus:border-primary"
                                       value={spec.value}
                                       onChange={(e) => updateSpecialty(ability.name, idx, 'value', parseInt(e.target.value) || 0)}
                                     />
-                                    <button onClick={() => removeSpecialty(ability.name, idx)} className="text-destructive opacity-50 hover:opacity-100">
+                                    <button onClick={() => removeSpecialty(ability.name, idx)} className="text-destructive opacity-30 hover:opacity-100 transition-opacity">
                                       <Trash2 className="w-3 h-3" />
                                     </button>
-                                 </div>
+                                 </motion.div>
                                ))}
+                               </AnimatePresence>
                                <button 
                                 onClick={() => addSpecialty(ability.name)}
-                                className="flex items-center gap-1 text-[9px] text-muted-foreground/50 hover:text-primary mt-1 w-full justify-end"
+                                className="flex items-center gap-1 text-[9px] text-muted-foreground/40 hover:text-primary mt-2 w-full justify-end uppercase tracking-wider transition-colors"
                                >
                                  <Plus className="w-3 h-3" /> Add Specialty
                                </button>
@@ -686,19 +774,24 @@ export default function CharacterSheet() {
                     action={
                         <button 
                           onClick={() => setExtraOxBody(prev => Math.min(prev + 1, 5))}
-                          className="text-[10px] border border-primary/30 px-2 py-1 hover:bg-primary/10 text-primary transition-colors uppercase tracking-wider"
+                          className="text-[10px] border border-primary/30 px-3 py-1 hover:bg-primary/10 text-primary transition-colors uppercase tracking-wider rounded-sm"
                         >
                           + OxBody
                         </button>
                     }
                   >
-                    <div className="flex flex-wrap gap-4 justify-center md:justify-start items-end mt-4">
+                    <div className="flex flex-wrap gap-6 justify-center md:justify-start items-end mt-6 pb-2">
                        {currentHealthLevels.map((level, i) => (
-                          <div key={i} className="flex flex-col items-center gap-2 group">
+                          <div key={i} className="flex flex-col items-center gap-3 group relative">
+                             {/* Connector Line */}
+                             {i < currentHealthLevels.length - 1 && (
+                                 <div className="absolute top-3 left-1/2 w-full h-px bg-primary/20 -z-10" />
+                             )}
+                             
                              <HealthBox status={healthDamage[i]} onClick={() => toggleHealth(i)} />
                              <span className={cn(
-                                "font-code text-[10px] uppercase",
-                                level === "Incap" ? "text-red-500" : "text-muted-foreground group-hover:text-primary transition-colors"
+                                "font-code text-[10px] uppercase tracking-widest transition-all duration-300",
+                                level === "Incap" ? "text-red-500 font-bold" : "text-muted-foreground group-hover:text-primary"
                              )}>
                                 {level}
                              </span>
@@ -709,7 +802,7 @@ export default function CharacterSheet() {
                                    newDamage.splice(i, 1);
                                    newDamage.push(0); 
                                    setHealthDamage(newDamage);
-                                }} className="text-destructive hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                                }} className="absolute -top-4 text-destructive hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity">
                                    <Trash2 className="w-3 h-3" />
                                 </button>
                              )}
@@ -725,16 +818,17 @@ export default function CharacterSheet() {
           {activeTab === "bio" && (
             <motion.div 
               key="bio"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
               className="grid grid-cols-1 md:grid-cols-12 gap-6"
             >
                {/* Psychic Profile */}
                <div className="md:col-span-6 space-y-6">
                   <SectionFrame title="Psychic Profile" subHeader="Mind & Soul Analysis" className="h-full">
-                     <div className="space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
+                     <div className="space-y-6">
+                        <div className="grid grid-cols-2 gap-6">
                            <ScionInput 
                               label="Temperament" 
                               placeholder="Dominant Emotion" 
@@ -761,39 +855,39 @@ export default function CharacterSheet() {
                            onChange={(e) => setPsychicProfile({...psychicProfile, keywords: e.target.value})}
                         />
                         
-                        <div className="space-y-1">
-                           <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic">Deep Analysis</label>
+                        <div className="space-y-2">
+                           <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic block">Deep Analysis</label>
                            <textarea 
-                              className="w-full bg-black/20 border border-white/10 rounded-sm p-2 text-sm font-tech text-foreground outline-none focus:border-primary/50 min-h-[80px]"
+                              className="w-full bg-black/40 border border-white/10 rounded-sm p-3 text-sm font-tech text-foreground outline-none focus:border-primary/50 min-h-[100px] resize-none"
                               placeholder="Psychological Analysis..."
                               value={psychicProfile.analysis}
                               onChange={(e) => setPsychicProfile({...psychicProfile, analysis: e.target.value})}
                            />
                         </div>
 
-                        <div className="grid grid-cols-1 gap-4">
-                           <div className="space-y-1">
-                              <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic">Strengths</label>
+                        <div className="grid grid-cols-1 gap-6">
+                           <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic block">Strengths</label>
                               <textarea 
-                                 className="w-full bg-black/20 border border-white/10 rounded-sm p-2 text-sm font-tech text-foreground outline-none focus:border-primary/50 min-h-[60px]"
+                                 className="w-full bg-black/40 border border-white/10 rounded-sm p-3 text-sm font-tech text-foreground outline-none focus:border-primary/50 min-h-[80px] resize-none"
                                  placeholder="Psychological Strengths..."
                                  value={psychicProfile.strengths}
                                  onChange={(e) => setPsychicProfile({...psychicProfile, strengths: e.target.value})}
                               />
                            </div>
-                           <div className="space-y-1">
-                              <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic">Weaknesses</label>
+                           <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic block">Weaknesses</label>
                               <textarea 
-                                 className="w-full bg-black/20 border border-white/10 rounded-sm p-2 text-sm font-tech text-foreground outline-none focus:border-primary/50 min-h-[60px]"
+                                 className="w-full bg-black/40 border border-white/10 rounded-sm p-3 text-sm font-tech text-foreground outline-none focus:border-primary/50 min-h-[80px] resize-none"
                                  placeholder="Vulnerabilities..."
                                  value={psychicProfile.weaknesses}
                                  onChange={(e) => setPsychicProfile({...psychicProfile, weaknesses: e.target.value})}
                               />
                            </div>
-                           <div className="space-y-1">
-                              <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic">Behaviors</label>
+                           <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic block">Behaviors</label>
                               <textarea 
-                                 className="w-full bg-black/20 border border-white/10 rounded-sm p-2 text-sm font-tech text-foreground outline-none focus:border-primary/50 min-h-[60px]"
+                                 className="w-full bg-black/40 border border-white/10 rounded-sm p-3 text-sm font-tech text-foreground outline-none focus:border-primary/50 min-h-[80px] resize-none"
                                  placeholder="Recurrent Patterns..."
                                  value={psychicProfile.behaviors}
                                  onChange={(e) => setPsychicProfile({...psychicProfile, behaviors: e.target.value})}
@@ -807,7 +901,7 @@ export default function CharacterSheet() {
                {/* Presence Profile */}
                <div className="md:col-span-6 space-y-6">
                   <SectionFrame title="Presence Profile" subHeader="Appearance & Aura" className="h-full">
-                     <div className="space-y-4">
+                     <div className="space-y-6">
                         <div className="grid grid-cols-3 gap-4">
                            <ScionInput 
                               label="Height" 
@@ -848,20 +942,20 @@ export default function CharacterSheet() {
                            onChange={(e) => setPresenceProfile({...presenceProfile, distinguishingMark: e.target.value})}
                         />
 
-                        <div className="space-y-1">
-                           <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic">Fashion & Style</label>
+                        <div className="space-y-2">
+                           <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic block">Fashion & Style</label>
                            <textarea 
-                              className="w-full bg-black/20 border border-white/10 rounded-sm p-2 text-sm font-tech text-foreground outline-none focus:border-primary/50 min-h-[80px]"
+                              className="w-full bg-black/40 border border-white/10 rounded-sm p-3 text-sm font-tech text-foreground outline-none focus:border-primary/50 min-h-[100px] resize-none"
                               placeholder="Dress Style & Presentation..."
                               value={presenceProfile.fashion}
                               onChange={(e) => setPresenceProfile({...presenceProfile, fashion: e.target.value})}
                            />
                         </div>
 
-                        <div className="space-y-1">
-                           <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic">Visual Notes</label>
+                        <div className="space-y-2">
+                           <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic block">Visual Notes</label>
                            <textarea 
-                              className="w-full bg-black/20 border border-white/10 rounded-sm p-2 text-sm font-tech text-foreground outline-none focus:border-primary/50 min-h-[150px]"
+                              className="w-full bg-black/40 border border-white/10 rounded-sm p-3 text-sm font-tech text-foreground outline-none focus:border-primary/50 min-h-[200px] resize-none"
                               placeholder="Additional Visual Observations..."
                               value={presenceProfile.visualNotes}
                               onChange={(e) => setPresenceProfile({...presenceProfile, visualNotes: e.target.value})}
@@ -873,7 +967,22 @@ export default function CharacterSheet() {
             </motion.div>
           )}
 
-          {/* ... Other Tabs remain structurally similar but updated with new styling ... */}
+          {activeTab === "powers" && (
+             <motion.div
+                key="powers"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="text-center py-20"
+             >
+                <div className="inline-block border border-primary/30 p-8 bg-black/40 backdrop-blur-sm rounded-sm">
+                   <Zap className="w-12 h-12 text-primary mx-auto mb-4 opacity-50" />
+                   <h3 className="text-xl font-mythic text-primary mb-2">ARSENAL UNDER CONSTRUCTION</h3>
+                   <p className="text-muted-foreground font-tech">Divine powers database initializing...</p>
+                </div>
+             </motion.div>
+          )}
+
         </AnimatePresence>
       </div>
     </div>
