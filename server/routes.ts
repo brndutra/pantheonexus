@@ -630,15 +630,13 @@ export async function registerRoutes(
       const { scionId } = req.params;
       const { offensives } = req.body;
       
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('scionsight')
         .update({ offensives })
-        .eq('scion_id', scionId)
-        .select()
-        .single();
+        .eq('scion_id', scionId);
       
       if (error) throw error;
-      res.json(data);
+      res.json({ success: true, offensives });
     } catch (error) {
       console.error("Error updating offensives:", error);
       res.status(500).json({ error: "Failed to update offensives" });
