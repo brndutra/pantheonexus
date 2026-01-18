@@ -817,8 +817,11 @@ export default function CharacterSheet() {
         updateCharacter({
           id: characterId,
           updates: {
+            legend,
             legendPointsCurrent,
+            willpower,
             willpowerCurrent,
+            extraOxBody,
             healthDamage,
             portrait: portrait || undefined,
           },
@@ -831,7 +834,7 @@ export default function CharacterSheet() {
         clearTimeout(autoSaveTimeoutRef.current);
       }
     };
-  }, [legendPointsCurrent, willpowerCurrent, healthDamage, portrait, characterId]);
+  }, [legend, legendPointsCurrent, willpower, willpowerCurrent, extraOxBody, healthDamage, portrait, characterId]);
 
   // Create edit handlers for each section
   const createEditHandlers = (isEditing: boolean, setEditing: (v: boolean) => void) => ({
@@ -1553,9 +1556,20 @@ export default function CharacterSheet() {
                                     <h4 className="text-[10px] font-mythic tracking-widest text-[hsl(var(--highlight-amber))] flex items-center gap-2">
                                         <Crown className="w-3 h-3" /> LEGEND RANK
                                     </h4>
-                                    <div className="flex items-center gap-2">
-                                         <span className="text-[9px] text-muted-foreground uppercase">PERMANENT:</span>
-                                         <span className="text-xl font-mythic text-[hsl(var(--highlight-amber))] drop-shadow-[0_0_10px_orange] leading-none">{legend}</span>
+                                    <div className="flex items-center gap-1">
+                                         <button 
+                                            onClick={() => setLegend(Math.max(1, legend - 1))}
+                                            className="w-5 h-5 flex items-center justify-center text-[hsl(var(--highlight-amber))]/60 hover:text-[hsl(var(--highlight-amber))] hover:bg-[hsl(var(--highlight-amber))]/10 rounded-sm transition-colors"
+                                         >
+                                            <Minus className="w-3 h-3" />
+                                         </button>
+                                         <span className="text-xl font-mythic text-[hsl(var(--highlight-amber))] drop-shadow-[0_0_10px_orange] leading-none w-6 text-center">{legend}</span>
+                                         <button 
+                                            onClick={() => setLegend(Math.min(12, legend + 1))}
+                                            className="w-5 h-5 flex items-center justify-center text-[hsl(var(--highlight-amber))]/60 hover:text-[hsl(var(--highlight-amber))] hover:bg-[hsl(var(--highlight-amber))]/10 rounded-sm transition-colors"
+                                         >
+                                            <Plus className="w-3 h-3" />
+                                         </button>
                                     </div>
                                 </div>
                                 
@@ -1597,7 +1611,7 @@ export default function CharacterSheet() {
                              </div>
                              <div className="p-2 bg-black/40 border border-primary/20 rounded-sm">
                                  <div className="flex justify-between gap-1 mb-2">
-                                    <DotRating value={willpower} max={10} onChange={setWillpower} iconClassName="w-2 h-2" activeClassName="bg-primary" readOnly={!editingVitality} />
+                                    <DotRating value={willpower} max={10} onChange={setWillpower} iconClassName="w-2 h-2" activeClassName="bg-primary" />
                                  </div>
                                  <div className="flex gap-1 justify-between">
                                      {Array.from({length: 10}).map((_, i) => (
