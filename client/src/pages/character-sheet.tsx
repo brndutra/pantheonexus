@@ -1108,11 +1108,34 @@ export default function CharacterSheet() {
   const baseAggSoak = epicStamina;
 
   const [armorList, setArmorList] = useState<{name: string, soakB: number, soakL: number, soakA: number, mobility: number, fatigue: number}[]>([]);
+  const [selectedArmor, setSelectedArmor] = useState<string>("");
+  
+  // Scion 1st Edition Armor Options
+  const ARMOR_OPTIONS = [
+    { name: "Nenhuma", soakB: 0, soakL: 0, soakA: 0, mobility: 0, fatigue: 0 },
+    { name: "Roupas Pesadas", soakB: 1, soakL: 0, soakA: 0, mobility: 0, fatigue: 0 },
+    { name: "Couro Reforçado", soakB: 2, soakL: 1, soakA: 0, mobility: 0, fatigue: 1 },
+    { name: "Colete Kevlar", soakB: 2, soakL: 2, soakA: 0, mobility: 0, fatigue: 1 },
+    { name: "Colete Balístico", soakB: 3, soakL: 3, soakA: 0, mobility: -1, fatigue: 1 },
+    { name: "Colete Tático", soakB: 4, soakL: 4, soakA: 0, mobility: -1, fatigue: 2 },
+    { name: "Armadura Riot", soakB: 5, soakL: 5, soakA: 0, mobility: -2, fatigue: 2 },
+    { name: "Armadura de Batalha", soakB: 6, soakL: 6, soakA: 0, mobility: -2, fatigue: 3 },
+    { name: "Cota de Malha", soakB: 4, soakL: 3, soakA: 0, mobility: -1, fatigue: 2 },
+    { name: "Armadura de Placas", soakB: 6, soakL: 5, soakA: 0, mobility: -3, fatigue: 3 },
+    { name: "Armadura Mítica (Leve)", soakB: 4, soakL: 4, soakA: 2, mobility: 0, fatigue: 0 },
+    { name: "Armadura Mítica (Média)", soakB: 6, soakL: 6, soakA: 3, mobility: 0, fatigue: 0 },
+    { name: "Armadura Mítica (Pesada)", soakB: 8, soakL: 8, soakA: 4, mobility: 0, fatigue: 0 },
+  ];
+  
+  // Get current armor stats
+  const currentArmor = ARMOR_OPTIONS.find(a => a.name === selectedArmor) || ARMOR_OPTIONS[0];
   
   // Calculate total soak with armor
-  const totalBashingSoak = baseBashingSoak + armorList.reduce((acc, curr) => acc + curr.soakB, 0);
-  const totalLethalSoak = baseLethalSoak + armorList.reduce((acc, curr) => acc + curr.soakL, 0);
-  const totalAggSoak = baseAggSoak + armorList.reduce((acc, curr) => acc + curr.soakA, 0);
+  const totalBashingSoak = baseBashingSoak + currentArmor.soakB;
+  const totalLethalSoak = baseLethalSoak + currentArmor.soakL;
+  const totalAggSoak = baseAggSoak + currentArmor.soakA;
+  const mobilityPenalty = currentArmor.mobility;
+  const fatiguePenalty = currentArmor.fatigue;
 
   // New State for Feats / Merits (if separate from Knacks)
   const [feats, setFeats] = useState<{name: string, type: string, cost: string, desc: string}[]>([]);
@@ -2097,8 +2120,8 @@ export default function CharacterSheet() {
         </div> 
         {/* --- TOP 3-COLUMN GRID END --- */}
 
-        {/* VITALITY ROW - 1/3 Vitality, 2/3 Offensive */}
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* VITALITY ROW - Vitality, Resistance, Offensive */}
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-4 gap-6">
 
             {/* 1. VITALITY MONITOR - Takes 1 column */}
             <MythicHUDFrame 
@@ -2108,62 +2131,6 @@ export default function CharacterSheet() {
                 className="md:col-span-1"
             >
                     <div className="space-y-6">
-                        {/* Legend & Aether Integrated */}
-                        <div className="grid grid-cols-2 gap-3 pb-4 border-b border-primary/10">
-                            {/* Legend Module */}
-                            <div className="bg-black/60 border border-[hsl(var(--highlight-amber))]/30 p-3 relative overflow-hidden group rounded-sm shadow-[0_0_15px_rgba(255,160,0,0.1)] col-span-2">
-                                <div className="absolute inset-0 bg-[hsl(var(--highlight-amber))]/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                <div className="flex justify-between items-center mb-2">
-                                    <h4 className="text-[10px] font-mythic tracking-widest text-[hsl(var(--highlight-amber))] flex items-center gap-2">
-                                        <Crown className="w-3 h-3" /> LEGEND RANK
-                                    </h4>
-                                    <div className="flex items-center gap-1">
-                                         <button 
-                                            onClick={() => setLegend(Math.max(1, legend - 1))}
-                                            className="w-5 h-5 flex items-center justify-center text-[hsl(var(--highlight-amber))]/60 hover:text-[hsl(var(--highlight-amber))] hover:bg-[hsl(var(--highlight-amber))]/10 rounded-sm transition-colors"
-                                         >
-                                            <Minus className="w-3 h-3" />
-                                         </button>
-                                         <span className="text-xl font-mythic text-[hsl(var(--highlight-amber))] drop-shadow-[0_0_10px_orange] leading-none w-6 text-center">{legend}</span>
-                                         <button 
-                                            onClick={() => setLegend(Math.min(12, legend + 1))}
-                                            className="w-5 h-5 flex items-center justify-center text-[hsl(var(--highlight-amber))]/60 hover:text-[hsl(var(--highlight-amber))] hover:bg-[hsl(var(--highlight-amber))]/10 rounded-sm transition-colors"
-                                         >
-                                            <Plus className="w-3 h-3" />
-                                         </button>
-                                    </div>
-                                </div>
-                                
-                                {/* Legend Pool Tracker - Boxes */}
-                                <div className="space-y-1">
-                                    <div className="flex justify-between items-end">
-                                        <span className="text-[9px] font-tech text-muted-foreground uppercase tracking-widest">LEGEND POOL ({legendPointsCurrent}/{legendPoolTotal})</span>
-                                    </div>
-                                    <div className="flex flex-wrap gap-1">
-                                        {Array.from({ length: legendPoolTotal }).map((_, i) => (
-                                            <button
-                                                key={i}
-                                                onClick={() => {
-                                                    if (legendPointsCurrent === i + 1) {
-                                                        updateLegendPointsCurrent(i); // Toggle off if clicking the last active one
-                                                    } else {
-                                                        updateLegendPointsCurrent(i + 1);
-                                                    }
-                                                }}
-                                                className={cn(
-                                                    "w-3 h-3 border transition-all duration-300 relative overflow-hidden",
-                                                    i < legendPointsCurrent 
-                                                        ? "bg-[hsl(var(--highlight-amber))] border-[hsl(var(--highlight-amber))] shadow-[0_0_5px_orange]" 
-                                                        : "bg-transparent border-primary/20 hover:border-[hsl(var(--highlight-amber))]/50"
-                                                )}
-                                                style={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)" }} // Standard square for points
-                                            />
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                         {/* Health Track */}
                         <div className="space-y-2">
                             <div className="flex justify-between items-center text-xs font-mythic uppercase text-primary/70">
@@ -2185,7 +2152,7 @@ export default function CharacterSheet() {
                         </div>
 
                         {/* Combat Derived Stats - Compact Grid */}
-                        <div className="grid grid-cols-2 gap-2 pt-2 border-t border-primary/10">
+                        <div className="grid grid-cols-3 gap-2 pt-2 border-t border-primary/10">
                             <div className="bg-black/40 p-2 flex justify-between items-center border-l-2 border-primary/40">
                                 <span className="text-[9px] uppercase tracking-wider text-muted-foreground">Dodge DV</span>
                                 <span className="font-mythic text-primary">{dodgeDV}</span>
@@ -2195,16 +2162,95 @@ export default function CharacterSheet() {
                                 <span className="font-mythic text-primary">{parryDV}</span>
                             </div>
                             <div className="bg-black/40 p-2 flex justify-between items-center border-l-2 border-primary/40">
-                                <span className="text-[9px] uppercase tracking-wider text-muted-foreground">Soak (B/L)</span>
-                                <span className="font-mythic text-primary">{totalBashingSoak}/{totalLethalSoak}</span>
-                            </div>
-                             <div className="bg-black/40 p-2 flex justify-between items-center border-l-2 border-primary/40">
                                 <span className="text-[9px] uppercase tracking-wider text-muted-foreground">Join Battle</span>
                                 <span className="font-mythic text-primary">{joinBattle}</span>
                             </div>
                         </div>
                     </div>
                 </MythicHUDFrame>
+
+            {/* RESISTANCE SECTION */}
+            <MythicHUDFrame 
+                title="Resistência" 
+                icon={Shield} 
+                subHeader="SOAK & ARMADURA"
+                className="md:col-span-1"
+            >
+                <div className="space-y-4">
+                    {/* Soak Values */}
+                    <div className="space-y-2">
+                        <div className="text-[10px] font-mythic uppercase text-primary/70 tracking-widest">Absorção (Soak)</div>
+                        <div className="grid grid-cols-3 gap-2">
+                            <div className="bg-black/40 p-2 text-center border border-primary/20 rounded-sm">
+                                <div className="text-[8px] text-muted-foreground uppercase">Bashing</div>
+                                <div className="text-lg font-mythic text-primary">{totalBashingSoak}</div>
+                                <div className="text-[7px] text-muted-foreground">({baseBashingSoak} + {currentArmor.soakB})</div>
+                            </div>
+                            <div className="bg-black/40 p-2 text-center border border-primary/20 rounded-sm">
+                                <div className="text-[8px] text-muted-foreground uppercase">Lethal</div>
+                                <div className="text-lg font-mythic text-primary">{totalLethalSoak}</div>
+                                <div className="text-[7px] text-muted-foreground">({baseLethalSoak} + {currentArmor.soakL})</div>
+                            </div>
+                            <div className="bg-black/40 p-2 text-center border border-red-500/20 rounded-sm">
+                                <div className="text-[8px] text-red-400/70 uppercase">Aggravated</div>
+                                <div className="text-lg font-mythic text-red-400">{totalAggSoak}</div>
+                                <div className="text-[7px] text-muted-foreground">({baseAggSoak} + {currentArmor.soakA})</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Armor Selection */}
+                    <div className="space-y-2 pt-2 border-t border-primary/10">
+                        <div className="text-[10px] font-mythic uppercase text-primary/70 tracking-widest">Armadura Equipada</div>
+                        <select
+                            value={selectedArmor}
+                            onChange={(e) => setSelectedArmor(e.target.value)}
+                            className="w-full bg-black/40 border border-primary/20 text-xs px-2 py-1.5 rounded-sm text-primary focus:border-primary outline-none"
+                            data-testid="select-armor"
+                        >
+                            {ARMOR_OPTIONS.map((armor) => (
+                                <option key={armor.name} value={armor.name} className="bg-black text-primary">
+                                    {armor.name}
+                                </option>
+                            ))}
+                        </select>
+
+                        {/* Armor Stats Display */}
+                        {selectedArmor && selectedArmor !== "Nenhuma" && (
+                            <div className="bg-black/30 p-2 rounded-sm border border-primary/10 space-y-1">
+                                <div className="grid grid-cols-2 gap-2 text-[9px]">
+                                    <div className="flex justify-between">
+                                        <span className="text-muted-foreground">Soak B/L/A:</span>
+                                        <span className="text-primary font-tech">{currentArmor.soakB}/{currentArmor.soakL}/{currentArmor.soakA}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="text-muted-foreground">Mobilidade:</span>
+                                        <span className={cn("font-tech", mobilityPenalty < 0 ? "text-red-400" : "text-primary")}>
+                                            {mobilityPenalty}
+                                        </span>
+                                    </div>
+                                    <div className="flex justify-between col-span-2">
+                                        <span className="text-muted-foreground">Fadiga:</span>
+                                        <span className={cn("font-tech", fatiguePenalty > 0 ? "text-amber-400" : "text-primary")}>
+                                            {fatiguePenalty}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Hardness (for Epic Stamina) */}
+                    {epicStamina > 0 && (
+                        <div className="pt-2 border-t border-primary/10">
+                            <div className="flex justify-between items-center text-xs">
+                                <span className="text-muted-foreground">Hardness (Epic Stamina):</span>
+                                <span className="font-mythic text-[hsl(var(--highlight-amber))]">{epicStamina}</span>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </MythicHUDFrame>
 
             {/* 2. OFFENSIVE CAPABILITIES - Takes 2 columns */}
             <MythicHUDFrame title="Offensive Capabilities" icon={Sword} subHeader="WEAPONRY & ATTACK VECTORS" className="md:col-span-2">
