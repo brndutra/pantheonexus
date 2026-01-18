@@ -600,10 +600,9 @@ export default function CharacterSheet() {
   const [availableOffensives, setAvailableOffensives] = useState<{
     melee: SupabaseOffensive[];
     ranged: SupabaseOffensive[];
-    unarmed: SupabaseOffensive[];
-    special: SupabaseOffensive[];
+    firearms: SupabaseOffensive[];
     innate: SupabaseOffensive[];
-  }>({ melee: [], ranged: [], unarmed: [], special: [], innate: [] });
+  }>({ melee: [], ranged: [], firearms: [], innate: [] });
   const [innateOffensivesLoaded, setInnateOffensivesLoaded] = useState(false);
   const [offensiveSearch, setOffensiveSearch] = useState("");
   const [showOffensiveDropdown, setShowOffensiveDropdown] = useState(false);
@@ -1030,8 +1029,7 @@ export default function CharacterSheet() {
   const allOffensives = [
     ...availableOffensives.melee,
     ...availableOffensives.ranged,
-    ...availableOffensives.unarmed,
-    ...availableOffensives.special,
+    ...availableOffensives.firearms,
   ];
   
   const filteredOffensives = offensiveSearch.length > 0
@@ -2307,10 +2305,9 @@ export default function CharacterSheet() {
                             </button>
                         )}
                         <div className="flex gap-1 text-[7px] text-muted-foreground shrink-0">
-                            <span className="px-1 py-0.5 bg-primary/10 rounded">M:{availableOffensives.melee.length}</span>
-                            <span className="px-1 py-0.5 bg-primary/10 rounded">R:{availableOffensives.ranged.length}</span>
-                            <span className="px-1 py-0.5 bg-primary/10 rounded">U:{availableOffensives.unarmed.length}</span>
-                            <span className="px-1 py-0.5 bg-primary/10 rounded">S:{availableOffensives.special.length}</span>
+                            <span className="px-1 py-0.5 bg-primary/10 rounded">Melee:{availableOffensives.melee.length}</span>
+                            <span className="px-1 py-0.5 bg-primary/10 rounded">Ranged:{availableOffensives.ranged.length}</span>
+                            <span className="px-1 py-0.5 bg-primary/10 rounded">Firearms:{availableOffensives.firearms.length}</span>
                         </div>
                     </div>
 
