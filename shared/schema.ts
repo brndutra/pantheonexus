@@ -92,6 +92,34 @@ export const characters = pgTable("characters", {
   
   // Portrait
   portrait: text("portrait"),
+  portraitCover: text("portrait_cover"),
+  
+  // From Scionsight - Nature & Title
+  nature: text("nature").default(""),
+  legendaryTitle: text("legendary_title").default(""),
+  
+  // From Scionsight - Birthrights
+  birthrights: jsonb("birthrights").notNull().default({
+    creatures: "",
+    guides: "",
+    followers: "",
+    relics: ""
+  }),
+  
+  // From Scionsight - Movement Feats
+  movementFeats: jsonb("movement_feats").notNull().default({
+    walk: 0,
+    run: 0,
+    jump: 0,
+    lift: 0
+  }),
+  
+  // From Scrolls - Additional Info
+  isPublic: text("is_public").default("true"),
+  zodiacSign: text("zodiac_sign").default(""),
+  playlistLink: text("playlist_link").default(""),
+  biography: text("biography").default(""),
+  serapeumAccountNumber: text("serapeum_account_number").default(""),
   
   // Profiles
   psychicProfile: jsonb("psychic_profile").notNull().default({
@@ -102,7 +130,9 @@ export const characters = pgTable("characters", {
     weaknesses: "",
     temperament: "",
     cognitiveType: "",
-    majorArcana: ""
+    majorArcana: "",
+    zodiacSign: "",
+    lastSynced: ""
   }),
   
   presenceProfile: jsonb("presence_profile").notNull().default({
@@ -114,6 +144,17 @@ export const characters = pgTable("characters", {
     fashion: "",
     distinguishingMark: "",
     visualNotes: ""
+  }),
+  
+  // From Scrolls - Professional Profile
+  professionalProfile: jsonb("professional_profile").notNull().default({
+    educationHistory: "",
+    mentorInfo: "",
+    pupilInfo: "",
+    interestedPurviews: "",
+    interestedAttributes: "",
+    interestedAbilities: "",
+    professionalNotes: ""
   }),
   
   // Metadata

@@ -268,7 +268,7 @@ export default function CharacterSheet() {
   const { mutate: updateCharacter } = useUpdateCharacter();
   const { callings: compendiumCallings, natures: compendiumNatures, virtues: compendiumVirtues } = useCompendium();
   const [activeTab, setActiveTab] = useState<"sheet" | "powers" | "bio">("sheet");
-  const [idCardTab, setIdCardTab] = useState<"identity" | "psychic" | "presence">("identity");
+  const [idCardTab, setIdCardTab] = useState<"identity" | "psychic" | "presence" | "bio" | "professional">("identity");
   
   
   // State
@@ -362,6 +362,23 @@ export default function CharacterSheet() {
       if (loadedCharacter.presenceProfile && typeof loadedCharacter.presenceProfile === 'object') {
         setPresenceProfile(loadedCharacter.presenceProfile as any);
       }
+      
+      // New fields from Scionsight/Scrolls
+      setNature(loadedCharacter.nature || "");
+      setLegendaryTitle(loadedCharacter.legendaryTitle || "");
+      setBiography(loadedCharacter.biography || "");
+      setZodiacSign(loadedCharacter.zodiacSign || "");
+      setPlaylistLink(loadedCharacter.playlistLink || "");
+      
+      if (loadedCharacter.birthrights && typeof loadedCharacter.birthrights === 'object') {
+        setBirthrights(loadedCharacter.birthrights as any);
+      }
+      if (loadedCharacter.movementFeats && typeof loadedCharacter.movementFeats === 'object') {
+        setMovementFeats(loadedCharacter.movementFeats as any);
+      }
+      if (loadedCharacter.professionalProfile && typeof loadedCharacter.professionalProfile === 'object') {
+        setProfessionalProfile(loadedCharacter.professionalProfile as any);
+      }
     }
   }, [loadedCharacter]);
 
@@ -434,6 +451,37 @@ export default function CharacterSheet() {
     fashion: "",
     distinguishingMark: "",
     visualNotes: ""
+  });
+
+  // New fields from Scionsight/Scrolls
+  const [nature, setNature] = useState("");
+  const [legendaryTitle, setLegendaryTitle] = useState("");
+  const [biography, setBiography] = useState("");
+  const [zodiacSign, setZodiacSign] = useState("");
+  const [playlistLink, setPlaylistLink] = useState("");
+  
+  const [birthrights, setBirthrights] = useState({
+    creatures: "",
+    guides: "",
+    followers: "",
+    relics: ""
+  });
+  
+  const [movementFeats, setMovementFeats] = useState({
+    walk: 0,
+    run: 0,
+    jump: 0,
+    lift: 0
+  });
+  
+  const [professionalProfile, setProfessionalProfile] = useState({
+    educationHistory: "",
+    mentorInfo: "",
+    pupilInfo: "",
+    interestedPurviews: "",
+    interestedAttributes: "",
+    interestedAbilities: "",
+    professionalNotes: ""
   });
 
   // Handlers
@@ -654,6 +702,15 @@ export default function CharacterSheet() {
         portrait: portrait || undefined,
         psychicProfile,
         presenceProfile,
+        // New fields from Scionsight/Scrolls
+        nature,
+        legendaryTitle,
+        biography,
+        zodiacSign,
+        playlistLink,
+        birthrights,
+        movementFeats,
+        professionalProfile,
       },
     });
   };
@@ -889,7 +946,7 @@ export default function CharacterSheet() {
 
                             {/* ID Card Internal Navigation - RESTORED */}
                             <div className="flex gap-4 mt-4 border-b border-primary/20 pb-1 flex-shrink-0 relative z-10">
-                               {['identity', 'psychic', 'presence'].map((tab) => (
+                               {['identity', 'psychic', 'presence', 'bio', 'professional'].map((tab) => (
                                   <button
                                     key={tab}
                                     onClick={() => setIdCardTab(tab as any)}
@@ -1063,6 +1120,168 @@ export default function CharacterSheet() {
                                             onChange={(e) => setPresenceProfile({...presenceProfile, visualNotes: e.target.value})}
                                             viewMode={!editingIdentity}
                                          />
+                                    </motion.div>
+                                )}
+                                {idCardTab === 'bio' && (
+                                    <motion.div 
+                                      key="bio"
+                                      initial={{ opacity: 0, height: 0 }}
+                                      animate={{ opacity: 1, height: 'auto' }}
+                                      exit={{ opacity: 0, height: 0 }}
+                                      className="space-y-3 mt-4"
+                                    >
+                                        <h5 className="text-[10px] font-mythic uppercase text-[hsl(var(--highlight-green))] border-b border-[hsl(var(--highlight-green))]/20 pb-1">Biography & Nature</h5>
+                                        
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <ScionInput 
+                                                label="Nature" 
+                                                className="h-8 text-xs bg-black/40 border-primary/20"
+                                                value={nature}
+                                                onChange={(e) => setNature(e.target.value)}
+                                                viewMode={!editingIdentity}
+                                            />
+                                            <ScionInput 
+                                                label="Legendary Title" 
+                                                className="h-8 text-xs bg-black/40 border-primary/20 text-[hsl(var(--highlight-green))]"
+                                                value={legendaryTitle}
+                                                onChange={(e) => setLegendaryTitle(e.target.value)}
+                                                viewMode={!editingIdentity}
+                                            />
+                                        </div>
+                                        
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <ScionInput 
+                                                label="Zodiac Sign" 
+                                                className="h-8 text-xs bg-black/40 border-primary/20"
+                                                value={zodiacSign}
+                                                onChange={(e) => setZodiacSign(e.target.value)}
+                                                viewMode={!editingIdentity}
+                                            />
+                                            <ScionInput 
+                                                label="Playlist Link" 
+                                                className="h-8 text-xs bg-black/40 border-primary/20"
+                                                value={playlistLink}
+                                                onChange={(e) => setPlaylistLink(e.target.value)}
+                                                viewMode={!editingIdentity}
+                                            />
+                                        </div>
+                                        
+                                        <ScionInput 
+                                            label="Biography" 
+                                            className="h-24 text-xs bg-black/40 border-primary/20 resize-none"
+                                            textarea
+                                            value={biography}
+                                            onChange={(e) => setBiography(e.target.value)}
+                                            viewMode={!editingIdentity}
+                                        />
+                                        
+                                        <h5 className="text-[10px] font-mythic uppercase text-primary/70 border-b border-primary/20 pb-1 mt-4">Birthrights</h5>
+                                        
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <ScionInput 
+                                                label="Creatures" 
+                                                className="h-8 text-xs bg-black/40 border-primary/20"
+                                                value={birthrights.creatures}
+                                                onChange={(e) => setBirthrights({...birthrights, creatures: e.target.value})}
+                                                viewMode={!editingIdentity}
+                                            />
+                                            <ScionInput 
+                                                label="Guides" 
+                                                className="h-8 text-xs bg-black/40 border-primary/20"
+                                                value={birthrights.guides}
+                                                onChange={(e) => setBirthrights({...birthrights, guides: e.target.value})}
+                                                viewMode={!editingIdentity}
+                                            />
+                                        </div>
+                                        
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <ScionInput 
+                                                label="Followers" 
+                                                className="h-8 text-xs bg-black/40 border-primary/20"
+                                                value={birthrights.followers}
+                                                onChange={(e) => setBirthrights({...birthrights, followers: e.target.value})}
+                                                viewMode={!editingIdentity}
+                                            />
+                                            <ScionInput 
+                                                label="Relics" 
+                                                className="h-8 text-xs bg-black/40 border-primary/20"
+                                                value={birthrights.relics}
+                                                onChange={(e) => setBirthrights({...birthrights, relics: e.target.value})}
+                                                viewMode={!editingIdentity}
+                                            />
+                                        </div>
+                                    </motion.div>
+                                )}
+                                {idCardTab === 'professional' && (
+                                    <motion.div 
+                                      key="professional"
+                                      initial={{ opacity: 0, height: 0 }}
+                                      animate={{ opacity: 1, height: 'auto' }}
+                                      exit={{ opacity: 0, height: 0 }}
+                                      className="space-y-3 mt-4"
+                                    >
+                                        <h5 className="text-[10px] font-mythic uppercase text-[hsl(var(--highlight-orange))] border-b border-[hsl(var(--highlight-orange))]/20 pb-1">Professional Profile</h5>
+                                        
+                                        <ScionInput 
+                                            label="Education History" 
+                                            className="h-12 text-xs bg-black/40 border-primary/20 resize-none"
+                                            textarea
+                                            value={professionalProfile.educationHistory}
+                                            onChange={(e) => setProfessionalProfile({...professionalProfile, educationHistory: e.target.value})}
+                                            viewMode={!editingIdentity}
+                                        />
+                                        
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <ScionInput 
+                                                label="Mentor Info" 
+                                                className="h-8 text-xs bg-black/40 border-primary/20"
+                                                value={professionalProfile.mentorInfo}
+                                                onChange={(e) => setProfessionalProfile({...professionalProfile, mentorInfo: e.target.value})}
+                                                viewMode={!editingIdentity}
+                                            />
+                                            <ScionInput 
+                                                label="Pupil Info" 
+                                                className="h-8 text-xs bg-black/40 border-primary/20"
+                                                value={professionalProfile.pupilInfo}
+                                                onChange={(e) => setProfessionalProfile({...professionalProfile, pupilInfo: e.target.value})}
+                                                viewMode={!editingIdentity}
+                                            />
+                                        </div>
+                                        
+                                        <h5 className="text-[10px] font-mythic uppercase text-primary/70 border-b border-primary/20 pb-1 mt-2">Interests</h5>
+                                        
+                                        <div className="grid grid-cols-3 gap-3">
+                                            <ScionInput 
+                                                label="Purviews" 
+                                                className="h-8 text-xs bg-black/40 border-primary/20"
+                                                value={professionalProfile.interestedPurviews}
+                                                onChange={(e) => setProfessionalProfile({...professionalProfile, interestedPurviews: e.target.value})}
+                                                viewMode={!editingIdentity}
+                                            />
+                                            <ScionInput 
+                                                label="Attributes" 
+                                                className="h-8 text-xs bg-black/40 border-primary/20"
+                                                value={professionalProfile.interestedAttributes}
+                                                onChange={(e) => setProfessionalProfile({...professionalProfile, interestedAttributes: e.target.value})}
+                                                viewMode={!editingIdentity}
+                                            />
+                                            <ScionInput 
+                                                label="Abilities" 
+                                                className="h-8 text-xs bg-black/40 border-primary/20"
+                                                value={professionalProfile.interestedAbilities}
+                                                onChange={(e) => setProfessionalProfile({...professionalProfile, interestedAbilities: e.target.value})}
+                                                viewMode={!editingIdentity}
+                                            />
+                                        </div>
+                                        
+                                        <ScionInput 
+                                            label="Professional Notes" 
+                                            className="h-16 text-xs bg-black/40 border-primary/20 resize-none"
+                                            textarea
+                                            value={professionalProfile.professionalNotes}
+                                            onChange={(e) => setProfessionalProfile({...professionalProfile, professionalNotes: e.target.value})}
+                                            viewMode={!editingIdentity}
+                                        />
                                     </motion.div>
                                 )}
                             </AnimatePresence>
