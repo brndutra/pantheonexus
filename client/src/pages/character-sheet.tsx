@@ -2196,10 +2196,26 @@ export default function CharacterSheet() {
                         <div className="space-y-2">
                             <div className="flex justify-between items-center text-xs font-mythic uppercase text-primary/70">
                                  <span>Structural Integrity</span>
-                                 <div className="flex items-center gap-1 text-[9px] text-muted-foreground">
-                                     <span className="w-2 h-2 border border-primary/50 bg-black/50 block" /> B
-                                     <span className="w-2 h-2 border border-primary/50 bg-black/50 flex items-center justify-center text-[8px]" >x</span> L
-                                     <span className="w-2 h-2 border border-red-500/50 bg-black/50 flex items-center justify-center text-[8px] text-red-500" >*</span> A
+                                 <div className="flex items-center gap-2">
+                                     <div className="flex items-center gap-1 text-[9px] text-muted-foreground">
+                                         <span className="w-2 h-2 border border-primary/50 bg-black/50 block" /> B
+                                         <span className="w-2 h-2 border border-primary/50 bg-black/50 flex items-center justify-center text-[8px]" >x</span> L
+                                         <span className="w-2 h-2 border border-red-500/50 bg-black/50 flex items-center justify-center text-[8px] text-red-500" >*</span> A
+                                     </div>
+                                     <div className="flex items-center gap-1 border-l border-primary/20 pl-2">
+                                         <span className="text-[8px] text-muted-foreground">-0:</span>
+                                         <button 
+                                             onClick={() => setExtraOxBody(Math.max(0, extraOxBody - 1))}
+                                             className="w-4 h-4 flex items-center justify-center bg-black/50 border border-primary/30 text-primary/70 hover:bg-primary/20 hover:text-primary rounded-sm text-[10px] transition-colors"
+                                             data-testid="btn-decrease-ox"
+                                         >-</button>
+                                         <span className="text-[9px] font-tech text-primary w-4 text-center">{1 + extraOxBody}</span>
+                                         <button 
+                                             onClick={() => setExtraOxBody(extraOxBody + 1)}
+                                             className="w-4 h-4 flex items-center justify-center bg-black/50 border border-primary/30 text-primary/70 hover:bg-primary/20 hover:text-primary rounded-sm text-[10px] transition-colors"
+                                             data-testid="btn-increase-ox"
+                                         >+</button>
+                                     </div>
                                  </div>
                              </div>
                              <div className="flex flex-wrap gap-2 justify-center">
