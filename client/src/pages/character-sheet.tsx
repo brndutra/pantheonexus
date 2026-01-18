@@ -827,6 +827,70 @@ export default function CharacterSheet() {
                  </SectionFrame>
               </div>
 
+              {/* Combat Dynamics & Physical Feats Section */}
+              <div className="md:col-span-12">
+                 <SectionFrame title="Combat & Feats" subHeader="Tactical Data & Physics">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                       
+                       {/* Defensive Values */}
+                       <div className="space-y-4">
+                          <h4 className="text-[10px] uppercase tracking-[0.2em] font-mythic text-primary/70 mb-2 border-b border-primary/20 pb-2 flex items-center justify-between">
+                             Defense <Shield className="w-3 h-3 text-primary/40" />
+                          </h4>
+                          <div className="grid grid-cols-2 gap-4">
+                             <ScionInput label="Dodge DV" placeholder="0" className="text-center font-code text-xl text-primary" />
+                             <ScionInput label="Parry DV" placeholder="0" className="text-center font-code text-xl text-primary" />
+                          </div>
+                          <ScionInput label="Join Battle" placeholder="Total Dice" className="text-center font-code text-lg" />
+                       </div>
+
+                       {/* Soak & Resistance */}
+                       <div className="space-y-4">
+                          <h4 className="text-[10px] uppercase tracking-[0.2em] font-mythic text-primary/70 mb-2 border-b border-primary/20 pb-2 flex items-center justify-between">
+                             Resilience <Hexagon className="w-3 h-3 text-primary/40" />
+                          </h4>
+                          <div className="grid grid-cols-3 gap-2">
+                             <div className="flex flex-col gap-1">
+                                <label className="text-[8px] uppercase tracking-widest text-primary/50 text-center">Bashing</label>
+                                <input className="bg-black/40 border border-primary/30 text-center font-code text-lg py-2 text-primary focus:bg-primary/10 outline-none transition-colors" placeholder="0" />
+                             </div>
+                             <div className="flex flex-col gap-1">
+                                <label className="text-[8px] uppercase tracking-widest text-primary/50 text-center">Lethal</label>
+                                <input className="bg-black/40 border border-primary/30 text-center font-code text-lg py-2 text-primary focus:bg-primary/10 outline-none transition-colors" placeholder="0" />
+                             </div>
+                             <div className="flex flex-col gap-1">
+                                <label className="text-[8px] uppercase tracking-widest text-primary/50 text-center">Aggravated</label>
+                                <input className="bg-black/40 border border-primary/30 text-center font-code text-lg py-2 text-primary focus:bg-primary/10 outline-none transition-colors" placeholder="0" />
+                             </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-4 mt-2">
+                              <ScionInput label="Armor" placeholder="Name/Type" />
+                              <ScionInput label="Mobility Penalty" placeholder="-0" />
+                          </div>
+                       </div>
+
+                       {/* Physical Feats */}
+                       <div className="space-y-4">
+                          <h4 className="text-[10px] uppercase tracking-[0.2em] font-mythic text-primary/70 mb-2 border-b border-primary/20 pb-2 flex items-center justify-between">
+                             Movement & Feats <Activity className="w-3 h-3 text-primary/40" />
+                          </h4>
+                          <div className="grid grid-cols-2 gap-4">
+                             <ScionInput label="Move" placeholder="Yards/Turn" />
+                             <ScionInput label="Dash" placeholder="Yards/Turn" />
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                             <ScionInput label="Jump (V)" placeholder="Yards" />
+                             <ScionInput label="Jump (H)" placeholder="Yards" />
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                             <ScionInput label="Lift" placeholder="Lbs/Kg" />
+                             <ScionInput label="Throw" placeholder="Range" />
+                          </div>
+                       </div>
+                    </div>
+                 </SectionFrame>
+              </div>
+
               {/* Abilities Row */}
               <div className="md:col-span-12">
                  <SectionFrame title="Abilities" subHeader="Skill Matrix">
