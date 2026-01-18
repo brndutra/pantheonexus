@@ -294,19 +294,19 @@ export class SupabaseStorage implements IStorage {
     
     return {
       Physical: [
-        { name: "Strength", value: sa.attribute_strength || 1, epic: sa.epic_strength || 0, rune: "ᚠ" },
-        { name: "Dexterity", value: sa.attribute_dexterity || 1, epic: sa.epic_dexterity || 0, rune: "ᚢ" },
-        { name: "Stamina", value: sa.attribute_stamina || 1, epic: sa.epic_stamina || 0, rune: "ᚦ" }
+        { name: "Strength", value: sa.attribute_strength || 1, epic: sa.attribute_epic_strength || 0, rune: "ᚠ" },
+        { name: "Dexterity", value: sa.attribute_dexterity || 1, epic: sa.attribute_epic_dexterity || 0, rune: "ᚢ" },
+        { name: "Stamina", value: sa.attribute_stamina || 1, epic: sa.attribute_epic_stamina || 0, rune: "ᚦ" }
       ],
       Social: [
-        { name: "Charisma", value: sa.attribute_charisma || 1, epic: sa.epic_charisma || 0, rune: "ᚨ" },
-        { name: "Manipulation", value: sa.attribute_manipulation || 1, epic: sa.epic_manipulation || 0, rune: "ᚱ" },
-        { name: "Appearance", value: sa.attribute_appearance || 1, epic: sa.epic_appearance || 0, rune: "ᚲ" }
+        { name: "Charisma", value: sa.attribute_charisma || 1, epic: sa.attribute_epic_charisma || 0, rune: "ᚨ" },
+        { name: "Manipulation", value: sa.attribute_manipulation || 1, epic: sa.attribute_epic_manipulation || 0, rune: "ᚱ" },
+        { name: "Appearance", value: sa.attribute_appearance || 1, epic: sa.attribute_epic_appearance || 0, rune: "ᚲ" }
       ],
       Mental: [
-        { name: "Perception", value: sa.attribute_perception || 1, epic: sa.epic_perception || 0, rune: "ᚷ" },
-        { name: "Intelligence", value: sa.attribute_intelligence || 1, epic: sa.epic_intelligence || 0, rune: "ᚹ" },
-        { name: "Wits", value: sa.attribute_wits || 1, epic: sa.epic_wits || 0, rune: "ᚺ" }
+        { name: "Perception", value: sa.attribute_perception || 1, epic: sa.attribute_epic_perception || 0, rune: "ᚷ" },
+        { name: "Intelligence", value: sa.attribute_intelligence || 1, epic: sa.attribute_epic_intelligence || 0, rune: "ᚹ" },
+        { name: "Wits", value: sa.attribute_wits || 1, epic: sa.attribute_epic_wits || 0, rune: "ᚺ" }
       ]
     };
   }
@@ -323,9 +323,9 @@ export class SupabaseStorage implements IStorage {
       const dex = physical.find((a: any) => a.name === "Dexterity");
       const sta = physical.find((a: any) => a.name === "Stamina");
       
-      if (str) { result.attribute_strength = str.value; result.epic_strength = str.epic || 0; }
-      if (dex) { result.attribute_dexterity = dex.value; result.epic_dexterity = dex.epic || 0; }
-      if (sta) { result.attribute_stamina = sta.value; result.epic_stamina = sta.epic || 0; }
+      if (str) { result.attribute_strength = str.value; result.attribute_epic_strength = str.epic || 0; }
+      if (dex) { result.attribute_dexterity = dex.value; result.attribute_epic_dexterity = dex.epic || 0; }
+      if (sta) { result.attribute_stamina = sta.value; result.attribute_epic_stamina = sta.epic || 0; }
     }
     
     if (attrs.Social && Array.isArray(attrs.Social)) {
@@ -334,9 +334,9 @@ export class SupabaseStorage implements IStorage {
       const man = social.find((a: any) => a.name === "Manipulation");
       const app = social.find((a: any) => a.name === "Appearance");
       
-      if (cha) { result.attribute_charisma = cha.value; result.epic_charisma = cha.epic || 0; }
-      if (man) { result.attribute_manipulation = man.value; result.epic_manipulation = man.epic || 0; }
-      if (app) { result.attribute_appearance = app.value; result.epic_appearance = app.epic || 0; }
+      if (cha) { result.attribute_charisma = cha.value; result.attribute_epic_charisma = cha.epic || 0; }
+      if (man) { result.attribute_manipulation = man.value; result.attribute_epic_manipulation = man.epic || 0; }
+      if (app) { result.attribute_appearance = app.value; result.attribute_epic_appearance = app.epic || 0; }
     }
     
     if (attrs.Mental && Array.isArray(attrs.Mental)) {
@@ -345,9 +345,9 @@ export class SupabaseStorage implements IStorage {
       const int = mental.find((a: any) => a.name === "Intelligence");
       const wit = mental.find((a: any) => a.name === "Wits");
       
-      if (per) { result.attribute_perception = per.value; result.epic_perception = per.epic || 0; }
-      if (int) { result.attribute_intelligence = int.value; result.epic_intelligence = int.epic || 0; }
-      if (wit) { result.attribute_wits = wit.value; result.epic_wits = wit.epic || 0; }
+      if (per) { result.attribute_perception = per.value; result.attribute_epic_perception = per.epic || 0; }
+      if (int) { result.attribute_intelligence = int.value; result.attribute_epic_intelligence = int.epic || 0; }
+      if (wit) { result.attribute_wits = wit.value; result.attribute_epic_wits = wit.epic || 0; }
     }
     
     return result;
