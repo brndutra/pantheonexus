@@ -645,6 +645,65 @@ export async function registerRoutes(
     }
   });
   
+  // Update scionsight knacks_selected
+  app.patch("/api/scionsight/:scionId/knacks", async (req, res) => {
+    try {
+      const { scionId } = req.params;
+      const { knacks_selected } = req.body;
+      
+      const { data, error } = await supabase
+        .from('scionsight')
+        .update({ knacks_selected })
+        .eq('scion_id', scionId)
+        .select()
+        .single();
+      
+      if (error) throw error;
+      res.json(data);
+    } catch (error) {
+      console.error("Error updating knacks:", error);
+      res.status(500).json({ error: "Failed to update knacks" });
+    }
+  });
+  
+  // Update scionsight boons_selected
+  app.patch("/api/scionsight/:scionId/boons", async (req, res) => {
+    try {
+      const { scionId } = req.params;
+      const { boons_selected } = req.body;
+      
+      const { data, error } = await supabase
+        .from('scionsight')
+        .update({ boons_selected })
+        .eq('scion_id', scionId)
+        .select()
+        .single();
+      
+      if (error) throw error;
+      res.json(data);
+    } catch (error) {
+      console.error("Error updating boons:", error);
+      res.status(500).json({ error: "Failed to update boons" });
+    }
+  });
+  
+  // Get boons from Supabase
+  app.get("/api/supabase-boons", async (req, res) => {
+    try {
+      const { data, error } = await supabase
+        .from('boons')
+        .select('*')
+        .order('purview')
+        .order('level');
+      
+      if (error) throw error;
+      res.json(data || []);
+    } catch (error) {
+      console.error("Error fetching boons from Supabase:", error);
+      res.status(500).json({ error: "Failed to fetch boons" });
+    }
+  });
+  
   // CUSTOM OFFENSIVES - Table for personalized weapons
   app.get("/api/offensives-custom", async (req, res) => {
     try {

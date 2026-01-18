@@ -129,6 +129,19 @@ interface ScionsightData {
   legend_pool_total: number;
   willpower_pool_current: number;
   willpower_pool_total: number;
+  knacks_selected?: string[];
+  boons_selected?: string[];
+}
+
+interface SupabaseBoon {
+  id: string;
+  name: string;
+  purview: string;
+  level: number;
+  description: string;
+  dice_pool: string | null;
+  cost: string | null;
+  duration: string | null;
 }
 
 // --- Data ---
@@ -540,6 +553,16 @@ export default function CharacterSheet() {
         }
       })
       .catch(err => console.error('Failed to fetch knacks:', err));
+      
+    // Fetch available boons from Supabase
+    fetch('/api/supabase-boons')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setAvailableBoons(data);
+        }
+      })
+      .catch(err => console.error('Failed to fetch boons:', err));
   }, []);
 
   const [willpower, setWillpower] = useState(5);
@@ -553,6 +576,14 @@ export default function CharacterSheet() {
   const [availableKnacks, setAvailableKnacks] = useState<SupabaseKnack[]>([]);
   const [knackSearch, setKnackSearch] = useState("");
   const [showKnackDropdown, setShowKnackDropdown] = useState(false);
+  const [knackAttributeFilter, setKnackAttributeFilter] = useState<string>("all");
+  
+  // Boons from Supabase
+  const [availableBoons, setAvailableBoons] = useState<SupabaseBoon[]>([]);
+  const [selectedBoons, setSelectedBoons] = useState<SupabaseBoon[]>([]);
+  const [boonSearch, setBoonSearch] = useState("");
+  const [showBoonDropdown, setShowBoonDropdown] = useState(false);
+  const [boonPurviewFilter, setBoonPurviewFilter] = useState<string>("all");
   
   // Scionsight data from Supabase
   const [scionsight, setScionsight] = useState<ScionsightData | null>(null);
@@ -759,27 +790,91 @@ export default function CharacterSheet() {
       description: knack.description,
       type: knack.type,
     };
-    setKnacks([...knacks, newKnack]);
+    const newKnacks = [...knacks, newKnack];
+    setKnacks(newKnacks);
     setKnackSearch("");
     setShowKnackDropdown(false);
+    saveKnacksToScionsight(newKnacks);
   };
   
   const removeKnack = (id: string) => {
-    setKnacks(knacks.filter(k => k.id !== id));
+    const newKnacks = knacks.filter(k => k.id !== id);
+    setKnacks(newKnacks);
+    saveKnacksToScionsight(newKnacks);
   };
   
-  // Filter knacks based on search
-  const filteredKnacks = knackSearch.length > 0
-    ? availableKnacks.filter(k => 
-        k.name.toLowerCase().includes(knackSearch.toLowerCase()) ||
-        k.attribute.toLowerCase().includes(knackSearch.toLowerCase())
-      )
-    : availableKnacks;
+  // Get unique attributes from knacks for filter dropdown
+  const knackAttributes = [...new Set(availableKnacks.map(k => k.attribute))].sort();
+  
+  // Get unique purviews from boons for filter dropdown
+  const boonPurviews = [...new Set(availableBoons.map(b => b.purview))].sort();
+  
+  // Filter knacks based on search and attribute filter
+  const filteredKnacks = availableKnacks.filter(k => {
+    const matchesAttribute = knackAttributeFilter === "all" || k.attribute === knackAttributeFilter;
+    const matchesSearch = knackSearch.length === 0 || 
+      k.name.toLowerCase().includes(knackSearch.toLowerCase()) ||
+      k.attribute.toLowerCase().includes(knackSearch.toLowerCase());
+    return matchesAttribute && matchesSearch;
+  });
+  
+  // Filter boons based on search and purview filter  
+  const filteredBoons = availableBoons.filter(b => {
+    const matchesPurview = boonPurviewFilter === "all" || b.purview === boonPurviewFilter;
+    const matchesSearch = boonSearch.length === 0 ||
+      b.name.toLowerCase().includes(boonSearch.toLowerCase()) ||
+      b.purview.toLowerCase().includes(boonSearch.toLowerCase());
+    return matchesPurview && matchesSearch;
+  });
 
   const addBoon = () => {
     if (newBoon.trim()) {
       setBoons([...boons, newBoon]);
       setNewBoon("");
+    }
+  };
+  
+  // Add boon from database
+  const addBoonFromDatabase = (boon: SupabaseBoon) => {
+    if (selectedBoons.some(b => b.id === boon.id)) return;
+    const newSelectedBoons = [...selectedBoons, boon];
+    setSelectedBoons(newSelectedBoons);
+    setBoonSearch("");
+    setShowBoonDropdown(false);
+    saveBoonsToScionsight(newSelectedBoons);
+  };
+  
+  const removeBoon = (id: string) => {
+    const newSelectedBoons = selectedBoons.filter(b => b.id !== id);
+    setSelectedBoons(newSelectedBoons);
+    saveBoonsToScionsight(newSelectedBoons);
+  };
+  
+  // Save knacks to scionsight
+  const saveKnacksToScionsight = async (knacksList: CharacterKnack[]) => {
+    if (!loadedCharacter?.id) return;
+    try {
+      await fetch(`/api/scionsight/${loadedCharacter.id}/knacks`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ knacks_selected: knacksList.map(k => k.name) })
+      });
+    } catch (error) {
+      console.error('Failed to save knacks to scionsight:', error);
+    }
+  };
+  
+  // Save boons to scionsight
+  const saveBoonsToScionsight = async (boonsList: SupabaseBoon[]) => {
+    if (!loadedCharacter?.id) return;
+    try {
+      await fetch(`/api/scionsight/${loadedCharacter.id}/boons`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ boons_selected: boonsList.map(b => b.name) })
+      });
+    } catch (error) {
+      console.error('Failed to save boons to scionsight:', error);
     }
   };
 
