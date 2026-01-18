@@ -164,6 +164,30 @@ export default function CharacterSheet() {
   const [portrait, setPortrait] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Psychic Profile State
+  const [psychicProfile, setPsychicProfile] = useState({
+    analysis: "",
+    keywords: "",
+    strengths: "",
+    behaviors: "",
+    weaknesses: "",
+    temperament: "",
+    cognitiveType: "",
+    majorArcana: ""
+  });
+
+  // Presence Profile State
+  const [presenceProfile, setPresenceProfile] = useState({
+    eyeColor: "",
+    hairColor: "",
+    height: "",
+    auraSignature: "",
+    scent: "",
+    fashion: "",
+    distinguishingMark: "",
+    visualNotes: ""
+  });
+
   // Handlers
   const handlePortraitUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -695,6 +719,157 @@ export default function CharacterSheet() {
                  </SectionFrame>
               </div>
 
+            </motion.div>
+          )}
+
+          {activeTab === "bio" && (
+            <motion.div 
+              key="bio"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="grid grid-cols-1 md:grid-cols-12 gap-6"
+            >
+               {/* Psychic Profile */}
+               <div className="md:col-span-6 space-y-6">
+                  <SectionFrame title="Psychic Profile" subHeader="Mind & Soul Analysis" className="h-full">
+                     <div className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4">
+                           <ScionInput 
+                              label="Temperament" 
+                              placeholder="Dominant Emotion" 
+                              value={psychicProfile.temperament}
+                              onChange={(e) => setPsychicProfile({...psychicProfile, temperament: e.target.value})}
+                           />
+                           <ScionInput 
+                              label="Cognitive Type" 
+                              placeholder="Thought Pattern" 
+                              value={psychicProfile.cognitiveType}
+                              onChange={(e) => setPsychicProfile({...psychicProfile, cognitiveType: e.target.value})}
+                           />
+                        </div>
+                        <ScionInput 
+                           label="Major Arcana" 
+                           placeholder="Archetype" 
+                           value={psychicProfile.majorArcana}
+                           onChange={(e) => setPsychicProfile({...psychicProfile, majorArcana: e.target.value})}
+                        />
+                        <ScionInput 
+                           label="Keywords" 
+                           placeholder="Key Terms" 
+                           value={psychicProfile.keywords}
+                           onChange={(e) => setPsychicProfile({...psychicProfile, keywords: e.target.value})}
+                        />
+                        
+                        <div className="space-y-1">
+                           <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic">Deep Analysis</label>
+                           <textarea 
+                              className="w-full bg-black/20 border border-white/10 rounded-sm p-2 text-sm font-tech text-foreground outline-none focus:border-primary/50 min-h-[80px]"
+                              placeholder="Psychological Analysis..."
+                              value={psychicProfile.analysis}
+                              onChange={(e) => setPsychicProfile({...psychicProfile, analysis: e.target.value})}
+                           />
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-4">
+                           <div className="space-y-1">
+                              <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic">Strengths</label>
+                              <textarea 
+                                 className="w-full bg-black/20 border border-white/10 rounded-sm p-2 text-sm font-tech text-foreground outline-none focus:border-primary/50 min-h-[60px]"
+                                 placeholder="Psychological Strengths..."
+                                 value={psychicProfile.strengths}
+                                 onChange={(e) => setPsychicProfile({...psychicProfile, strengths: e.target.value})}
+                              />
+                           </div>
+                           <div className="space-y-1">
+                              <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic">Weaknesses</label>
+                              <textarea 
+                                 className="w-full bg-black/20 border border-white/10 rounded-sm p-2 text-sm font-tech text-foreground outline-none focus:border-primary/50 min-h-[60px]"
+                                 placeholder="Vulnerabilities..."
+                                 value={psychicProfile.weaknesses}
+                                 onChange={(e) => setPsychicProfile({...psychicProfile, weaknesses: e.target.value})}
+                              />
+                           </div>
+                           <div className="space-y-1">
+                              <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic">Behaviors</label>
+                              <textarea 
+                                 className="w-full bg-black/20 border border-white/10 rounded-sm p-2 text-sm font-tech text-foreground outline-none focus:border-primary/50 min-h-[60px]"
+                                 placeholder="Recurrent Patterns..."
+                                 value={psychicProfile.behaviors}
+                                 onChange={(e) => setPsychicProfile({...psychicProfile, behaviors: e.target.value})}
+                              />
+                           </div>
+                        </div>
+                     </div>
+                  </SectionFrame>
+               </div>
+
+               {/* Presence Profile */}
+               <div className="md:col-span-6 space-y-6">
+                  <SectionFrame title="Presence Profile" subHeader="Appearance & Aura" className="h-full">
+                     <div className="space-y-4">
+                        <div className="grid grid-cols-3 gap-4">
+                           <ScionInput 
+                              label="Height" 
+                              placeholder="Height" 
+                              value={presenceProfile.height}
+                              onChange={(e) => setPresenceProfile({...presenceProfile, height: e.target.value})}
+                           />
+                           <ScionInput 
+                              label="Eye Color" 
+                              placeholder="Eyes" 
+                              value={presenceProfile.eyeColor}
+                              onChange={(e) => setPresenceProfile({...presenceProfile, eyeColor: e.target.value})}
+                           />
+                           <ScionInput 
+                              label="Hair Color" 
+                              placeholder="Hair" 
+                              value={presenceProfile.hairColor}
+                              onChange={(e) => setPresenceProfile({...presenceProfile, hairColor: e.target.value})}
+                           />
+                        </div>
+
+                        <ScionInput 
+                           label="Aura Signature" 
+                           placeholder="Vibration/Feeling" 
+                           value={presenceProfile.auraSignature}
+                           onChange={(e) => setPresenceProfile({...presenceProfile, auraSignature: e.target.value})}
+                        />
+                         <ScionInput 
+                           label="Scent / Essence" 
+                           placeholder="Olfactory Impression" 
+                           value={presenceProfile.scent}
+                           onChange={(e) => setPresenceProfile({...presenceProfile, scent: e.target.value})}
+                        />
+                        <ScionInput 
+                           label="Distinguishing Mark" 
+                           placeholder="Notable Feature" 
+                           value={presenceProfile.distinguishingMark}
+                           onChange={(e) => setPresenceProfile({...presenceProfile, distinguishingMark: e.target.value})}
+                        />
+
+                        <div className="space-y-1">
+                           <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic">Fashion & Style</label>
+                           <textarea 
+                              className="w-full bg-black/20 border border-white/10 rounded-sm p-2 text-sm font-tech text-foreground outline-none focus:border-primary/50 min-h-[80px]"
+                              placeholder="Dress Style & Presentation..."
+                              value={presenceProfile.fashion}
+                              onChange={(e) => setPresenceProfile({...presenceProfile, fashion: e.target.value})}
+                           />
+                        </div>
+
+                        <div className="space-y-1">
+                           <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic">Visual Notes</label>
+                           <textarea 
+                              className="w-full bg-black/20 border border-white/10 rounded-sm p-2 text-sm font-tech text-foreground outline-none focus:border-primary/50 min-h-[150px]"
+                              placeholder="Additional Visual Observations..."
+                              value={presenceProfile.visualNotes}
+                              onChange={(e) => setPresenceProfile({...presenceProfile, visualNotes: e.target.value})}
+                           />
+                        </div>
+                     </div>
+                  </SectionFrame>
+               </div>
             </motion.div>
           )}
 
