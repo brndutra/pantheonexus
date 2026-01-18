@@ -585,6 +585,21 @@ export async function registerRoutes(
     }
   });
   
+  // KNACKS - Fetch from Supabase knacks table
+  app.get("/api/supabase-knacks", async (req, res) => {
+    try {
+      const { data, error } = await supabase
+        .from('knacks')
+        .select('*');
+      
+      if (error) throw error;
+      res.json(data || []);
+    } catch (error) {
+      console.error("Error fetching knacks from Supabase:", error);
+      res.status(500).json({ error: "Failed to fetch knacks" });
+    }
+  });
+  
   // Innate offensives endpoint
   app.get("/api/offensives/innate", async (req, res) => {
     try {
