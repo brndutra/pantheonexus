@@ -62,13 +62,22 @@ export const useArticles = () => {
     
     const updated = [newArticle, ...articles];
     setArticles(updated);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    } catch (error) {
+      console.error("Storage limit exceeded", error);
+      alert("Storage limit exceeded! The article will be available for this session but may not persist on reload due to large image sizes.");
+    }
   };
 
   const deleteArticle = (id: number) => {
     const updated = articles.filter(a => a.id !== id);
     setArticles(updated);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    } catch (error) {
+      console.error("Storage limit exceeded", error);
+    }
   };
 
   return { articles, addArticle, deleteArticle };

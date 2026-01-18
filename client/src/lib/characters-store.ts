@@ -52,13 +52,22 @@ export const useCharacters = () => {
     };
     const updated = [...characters, newChar];
     setCharacters(updated);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    } catch (error) {
+        console.error("Storage limit exceeded", error);
+        alert("Storage limit exceeded! Character may not persist on reload.");
+    }
   };
 
   const deleteCharacter = (id: number) => {
     const updated = characters.filter(c => c.id !== id);
     setCharacters(updated);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    } catch (error) {
+        console.error("Storage limit exceeded", error);
+    }
   };
 
   const getCharacterBySlug = (slug: string) => {
