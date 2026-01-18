@@ -74,6 +74,12 @@
   --mythic-gold: 46 100% 50%;
   --tech-silver: 200 10% 60%;
   --void-black: 240 10% 3%;
+  
+  /* New Accent Colors for HUD/Highlight Elements */
+  --highlight-blue: 190 90% 50%;
+  --highlight-purple: 270 80% 60%;
+  --highlight-red: 0 90% 60%;
+  --highlight-amber: 30 100% 50%;
 }
 
 .dark {
