@@ -1,0 +1,16 @@
+Chamados:
+A seguir, a lista dos Chamados disponíveis inicialmente (Common Callings), com explicações detalhadas no tópico específico. 
+Amante (Lover): Centrais em relações amorosas e dedicação romântica. Sedutor, romântico, dedicado, paixão, lealdade, desejo, fidelidade, sedução, afeto.
+Caçador (Hunter): Perseguem presas ou objetivos com tenacidade. Rastreador, implacável, incansável, caçada, perseverança, foco, vigilante, obstinado.
+Criador (Creator): Moldam o caos em ordem, trazendo inovação. Talentoso, inventor, inspirado, arte, inovação, originalidade, engenhoso, artesão, gênese.
+Curandeiro (Healer): Restauram saúde ou purificam o corrompido. Médico, renovação, purificador, restauração, compaixão, alívio, regeneração, cuidado, cura.
+Emissário (Emissary): Mensageiros e guias entre reinos ou povos. Arauto, diplomata, psicopompo, mensageiro, comunicação, viagem, conexão, intermediário.
+Guardião (Guardian): Protegem territórios, ideias ou pessoas. Defensor, protetor, patrono, escudo, vigilante, refúgio, proteção, guia, segurança.
+Guerreiro (Warrior): Mestres em força e combate lendário. Lutador, marcial, invicto, batalha, força, honra, combate, estratégia, destreza.
+Juiz (Judge): Aplicam leis divinas e cósmicas com justiça. Justo, imparcial, avaliação, julgamento, sabedoria, leis, moralidade, equidade, castigo.
+Líder (Leader): Guiam com autoridade e inspiração. Governante, comandante, inspiração, autoridade, carisma, estratégia, influência, poder.
+Marginal (Liminal): Vivem nas margens e cruzam fronteiras sociais. Fronteira, estranho, mudança, transição, exílio, limiar, transgressor, incerteza, sombra.
+Pastor (Shepherd): Guiam e apoiam heróis em suas jornadas. Mentor, suporte, orientador, guia, amigo, acolhimento, apoio, conselheiro, sabedoria.
+Sábio (Sage): Buscam e compartilham conhecimento profundo. Inteligente, acadêmico, especialista, erudito, professor, filósofo, reflexão, aprendizado, sabedoria.
+Trapaceiro (Trickster): Criam caos criativo, desafiando normas. Astúcia, transgressor, patife, caos, esperteza, disfarce, truque, irreverência, jogo.
+
