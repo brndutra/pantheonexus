@@ -310,6 +310,38 @@ export default function CharacterSheet() {
      fullMark: 10
   }));
 
+  // Combat & Physics Calculations
+  const getAttributeTotal = (name: AttributeName) => {
+    let attr: Attribute | undefined;
+    for (const cat of Object.values(attributes)) {
+      attr = cat.find(a => a.name === name);
+      if (attr) break;
+    }
+    return attr ? attr.value + attr.epic : 0; // Using simplified total for now
+  };
+
+  const getAbilityValue = (name: string) => abilities[name]?.value || 0;
+
+  const joinBattle = getAttributeTotal("Wits") + getAbilityValue("Awareness");
+  const dodgeDV = Math.ceil((getAttributeTotal("Dexterity") + getAbilityValue("Athletics") + legend) / 2);
+  const parryDV = Math.ceil((getAttributeTotal("Dexterity") + Math.max(getAbilityValue("Melee"), getAbilityValue("Brawl"))) / 2); // Simplified weapon defense
+  
+  const staminaTotal = getAttributeTotal("Stamina");
+  const armorSoak = 0; // Placeholder until Armor is implemented properly
+  const bashingSoak = staminaTotal + armorSoak;
+  const lethalSoak = Math.floor(staminaTotal / 2) + armorSoak;
+  const aggSoak = armorSoak;
+
+  const move = getAttributeTotal("Dexterity") + 6;
+  const dash = getAttributeTotal("Dexterity") + 12;
+  
+  const jumpVert = getAttributeTotal("Strength") + getAbilityValue("Athletics");
+  const jumpHoriz = (getAttributeTotal("Strength") + getAbilityValue("Athletics")) * 2;
+  
+  const strengthTotal = getAttributeTotal("Strength");
+  const lift = strengthTotal * 50; // Simplified calculation (lbs)
+  const throwRange = strengthTotal * 10; // Simplified calculation (yards)
+
   // Aether Calculation (Example: Legend * 10%)
   const aetherPercentage = legend * 10;
   const legendPoolTotal = legend * legend;
@@ -838,10 +870,10 @@ export default function CharacterSheet() {
                              Defense <Shield className="w-3 h-3 text-primary/40" />
                           </h4>
                           <div className="grid grid-cols-2 gap-4">
-                             <ScionInput label="Dodge DV" placeholder="0" className="text-center font-code text-xl text-primary" />
-                             <ScionInput label="Parry DV" placeholder="0" className="text-center font-code text-xl text-primary" />
+                             <ScionInput label="Dodge DV" value={dodgeDV} readOnly className="text-center font-code text-xl text-primary" />
+                             <ScionInput label="Parry DV" value={parryDV} readOnly className="text-center font-code text-xl text-primary" />
                           </div>
-                          <ScionInput label="Join Battle" placeholder="Total Dice" className="text-center font-code text-lg" />
+                          <ScionInput label="Join Battle" value={joinBattle} readOnly className="text-center font-code text-lg" />
                        </div>
 
                        {/* Soak & Resistance */}
@@ -852,15 +884,15 @@ export default function CharacterSheet() {
                           <div className="grid grid-cols-3 gap-2">
                              <div className="flex flex-col gap-1">
                                 <label className="text-[8px] uppercase tracking-widest text-primary/50 text-center">Bashing</label>
-                                <input className="bg-black/40 border border-primary/30 text-center font-code text-lg py-2 text-primary focus:bg-primary/10 outline-none transition-colors" placeholder="0" />
+                                <input className="bg-black/40 border border-primary/30 text-center font-code text-lg py-2 text-primary focus:bg-primary/10 outline-none transition-colors" value={bashingSoak} readOnly />
                              </div>
                              <div className="flex flex-col gap-1">
                                 <label className="text-[8px] uppercase tracking-widest text-primary/50 text-center">Lethal</label>
-                                <input className="bg-black/40 border border-primary/30 text-center font-code text-lg py-2 text-primary focus:bg-primary/10 outline-none transition-colors" placeholder="0" />
+                                <input className="bg-black/40 border border-primary/30 text-center font-code text-lg py-2 text-primary focus:bg-primary/10 outline-none transition-colors" value={lethalSoak} readOnly />
                              </div>
                              <div className="flex flex-col gap-1">
                                 <label className="text-[8px] uppercase tracking-widest text-primary/50 text-center">Aggravated</label>
-                                <input className="bg-black/40 border border-primary/30 text-center font-code text-lg py-2 text-primary focus:bg-primary/10 outline-none transition-colors" placeholder="0" />
+                                <input className="bg-black/40 border border-primary/30 text-center font-code text-lg py-2 text-primary focus:bg-primary/10 outline-none transition-colors" value={aggSoak} readOnly />
                              </div>
                           </div>
                           <div className="grid grid-cols-2 gap-4 mt-2">
@@ -875,16 +907,16 @@ export default function CharacterSheet() {
                              Movement & Feats <Activity className="w-3 h-3 text-primary/40" />
                           </h4>
                           <div className="grid grid-cols-2 gap-4">
-                             <ScionInput label="Move" placeholder="Yards/Turn" />
-                             <ScionInput label="Dash" placeholder="Yards/Turn" />
+                             <ScionInput label="Move" value={`${move} yds`} readOnly />
+                             <ScionInput label="Dash" value={`${dash} yds`} readOnly />
                           </div>
                           <div className="grid grid-cols-2 gap-4">
-                             <ScionInput label="Jump (V)" placeholder="Yards" />
-                             <ScionInput label="Jump (H)" placeholder="Yards" />
+                             <ScionInput label="Jump (V)" value={`${jumpVert} yds`} readOnly />
+                             <ScionInput label="Jump (H)" value={`${jumpHoriz} yds`} readOnly />
                           </div>
                           <div className="grid grid-cols-2 gap-4">
-                             <ScionInput label="Lift" placeholder="Lbs/Kg" />
-                             <ScionInput label="Throw" placeholder="Range" />
+                             <ScionInput label="Lift" value={`${lift} lbs`} readOnly />
+                             <ScionInput label="Throw" value={`${throwRange} yds`} readOnly />
                           </div>
                        </div>
                     </div>
