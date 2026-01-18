@@ -483,6 +483,8 @@ export default function CharacterSheet() {
   const [legendPointsCurrent, setLegendPointsCurrent] = useState(legendPoolTotal);
 
   // Combat Stats (Scion 1st Ed)
+  // Join Battle = Wits + Awareness
+  const joinBattle = getAttributeTotal("Wits") + getAbilityValue("Awareness");
   // DV = [(Dexterity + Athletics + Legend) / 2]
   const dodgeDV = Math.ceil((getAttributeTotal("Dexterity") + getAbilityValue("Athletics") + legend) / 2);
   // Parry DV = [(Dexterity + Brawl/Melee + Weapon Defense) / 2]
@@ -1150,7 +1152,7 @@ export default function CharacterSheet() {
                             </div>
                             <div className="bg-black/40 p-2 flex justify-between items-center border-l-2 border-primary/40">
                                 <span className="text-[9px] uppercase tracking-wider text-muted-foreground">Soak (B/L)</span>
-                                <span className="font-mythic text-primary">{bashingSoak}/{lethalSoak}</span>
+                                <span className="font-mythic text-primary">{totalBashingSoak}/{totalLethalSoak}</span>
                             </div>
                              <div className="bg-black/40 p-2 flex justify-between items-center border-l-2 border-primary/40">
                                 <span className="text-[9px] uppercase tracking-wider text-muted-foreground">Join Battle</span>
