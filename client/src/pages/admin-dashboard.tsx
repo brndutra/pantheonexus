@@ -8,20 +8,25 @@ import { useCompendium } from "@/lib/compendium-store";
 
 // Reusing style components for consistency
 const SectionFrame = ({ children, title, className, subHeader }: { children: React.ReactNode, title: string, className?: string, subHeader?: string }) => (
-  <div className={cn("p-8 frame-ethereal rounded-sm h-full group", className)}>
-    {/* CSS Corner Accents */}
-    <div className="frame-corner-tl" />
-    <div className="frame-corner-tr" />
-    <div className="frame-corner-bl" />
-    <div className="frame-corner-br" />
+  <div className={cn("frame-ethereal group backdrop-blur-xl bg-black/40", className)}>
+    {/* CSS Corner Accents inside clip-path */}
+    <div className="absolute top-0 left-0 w-8 h-8 border-t border-l border-primary/60 rounded-tl-sm" />
+    <div className="absolute top-0 right-0 w-8 h-8 border-t border-r border-primary/60 rounded-tr-sm" />
+    <div className="absolute bottom-0 left-0 w-8 h-8 border-b border-l border-primary/60 rounded-bl-sm" />
+    <div className="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-primary/60 rounded-br-sm" />
+    
+    {/* Tech scanline inside frame */}
+    <div className="absolute inset-0 bg-grid-gold opacity-10 pointer-events-none" />
 
-    <div className="flex justify-between items-start mb-6 border-b border-primary/20 pb-2 relative z-10 px-2">
+    <div className="flex justify-between items-start mb-6 border-b border-primary/30 pb-2 relative z-10 px-6 pt-6 bg-gradient-to-b from-primary/5 to-transparent">
        <div>
-          <h3 className="font-mythic text-primary text-xl tracking-[0.15em] uppercase drop-shadow-md">{title}</h3>
-          {subHeader && <p className="text-[10px] text-muted-foreground uppercase tracking-[0.2em] mt-1 font-tech">{subHeader}</p>}
+          <h3 className="font-mythic text-primary text-xl tracking-[0.15em] uppercase drop-shadow-md flex items-center gap-2">
+            <span className="text-shadow-glow">{title}</span>
+          </h3>
+          {subHeader && <p className="text-[10px] text-muted-foreground uppercase tracking-[0.2em] mt-1 font-tech pl-1">{subHeader}</p>}
        </div>
     </div>
-    <div className="relative z-10 px-2">
+    <div className="relative z-10 px-6 pb-6">
       {children}
     </div>
   </div>
@@ -168,23 +173,25 @@ export default function AdminDashboard() {
 
       <div className="relative z-20 container mx-auto p-4 md:p-8 max-w-7xl">
         {/* Header */}
-        <div className="flex justify-between items-end mb-8 border-b border-primary/20 pb-4">
-            <div className="flex flex-col">
-                <h1 className="font-mythic text-4xl text-primary tracking-[0.2em] drop-shadow-[0_0_15px_rgba(212,175,55,0.5)]">
+        <div className="flex justify-between items-end mb-8 border-b border-primary/20 pb-4 relative">
+             <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary to-transparent opacity-50 shadow-[0_0_10px_gold]" />
+            <div className="flex flex-col relative z-10">
+                <h1 className="font-mythic text-4xl md:text-5xl text-primary tracking-[0.2em] drop-shadow-[0_0_15px_rgba(212,175,55,0.5)] animate-glitch" data-text="PANTHEONEXUS">
                     PANTHEON<span className="text-foreground">EXUS</span>
                 </h1>
-                <div className="flex items-center gap-2">
-                    <span className="font-tech text-xs text-muted-foreground tracking-[0.5em] uppercase">Admin Console v2.0</span>
+                <div className="flex items-center gap-2 mt-1">
+                    <div className="h-px w-8 bg-primary/50" />
+                    <span className="font-tech text-xs text-muted-foreground tracking-[0.5em] uppercase text-shadow-tech">Admin Console v2.0 // Override Access</span>
                 </div>
             </div>
-            <div className="flex gap-4">
+            <div className="flex gap-4 relative z-10">
               <Link href="/character-sheet/victorious-sun">
-                <button className="flex items-center gap-2 text-[10px] font-mythic uppercase tracking-widest text-primary border border-primary/30 px-3 py-1 hover:bg-primary/10 transition-colors rounded-sm">
+                <button className="flex items-center gap-2 text-[10px] font-mythic uppercase tracking-widest text-primary border border-primary/30 px-3 py-1 hover:bg-primary/10 transition-colors rounded-sm hover:shadow-[0_0_10px_rgba(212,175,55,0.2)]">
                   <LayoutGrid className="w-3 h-3" /> Character Sheet
                 </button>
               </Link>
               <Link href="/">
-                <button className="flex items-center gap-2 text-[10px] font-mythic uppercase tracking-widest text-primary border border-primary/30 px-3 py-1 hover:bg-primary/10 transition-colors rounded-sm">
+                <button className="flex items-center gap-2 text-[10px] font-mythic uppercase tracking-widest text-primary border border-primary/30 px-3 py-1 hover:bg-primary/10 transition-colors rounded-sm hover:shadow-[0_0_10px_rgba(212,175,55,0.2)]">
                    Return Home
                 </button>
               </Link>

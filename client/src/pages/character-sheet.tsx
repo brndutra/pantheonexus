@@ -99,25 +99,30 @@ const ABILITIES_LIST = [
 // --- Components ---
 
 const SectionFrame = ({ children, title, className, icon: Icon, action, subHeader }: { children: React.ReactNode, title: string, className?: string, icon?: any, action?: React.ReactNode, subHeader?: string }) => (
-  <div className={cn("p-8 frame-ethereal rounded-sm group", className)}>
-    {/* CSS Corner Accents */}
-    <div className="frame-corner-tl" />
-    <div className="frame-corner-tr" />
-    <div className="frame-corner-bl" />
-    <div className="frame-corner-br" />
+  <div className={cn("frame-ethereal group backdrop-blur-xl bg-black/40", className)}>
+    {/* CSS Corner Accents inside clip-path */}
+    <div className="absolute top-0 left-0 w-8 h-8 border-t border-l border-primary/60 rounded-tl-sm" />
+    <div className="absolute top-0 right-0 w-8 h-8 border-t border-r border-primary/60 rounded-tr-sm" />
+    <div className="absolute bottom-0 left-0 w-8 h-8 border-b border-l border-primary/60 rounded-bl-sm" />
+    <div className="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-primary/60 rounded-br-sm" />
+    
+    {/* Tech scanline inside frame */}
+    <div className="absolute inset-0 bg-grid-gold opacity-10 pointer-events-none" />
 
     {/* Header Line */}
-    <div className="flex justify-between items-start mb-6 border-b border-primary/30 pb-2 relative z-10 px-2">
+    <div className="flex justify-between items-start mb-6 border-b border-primary/30 pb-2 relative z-10 px-6 pt-6 bg-gradient-to-b from-primary/5 to-transparent">
        <div>
-          <h3 className="font-mythic text-primary text-xl tracking-[0.15em] uppercase drop-shadow-md">{title}</h3>
-          {subHeader && <p className="text-[10px] text-muted-foreground uppercase tracking-[0.2em] mt-1 font-tech">{subHeader}</p>}
+          <h3 className="font-mythic text-primary text-xl tracking-[0.15em] uppercase drop-shadow-md flex items-center gap-2">
+            {Icon && <Icon className="w-5 h-5 text-primary/80" />}
+            <span className="text-shadow-glow">{title}</span>
+          </h3>
+          {subHeader && <p className="text-[10px] text-muted-foreground uppercase tracking-[0.2em] mt-1 font-tech pl-7">{subHeader}</p>}
        </div>
        <div className="flex items-center gap-2">
          {action}
-         {Icon && <Icon className="w-5 h-5 text-primary/60" />}
        </div>
     </div>
-    <div className="relative z-10 px-2">
+    <div className="relative z-10 px-6 pb-6">
       {children}
     </div>
   </div>
@@ -408,23 +413,25 @@ export default function CharacterSheet() {
       <div className="relative z-20 container mx-auto p-4 md:p-8 max-w-7xl">
 
         {/* PANTHEONEXUS HEADER */}
-        <div className="flex justify-between items-end mb-8 border-b border-primary/20 pb-4">
-            <div className="flex flex-col">
-                <h1 className="font-mythic text-4xl text-primary tracking-[0.2em] drop-shadow-[0_0_15px_rgba(212,175,55,0.5)]">
+        <div className="flex justify-between items-end mb-8 border-b border-primary/20 pb-4 relative">
+             <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary to-transparent opacity-50 shadow-[0_0_10px_gold]" />
+            <div className="flex flex-col relative z-10">
+                <h1 className="font-mythic text-5xl md:text-7xl text-primary tracking-[0.1em] drop-shadow-[0_0_15px_rgba(212,175,55,0.5)] animate-glitch" data-text="PANTHEONEXUS">
                     PANTHEON<span className="text-foreground">EXUS</span>
                 </h1>
-                <div className="flex items-center gap-2">
-                    <span className="font-tech text-xs text-muted-foreground tracking-[0.5em] uppercase">System v2.4 // Scion Scrolls</span>
+                <div className="flex items-center gap-2 mt-1">
+                    <div className="h-px w-8 bg-primary/50" />
+                    <span className="font-tech text-xs text-muted-foreground tracking-[0.5em] uppercase text-shadow-tech">System v2.5 // Scion Neural Link</span>
                 </div>
             </div>
-            <div className="text-right hidden md:block">
-                <div className="text-[10px] font-code text-primary/50 tracking-widest">SECURE CONNECTION</div>
+            <div className="text-right hidden md:block relative z-10">
+                <div className="text-[10px] font-code text-primary/50 tracking-widest bg-black/40 px-2 py-1 border border-primary/10 mb-1 inline-block">SECURE CONNECTION ESTABLISHED</div>
                 <div className="flex items-center justify-end gap-2 mt-1 mb-2">
-                    <span className="text-[10px] font-tech text-primary">ONLINE</span>
+                    <span className="text-[10px] font-tech text-primary animate-pulse">ONLINE</span>
                     <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse shadow-[0_0_8px_gold]"></div>
                 </div>
                 <Link href="/">
-                  <button className="flex items-center gap-2 text-[10px] font-mythic uppercase tracking-widest text-primary border border-primary/30 px-3 py-1 hover:bg-primary/10 transition-colors rounded-sm ml-auto">
+                  <button className="flex items-center gap-2 text-[10px] font-mythic uppercase tracking-widest text-primary border border-primary/30 px-3 py-1 hover:bg-primary/10 transition-colors rounded-sm ml-auto hover:shadow-[0_0_10px_rgba(212,175,55,0.2)]">
                     <ArrowLeft className="w-3 h-3" /> Return Home
                   </button>
                 </Link>
@@ -632,7 +639,7 @@ export default function CharacterSheet() {
                                 <div className="flex items-center gap-2">
                                     <div className="w-1 h-1 bg-primary/50 rotate-45 group-hover:bg-primary transition-colors" />
                                     <input 
-                                      className="bg-transparent w-full outline-none font-tech text-foreground placeholder:text-muted-foreground/20 text-sm focus:text-primary transition-colors border-b border-transparent focus:border-primary/30"
+                                      className="bg-transparent w-full outline-none font-tech text-foreground placeholder:text-muted-foreground/20 text-sm focus:text-primary transition-colors border-b border-transparent focus:border-primary/30 uppercase tracking-wider"
                                       placeholder={`Calling ${i+1}`}
                                       value={c.name}
                                       onChange={(e) => updateCalling(i, 'name', e.target.value)}
@@ -640,7 +647,7 @@ export default function CharacterSheet() {
                                     />
                                     <button 
                                       onClick={() => setActiveTitleIndex(activeTitleIndex === i ? null : i)}
-                                      className={cn("opacity-30 hover:opacity-100 transition-opacity", c.title && "text-primary opacity-100 drop-shadow-[0_0_5px_gold]")}
+                                      className={cn("opacity-30 hover:opacity-100 transition-opacity p-1 hover:bg-primary/10 rounded-sm", c.title && "text-primary opacity-100 drop-shadow-[0_0_5px_gold]")}
                                     >
                                        <Crown className="w-3 h-3" />
                                     </button>
@@ -655,16 +662,20 @@ export default function CharacterSheet() {
                                   {activeTitleIndex === i && (
                                     <motion.div 
                                       initial={{ opacity: 0, scale: 0.9, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 10 }}
-                                      className="absolute left-0 top-full mt-2 z-50 bg-black/90 border border-primary p-3 w-48 shadow-[0_0_30px_rgba(0,0,0,0.8)] backdrop-blur-xl rounded-sm"
+                                      className="absolute left-0 top-full mt-2 z-50 bg-black/95 border border-primary p-3 w-64 shadow-[0_0_30px_rgba(212,175,55,0.3)] backdrop-blur-xl rounded-sm clip-path-polygon"
+                                      style={{ clipPath: "polygon(0 0, 100% 0, 100% 85%, 90% 100%, 0 100%)" }}
                                     >
-                                       <div className="text-[9px] uppercase tracking-widest text-muted-foreground mb-1">Legendary Title</div>
-                                       <input 
-                                          autoFocus
-                                          className="w-full bg-transparent text-primary font-mythic text-sm outline-none placeholder:text-primary/30 border-b border-primary/30 pb-1"
-                                          placeholder="Title..."
-                                          value={c.title}
-                                          onChange={(e) => updateCalling(i, 'title', e.target.value)}
-                                       />
+                                       <div className="text-[9px] uppercase tracking-widest text-muted-foreground mb-1 font-code">Legendary Title Override</div>
+                                       <div className="relative">
+                                          <input 
+                                              autoFocus
+                                              className="w-full bg-transparent text-primary font-mythic text-sm outline-none placeholder:text-primary/30 border-b border-primary/30 pb-1 focus:border-primary transition-colors uppercase tracking-wider"
+                                              placeholder="Title..."
+                                              value={c.title}
+                                              onChange={(e) => updateCalling(i, 'title', e.target.value)}
+                                          />
+                                          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-primary/50 rotate-45" />
+                                       </div>
                                     </motion.div>
                                   )}
                                 </AnimatePresence>
