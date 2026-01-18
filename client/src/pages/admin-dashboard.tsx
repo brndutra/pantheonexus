@@ -5,20 +5,17 @@ import { Plus, Trash2, Scroll, Shield, User, Star, LayoutGrid, FileText, Send, B
 import { useArticles } from "@/lib/articles-store";
 import { useCharacters } from "@/lib/characters-store";
 import { useCompendium } from "@/lib/compendium-store";
-import textureBg from "@assets/generated_images/minimalist_gold_grid_background.png";
-import cornerOrnament from "@assets/generated_images/tech_mythic_corner_ornament.png";
-import darkGoldTexture from "@assets/generated_images/dark_sci-fi_mythic_gold_background.png";
-import artNouveauFrame from "@assets/generated_images/cyber_mythic_ornate_frame.png";
 
 // Reusing style components for consistency
 const SectionFrame = ({ children, title, className, subHeader }: { children: React.ReactNode, title: string, className?: string, subHeader?: string }) => (
-  <div className={cn("p-8 relative bg-black/40 backdrop-blur-md shadow-2xl overflow-hidden h-full group", className)}>
-    {/* Full Frame Border */}
-    <div className="absolute inset-0 z-0 pointer-events-none opacity-60 group-hover:opacity-100 transition-opacity">
-        <img src={artNouveauFrame} className="w-full h-full object-fill" alt="" />
-    </div>
+  <div className={cn("p-8 relative bg-black/90 border border-primary/20 backdrop-blur-md shadow-2xl overflow-hidden h-full group rounded-lg", className)}>
+    {/* CSS Corner Accents */}
+    <div className="absolute top-0 left-0 w-8 h-8 border-t border-l border-primary/50 rounded-tl-sm" />
+    <div className="absolute top-0 right-0 w-8 h-8 border-t border-r border-primary/50 rounded-tr-sm" />
+    <div className="absolute bottom-0 left-0 w-8 h-8 border-b border-l border-primary/50 rounded-bl-sm" />
+    <div className="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-primary/50 rounded-br-sm" />
 
-    <div className="flex justify-between items-start mb-6 border-b border-primary/30 pb-2 relative z-10 px-2">
+    <div className="flex justify-between items-start mb-6 border-b border-primary/20 pb-2 relative z-10 px-2">
        <div>
           <h3 className="font-mythic text-primary text-xl tracking-[0.15em] uppercase drop-shadow-md">{title}</h3>
           {subHeader && <p className="text-[10px] text-muted-foreground uppercase tracking-[0.2em] mt-1 font-tech">{subHeader}</p>}
@@ -35,7 +32,7 @@ const ScionInput = ({ label, className, as: Component = "input", ...props }: Rea
     {label && <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic">{label}</label>}
     <Component 
       className={cn(
-        "bg-black/20 border border-white/10 rounded-sm px-3 py-2 text-sm font-tech text-foreground outline-none focus:border-primary/50 placeholder:text-muted-foreground/30 transition-colors",
+        "bg-black/50 border border-white/10 rounded-sm px-3 py-2 text-sm font-tech text-foreground outline-none focus:border-primary/50 placeholder:text-muted-foreground/30 transition-colors focus:bg-primary/5",
         className
       )}
       {...props} 
@@ -156,12 +153,7 @@ export default function AdminDashboard() {
 
   return (
     <div 
-      className="min-h-screen bg-black text-foreground overflow-x-hidden font-tech selection:bg-primary/30 relative"
-      style={{
-        backgroundImage: `url(${darkGoldTexture})`,
-        backgroundSize: 'cover',
-        backgroundAttachment: 'fixed',
-      }}
+      className="min-h-screen bg-black text-foreground overflow-x-hidden font-tech selection:bg-primary/30 relative bg-grid-gold"
     >
       <div className="fixed inset-0 pointer-events-none z-10 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.8)_90%)]" />
 
