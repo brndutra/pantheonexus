@@ -1,0 +1,228 @@
+
+export const AUTO_SUCCESS_TABLE = {
+  1: 1,
+  2: 2,
+  3: 4,
+  4: 7,
+  5: 11,
+  6: 15,
+  7: 20,
+  8: 25,
+  9: 30,
+  10: 35
+};
+
+export const EPIC_ATTRIBUTES_DATA = {
+  strength: {
+    id: 'strength',
+    name: 'Força Épica',
+    knacks: [
+      { name: 'Crushing Grip', desc: 'Agarrões causam dano letal.' },
+      { name: 'One Inch Punch', desc: '[Requer: Crushing Grip] Concentra toda a força em uma pequena parte do corpo.' },
+      { name: 'Divine Wrath', desc: '[Requer: Crushing Grip] Ataques desarmados causam dano letal; Agarrões causam agravado.' },
+      { name: 'Disfiguring Attack', desc: '[Requer: Divine Wrath] Pode causar dano agravado e cicatrizes graves.' },
+      { name: 'Holy Bound', desc: 'Distâncias de salto duplicadas.' },
+      { name: 'Divine Bound', desc: '[Requer: Holy Bound] Salto divino no céu, muito mais longe.' },
+      { name: 'Holy Rampage', desc: 'Objetos inanimados têm menos defesa contra o Descendente.' },
+      { name: 'Divine Rampage', desc: '[Requer: Holy Rampage] Pode quebrar facilmente objetos inanimados.' },
+      { name: 'Armor Crusher', desc: '[Requer: Holy Rampage] Ataques perfuram armaduras e escudos com facilidade.' },
+      { name: 'Hurl to the Horizon', desc: 'Dobra o alcance de arremesso.' },
+      { name: 'Mighty Heave', desc: '[Requer: Hurl to the Horizon] Arremessa objetos ainda mais longe.' },
+      { name: 'Hurl to the Moon', desc: '[Requer: Mighty Heave] Arremessa objetos massivos a distâncias miraculosas.' },
+      { name: 'Uplifting Might', desc: 'Dobra a capacidade de levantamento.' },
+      { name: 'Knockback Attack', desc: 'Ataque que não causa dano, mas tem muito recuo.' },
+      { name: 'Knockback Wave', desc: '[Requer: Knockback Attack] Todos dentro do raio são jogados para trás.' },
+      { name: 'Shock Wave', desc: 'Onda de choque derruba todos ou lança alvo único ao ar.' },
+      { name: 'Making It Look Easy', desc: 'Executa façanhas de força sem esforço aparente.' },
+      { name: 'Hang On', desc: 'Estende muito o tempo em que pode realizar uma façanha de força.' },
+      { name: 'Titanium Tools', desc: 'Objetos mundanos usados como armas não se quebram.' }
+    ]
+  },
+  dexterity: {
+    id: 'dexterity',
+    name: 'Destreza Épica',
+    knacks: [
+      { name: "Cat's Grace", desc: 'Não pode ser derrubado e ignora terreno difícil.' },
+      { name: 'Divine Balance', desc: '[Requer: Cat\'s Grace] Pode equilibrar-se em qualquer superfície que suporte seu peso.' },
+      { name: 'Lightning Sprinter', desc: 'Dobra a velocidade de sprint; corre sobre água e lama.' },
+      { name: 'Fast As Thought', desc: '[Requer: Lightning Sprinter] Dobra distância de corrida; ignora obstáculos.' },
+      { name: 'Monkey Climber', desc: 'Velocidade de movimento normal em apoios.' },
+      { name: 'Spider Climber', desc: '[Requer: Monkey Climber] Sobe superfícies verticais sem apoios.' },
+      { name: 'Anti-Gravity Climber', desc: '[Requer: Spider Climber] Anda em qualquer superfície desafiando a gravidade.' },
+      { name: 'Untouchable Opponent', desc: 'Adiciona Destreza Épica ao cálculo de Esquiva (DV).' },
+      { name: 'Whirlwind Shield', desc: '[Requer: Untouchable Opponent] Pode aparar armas lançadas e balas.' },
+      { name: 'Escape Artist', desc: 'Escapa de agarres e restrições físicas automaticamente.' },
+      { name: 'Ricochet Symphony', desc: 'Objetos arremessados ignoram cobertura ricocheteando.' },
+      { name: 'And the Crowd Goes Wild', desc: 'Rolamentos de Atletismo tratam pontos de Destreza Épica como sucessos automáticos.' },
+      { name: 'Perfect Partner', desc: 'Coordenação perfeita; junta-se a ataques sem teste.' },
+      { name: 'Photographic Penmanship', desc: 'Desenha/escreve perfeitamente; falsificador perfeito.' },
+      { name: 'Roll With It', desc: 'Usa Destreza Épica para ajudar na absorção de dano.' },
+      { name: 'Microscopic Precision', desc: 'Controle motor fino extraordinário.' },
+      { name: 'Omnidexterity', desc: 'Usa pés/boca como mãos dominantes.' },
+      { name: 'Dancing on a Needle', desc: 'Equilíbrio perfeito em qualquer situação adversa.' },
+      { name: 'Born Behind the Wheel', desc: 'Bônus em testes de direção; usa truques de velocidade em veículos.' }
+    ]
+  },
+  stamina: {
+    id: 'stamina',
+    name: 'Stamina Épica',
+    knacks: [
+      { name: 'Damage Conversion', desc: 'Converte dano letal recebido em contusão.' },
+      { name: 'Divine Damage Conversion', desc: '[Requer: Damage Conversion] Converte dano agravado em letal.' },
+      { name: 'Holy Fortitude', desc: 'Dobra tempo de trabalho e período entre comer/beber/dormir.' },
+      { name: 'Divine Fortitude', desc: '[Requer: Holy Fortitude] Elimina necessidade de comer/beber/dormir.' },
+      { name: 'Tireless Worker', desc: '[Requer: Divine Fortitude] Trabalha sem parar.' },
+      { name: 'Inner Furnace', desc: 'Consome qualquer matéria orgânica como alimento.' },
+      { name: 'Devourer', desc: '[Requer: Inner Furnace] Consome líquidos/sólidos perigosos sem dano.' },
+      { name: 'Internal Refinery', desc: '[Requer: Devourer] Imune a veneno/doença; cria antídotos.' },
+      { name: 'Self-Healing', desc: 'Cura dano letal ou contusão rapidamente.' },
+      { name: 'Regeneration', desc: '[Requer: Self-Healing] Regenera dano agravado e membros.' },
+      { name: 'Solipsistic Well-Being', desc: 'Um único ataque surpresa não causa dano.' },
+      { name: 'Body Armor', desc: 'Pode aparar desarmado; armadura natural.' },
+      { name: 'Impenetrable', desc: '[Requer: Body Armor] Absorve dano agravado; ignora propriedade Perfuração.' },
+      { name: 'Invulnerable Nail', desc: '[Requer: Body Armor] Ponto do corpo invulnerável momentaneamente.' },
+      { name: 'Skin-Shedding', desc: 'Anula dano ao ser jogado para trás deixando pele para trás.' },
+      { name: 'Extended Youth', desc: 'Não envelhece mais.' },
+      { name: 'Raise Your Glass', desc: 'Recupera Lenda bebendo; resiste à intoxicação.' },
+      { name: 'Whale\'s Breath', desc: 'Prende respiração por tempo triplicado; imune a pressão.' },
+      { name: 'Raging Bull', desc: 'Penalidades de ferimento tornam-se bônus.' },
+      { name: 'Under Pressure', desc: 'Imune a pressão atmosférica extrema.' }
+    ]
+  },
+  charisma: {
+    id: 'charisma',
+    name: 'Carisma Épico',
+    knacks: [
+      { name: 'Benefit', desc: 'Ganha seguidores e recursos temporários.' },
+      { name: 'Blessing of Importance', desc: 'O Scion é tratado como VIP em qualquer lugar.' },
+      { name: 'Bonhomie', desc: 'Aura de boa vontade; reduz hostilidade.' },
+      { name: 'Boys Will Be Boys', desc: 'Desculpas são aceitas mais facilmente.' },
+      { name: 'Captivating Presence', desc: 'Atrai atenção total de quem ouve.' },
+      { name: 'Charmer', desc: 'Aumenta atitude positiva de NPCs.' },
+      { name: 'Inspirational Figure', desc: 'Aliados ganham bônus de vontade.' },
+      { name: 'Never Say Die', desc: 'Inspira aliados a ignorar penalidades.' },
+      { name: 'Paragon', desc: 'Inspira competência em subordinados.' },
+      { name: 'Pied Piper', desc: 'Atrai seguidores ou animais.' },
+      { name: 'Unbound', desc: 'Imune a controle mental baseado em Carisma.' },
+      { name: 'Engender Love', desc: 'Cria sentimentos de amor verdadeiro ou lealdade.' },
+      { name: 'Holy Stroke', desc: 'Cura mental ou emocional através da presença.' },
+      { name: 'Mood Music', desc: 'Altera o humor de uma multidão com performance.' },
+      { name: 'Renown', desc: 'Reconhecimento instantâneo de feitos lendários.' },
+      { name: 'Crowd Control', desc: 'Comanda multidões com facilidade.' },
+      { name: 'Instant Seminar', desc: 'Ensina habilidades complexas rapidamente.' }
+    ]
+  },
+  manipulation: {
+    id: 'manipulation',
+    name: 'Manipulação Épica',
+    knacks: [
+      { name: 'Blurt It Out', desc: 'Força alvo a revelar segredo inadvertidamente.' },
+      { name: 'Command', desc: 'Ordens simples devem ser obedecidas.' },
+      { name: 'Decoy', desc: 'Redireciona atenção ou ataque para outro alvo.' },
+      { name: 'God\'s Honest Truth', desc: 'Mentiras soam como verdades absolutas.' },
+      { name: 'Inflict Love', desc: 'Cria obsessão ou paixão artificial.' },
+      { name: 'Overt Order', desc: 'Comando psíquico direto e irresistível.' },
+      { name: 'Takes One to Know One', desc: 'Identifica mentiras e motivações ocultas.' },
+      { name: 'The Rumor Mill', desc: 'Espalha boatos que se tornam "fatos" locais.' },
+      { name: 'Trickster', desc: 'Mestre do engano e da confusão.' },
+      { name: 'Instant Hypnosis', desc: 'Coloca alvo em transe rapidamente.' },
+      { name: 'Mass Hypnosis', desc: '[Requer: Instant Hypnosis] Hipnotiza grupos inteiros.' },
+      { name: 'Advocate', desc: 'Convence qualquer um de sua inocência ou razão.' },
+      { name: 'Telepathy', desc: 'Lê pensamentos superficiais.' },
+      { name: 'Memory Theft', desc: 'Rouba ou altera memórias recentes.' },
+      { name: 'Reshape Object', desc: 'Vende um objeto como se fosse outro.' },
+      { name: 'Puppeteer', desc: 'Controla ações físicas de outra pessoa.' }
+    ]
+  },
+  appearance: {
+    id: 'appearance',
+    name: 'Aparência Épica',
+    knacks: [
+      { name: 'Center of Attention', desc: 'Impossível de ser ignorado em uma sala.' },
+      { name: 'Come Hither', desc: 'Sedução sobrenatural quase irresistível.' },
+      { name: 'Compelling Presence', desc: 'Aparência impõe respeito ou medo.' },
+      { name: 'Divinity', desc: 'Revela natureza divina, causando adoração ou terror.' },
+      { name: 'Dreadful Mien', desc: 'Aparência aterrorizante que paralisa inimigos.' },
+      { name: 'Lasting Impression', desc: 'Lembrança do Scion persiste sobrenaturalmente.' },
+      { name: 'Serpent\'s Gaze', desc: 'Paralisa vítima com o olhar.' },
+      { name: 'Visage Great and Terrible', desc: 'Alterna entre beleza e terror.' },
+      { name: 'Blinding Visage', desc: 'Beleza ou brilho que cega fisicamente.' },
+      { name: 'Game Face', desc: 'Esconde emoções perfeitamente.' },
+      { name: 'Mirror Mirror', desc: 'Muda aparência para o que o alvo mais deseja.' },
+      { name: 'My Eyes Are Up Here', desc: 'Distrai oponentes em combate.' },
+      { name: 'Star Is Born', desc: 'Sempre fotogênico e perfeito em mídia.' },
+      { name: 'Subliminal Warning', desc: 'Aparência avisa perigo instintivamente.' },
+      { name: 'Look Snatcher', desc: 'Rouba a aparência de outra pessoa.' },
+      { name: 'Doppelganger', desc: 'Cópia perfeita de voz e maneirismos.' }
+    ]
+  },
+  perception: {
+    id: 'perception',
+    name: 'Percepção Épica',
+    knacks: [
+      { name: 'Broad-Spectrum Reception', desc: 'Vê em espectros não visíveis (infravermelho, etc).' },
+      { name: 'Environmental Awareness', desc: 'Sente alterações no ambiente (clima, pressão).' },
+      { name: 'Hear Prayers', desc: 'Ouve quando seu nome é dito a distância.' },
+      { name: 'Parallel Attention', desc: 'Foca em múltiplas coisas ao mesmo tempo.' },
+      { name: 'Perfect Pitch', desc: 'Identifica sons e tons com precisão absoluta.' },
+      { name: 'Predatory Focus', desc: 'Foca em um alvo ignorando distrações.' },
+      { name: 'Refined Palate', desc: 'Analisa substâncias pelo gosto/cheiro.' },
+      { name: 'Subliminal Perception', desc: 'Nota detalhes que passam despercebidos.' },
+      { name: 'Supernal Hunter', desc: 'Rastreia alvos através de meios sobrenaturais.' },
+      { name: 'Telescopic Senses', desc: 'Visão e audição de longo alcance.' },
+      { name: 'Unfailing Recognition', desc: 'Nunca esquece um rosto ou voz.' },
+      { name: 'Clairvoyance', desc: 'Vê locais distantes remotamente.' },
+      { name: 'Fool Me Once', desc: 'Imune a ilusões já vistas.' },
+      { name: 'Sense Fate', desc: 'Sente a trama do destino ou profecias.' },
+      { name: 'Sense Unnatural', desc: 'Detecta magia, monstros ou seres sobrenaturais.' },
+      { name: 'Spatial Geometry', desc: 'Calcula distâncias e trajetórias instantaneamente.' },
+      { name: 'Psychometry', desc: 'Lê a história de um objeto ao tocá-lo.' }
+    ]
+  },
+  intelligence: {
+    id: 'intelligence',
+    name: 'Inteligência Épica',
+    knacks: [
+      { name: 'Fast Learner', desc: 'Reduz tempo de aprendizado drasticamente.' },
+      { name: 'Know-It-All', desc: 'Acesso a conhecimento geral enciclopédico.' },
+      { name: 'Language Mastery', desc: 'Aprende línguas instantaneamente.' },
+      { name: 'Math Genius', desc: 'Cálculos complexos de cabeça instantâneos.' },
+      { name: 'Perfect Memory', desc: 'Memória eidética perfeita.' },
+      { name: 'Speed Reading', desc: 'Lê livros inteiros em segundos.' },
+      { name: 'Star Pupil', desc: 'Aprende observando uma única vez.' },
+      { name: 'Teaching Prodigy', desc: 'Transmite conhecimento complexo facilmente.' },
+      { name: 'Wireless Interface', desc: 'Interage mentalmente com computadores/dados.' },
+      { name: 'Blockade of Reason', desc: 'Torna a mente impenetrável a leitura.' },
+      { name: 'Concept to Execution', desc: 'Planejamento perfeito de projetos.' },
+      { name: 'Instant Investigator', desc: 'Reconstrói cenas de crime mentalmente.' },
+      { name: 'Tactical Genius', desc: 'Bônus em estratégia e táticas de grupo.' },
+      { name: 'Well-Read', desc: 'Sabe se algo é verdade ou mito por leitura.' },
+      { name: 'Fight Math', desc: 'Prevê movimentos de combate por lógica.' },
+      { name: 'Multitasking', desc: 'Realiza múltiplas tarefas mentais simultâneas.' },
+      { name: 'Cipher', desc: 'Decodifica qualquer código ou cifra.' }
+    ]
+  },
+  wits: {
+    id: 'wits',
+    name: 'Raciocínio Épico',
+    knacks: [
+      { name: 'Cunning Logic', desc: 'Encontra falhas em argumentos rapidamente.' },
+      { name: 'Instant Assessment', desc: 'Analisa situação tática num piscar de olhos.' },
+      { name: 'Meditative Focus', desc: 'Entra em estado de foco ignorando caos.' },
+      { name: 'Opening Gambit', desc: 'Sempre age primeiro (bônus de iniciativa).' },
+      { name: 'Perfect Imposter', desc: 'Mistura-se em qualquer grupo social.' },
+      { name: 'Psychic Profiler', desc: 'Lê personalidade e motivações rapidamente.' },
+      { name: 'Quick Study', desc: 'Improvisa habilidades que não possui.' },
+      { name: 'Rabbit Reflexes', desc: 'Reage a perigos inesperados instantaneamente.' },
+      { name: 'Social Chameleon', desc: 'Adapta-se a qualquer etiqueta ou cultura.' },
+      { name: 'Spark of Genius', desc: 'Ideias brilhantes sob pressão.' },
+      { name: 'Unspoken Communication', desc: 'Comunica-se com aliados sem palavras.' },
+      { name: 'Instant Analysis', desc: 'Identifica fraquezas de oponentes.' },
+      { name: 'Jack of All Trades', desc: 'Reduz penalidades por falta de perícia.' },
+      { name: 'Monkey in the Middle', desc: 'Redireciona ataques entre inimigos.' },
+      { name: 'Ricochet Symphony', desc: 'Calcula ricochetes perfeitos em tempo real.' },
+      { name: 'Get a Clue', desc: 'O mestre fornece uma dica direta.' },
+      { name: 'Instant Reflexes', desc: 'Ações reflexas não consomem sua vez.' }
+    ]
+  }
+};
