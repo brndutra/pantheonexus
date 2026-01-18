@@ -92,7 +92,8 @@ const DEFAULT_ATTRIBUTES: Record<AttributeCategory, Attribute[]> = {
   ],
 };
 
-const ABILITIES_LIST = [
+// Default abilities list - will be replaced by API data if available
+const DEFAULT_ABILITIES_LIST = [
   "Academics", "Animal Ken", "Art", "Athletics", "Awareness", "Brawl", 
   "Command", "Control", "Craft", "Empathy", "Fortitude", "Integrity", 
   "Investigation", "Larceny", "Marksmanship", "Medicine", "Melee", 
@@ -382,8 +383,23 @@ export default function CharacterSheet() {
     }
   }, [loadedCharacter]);
 
+  // Abilities list from API or default
+  const [abilitiesList, setAbilitiesList] = useState<string[]>(DEFAULT_ABILITIES_LIST);
+  
+  // Fetch abilities schema from API
+  useEffect(() => {
+    fetch('/api/abilities-schema')
+      .then(res => res.json())
+      .then(data => {
+        if (data.abilities && data.abilities.length > 0) {
+          setAbilitiesList(data.abilities);
+        }
+      })
+      .catch(err => console.error('Failed to fetch abilities schema:', err));
+  }, []);
+
   const [abilities, setAbilities] = useState<Record<string, Ability>>(
-    ABILITIES_LIST.reduce((acc, curr) => ({ 
+    DEFAULT_ABILITIES_LIST.reduce((acc, curr) => ({ 
       ...acc, 
       [curr]: { name: curr, value: 0, specialties: [] } 
     }), {} as Record<string, Ability>)
@@ -1593,7 +1609,7 @@ export default function CharacterSheet() {
                 <MythicHUDFrame title="Abilities Database" icon={Brain} subHeader="SKILL SET MATRIX" className="flex-1 min-h-[500px] flex flex-col" isEditing={editingAbilities} {...createEditHandlers(editingAbilities, setEditingAbilities)}>
                     <div className="flex-1 overflow-y-auto pr-2 scion-scrollbar custom-scroll-area">
                         <div className="grid grid-cols-1 gap-1 h-full content-start">
-                            {ABILITIES_LIST.map((abilityName) => {
+                            {abilitiesList.map((abilityName) => {
                                 const ability = abilities[abilityName] || { value: 0, specialties: [] };
                                 const isFavored = false; // Todo: Add favored logic
                                 return (

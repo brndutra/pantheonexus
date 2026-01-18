@@ -2,11 +2,13 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 
-interface DotRatingProps {
+export interface DotRatingProps {
   value: number;
   max?: number;
   onChange?: (value: number) => void;
   className?: string;
+  iconClassName?: string;
+  activeClassName?: string;
   variant?: "mythic" | "tech";
   readOnly?: boolean;
 }
@@ -16,6 +18,8 @@ export function DotRating({
   max = 5,
   onChange,
   className,
+  iconClassName,
+  activeClassName,
   variant = "mythic",
   readOnly = false,
 }: DotRatingProps) {
@@ -29,7 +33,7 @@ export function DotRating({
           onClick={() => !readOnly && onChange?.(dot === value ? 0 : dot)}
           className={cn(
             "rounded-[1px] transition-all duration-300 relative focus:outline-none",
-            "w-3 h-3 md:w-4 md:h-4" // Square shape from reference
+            iconClassName || "w-3 h-3 md:w-4 md:h-4"
           )}
           type="button"
           tabIndex={readOnly ? -1 : 0}
@@ -39,7 +43,7 @@ export function DotRating({
             className={cn(
               "absolute inset-0 border transition-all duration-200",
               dot <= value
-                ? "bg-primary border-primary shadow-[0_0_8px_rgba(212,175,55,0.4)]"
+                ? activeClassName || "bg-primary border-primary shadow-[0_0_8px_rgba(212,175,55,0.4)]"
                 : "bg-transparent border-muted-foreground/30 hover:border-primary/50"
             )}
           />
