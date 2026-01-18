@@ -5,8 +5,8 @@ import { Shield, Scroll, LayoutGrid, BookOpen, Crown, ChevronRight, User, Star, 
 import { useCharacters, slugify } from "@/lib/characters-store";
 import textureBg from "@assets/generated_images/minimalist_gold_grid_background.png";
 import cornerOrnament from "@assets/generated_images/tech_mythic_corner_ornament.png";
-import darkGoldTexture from "@assets/generated_images/digital_hieroglyph_dark_background.png";
-import artNouveauFrame from "@assets/generated_images/cyber_greek_ornate_frame.png";
+import darkGoldTexture from "@assets/generated_images/dark_sci-fi_mythic_gold_background.png";
+import artNouveauFrame from "@assets/generated_images/cyber_mythic_ornate_frame.png";
 import {
   Carousel,
   CarouselContent,
