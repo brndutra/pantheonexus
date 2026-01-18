@@ -2605,9 +2605,19 @@ export default function CharacterSheet() {
                                  </div>
                              )}
                              
-                             {/* Knack Search */}
+                             {/* Knack Search with Attribute Filter */}
                              <div className="pt-3 border-t border-primary/10 relative">
-                                 <div className="relative">
+                                 <div className="flex gap-2 mb-2">
+                                     <select
+                                         value={knackAttributeFilter}
+                                         onChange={e => setKnackAttributeFilter(e.target.value)}
+                                         className="bg-black/30 border border-primary/20 text-[9px] px-2 py-1.5 rounded-sm focus:border-primary text-primary outline-none"
+                                     >
+                                         <option value="all">Todos Atributos</option>
+                                         {knackAttributes.map(attr => (
+                                             <option key={attr} value={attr}>{attr}</option>
+                                         ))}
+                                     </select>
                                      <input 
                                          value={knackSearch}
                                          onChange={e => {
@@ -2615,9 +2625,11 @@ export default function CharacterSheet() {
                                              setShowKnackDropdown(true);
                                          }}
                                          onFocus={() => setShowKnackDropdown(true)}
-                                         placeholder="Buscar knacks..."
-                                         className="w-full bg-black/30 border border-primary/20 text-[10px] px-3 py-2 rounded-sm focus:border-primary text-primary placeholder:text-primary/30 outline-none"
+                                         placeholder="Buscar por nome..."
+                                         className="flex-1 bg-black/30 border border-primary/20 text-[10px] px-3 py-2 rounded-sm focus:border-primary text-primary placeholder:text-primary/30 outline-none"
                                      />
+                                 </div>
+                                 <div className="relative">
                                      {showKnackDropdown && filteredKnacks.length > 0 && (
                                          <div className="absolute top-full left-0 right-0 mt-1 bg-black/95 border border-primary/30 rounded-sm max-h-[200px] overflow-y-auto z-50 shadow-xl">
                                              {filteredKnacks.slice(0, 10).map((k) => (
@@ -2685,21 +2697,112 @@ export default function CharacterSheet() {
                      <div>
                          <h5 className="text-xs font-mythic text-accent-foreground/60 border-b border-accent-foreground/20 pb-1 mb-3 uppercase">Boons Registry</h5>
                          <div className="space-y-2">
-                             {boons.map((b, i) => (
-                                 <div key={i} className="flex items-center gap-2 p-2 bg-accent/10 border-l-2 border-accent text-sm font-tech text-accent-foreground/90">
-                                      <div className="w-1 h-1 bg-accent-foreground rounded-full shadow-[0_0_5px_red]" />
-                                     {b}
+                             {selectedBoons.length === 0 ? (
+                                 <div className="text-[10px] text-muted-foreground/50 italic text-center py-4">
+                                     Nenhum boon adicionado. Use a busca abaixo.
                                  </div>
-                             ))}
-                             <div className="flex items-center gap-2 mt-2 opacity-50 focus-within:opacity-100 transition-opacity">
-                                 <Plus className="w-4 h-4 text-accent-foreground" />
-                                 <input 
-                                     value={newBoon}
-                                     onChange={(e) => setNewBoon(e.target.value)}
-                                     onKeyDown={(e) => e.key === 'Enter' && addBoon()}
-                                     placeholder="Add New Boon Invocation..."
-                                     className="bg-transparent border-none focus:ring-0 text-sm w-full placeholder:text-muted-foreground/50"
-                                 />
+                             ) : (
+                                 <div className="grid grid-cols-1 gap-2">
+                                     {selectedBoons.map((b) => (
+                                         <div key={b.id} className="flex items-start gap-3 p-2 bg-accent/10 border border-accent/20 rounded-sm group hover:bg-accent/20 transition-colors">
+                                             <div className="w-6 h-6 rounded-full bg-accent/30 flex items-center justify-center shrink-0">
+                                                 <Flame className="w-3 h-3 text-accent-foreground" />
+                                             </div>
+                                             <div className="flex-1 min-w-0">
+                                                 <div className="flex items-center justify-between gap-2">
+                                                     <span className="text-sm font-bold text-accent-foreground truncate">{b.name}</span>
+                                                     <button 
+                                                         onClick={() => removeBoon(b.id)}
+                                                         className="text-red-400/50 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+                                                     >
+                                                         <X className="w-3 h-3" />
+                                                     </button>
+                                                 </div>
+                                                 <div className="flex items-center gap-2 text-[9px] text-muted-foreground mt-0.5">
+                                                     <span className="px-1 py-0.5 bg-accent/20 rounded">{b.purview}</span>
+                                                     <span className="px-1 py-0.5 bg-accent/20 rounded">Nível {b.level}</span>
+                                                 </div>
+                                                 <p className="text-[9px] text-muted-foreground/70 mt-1 line-clamp-2">{b.description}</p>
+                                             </div>
+                                         </div>
+                                     ))}
+                                 </div>
+                             )}
+                             
+                             {/* Boon Search with Purview Filter */}
+                             <div className="pt-3 border-t border-accent/10 relative">
+                                 <div className="flex gap-2 mb-2">
+                                     <select
+                                         value={boonPurviewFilter}
+                                         onChange={e => setBoonPurviewFilter(e.target.value)}
+                                         className="bg-black/30 border border-accent/20 text-[9px] px-2 py-1.5 rounded-sm focus:border-accent text-accent-foreground outline-none"
+                                     >
+                                         <option value="all">Todos Purviews</option>
+                                         {boonPurviews.map(purview => (
+                                             <option key={purview} value={purview}>{purview}</option>
+                                         ))}
+                                     </select>
+                                     <input 
+                                         value={boonSearch}
+                                         onChange={e => {
+                                             setBoonSearch(e.target.value);
+                                             setShowBoonDropdown(true);
+                                         }}
+                                         onFocus={() => setShowBoonDropdown(true)}
+                                         placeholder="Buscar por nome..."
+                                         className="flex-1 bg-black/30 border border-accent/20 text-[10px] px-3 py-2 rounded-sm focus:border-accent text-accent-foreground placeholder:text-accent-foreground/30 outline-none"
+                                     />
+                                 </div>
+                                 <div className="relative">
+                                     {showBoonDropdown && filteredBoons.length > 0 && (
+                                         <div className="absolute top-0 left-0 right-0 bg-black/95 border border-accent/30 rounded-sm max-h-[200px] overflow-y-auto z-50 shadow-xl">
+                                             {filteredBoons.slice(0, 15).map((b) => (
+                                                 <button
+                                                     key={b.id}
+                                                     onClick={() => addBoonFromDatabase(b)}
+                                                     disabled={selectedBoons.some(sb => sb.id === b.id)}
+                                                     className={cn(
+                                                         "w-full text-left px-3 py-2 text-[10px] font-tech transition-colors flex items-center gap-3 border-b border-accent/10 last:border-0",
+                                                         selectedBoons.some(sb => sb.id === b.id) 
+                                                             ? "opacity-40 cursor-not-allowed" 
+                                                             : "hover:bg-accent/20"
+                                                     )}
+                                                 >
+                                                     <div className="w-4 h-4 rounded-full bg-accent/30 flex items-center justify-center shrink-0">
+                                                         <Flame className="w-2 h-2 text-accent-foreground/60" />
+                                                     </div>
+                                                     <div className="flex-1 min-w-0">
+                                                         <span className="text-accent-foreground font-bold">{b.name}</span>
+                                                         <div className="flex items-center gap-2 text-[8px] text-muted-foreground mt-0.5">
+                                                             <span>{b.purview}</span>
+                                                             <span>•</span>
+                                                             <span>Lvl {b.level}</span>
+                                                         </div>
+                                                     </div>
+                                                 </button>
+                                             ))}
+                                             {filteredBoons.length > 15 && (
+                                                 <div className="px-3 py-1 text-[8px] text-muted-foreground text-center">
+                                                     +{filteredBoons.length - 15} mais...
+                                                 </div>
+                                             )}
+                                         </div>
+                                     )}
+                                 </div>
+                                 {showBoonDropdown && (
+                                     <button 
+                                         onClick={() => {
+                                             setShowBoonDropdown(false);
+                                             setBoonSearch("");
+                                         }}
+                                         className="absolute right-2 top-3 p-1 text-muted-foreground hover:text-accent-foreground transition-colors"
+                                     >
+                                         <X className="w-3 h-3" />
+                                     </button>
+                                 )}
+                                 <div className="text-[8px] text-muted-foreground mt-2">
+                                     {availableBoons.length} boons disponíveis
+                                 </div>
                              </div>
                          </div>
                      </div>
