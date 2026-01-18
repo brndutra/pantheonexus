@@ -5,7 +5,7 @@ import { Plus, Trash2, Scroll, Shield, User, Star, LayoutGrid, FileText, Send } 
 import { useArticles } from "@/lib/articles-store";
 import { useCharacters } from "@/lib/characters-store";
 import textureBg from "@assets/generated_images/minimalist_gold_grid_background.png";
-import cornerOrnament from "@assets/generated_images/mythological_corner_ornament.png";
+import cornerOrnament from "@assets/generated_images/tech_mythic_corner_ornament.png";
 import darkGoldTexture from "@assets/generated_images/dark_gold_texture_background.png";
 
 // Reusing style components for consistency
