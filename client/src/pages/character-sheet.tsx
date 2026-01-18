@@ -2589,8 +2589,8 @@ export default function CharacterSheet() {
                                  </div>
                                  <div className="relative">
                                      {showKnackDropdown && filteredKnacks.length > 0 && (
-                                         <div className="absolute top-full left-0 right-0 mt-1 bg-black/95 border border-primary/30 rounded-sm max-h-[200px] overflow-y-auto z-50 shadow-xl">
-                                             {filteredKnacks.slice(0, 10).map((k) => (
+                                         <div className="absolute top-full left-0 right-0 mt-1 bg-black/95 border border-primary/30 rounded-sm max-h-[400px] overflow-y-auto z-50 shadow-xl">
+                                             {filteredKnacks.map((k) => (
                                                  <button
                                                      key={k.id}
                                                      onClick={() => addKnackFromDatabase(k)}
@@ -2625,11 +2625,6 @@ export default function CharacterSheet() {
                                                      </div>
                                                  </button>
                                              ))}
-                                             {filteredKnacks.length > 10 && (
-                                                 <div className="px-3 py-1 text-[8px] text-muted-foreground text-center">
-                                                     +{filteredKnacks.length - 10} mais...
-                                                 </div>
-                                             )}
                                          </div>
                                      )}
                                  </div>
@@ -2713,8 +2708,8 @@ export default function CharacterSheet() {
                                  </div>
                                  <div className="relative">
                                      {showBoonDropdown && filteredBoons.length > 0 && (
-                                         <div className="absolute top-0 left-0 right-0 bg-black/95 border border-accent/30 rounded-sm max-h-[200px] overflow-y-auto z-50 shadow-xl">
-                                             {filteredBoons.slice(0, 15).map((b) => (
+                                         <div className="absolute top-0 left-0 right-0 bg-black/95 border border-accent/30 rounded-sm max-h-[400px] overflow-y-auto z-50 shadow-xl">
+                                             {filteredBoons.map((b) => (
                                                  <button
                                                      key={b.id}
                                                      onClick={() => addBoonFromDatabase(b)}
@@ -2739,11 +2734,6 @@ export default function CharacterSheet() {
                                                      </div>
                                                  </button>
                                              ))}
-                                             {filteredBoons.length > 15 && (
-                                                 <div className="px-3 py-1 text-[8px] text-muted-foreground text-center">
-                                                     +{filteredBoons.length - 15} mais...
-                                                 </div>
-                                             )}
                                          </div>
                                      )}
                                  </div>
