@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Link } from "wouter";
 import { cn } from "@/lib/utils";
-import { Shield, BookOpen, Crown, ChevronRight, User, Plus, Zap, Sword, MapPin, Archive, Globe, Skull, Users, Flame, Lock, ExternalLink } from "lucide-react";
+import { Shield, BookOpen, Crown, ChevronRight, User, Plus, Zap, Sword, MapPin, Archive, Globe, Skull, Users, Flame, Lock, ExternalLink, Sparkles } from "lucide-react";
 import { useCharacters } from "@/lib/use-characters";
+import { BoonsCatalogModal } from "@/components/boon-catalog";
 import {
   Carousel,
   CarouselContent,
@@ -112,6 +113,7 @@ export default function Home() {
   const [epicTab, setEpicTab] = useState<"Physical" | "Social" | "Mental">("Physical");
   const [selectedPurview, setSelectedPurview] = useState("Animal");
   const [selectedLocation, setSelectedLocation] = useState(LOCATIONS[0]);
+  const [boonModalOpen, setBoonModalOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-mythic-void text-foreground overflow-x-hidden font-tech selection:bg-primary/30 relative">
@@ -315,7 +317,7 @@ export default function Home() {
               </div>
               <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-4">SYS_MODULE_02 // Boons & Powers of the Gods</p>
               
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 mb-4">
                 {PURVIEWS.map((purview) => (
                   <button
                     key={purview}
@@ -331,6 +333,15 @@ export default function Home() {
                   </button>
                 ))}
               </div>
+              
+              <button
+                onClick={() => setBoonModalOpen(true)}
+                className="w-full flex items-center justify-center gap-2 py-3 bg-primary/10 border border-primary/30 text-primary hover:bg-primary/20 hover:border-primary/50 transition-all rounded-sm"
+                data-testid="button-open-boons-catalog"
+              >
+                <Sparkles className="w-4 h-4" />
+                <span className="text-xs uppercase tracking-widest font-tech">Open Boons Catalog</span>
+              </button>
             </div>
           </div>
         </div>
