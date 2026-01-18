@@ -163,6 +163,7 @@ export default function CharacterSheet() {
   // State
   const [attributes, setAttributes] = useState(DEFAULT_ATTRIBUTES);
   const [legend, setLegend] = useState(2);
+  const [aetherPercentage, setAetherPercentage] = useState(0);
   const [scionName, setScionName] = useState("");
   const [scionPlayer, setScionPlayer] = useState("");
   const [scionPantheon, setScionPantheon] = useState("");
@@ -176,6 +177,7 @@ export default function CharacterSheet() {
         setScionPlayer(character.player);
         setScionPantheon(character.pantheon);
         setLegend(character.legend);
+        setAetherPercentage(character.aetherPercentage || character.legend * 10);
       }
     }
   }, [match, params?.slug, getCharacterBySlug]);
@@ -399,8 +401,7 @@ export default function CharacterSheet() {
   const lift = strengthTotal * 50; // Simplified calculation (lbs)
   const throwRange = strengthTotal * 10; // Simplified calculation (yards)
 
-  // Aether Calculation (Example: Legend * 10%)
-  const aetherPercentage = legend * 10;
+  // Aether Calculation (Now controlled via state)
   const legendPoolTotal = legend * legend;
 
   return (
@@ -724,23 +725,33 @@ export default function CharacterSheet() {
             {/* RIGHT COLUMN: LEGEND & VITALITY */}
             <div className="md:col-span-4 flex flex-col gap-4">
                 {/* Legend Rank Block - Condensed */}
-                <div className="border-2 border-primary/30 p-4 bg-black/60 backdrop-blur-md rounded-sm flex items-center justify-between relative overflow-hidden shadow-[0_0_30px_rgba(212,175,55,0.1)] h-[120px]">
-                   <img src={artNouveauFrame} className="absolute inset-0 w-full h-full opacity-30 mix-blend-overlay pointer-events-none" alt="" />
-                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.1)_0%,transparent_70%)]" />
+                <div className="border border-primary/40 p-4 bg-mythic-void rounded-sm flex items-center justify-between relative overflow-hidden shadow-[0_0_40px_rgba(212,175,55,0.15)] h-[120px] group">
+                   {/* Background Effects */}
+                   <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay" />
+                   <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-black/80 to-primary/5" />
+                   <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 blur-[50px] animate-pulse" />
                    
-                   <div className="flex flex-col items-center z-10 w-1/2 border-r border-primary/20">
-                      <h2 className="text-xs font-mythic text-primary/70 tracking-widest mb-1">LEGEND</h2>
-                      <div className="w-16 h-16 border-2 border-primary flex items-center justify-center bg-black/80 text-4xl font-mythic text-primary shadow-[0_0_20px_rgba(212,175,55,0.3)] relative">
-                         <div className="absolute inset-1 border border-primary/30" />
-                         {legend}
+                   {/* Animated Scanline */}
+                   <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent,rgba(212,175,55,0.1),transparent)] h-[200%] w-full animate-scanline pointer-events-none opacity-30" />
+
+                   <div className="flex flex-col items-center z-10 w-1/2 border-r border-primary/20 relative">
+                      <h2 className="text-[10px] font-mythic text-primary/80 tracking-[0.3em] mb-2 text-shadow-glow">LEGEND</h2>
+                      <div className="relative">
+                          <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full" />
+                          <div className="w-16 h-16 border border-primary/50 flex items-center justify-center bg-black/90 text-4xl font-mythic text-primary shadow-[0_0_15px_rgba(212,175,55,0.4)] relative backdrop-blur-sm">
+                             {/* Corners */}
+                             <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-primary" />
+                             <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-primary" />
+                             <span className="drop-shadow-[0_0_5px_gold]">{legend}</span>
+                          </div>
                       </div>
                    </div>
                    
-                   <div className="flex flex-col items-center z-10 w-1/2">
-                      <h2 className="text-xs font-mythic text-primary/70 tracking-widest mb-1">AETHER</h2>
-                      <div className="w-16 h-16 rounded-full flex items-center justify-center bg-black/40 relative">
-                         <svg className="absolute inset-0 w-full h-full -rotate-90 drop-shadow-[0_0_10px_rgba(212,175,55,0.3)]">
-                            <circle cx="32" cy="32" r="28" stroke="#1a1a1a" strokeWidth="3" fill="transparent" />
+                   <div className="flex flex-col items-center z-10 w-1/2 relative">
+                      <h2 className="text-[10px] font-mythic text-primary/80 tracking-[0.3em] mb-2 text-shadow-glow">AETHER</h2>
+                      <div className="w-16 h-16 rounded-full flex items-center justify-center bg-black/40 relative shadow-inner shadow-primary/20">
+                         <svg className="absolute inset-0 w-full h-full -rotate-90 drop-shadow-[0_0_8px_rgba(212,175,55,0.5)]">
+                            <circle cx="32" cy="32" r="28" stroke="#333" strokeWidth="2" fill="transparent" />
                             <circle 
                               cx="32" cy="32" r="28" 
                               stroke="#d4af37" 
@@ -752,7 +763,7 @@ export default function CharacterSheet() {
                               className="transition-all duration-1000 ease-out"
                             />
                          </svg>
-                         <span className="font-code text-lg text-primary font-bold">{aetherPercentage}%</span>
+                         <span className="font-code text-lg text-primary font-bold drop-shadow-[0_0_5px_gold]">{aetherPercentage}%</span>
                       </div>
                    </div>
                 </div>
