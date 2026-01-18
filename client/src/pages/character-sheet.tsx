@@ -2,8 +2,9 @@ import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { DotRating } from "@/components/ui/dot-rating";
 import { ScionInput } from "@/components/ui/scion-input";
+import { Link } from "wouter";
 import { cn } from "@/lib/utils";
-import { Shield, Zap, Skull, Scroll, Activity, Cpu, Hexagon, Plus, Trash2, Crown, Heart, Radar, Minus, Upload, Image as ImageIcon, X, FileText, User } from "lucide-react";
+import { Shield, Zap, Skull, Scroll, Activity, Cpu, Hexagon, Plus, Trash2, Crown, Heart, Radar, Minus, Upload, Image as ImageIcon, X, FileText, User, LayoutGrid, ArrowLeft } from "lucide-react";
 import {
   RadarChart,
   PolarGrid,
@@ -400,10 +401,15 @@ export default function CharacterSheet() {
             </div>
             <div className="text-right hidden md:block">
                 <div className="text-[10px] font-code text-primary/50 tracking-widest">SECURE CONNECTION</div>
-                <div className="flex items-center justify-end gap-2 mt-1">
+                <div className="flex items-center justify-end gap-2 mt-1 mb-2">
                     <span className="text-[10px] font-tech text-primary">ONLINE</span>
                     <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse shadow-[0_0_8px_gold]"></div>
                 </div>
+                <Link href="/">
+                  <button className="flex items-center gap-2 text-[10px] font-mythic uppercase tracking-widest text-primary border border-primary/30 px-3 py-1 hover:bg-primary/10 transition-colors rounded-sm ml-auto">
+                    <ArrowLeft className="w-3 h-3" /> Return Home
+                  </button>
+                </Link>
             </div>
         </div>
         
