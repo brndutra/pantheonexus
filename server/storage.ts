@@ -150,33 +150,133 @@ export class SupabaseStorage implements IStorage {
     return !error;
   }
 
-  private scrollToCharacter(scroll: any, scionsight?: any): Character {
-    const scrollData = scroll.data || {};
-    const ss = scionsight || {};
+  private normalizeAttributes(attrs: any): any {
+    const defaultAttrs = {
+      Physical: [
+        { name: "Strength", value: 1, epic: 0, rune: "ᚠ" },
+        { name: "Dexterity", value: 1, epic: 0, rune: "ᚢ" },
+        { name: "Stamina", value: 1, epic: 0, rune: "ᚦ" }
+      ],
+      Social: [
+        { name: "Charisma", value: 1, epic: 0, rune: "ᚨ" },
+        { name: "Manipulation", value: 1, epic: 0, rune: "ᚱ" },
+        { name: "Appearance", value: 1, epic: 0, rune: "ᚲ" }
+      ],
+      Mental: [
+        { name: "Perception", value: 1, epic: 0, rune: "ᚷ" },
+        { name: "Intelligence", value: 1, epic: 0, rune: "ᚹ" },
+        { name: "Wits", value: 1, epic: 0, rune: "ᚺ" }
+      ]
+    };
+
+    if (!attrs) return defaultAttrs;
     
-    const callings = ss.calling_1 ? [
-      { id: 1, name: ss.calling_1 || "", title: "", value: ss.calling_1_rating || 1 },
-      { id: 2, name: ss.calling_2 || "", title: "", value: ss.calling_2_rating || 1 },
-      { id: 3, name: ss.calling_3 || "", title: "", value: ss.calling_3_rating || 1 }
-    ] : scrollData.callings || [
-      { id: 1, name: "", title: "", value: 1 },
-      { id: 2, name: "", title: "", value: 1 },
-      { id: 3, name: "", title: "", value: 1 }
-    ];
+    if (attrs.Physical && Array.isArray(attrs.Physical)) {
+      return attrs;
+    }
     
-    const virtues = ss.virtue_1 ? [
-      { id: 1, name: ss.virtue_1 || "Valor", value: ss.virtue_1_rating || 1 },
-      { id: 2, name: ss.virtue_2 || "Harmony", value: ss.virtue_2_rating || 1 },
-      { id: 3, name: ss.virtue_3 || "Order", value: ss.virtue_3_rating || 1 },
-      { id: 4, name: ss.virtue_4 || "Piety", value: ss.virtue_4_rating || 1 },
-      { id: 5, name: "", value: 1 }
-    ] : scrollData.virtues || [
+    if (attrs.physical && typeof attrs.physical === 'object' && !Array.isArray(attrs.physical)) {
+      return {
+        Physical: [
+          { name: "Strength", value: attrs.physical?.strength || 1, epic: 0, rune: "ᚠ" },
+          { name: "Dexterity", value: attrs.physical?.dexterity || 1, epic: 0, rune: "ᚢ" },
+          { name: "Stamina", value: attrs.physical?.stamina || 1, epic: 0, rune: "ᚦ" }
+        ],
+        Social: [
+          { name: "Charisma", value: attrs.social?.charisma || 1, epic: 0, rune: "ᚨ" },
+          { name: "Manipulation", value: attrs.social?.manipulation || 1, epic: 0, rune: "ᚱ" },
+          { name: "Appearance", value: attrs.social?.appearance || 1, epic: 0, rune: "ᚲ" }
+        ],
+        Mental: [
+          { name: "Perception", value: attrs.mental?.perception || 1, epic: 0, rune: "ᚷ" },
+          { name: "Intelligence", value: attrs.mental?.intelligence || 1, epic: 0, rune: "ᚹ" },
+          { name: "Wits", value: attrs.mental?.wits || 1, epic: 0, rune: "ᚺ" }
+        ]
+      };
+    }
+    
+    return defaultAttrs;
+  }
+
+  private normalizeCallings(callings: any, ss: any): any[] {
+    if (ss.calling_1) {
+      return [
+        { id: 1, name: ss.calling_1 || "", title: "", value: ss.calling_1_rating || 1 },
+        { id: 2, name: ss.calling_2 || "", title: "", value: ss.calling_2_rating || 1 },
+        { id: 3, name: ss.calling_3 || "", title: "", value: ss.calling_3_rating || 1 }
+      ];
+    }
+    
+    if (!callings || !Array.isArray(callings)) {
+      return [
+        { id: 1, name: "", title: "", value: 1 },
+        { id: 2, name: "", title: "", value: 1 },
+        { id: 3, name: "", title: "", value: 1 }
+      ];
+    }
+    
+    return callings.map((c: any, idx: number) => ({
+      id: c.id || idx + 1,
+      name: c.name || "",
+      title: c.title || "",
+      value: c.value || c.dots || c.rating || 1
+    }));
+  }
+
+  private normalizeVirtues(virtues: any, ss: any): any[] {
+    if (ss.virtue_1) {
+      return [
+        { id: 1, name: ss.virtue_1 || "Valor", value: ss.virtue_1_rating || 1 },
+        { id: 2, name: ss.virtue_2 || "Harmony", value: ss.virtue_2_rating || 1 },
+        { id: 3, name: ss.virtue_3 || "Order", value: ss.virtue_3_rating || 1 },
+        { id: 4, name: ss.virtue_4 || "Piety", value: ss.virtue_4_rating || 1 },
+        { id: 5, name: "", value: 1 }
+      ];
+    }
+    
+    if (!virtues) {
+      return [
+        { id: 1, name: "Valor", value: 1 },
+        { id: 2, name: "Harmony", value: 1 },
+        { id: 3, name: "Order", value: 1 },
+        { id: 4, name: "Piety", value: 1 },
+        { id: 5, name: "", value: 1 }
+      ];
+    }
+    
+    if (Array.isArray(virtues)) {
+      return virtues.map((v: any, idx: number) => ({
+        id: v.id || idx + 1,
+        name: v.name || "",
+        value: v.value || 1
+      }));
+    }
+    
+    if (typeof virtues === 'object') {
+      const entries = Object.entries(virtues);
+      return entries.map(([name, value], idx) => ({
+        id: idx + 1,
+        name: name,
+        value: typeof value === 'number' ? value : 1
+      }));
+    }
+    
+    return [
       { id: 1, name: "Valor", value: 1 },
       { id: 2, name: "Harmony", value: 1 },
       { id: 3, name: "Order", value: 1 },
       { id: 4, name: "Piety", value: 1 },
       { id: 5, name: "", value: 1 }
     ];
+  }
+
+  private scrollToCharacter(scroll: any, scionsight?: any): Character {
+    const scrollData = scroll.data || {};
+    const ss = scionsight || {};
+    
+    const callings = this.normalizeCallings(scrollData.callings, ss);
+    const virtues = this.normalizeVirtues(scrollData.virtues, ss);
+    const attributes = this.normalizeAttributes(scrollData.attributes);
     
     return {
       id: scroll.id,
@@ -190,23 +290,7 @@ export class SupabaseStorage implements IStorage {
       stateRegion: scroll.origin_state || "",
       legend: ss.legend_level || scrollData.legend || 1,
       legendPointsCurrent: ss.legend_pool_total || scrollData.legend_points_current || 1,
-      attributes: scrollData.attributes || {
-        Physical: [
-          { name: "Strength", value: 1, epic: 0, rune: "ᚠ" },
-          { name: "Dexterity", value: 1, epic: 0, rune: "ᚢ" },
-          { name: "Stamina", value: 1, epic: 0, rune: "ᚦ" }
-        ],
-        Social: [
-          { name: "Charisma", value: 1, epic: 0, rune: "ᚨ" },
-          { name: "Manipulation", value: 1, epic: 0, rune: "ᚱ" },
-          { name: "Appearance", value: 1, epic: 0, rune: "ᚲ" }
-        ],
-        Mental: [
-          { name: "Perception", value: 1, epic: 0, rune: "ᚷ" },
-          { name: "Intelligence", value: 1, epic: 0, rune: "ᚹ" },
-          { name: "Wits", value: 1, epic: 0, rune: "ᚺ" }
-        ]
-      },
+      attributes: attributes,
       abilities: scrollData.abilities || {},
       callings: callings,
       virtues: virtues,
@@ -250,15 +334,15 @@ export class SupabaseStorage implements IStorage {
         cognitiveType: scroll.psy_intp || "",
         majorArcana: scroll.psy_archetypal_arcana || ""
       },
-      presenceProfile: scroll.pr_eye_color ? {
-        eyeColor: scroll.pr_eye_color || "",
-        hairColor: scroll.pr_hair_color || "",
-        height: scroll.pr_height || "",
-        auraSignature: scroll.pr_aura_signature || "",
-        scent: scroll.pr_scent || "",
-        fashion: scroll.pr_fashion || "",
-        distinguishingMark: scroll.pr_distinguishing_mark || "",
-        visualNotes: scroll.pr_visual_notes || ""
+      presenceProfile: scroll.pres_eye_color ? {
+        eyeColor: scroll.pres_eye_color || "",
+        hairColor: scroll.pres_hair_color || "",
+        height: scroll.pres_height || "",
+        auraSignature: scroll.pres_aura_signature || "",
+        scent: scroll.pres_scent || "",
+        fashion: scroll.pres_fashion || "",
+        distinguishingMark: scroll.pres_distinguishing_mark || "",
+        visualNotes: scroll.pres_visual_notes || ""
       } : scrollData.presence_profile || {
         eyeColor: "", hairColor: "", height: "", auraSignature: "",
         scent: "", fashion: "", distinguishingMark: "", visualNotes: ""
@@ -315,6 +399,18 @@ export class SupabaseStorage implements IStorage {
       result.prof_interested_attributes = prof.interestedAttributes || "";
       result.prof_interested_abilities = prof.interestedAbilities || "";
       result.prof_professional_notes = prof.professionalNotes || "";
+    }
+    
+    if (char.presenceProfile && typeof char.presenceProfile === 'object') {
+      const pres = char.presenceProfile as any;
+      result.pres_eye_color = pres.eyeColor || "";
+      result.pres_hair_color = pres.hairColor || "";
+      result.pres_height = pres.height || "";
+      result.pres_aura_signature = pres.auraSignature || "";
+      result.pres_scent = pres.scent || "";
+      result.pres_fashion = pres.fashion || "";
+      result.pres_distinguishing_mark = pres.distinguishingMark || "";
+      result.pres_visual_notes = pres.visualNotes || "";
     }
     
     const dataFields: any = {};
