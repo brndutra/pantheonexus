@@ -827,6 +827,7 @@ export default function CharacterSheet() {
                                       onChange={(e) => setScionName(e.target.value)}
                                       placeholder="CODENAME" 
                                       className="text-2xl font-mythic text-primary uppercase border-none bg-transparent p-0 shadow-none focus-visible:ring-0 placeholder:text-primary/20 text-shadow-glow" 
+                                      viewMode={!editingIdentity}
                                      />
                                      <div className="flex gap-2 mt-1">
                                          <ScionInput 
@@ -834,6 +835,7 @@ export default function CharacterSheet() {
                                             onChange={(e) => setScionPantheon(e.target.value)}
                                             placeholder="PANTHEON" 
                                             className="text-xs font-tech tracking-[0.2em] text-primary/70 uppercase border-none bg-transparent p-0 shadow-none h-auto" 
+                                            viewMode={!editingIdentity}
                                          />
                                      </div>
                                 </div>
@@ -1407,6 +1409,7 @@ export default function CharacterSheet() {
                                                 onChange={(e) => updateCalling(idx, 'name', e.target.value)}
                                                 placeholder="SELECT CALLING"
                                                 className="text-base font-mythic uppercase tracking-wider text-primary bg-transparent border-none p-0 h-auto focus:ring-0 drop-shadow-md" 
+                                                viewMode={!editingCombat}
                                             />
                                         </div>
                                         <div className="flex items-center bg-black/40 p-1 rounded-sm border border-primary/20">
@@ -1416,6 +1419,7 @@ export default function CharacterSheet() {
                                                 onChange={(v) => updateCalling(idx, 'value', v)} 
                                                 iconClassName="w-2.5 h-2.5 rounded-sm border-primary/50"
                                                 activeClassName="bg-primary shadow-[0_0_6px_gold]"
+                                                readOnly={!editingCombat}
                                             />
                                         </div>
                                     </div>
@@ -1427,6 +1431,7 @@ export default function CharacterSheet() {
                                             onChange={(e) => updateCalling(idx, 'title', e.target.value)}
                                             placeholder="Enter Epithet / Title..."
                                             className="flex-1 text-[10px] font-code text-primary/70 bg-transparent border-none p-0 h-auto italic" 
+                                            viewMode={!editingCombat}
                                         />
                                     </div>
                                 </div>
@@ -1502,7 +1507,7 @@ export default function CharacterSheet() {
                              </div>
                              <div className="p-2 bg-black/40 border border-primary/20 rounded-sm">
                                  <div className="flex justify-between gap-1 mb-2">
-                                    <DotRating value={willpower} max={10} onChange={setWillpower} iconClassName="w-2 h-2" activeClassName="bg-primary" />
+                                    <DotRating value={willpower} max={10} onChange={setWillpower} iconClassName="w-2 h-2" activeClassName="bg-primary" readOnly={!editingVitality} />
                                  </div>
                                  <div className="flex gap-1 justify-between">
                                      {Array.from({length: 10}).map((_, i) => (
@@ -1604,12 +1609,14 @@ export default function CharacterSheet() {
                                                 {abilityName}
                                             </span>
                                             {/* Add specialty button (hidden by default) */}
-                                            <button 
-                                                onClick={() => addSpecialty(abilityName)}
-                                                className="opacity-0 group-hover:opacity-100 text-primary/40 hover:text-primary transition-opacity"
-                                            >
-                                                <Plus className="w-3 h-3" />
-                                            </button>
+                                            {editingAbilities && (
+                                                <button 
+                                                    onClick={() => addSpecialty(abilityName)}
+                                                    className="opacity-0 group-hover:opacity-100 text-primary/40 hover:text-primary transition-opacity"
+                                                >
+                                                    <Plus className="w-3 h-3" />
+                                                </button>
+                                            )}
                                         </div>
                                         
                                         <div className="flex flex-col items-end gap-1">
@@ -1619,6 +1626,7 @@ export default function CharacterSheet() {
                                                 onChange={(v) => updateAbilityValue(abilityName, v)}
                                                 iconClassName="w-1.5 h-1.5"
                                                 activeClassName="bg-primary"
+                                                readOnly={!editingAbilities}
                                             />
                                             {/* Specialties List */}
                                             {(ability.specialties || []).length > 0 && (
@@ -1630,8 +1638,9 @@ export default function CharacterSheet() {
                                                                 onChange={(e) => updateSpecialty(abilityName, sIdx, 'name', e.target.value)}
                                                                 placeholder="Specialty"
                                                                 className="text-[9px] bg-transparent border-b border-primary/20 w-20 text-right focus:border-primary outline-none text-primary/70"
+                                                                disabled={!editingAbilities}
                                                             />
-                                                            <button onClick={() => removeSpecialty(abilityName, sIdx)} className="text-red-500/50 hover:text-red-500"><X className="w-2 h-2" /></button>
+                                                            {editingAbilities && <button onClick={() => removeSpecialty(abilityName, sIdx)} className="text-red-500/50 hover:text-red-500"><X className="w-2 h-2" /></button>}
                                                         </div>
                                                     ))}
                                                 </div>
