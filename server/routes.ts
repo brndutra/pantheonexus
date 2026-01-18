@@ -687,17 +687,24 @@ export async function registerRoutes(
     }
   });
   
-  // Get boons from Supabase
+  // Get boons from Supabase (combining boons, boons_capitals, and boons_specials)
   app.get("/api/supabase-boons", async (req, res) => {
     try {
-      const { data, error } = await supabase
-        .from('boons')
-        .select('*')
-        .order('purview')
-        .order('level');
+      // Fetch from all three tables in parallel
+      const [boonsResult, capitalsResult, specialsResult] = await Promise.all([
+        supabase.from('boons').select('*').order('purview').order('level'),
+        supabase.from('boons_capitals').select('*').order('purview').order('level'),
+        supabase.from('boons_specials').select('*').order('purview').order('level')
+      ]);
       
-      if (error) throw error;
-      res.json(data || []);
+      const boons = boonsResult.data || [];
+      const capitals = (capitalsResult.data || []).map((b: any) => ({ ...b, type: 'capital' }));
+      const specials = (specialsResult.data || []).map((b: any) => ({ ...b, type: 'special' }));
+      
+      // Combine all boons
+      const allBoons = [...boons, ...capitals, ...specials];
+      
+      res.json(allBoons);
     } catch (error) {
       console.error("Error fetching boons from Supabase:", error);
       res.status(500).json({ error: "Failed to fetch boons" });
