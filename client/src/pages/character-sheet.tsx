@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { DotRating } from "@/components/ui/dot-rating";
 import { ScionInput } from "@/components/ui/scion-input";
 import { cn } from "@/lib/utils";
-import { Shield, Zap, Skull, Scroll, Activity, Cpu, Hexagon, Plus, Trash2, Crown, Heart, Radar } from "lucide-react";
+import { Shield, Zap, Skull, Scroll, Activity, Cpu, Hexagon, Plus, Trash2, Crown, Heart, Radar, Minus } from "lucide-react";
 import {
   RadarChart,
   PolarGrid,
@@ -40,6 +40,12 @@ interface Virtue {
   value: number;
 }
 
+interface Ability {
+  name: string;
+  value: number;
+  specialties: { name: string; value: number }[];
+}
+
 type DamageType = 0 | 1 | 2 | 3; // 0: None, 1: Bashing, 2: Lethal, 3: Aggravated
 
 // --- Data ---
@@ -61,7 +67,7 @@ const DEFAULT_ATTRIBUTES: Record<AttributeCategory, Attribute[]> = {
   ],
 };
 
-const ABILITIES = [
+const ABILITIES_LIST = [
   "Academics", "Animal Ken", "Art", "Athletics", "Awareness", "Brawl", 
   "Command", "Control", "Craft", "Empathy", "Fortitude", "Integrity", 
   "Investigation", "Larceny", "Marksmanship", "Medicine", "Melee", 
@@ -116,8 +122,11 @@ export default function CharacterSheet() {
   
   // State
   const [attributes, setAttributes] = useState(DEFAULT_ATTRIBUTES);
-  const [abilities, setAbilities] = useState<Record<string, number>>(
-    ABILITIES.reduce((acc, curr) => ({ ...acc, [curr]: 0 }), {})
+  const [abilities, setAbilities] = useState<Record<string, Ability>>(
+    ABILITIES_LIST.reduce((acc, curr) => ({ 
+      ...acc, 
+      [curr]: { name: curr, value: 0, specialties: [] } 
+    }), {} as Record<string, Ability>)
   );
   
   const [callings, setCallings] = useState<Calling[]>([
@@ -169,6 +178,46 @@ export default function CharacterSheet() {
     newVirtues[index] = { ...newVirtues[index], [field]: value };
     setVirtues(newVirtues);
   };
+
+  const updateAbilityValue = (abilityName: string, newValue: number) => {
+    setAbilities(prev => ({
+      ...prev,
+      [abilityName]: { ...prev[abilityName], value: Math.max(0, newValue) }
+    }));
+  };
+
+  const addSpecialty = (abilityName: string) => {
+    setAbilities(prev => ({
+      ...prev,
+      [abilityName]: {
+        ...prev[abilityName],
+        specialties: [...prev[abilityName].specialties, { name: "", value: 1 }]
+      }
+    }));
+  };
+
+  const removeSpecialty = (abilityName: string, index: number) => {
+    setAbilities(prev => ({
+      ...prev,
+      [abilityName]: {
+        ...prev[abilityName],
+        specialties: prev[abilityName].specialties.filter((_, i) => i !== index)
+      }
+    }));
+  };
+
+  const updateSpecialty = (abilityName: string, index: number, field: 'name' | 'value', value: string | number) => {
+    setAbilities(prev => {
+      const newSpecialties = [...prev[abilityName].specialties];
+      // @ts-ignore - dynamic key access
+      newSpecialties[index] = { ...newSpecialties[index], [field]: value };
+      return {
+        ...prev,
+        [abilityName]: { ...prev[abilityName], specialties: newSpecialties }
+      };
+    });
+  };
+
 
   const toggleHealth = (idx: number) => {
     const newHealth = [...healthDamage];
@@ -486,16 +535,50 @@ export default function CharacterSheet() {
               {/* Abilities Row */}
               <div className="md:col-span-12">
                  <SectionFrame title="Abilities" subHeader="Skill Matrix">
-                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-x-12 gap-y-3 px-4">
-                       {ABILITIES.map(ability => (
-                          <div key={ability} className="flex justify-between items-center border-b border-white/5 pb-1 group hover:border-primary/30 transition-colors">
-                             <span className="text-xs font-tech text-muted-foreground group-hover:text-foreground transition-colors uppercase tracking-wider">{ability}</span>
-                             <DotRating 
-                                value={abilities[ability]} 
-                                max={5}
-                                className="scale-75 origin-right opacity-60 group-hover:opacity-100 transition-opacity"
-                                onChange={(v) => setAbilities({...abilities, [ability]: v})}
-                             />
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-4">
+                       {Object.values(abilities).map(ability => (
+                          <div key={ability.name} className="flex flex-col border border-white/5 bg-black/20 p-2 rounded-sm group hover:border-primary/30 transition-colors">
+                             <div className="flex justify-between items-center mb-1">
+                                <span className="text-xs font-tech text-foreground/90 uppercase tracking-wider">{ability.name}</span>
+                                <div className="flex items-center gap-1">
+                                  <button onClick={() => updateAbilityValue(ability.name, ability.value - 1)} className="text-muted-foreground hover:text-white px-1">
+                                    <Minus className="w-3 h-3" />
+                                  </button>
+                                  <span className="font-mythic text-primary text-lg w-6 text-center">{ability.value}</span>
+                                  <button onClick={() => updateAbilityValue(ability.name, ability.value + 1)} className="text-muted-foreground hover:text-white px-1">
+                                    <Plus className="w-3 h-3" />
+                                  </button>
+                                </div>
+                             </div>
+
+                             {/* Specialties List */}
+                             <div className="space-y-1 mt-1 border-t border-white/5 pt-1">
+                               {ability.specialties.map((spec, idx) => (
+                                 <div key={idx} className="flex items-center gap-1">
+                                    <div className="w-1.5 h-1.5 border-l border-b border-primary/40 rounded-bl-sm" />
+                                    <input 
+                                      className="bg-transparent text-[10px] font-tech text-muted-foreground focus:text-primary outline-none flex-1 min-w-0"
+                                      placeholder="Specialty..."
+                                      value={spec.name}
+                                      onChange={(e) => updateSpecialty(ability.name, idx, 'name', e.target.value)}
+                                    />
+                                    <input 
+                                      className="bg-transparent text-[10px] font-mythic text-primary w-4 text-center outline-none border-b border-white/10 focus:border-primary"
+                                      value={spec.value}
+                                      onChange={(e) => updateSpecialty(ability.name, idx, 'value', parseInt(e.target.value) || 0)}
+                                    />
+                                    <button onClick={() => removeSpecialty(ability.name, idx)} className="text-destructive opacity-50 hover:opacity-100">
+                                      <Trash2 className="w-3 h-3" />
+                                    </button>
+                                 </div>
+                               ))}
+                               <button 
+                                onClick={() => addSpecialty(ability.name)}
+                                className="flex items-center gap-1 text-[9px] text-muted-foreground/50 hover:text-primary mt-1 w-full justify-end"
+                               >
+                                 <Plus className="w-3 h-3" /> Add Specialty
+                               </button>
+                             </div>
                           </div>
                        ))}
                     </div>
