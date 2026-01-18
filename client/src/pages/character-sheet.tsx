@@ -518,34 +518,38 @@ export default function CharacterSheet() {
     "-1", "-1", "-2", "-2", "-4", "Incap"
   ];
 
-  // Prepare Radar Data
+  // Prepare Radar Data (with safety checks for attribute arrays)
   const radarData = [
-     ...attributes.Physical,
-     ...attributes.Social,
-     ...attributes.Mental
-  ].map(attr => ({
+     ...(attributes.Physical || []),
+     ...(attributes.Social || []),
+     ...(attributes.Mental || [])
+  ].filter(attr => attr && attr.name).map(attr => ({
      subject: attr.name.substring(0, 3).toUpperCase(),
-     A: attr.value,
+     A: attr.value || 0,
      fullMark: 10
   }));
 
-  // Combat & Physics Calculations (Updated)
+  // Combat & Physics Calculations (Updated - with safety checks)
   const getAttributeTotal = (name: AttributeName) => {
     let attr: Attribute | undefined;
-    for (const cat of Object.values(attributes)) {
-      attr = cat.find(a => a.name === name);
-      if (attr) break;
+    for (const cat of Object.values(attributes || {})) {
+      if (Array.isArray(cat)) {
+        attr = cat.find(a => a && a.name === name);
+        if (attr) break;
+      }
     }
-    return attr ? attr.value + attr.epic : 0; 
+    return attr ? (attr.value || 0) + (attr.epic || 0) : 0; 
   };
   
   const getAttributeEpic = (name: AttributeName) => {
     let attr: Attribute | undefined;
-    for (const cat of Object.values(attributes)) {
-      attr = cat.find(a => a.name === name);
-      if (attr) break;
+    for (const cat of Object.values(attributes || {})) {
+      if (Array.isArray(cat)) {
+        attr = cat.find(a => a && a.name === name);
+        if (attr) break;
+      }
     }
-    return attr ? attr.epic : 0;
+    return attr ? (attr.epic || 0) : 0;
   };
 
   const getAbilityValue = (name: string) => abilities[name]?.value || 0;
