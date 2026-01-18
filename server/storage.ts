@@ -94,15 +94,25 @@ export class SupabaseStorage implements IStorage {
   }
 
   async getAllCharacters(): Promise<Character[]> {
-    const { data, error } = await supabase.from('scrolls').select('*').order('updated_at', { ascending: false });
+    const { data: scrolls, error } = await supabase.from('scrolls').select('*').order('updated_at', { ascending: false });
     if (error) throw new Error(error.message);
-    return (data || []).map(scroll => this.scrollToCharacter(scroll)) as Character[];
+    
+    const { data: scionsights } = await supabase.from('scionsight').select('*');
+    const scionsightMap = new Map((scionsights || []).map(s => [s.scion_id, s]));
+    
+    return (scrolls || []).map(scroll => {
+      const scionsight = scionsightMap.get(scroll.id);
+      return this.scrollToCharacter(scroll, scionsight);
+    }) as Character[];
   }
 
   async getCharacter(id: string): Promise<Character | undefined> {
-    const { data, error } = await supabase.from('scrolls').select('*').eq('id', id).single();
-    if (error || !data) return undefined;
-    return this.scrollToCharacter(data) as Character;
+    const { data: scroll, error } = await supabase.from('scrolls').select('*').eq('id', id).single();
+    if (error || !scroll) return undefined;
+    
+    const { data: scionsight } = await supabase.from('scionsight').select('*').eq('scion_id', id).single();
+    
+    return this.scrollToCharacter(scroll, scionsight) as Character;
   }
 
   async createCharacter(character: InsertCharacter): Promise<Character> {
@@ -115,9 +125,24 @@ export class SupabaseStorage implements IStorage {
   async updateCharacter(id: string, updates: Partial<InsertCharacter>): Promise<Character | undefined> {
     const scrollUpdates = this.characterToScroll(updates as any);
     scrollUpdates.updated_at = new Date().toISOString();
-    const { data, error } = await supabase.from('scrolls').update(scrollUpdates).eq('id', id).select().single();
-    if (error || !data) return undefined;
-    return this.scrollToCharacter(data) as Character;
+    const { data: scrollData, error } = await supabase.from('scrolls').update(scrollUpdates).eq('id', id).select().single();
+    if (error || !scrollData) return undefined;
+    
+    const scionsightUpdates = this.characterToScionsight(updates as any);
+    if (Object.keys(scionsightUpdates).length > 0) {
+      scionsightUpdates.updated_at = new Date().toISOString();
+      const { data: existingScionsight } = await supabase.from('scionsight').select('id').eq('scion_id', id).single();
+      
+      if (existingScionsight) {
+        await supabase.from('scionsight').update(scionsightUpdates).eq('scion_id', id);
+      } else {
+        scionsightUpdates.scion_id = id;
+        await supabase.from('scionsight').insert(scionsightUpdates);
+      }
+    }
+    
+    const { data: scionsight } = await supabase.from('scionsight').select('*').eq('scion_id', id).single();
+    return this.scrollToCharacter(scrollData, scionsight) as Character;
   }
 
   async deleteCharacter(id: string): Promise<boolean> {
@@ -125,8 +150,34 @@ export class SupabaseStorage implements IStorage {
     return !error;
   }
 
-  private scrollToCharacter(scroll: any): Character {
+  private scrollToCharacter(scroll: any, scionsight?: any): Character {
     const scrollData = scroll.data || {};
+    const ss = scionsight || {};
+    
+    const callings = ss.calling_1 ? [
+      { id: 1, name: ss.calling_1 || "", title: "", value: ss.calling_1_rating || 1 },
+      { id: 2, name: ss.calling_2 || "", title: "", value: ss.calling_2_rating || 1 },
+      { id: 3, name: ss.calling_3 || "", title: "", value: ss.calling_3_rating || 1 }
+    ] : scrollData.callings || [
+      { id: 1, name: "", title: "", value: 1 },
+      { id: 2, name: "", title: "", value: 1 },
+      { id: 3, name: "", title: "", value: 1 }
+    ];
+    
+    const virtues = ss.virtue_1 ? [
+      { id: 1, name: ss.virtue_1 || "Valor", value: ss.virtue_1_rating || 1 },
+      { id: 2, name: ss.virtue_2 || "Harmony", value: ss.virtue_2_rating || 1 },
+      { id: 3, name: ss.virtue_3 || "Order", value: ss.virtue_3_rating || 1 },
+      { id: 4, name: ss.virtue_4 || "Piety", value: ss.virtue_4_rating || 1 },
+      { id: 5, name: "", value: 1 }
+    ] : scrollData.virtues || [
+      { id: 1, name: "Valor", value: 1 },
+      { id: 2, name: "Harmony", value: 1 },
+      { id: 3, name: "Order", value: 1 },
+      { id: 4, name: "Piety", value: 1 },
+      { id: 5, name: "", value: 1 }
+    ];
+    
     return {
       id: scroll.id,
       name: scroll.name || "",
@@ -137,8 +188,8 @@ export class SupabaseStorage implements IStorage {
       nationality: scroll.origin_country || "",
       cityOfOrigin: scroll.origin_city || "",
       stateRegion: scroll.origin_state || "",
-      legend: scrollData.legend || 1,
-      legendPointsCurrent: scrollData.legend_points_current || 1,
+      legend: ss.legend_level || scrollData.legend || 1,
+      legendPointsCurrent: ss.legend_pool_total || scrollData.legend_points_current || 1,
       attributes: scrollData.attributes || {
         Physical: [
           { name: "Strength", value: 1, epic: 0, rune: "ᚠ" },
@@ -157,33 +208,33 @@ export class SupabaseStorage implements IStorage {
         ]
       },
       abilities: scrollData.abilities || {},
-      callings: scrollData.callings || [
-        { id: 1, name: "", title: "", value: 1 },
-        { id: 2, name: "", title: "", value: 1 },
-        { id: 3, name: "", title: "", value: 1 }
-      ],
-      virtues: scrollData.virtues || [
-        { id: 1, name: "Valor", value: 1 },
-        { id: 2, name: "Harmony", value: 1 },
-        { id: 3, name: "Order", value: 1 },
-        { id: 4, name: "Piety", value: 1 },
-        { id: 5, name: "", value: 1 }
-      ],
-      willpower: scrollData.willpower || 5,
-      willpowerCurrent: scrollData.willpower_current || 5,
+      callings: callings,
+      virtues: virtues,
+      willpower: ss.willpower_pool_total || scrollData.willpower || 5,
+      willpowerCurrent: ss.willpower_pool_current || scrollData.willpower_current || 5,
       extraOxBody: scrollData.extra_ox_body || 0,
       healthDamage: scrollData.health_damage || [],
-      knacks: scrollData.knacks || [],
-      boons: scrollData.boons || [],
+      knacks: ss.knacks || scrollData.knacks || [],
+      boons: ss.boons || scrollData.boons || [],
       weapons: scrollData.weapons || [],
       armorList: scrollData.armor_list || [],
       feats: scrollData.feats || [],
       portrait: scroll.url_portrait_prism || null,
       portraitCover: scroll.url_prism_cover || null,
-      nature: scrollData.nature || "",
-      legendaryTitle: scrollData.legendary_title || "",
-      birthrights: scrollData.birthrights || { creatures: "", guides: "", followers: "", relics: "" },
-      movementFeats: scrollData.movement_feats || { walk: 0, run: 0, jump: 0, lift: 0 },
+      nature: ss.nature || scrollData.nature || "",
+      legendaryTitle: ss.legendary_title || scrollData.legendary_title || "",
+      birthrights: ss.birthrights_creatures ? {
+        creatures: ss.birthrights_creatures || "",
+        guides: ss.birthrights_guides || "",
+        followers: ss.birthrights_followers || "",
+        relics: ss.birthrights_relics || ""
+      } : scrollData.birthrights || { creatures: "", guides: "", followers: "", relics: "" },
+      movementFeats: ss.feats_walk !== undefined ? {
+        walk: ss.feats_walk || 0,
+        run: ss.feats_run || 0,
+        jump: ss.feats_jump || 0,
+        lift: ss.feats_lift || 0
+      } : scrollData.movement_feats || { walk: 0, run: 0, jump: 0, lift: 0 },
       isPublic: scroll.is_public || "true",
       zodiacSign: scroll.zodiac_sign || "",
       playlistLink: scroll.playlist_link || "",
@@ -199,7 +250,16 @@ export class SupabaseStorage implements IStorage {
         cognitiveType: scroll.psy_intp || "",
         majorArcana: scroll.psy_archetypal_arcana || ""
       },
-      presenceProfile: scrollData.presence_profile || {
+      presenceProfile: scroll.pr_eye_color ? {
+        eyeColor: scroll.pr_eye_color || "",
+        hairColor: scroll.pr_hair_color || "",
+        height: scroll.pr_height || "",
+        auraSignature: scroll.pr_aura_signature || "",
+        scent: scroll.pr_scent || "",
+        fashion: scroll.pr_fashion || "",
+        distinguishingMark: scroll.pr_distinguishing_mark || "",
+        visualNotes: scroll.pr_visual_notes || ""
+      } : scrollData.presence_profile || {
         eyeColor: "", hairColor: "", height: "", auraSignature: "",
         scent: "", fashion: "", distinguishingMark: "", visualNotes: ""
       },
@@ -283,6 +343,73 @@ export class SupabaseStorage implements IStorage {
     
     if (Object.keys(dataFields).length > 0) {
       result.data = dataFields;
+    }
+    
+    return result;
+  }
+
+  private characterToScionsight(char: Partial<InsertCharacter>): any {
+    const result: any = {};
+    
+    if (char.legend !== undefined) result.legend_level = char.legend;
+    if (char.legendPointsCurrent !== undefined) result.legend_pool_total = char.legendPointsCurrent;
+    if (char.willpower !== undefined) result.willpower_pool_total = char.willpower;
+    if (char.willpowerCurrent !== undefined) result.willpower_pool_current = char.willpowerCurrent;
+    if (char.nature !== undefined) result.nature = char.nature;
+    if (char.legendaryTitle !== undefined) result.legendary_title = char.legendaryTitle;
+    if (char.knacks !== undefined) result.knacks = char.knacks;
+    if (char.boons !== undefined) result.boons = char.boons;
+    
+    if (char.callings && Array.isArray(char.callings)) {
+      const callings = char.callings as any[];
+      if (callings[0]) {
+        result.calling_1 = callings[0].name || "";
+        result.calling_1_rating = callings[0].value || 1;
+      }
+      if (callings[1]) {
+        result.calling_2 = callings[1].name || "";
+        result.calling_2_rating = callings[1].value || 1;
+      }
+      if (callings[2]) {
+        result.calling_3 = callings[2].name || "";
+        result.calling_3_rating = callings[2].value || 1;
+      }
+    }
+    
+    if (char.virtues && Array.isArray(char.virtues)) {
+      const virtues = char.virtues as any[];
+      if (virtues[0]) {
+        result.virtue_1 = virtues[0].name || "";
+        result.virtue_1_rating = virtues[0].value || 1;
+      }
+      if (virtues[1]) {
+        result.virtue_2 = virtues[1].name || "";
+        result.virtue_2_rating = virtues[1].value || 1;
+      }
+      if (virtues[2]) {
+        result.virtue_3 = virtues[2].name || "";
+        result.virtue_3_rating = virtues[2].value || 1;
+      }
+      if (virtues[3]) {
+        result.virtue_4 = virtues[3].name || "";
+        result.virtue_4_rating = virtues[3].value || 1;
+      }
+    }
+    
+    if (char.birthrights && typeof char.birthrights === 'object') {
+      const br = char.birthrights as any;
+      result.birthrights_creatures = br.creatures || "";
+      result.birthrights_guides = br.guides || "";
+      result.birthrights_followers = br.followers || "";
+      result.birthrights_relics = br.relics || "";
+    }
+    
+    if (char.movementFeats && typeof char.movementFeats === 'object') {
+      const mf = char.movementFeats as any;
+      result.feats_walk = mf.walk || 0;
+      result.feats_run = mf.run || 0;
+      result.feats_jump = mf.jump || 0;
+      result.feats_lift = mf.lift || 0;
     }
     
     return result;
