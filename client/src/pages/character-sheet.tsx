@@ -100,6 +100,28 @@ interface SupabaseOffensive {
   tags: string | null;
 }
 
+interface SupabaseKnack {
+  id: string;
+  name: string;
+  attribute: string;
+  requirements: string;
+  description: string;
+  type: string;
+  duration: string;
+  range: string;
+  usage_per_scene: string;
+  visible: boolean;
+  url_icon: string | null;
+}
+
+interface CharacterKnack {
+  id: string;
+  name: string;
+  attribute: string;
+  description: string;
+  type: string;
+}
+
 // --- Data ---
 const DEFAULT_ATTRIBUTES: Record<AttributeCategory, Attribute[]> = {
   Physical: [
@@ -486,6 +508,16 @@ export default function CharacterSheet() {
         }
       })
       .catch(err => console.error('Failed to fetch offensives:', err));
+      
+    // Fetch available knacks from Supabase
+    fetch('/api/supabase-knacks')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setAvailableKnacks(data.filter((k: SupabaseKnack) => k.visible));
+        }
+      })
+      .catch(err => console.error('Failed to fetch knacks:', err));
   }, []);
 
   const [willpower, setWillpower] = useState(5);
@@ -495,8 +527,10 @@ export default function CharacterSheet() {
   const [extraOxBody, setExtraOxBody] = useState(0);
   const [healthDamage, setHealthDamage] = useState<DamageType[]>(new Array(7 + 10).fill(0));
 
-  const [knacks, setKnacks] = useState<string[]>([]);
-  const [newKnack, setNewKnack] = useState("");
+  const [knacks, setKnacks] = useState<CharacterKnack[]>([]);
+  const [availableKnacks, setAvailableKnacks] = useState<SupabaseKnack[]>([]);
+  const [knackSearch, setKnackSearch] = useState("");
+  const [showKnackDropdown, setShowKnackDropdown] = useState(false);
   const [boons, setBoons] = useState<string[]>([]);
   const [newBoon, setNewBoon] = useState("");
 
@@ -673,12 +707,33 @@ export default function CharacterSheet() {
     setHealthDamage(newHealth);
   };
 
-  const addKnack = () => {
-    if (newKnack.trim()) {
-      setKnacks([...knacks, newKnack]);
-      setNewKnack("");
-    }
+  const addKnackFromDatabase = (knack: SupabaseKnack) => {
+    // Check if already added
+    if (knacks.some(k => k.id === knack.id)) return;
+    
+    const newKnack: CharacterKnack = {
+      id: knack.id,
+      name: knack.name,
+      attribute: knack.attribute,
+      description: knack.description,
+      type: knack.type,
+    };
+    setKnacks([...knacks, newKnack]);
+    setKnackSearch("");
+    setShowKnackDropdown(false);
   };
+  
+  const removeKnack = (id: string) => {
+    setKnacks(knacks.filter(k => k.id !== id));
+  };
+  
+  // Filter knacks based on search
+  const filteredKnacks = knackSearch.length > 0
+    ? availableKnacks.filter(k => 
+        k.name.toLowerCase().includes(knackSearch.toLowerCase()) ||
+        k.attribute.toLowerCase().includes(knackSearch.toLowerCase())
+      )
+    : availableKnacks;
 
   const addBoon = () => {
     if (newBoon.trim()) {
@@ -1767,110 +1822,113 @@ export default function CharacterSheet() {
 
             {/* 2. OFFENSIVE CAPABILITIES - Takes 2 columns */}
             <MythicHUDFrame title="Offensive Capabilities" icon={Sword} subHeader="WEAPONRY & ATTACK VECTORS" className="md:col-span-2">
-                <div className="space-y-3">
-                    {/* Weapons Table Header */}
-                    <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr_1fr_auto] gap-1 text-[7px] uppercase tracking-widest text-muted-foreground border-b border-primary/10 pb-1 bg-primary/5 p-1.5 rounded-t-sm">
+                <div className="space-y-2">
+                    {/* Search + Categories Row */}
+                    <div className="flex items-center gap-2 pb-2 border-b border-primary/10">
+                        <div className="relative flex-1">
+                            <input 
+                                value={offensiveSearch}
+                                onChange={e => {
+                                    setOffensiveSearch(e.target.value);
+                                    setShowOffensiveDropdown(true);
+                                }}
+                                onFocus={() => setShowOffensiveDropdown(true)}
+                                placeholder="Buscar armas do compêndio..." 
+                                className="w-full bg-black/30 border border-primary/20 text-[10px] px-2 py-1.5 rounded-sm focus:border-primary text-primary placeholder:text-primary/30 outline-none"
+                            />
+                            {showOffensiveDropdown && filteredOffensives.length > 0 && (
+                                <div className="absolute top-full left-0 right-0 mt-1 bg-black/95 border border-primary/30 rounded-sm max-h-[200px] overflow-y-auto z-50 shadow-xl">
+                                    {filteredOffensives.slice(0, 15).map((o, i) => (
+                                        <button
+                                            key={`${o.offensive_name}-${i}`}
+                                            onClick={() => addOffensiveFromDatabase(o)}
+                                            className="w-full text-left px-2 py-1.5 text-[9px] font-tech hover:bg-primary/20 transition-colors flex items-center justify-between gap-2 border-b border-primary/10 last:border-0"
+                                        >
+                                            <div className="flex items-center gap-2">
+                                                <Crosshair className="w-3 h-3 text-primary/50" />
+                                                <span className="text-primary font-bold">{o.offensive_name}</span>
+                                                <span className="text-[7px] text-muted-foreground uppercase px-1 py-0.5 bg-primary/10 rounded">{o.category}</span>
+                                            </div>
+                                            <div className="flex items-center gap-2 text-muted-foreground text-[8px]">
+                                                <span>{o.attack_attribute}+{o.attack_ability}</span>
+                                                <span className="text-red-400/70">{o.damage}+{o.damage_attribute}</span>
+                                            </div>
+                                        </button>
+                                    ))}
+                                    {filteredOffensives.length > 15 && (
+                                        <div className="px-2 py-1 text-[8px] text-muted-foreground text-center">
+                                            +{filteredOffensives.length - 15} mais resultados...
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                        {showOffensiveDropdown && (
+                            <button 
+                                onClick={() => {
+                                    setShowOffensiveDropdown(false);
+                                    setOffensiveSearch("");
+                                }}
+                                className="p-1.5 text-muted-foreground hover:text-primary transition-colors shrink-0"
+                            >
+                                <X className="w-3 h-3" />
+                            </button>
+                        )}
+                        <div className="flex gap-1 text-[7px] text-muted-foreground shrink-0">
+                            <span className="px-1 py-0.5 bg-primary/10 rounded">M:{availableOffensives.melee.length}</span>
+                            <span className="px-1 py-0.5 bg-primary/10 rounded">R:{availableOffensives.ranged.length}</span>
+                            <span className="px-1 py-0.5 bg-primary/10 rounded">U:{availableOffensives.unarmed.length}</span>
+                            <span className="px-1 py-0.5 bg-primary/10 rounded">S:{availableOffensives.special.length}</span>
+                        </div>
+                    </div>
+
+                    {/* Weapons Table Header - 11 columns */}
+                    <div className="grid grid-cols-[1.5fr_0.6fr_0.6fr_0.6fr_0.5fr_0.5fr_0.5fr_0.6fr_0.6fr_0.8fr_auto] gap-0.5 text-[6px] uppercase tracking-widest text-muted-foreground border-b border-primary/10 pb-1 bg-primary/5 p-1 rounded-t-sm">
                         <div>Weapon</div>
+                        <div className="text-center">Atk Attr</div>
+                        <div className="text-center">Atk Abil</div>
                         <div className="text-center">Acc</div>
+                        <div className="text-center">Dmg Attr</div>
                         <div className="text-center">Dmg</div>
                         <div className="text-center">Def</div>
                         <div className="text-center">Spd</div>
                         <div className="text-center">Range</div>
                         <div className="text-center">Tags</div>
-                        <div className="w-5"></div>
+                        <div className="w-4"></div>
                     </div>
 
                     {/* Weapons List */}
-                    <div className="space-y-0.5 max-h-[180px] overflow-y-auto">
+                    <div className="space-y-0 max-h-[160px] overflow-y-auto">
                         {weapons.length === 0 ? (
                             <div className="text-[10px] text-muted-foreground text-center py-3 italic">
-                                Nenhuma arma equipada. Use a busca abaixo para adicionar.
+                                Nenhuma arma equipada. Use a busca acima.
                             </div>
                         ) : (
                             weapons.map((w, i) => (
-                                <div key={i} className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr_1fr_auto] gap-1 text-[9px] font-tech text-primary/80 items-center p-1 hover:bg-primary/10 rounded-sm transition-colors border-l-2 border-transparent hover:border-primary group">
+                                <div key={i} className="grid grid-cols-[1.5fr_0.6fr_0.6fr_0.6fr_0.5fr_0.5fr_0.5fr_0.6fr_0.6fr_0.8fr_auto] gap-0.5 text-[8px] font-tech text-primary/80 items-center p-0.5 hover:bg-primary/10 transition-colors border-l-2 border-transparent hover:border-primary group">
                                     <div className="font-bold truncate flex items-center gap-1">
-                                        <Crosshair className="w-2.5 h-2.5 text-primary/40 shrink-0" />
+                                        <Crosshair className="w-2 h-2 text-primary/40 shrink-0" />
                                         <span className="truncate">{w.name}</span>
-                                        <span className="text-[7px] text-muted-foreground/60 uppercase shrink-0">({w.category?.slice(0,3)})</span>
+                                        <span className="text-[6px] text-muted-foreground/50 uppercase shrink-0">({w.category?.slice(0,3)})</span>
                                     </div>
+                                    <div className="text-center text-cyan-400/70 text-[7px]">{w.attackAttribute || "-"}</div>
+                                    <div className="text-center text-cyan-400/70 text-[7px]">{w.attackAbility || "-"}</div>
                                     <div className="text-center text-muted-foreground">{w.accuracy >= 0 ? `+${w.accuracy}` : w.accuracy}</div>
+                                    <div className="text-center text-orange-400/70 text-[7px]">{w.damageAttribute || "-"}</div>
                                     <div className="text-center text-red-400/70">{w.damage}</div>
                                     <div className="text-center text-blue-400/70">{w.defense >= 0 ? `+${w.defense}` : w.defense}</div>
                                     <div className="text-center text-muted-foreground">{w.speed}</div>
                                     <div className="text-center text-muted-foreground/60">{w.range || "-"}</div>
-                                    <div className="text-center text-[7px] uppercase opacity-70">{w.tags || "-"}</div>
+                                    <div className="text-center text-[6px] uppercase opacity-60 truncate">{w.tags || "-"}</div>
                                     <button 
                                         onClick={() => removeWeapon(i)}
-                                        className="w-5 h-5 flex items-center justify-center text-red-400/50 hover:text-red-400 hover:bg-red-400/10 rounded-sm transition-colors opacity-0 group-hover:opacity-100"
+                                        className="w-4 h-4 flex items-center justify-center text-red-400/50 hover:text-red-400 hover:bg-red-400/10 rounded-sm transition-colors opacity-0 group-hover:opacity-100"
                                     >
-                                        <Trash2 className="w-3 h-3" />
+                                        <Trash2 className="w-2.5 h-2.5" />
                                     </button>
                                 </div>
                             ))
                         )}
-                    </div>
-
-                    {/* Search Offensives */}
-                    <div className="pt-2 border-t border-primary/10 relative">
-                        <div className="flex items-center gap-2">
-                            <div className="relative flex-1">
-                                <input 
-                                    value={offensiveSearch}
-                                    onChange={e => {
-                                        setOffensiveSearch(e.target.value);
-                                        setShowOffensiveDropdown(true);
-                                    }}
-                                    onFocus={() => setShowOffensiveDropdown(true)}
-                                    placeholder="Buscar armas do compêndio..." 
-                                    className="w-full bg-black/30 border border-primary/20 text-[10px] px-2 py-1.5 rounded-sm focus:border-primary text-primary placeholder:text-primary/30 outline-none"
-                                />
-                                {showOffensiveDropdown && filteredOffensives.length > 0 && (
-                                    <div className="absolute top-full left-0 right-0 mt-1 bg-black/95 border border-primary/30 rounded-sm max-h-[200px] overflow-y-auto z-50 shadow-xl">
-                                        {filteredOffensives.slice(0, 15).map((o, i) => (
-                                            <button
-                                                key={`${o.offensive_name}-${i}`}
-                                                onClick={() => addOffensiveFromDatabase(o)}
-                                                className="w-full text-left px-2 py-1.5 text-[9px] font-tech hover:bg-primary/20 transition-colors flex items-center justify-between gap-2 border-b border-primary/10 last:border-0"
-                                            >
-                                                <div className="flex items-center gap-2">
-                                                    <Crosshair className="w-3 h-3 text-primary/50" />
-                                                    <span className="text-primary font-bold">{o.offensive_name}</span>
-                                                    <span className="text-[7px] text-muted-foreground uppercase px-1 py-0.5 bg-primary/10 rounded">{o.category}</span>
-                                                </div>
-                                                <div className="flex items-center gap-2 text-muted-foreground">
-                                                    <span>Acc: {o.accuracy >= 0 ? `+${o.accuracy}` : o.accuracy}</span>
-                                                    <span className="text-red-400/70">Dmg: {o.damage}</span>
-                                                    <span>Spd: {o.speed}</span>
-                                                </div>
-                                            </button>
-                                        ))}
-                                        {filteredOffensives.length > 15 && (
-                                            <div className="px-2 py-1 text-[8px] text-muted-foreground text-center">
-                                                +{filteredOffensives.length - 15} mais resultados...
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-                            {showOffensiveDropdown && (
-                                <button 
-                                    onClick={() => {
-                                        setShowOffensiveDropdown(false);
-                                        setOffensiveSearch("");
-                                    }}
-                                    className="p-1.5 text-muted-foreground hover:text-primary transition-colors"
-                                >
-                                    <X className="w-3 h-3" />
-                                </button>
-                            )}
-                        </div>
-                        <div className="flex gap-2 mt-2 text-[8px] text-muted-foreground">
-                            <span className="px-1.5 py-0.5 bg-primary/10 rounded">Melee: {availableOffensives.melee.length}</span>
-                            <span className="px-1.5 py-0.5 bg-primary/10 rounded">Ranged: {availableOffensives.ranged.length}</span>
-                            <span className="px-1.5 py-0.5 bg-primary/10 rounded">Unarmed: {availableOffensives.unarmed.length}</span>
-                            <span className="px-1.5 py-0.5 bg-primary/10 rounded">Special: {availableOffensives.special.length}</span>
-                        </div>
                     </div>
                 </div>
             </MythicHUDFrame>
@@ -2034,21 +2092,125 @@ export default function CharacterSheet() {
                      <div>
                          <h5 className="text-xs font-mythic text-primary/60 border-b border-primary/20 pb-1 mb-3 uppercase">Knacks Registry</h5>
                          <div className="space-y-2">
-                             {knacks.map((k, i) => (
-                                 <div key={i} className="flex items-center gap-2 p-2 bg-primary/5 border-l-2 border-primary/40 text-sm font-tech text-primary/90">
-                                     <div className="w-1 h-1 bg-primary rounded-full shadow-[0_0_5px_gold]" />
-                                     {k}
+                             {knacks.length === 0 ? (
+                                 <div className="text-[10px] text-muted-foreground/50 italic text-center py-4">
+                                     Nenhum knack adicionado. Use a busca abaixo.
                                  </div>
-                             ))}
-                             <div className="flex items-center gap-2 mt-2 opacity-50 focus-within:opacity-100 transition-opacity">
-                                 <Plus className="w-4 h-4 text-primary" />
-                                 <input 
-                                     value={newKnack}
-                                     onChange={(e) => setNewKnack(e.target.value)}
-                                     onKeyDown={(e) => e.key === 'Enter' && addKnack()}
-                                     placeholder="Add New Knack Protocol..."
-                                     className="bg-transparent border-none focus:ring-0 text-sm w-full placeholder:text-muted-foreground/50"
-                                 />
+                             ) : (
+                                 <div className="grid grid-cols-1 gap-2">
+                                     {knacks.map((k) => (
+                                         <div key={k.id} className="flex items-start gap-3 p-2 bg-primary/5 border border-primary/20 rounded-sm group hover:bg-primary/10 transition-colors">
+                                             {/* Hexagonal Icon */}
+                                             <div className="relative shrink-0">
+                                                 <svg viewBox="0 0 40 46" className="w-8 h-9">
+                                                     <polygon 
+                                                         points="20,0 40,11.5 40,34.5 20,46 0,34.5 0,11.5" 
+                                                         fill="none" 
+                                                         stroke="currentColor" 
+                                                         strokeWidth="2"
+                                                         className="text-primary/60"
+                                                     />
+                                                     <polygon 
+                                                         points="20,3 37,13 37,33 20,43 3,33 3,13" 
+                                                         fill="currentColor" 
+                                                         className="text-primary/20"
+                                                     />
+                                                 </svg>
+                                                 <Zap className="w-4 h-4 text-primary absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                                             </div>
+                                             <div className="flex-1 min-w-0">
+                                                 <div className="flex items-center justify-between gap-2">
+                                                     <span className="text-sm font-bold text-primary truncate">{k.name}</span>
+                                                     <button 
+                                                         onClick={() => removeKnack(k.id)}
+                                                         className="text-red-400/50 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+                                                     >
+                                                         <X className="w-3 h-3" />
+                                                     </button>
+                                                 </div>
+                                                 <div className="flex items-center gap-2 text-[9px] text-muted-foreground mt-0.5">
+                                                     <span className="px-1 py-0.5 bg-primary/10 rounded">{k.attribute}</span>
+                                                     <span className="px-1 py-0.5 bg-primary/10 rounded">{k.type}</span>
+                                                 </div>
+                                                 <p className="text-[9px] text-muted-foreground/70 mt-1 line-clamp-2">{k.description}</p>
+                                             </div>
+                                         </div>
+                                     ))}
+                                 </div>
+                             )}
+                             
+                             {/* Knack Search */}
+                             <div className="pt-3 border-t border-primary/10 relative">
+                                 <div className="relative">
+                                     <input 
+                                         value={knackSearch}
+                                         onChange={e => {
+                                             setKnackSearch(e.target.value);
+                                             setShowKnackDropdown(true);
+                                         }}
+                                         onFocus={() => setShowKnackDropdown(true)}
+                                         placeholder="Buscar knacks..."
+                                         className="w-full bg-black/30 border border-primary/20 text-[10px] px-3 py-2 rounded-sm focus:border-primary text-primary placeholder:text-primary/30 outline-none"
+                                     />
+                                     {showKnackDropdown && filteredKnacks.length > 0 && (
+                                         <div className="absolute top-full left-0 right-0 mt-1 bg-black/95 border border-primary/30 rounded-sm max-h-[200px] overflow-y-auto z-50 shadow-xl">
+                                             {filteredKnacks.slice(0, 10).map((k) => (
+                                                 <button
+                                                     key={k.id}
+                                                     onClick={() => addKnackFromDatabase(k)}
+                                                     disabled={knacks.some(kk => kk.id === k.id)}
+                                                     className={cn(
+                                                         "w-full text-left px-3 py-2 text-[10px] font-tech transition-colors flex items-center gap-3 border-b border-primary/10 last:border-0",
+                                                         knacks.some(kk => kk.id === k.id) 
+                                                             ? "opacity-40 cursor-not-allowed" 
+                                                             : "hover:bg-primary/20"
+                                                     )}
+                                                 >
+                                                     {/* Mini Hex Icon */}
+                                                     <div className="relative shrink-0">
+                                                         <svg viewBox="0 0 40 46" className="w-5 h-6">
+                                                             <polygon 
+                                                                 points="20,0 40,11.5 40,34.5 20,46 0,34.5 0,11.5" 
+                                                                 fill="none" 
+                                                                 stroke="currentColor" 
+                                                                 strokeWidth="2"
+                                                                 className="text-primary/40"
+                                                             />
+                                                         </svg>
+                                                         <Zap className="w-2.5 h-2.5 text-primary/60 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                                                     </div>
+                                                     <div className="flex-1 min-w-0">
+                                                         <span className="text-primary font-bold">{k.name}</span>
+                                                         <div className="flex items-center gap-2 text-[8px] text-muted-foreground mt-0.5">
+                                                             <span>{k.attribute}</span>
+                                                             <span>•</span>
+                                                             <span>{k.type}</span>
+                                                         </div>
+                                                     </div>
+                                                 </button>
+                                             ))}
+                                             {filteredKnacks.length > 10 && (
+                                                 <div className="px-3 py-1 text-[8px] text-muted-foreground text-center">
+                                                     +{filteredKnacks.length - 10} mais...
+                                                 </div>
+                                             )}
+                                         </div>
+                                     )}
+                                 </div>
+                                 {showKnackDropdown && (
+                                     <button 
+                                         onClick={() => {
+                                             setShowKnackDropdown(false);
+                                             setKnackSearch("");
+                                         }}
+                                         className="absolute right-2 top-3 p-1 text-muted-foreground hover:text-primary transition-colors"
+                                     >
+                                         <X className="w-3 h-3" />
+                                     </button>
+                                 )}
+                                 <div className="text-[8px] text-muted-foreground mt-2">
+                                     {availableKnacks.length} knacks disponíveis
+                                 </div>
                              </div>
                          </div>
                      </div>
