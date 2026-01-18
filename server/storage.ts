@@ -136,13 +136,15 @@ export class SupabaseStorage implements IStorage {
     const scionsightUpdates = this.characterToScionsight(updates as any);
     if (Object.keys(scionsightUpdates).length > 0) {
       scionsightUpdates.updated_at = new Date().toISOString();
-      const { data: existingScionsight } = await supabase.from('scionsight').select('id').eq('scion_id', id).single();
+      const { data: existingScionsight } = await supabase.from('scionsight').select('scion_id').eq('scion_id', id).single();
       
       if (existingScionsight) {
-        await supabase.from('scionsight').update(scionsightUpdates).eq('scion_id', id);
+        const { error: ssError } = await supabase.from('scionsight').update(scionsightUpdates).eq('scion_id', id);
+        if (ssError) console.log('Error updating scionsight:', ssError);
       } else {
         scionsightUpdates.scion_id = id;
-        await supabase.from('scionsight').insert(scionsightUpdates);
+        const { error: ssInsertError } = await supabase.from('scionsight').insert(scionsightUpdates);
+        if (ssInsertError) console.log('Error inserting scionsight:', ssInsertError);
       }
     }
     
@@ -543,6 +545,8 @@ export class SupabaseStorage implements IStorage {
 
   private characterToScionsight(char: Partial<InsertCharacter>): any {
     const result: any = {};
+    
+    console.log('characterToScionsight - birthrights:', char.birthrights);
     
     if (char.legend !== undefined) result.legend_level = char.legend;
     if (char.legendPointsCurrent !== undefined) result.legend_pool_total = char.legendPointsCurrent;
