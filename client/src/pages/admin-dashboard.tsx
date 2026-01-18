@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Link } from "wouter";
 import { cn } from "@/lib/utils";
-import { Plus, Trash2, Scroll, Shield, User, Star, LayoutGrid, FileText, Send, Book, Zap, Skull, Heart } from "lucide-react";
+import { Plus, Trash2, Scroll, Shield, User, Star, LayoutGrid, FileText, Send, Book, Zap, Skull, Heart, Crown } from "lucide-react";
 import { useArticles } from "@/lib/articles-store";
-import { useCharacters } from "@/lib/characters-store";
+import { useCharacters, useCreateCharacter, useDeleteCharacter } from "@/lib/use-characters";
 import { useCompendium } from "@/lib/compendium-store";
 
 // Reusing style components for consistency
@@ -100,14 +100,15 @@ export default function AdminDashboard() {
   };
 
   // Scrolls State
-  const { characters: scrolls, addCharacter, deleteCharacter } = useCharacters();
+  const { data: scrolls = [], isLoading: scrollsLoading } = useCharacters();
+  const { mutate: createCharacter } = useCreateCharacter();
+  const { mutate: removeCharacter } = useDeleteCharacter();
 
   const [newScroll, setNewScroll] = useState({
     name: "",
     player: "",
     legend: 1,
-    pantheon: "",
-    aetherPercentage: 10
+    pantheon: ""
   });
 
   // Articles State
@@ -124,19 +125,18 @@ export default function AdminDashboard() {
 
   const handleAddScroll = () => {
     if (newScroll.name && newScroll.player) {
-      addCharacter({
+      createCharacter({
           name: newScroll.name,
           player: newScroll.player,
           legend: newScroll.legend,
-          pantheon: newScroll.pantheon,
-          aetherPercentage: newScroll.aetherPercentage
+          pantheon: newScroll.pantheon
       });
-      setNewScroll({ name: "", player: "", legend: 1, pantheon: "", aetherPercentage: 10 });
+      setNewScroll({ name: "", player: "", legend: 1, pantheon: "" });
     }
   };
 
-  const handleDeleteScroll = (id: number) => {
-    deleteCharacter(id);
+  const handleDeleteScroll = (id: string) => {
+    removeCharacter(id);
   };
 
 
@@ -475,7 +475,7 @@ export default function AdminDashboard() {
                                 <div className="h-8 w-px bg-white/10 mx-2" />
                                 
                                 <div className="flex gap-2">
-                                <Link href={`/character-sheet/${scroll.name.toLowerCase().replace(/\s+/g, '-')}`}>
+                                <Link href={`/character-sheet/${scroll.id}`}>
                                     <button className="p-2 hover:bg-white/5 rounded-sm text-muted-foreground hover:text-primary transition-colors">
                                         <Star className="w-4 h-4" />
                                     </button>
