@@ -512,6 +512,7 @@ export default function CharacterSheet() {
   const [virtueSearchOpen, setVirtueSearchOpen] = useState<number | null>(null);
   const [availableNatures, setAvailableNatures] = useState<{id?: string, nome: string, name?: string, description?: string, definition?: string, gatilho_forca_vontade?: string}[]>([]);
   const [natureSearchOpen, setNatureSearchOpen] = useState(false);
+  const [showNatureTooltip, setShowNatureTooltip] = useState(false);
   
   // Fetch available virtues from API
   useEffect(() => {
@@ -1922,7 +1923,7 @@ export default function CharacterSheet() {
                     
                     {/* Nature Section - Moved from Callings */}
                     <div className="mt-2 pt-2 border-t border-primary/15">
-                        <div className="relative group">
+                        <div className="relative">
                             <div className="absolute inset-0 bg-gradient-to-r from-[hsl(var(--highlight-purple))]/10 to-transparent border-l-2 border-[hsl(var(--highlight-purple))]/60" />
                             <div className="relative z-10 px-3 py-1.5 flex items-center gap-2">
                                 <span className="text-[8px] uppercase tracking-widest text-muted-foreground font-tech shrink-0">NAT</span>
@@ -1932,16 +1933,18 @@ export default function CharacterSheet() {
                                         onChange={(e) => setNature(e.target.value)}
                                         onFocus={() => editingVirtues && setNatureSearchOpen(true)}
                                         onBlur={() => setTimeout(() => setNatureSearchOpen(false), 200)}
-                                        className="w-full text-sm font-mythic uppercase tracking-wider text-[hsl(var(--highlight-purple))] bg-transparent border-none p-0 h-auto focus:ring-0 outline-none placeholder:text-primary/30" 
+                                        onMouseEnter={() => !editingVirtues && setShowNatureTooltip(true)}
+                                        onMouseLeave={() => setShowNatureTooltip(false)}
+                                        className="w-full text-sm font-mythic uppercase tracking-wider text-[hsl(var(--highlight-purple))] bg-transparent border-none p-0 h-auto focus:ring-0 outline-none placeholder:text-primary/30 cursor-pointer" 
                                         placeholder="SELECT NATURE"
                                         disabled={!editingVirtues}
                                     />
                                     {/* Nature Tooltip on hover */}
-                                    {nature && !editingVirtues && (() => {
+                                    {nature && !editingVirtues && showNatureTooltip && (() => {
                                         const natureStr = String(nature || '');
                                         const foundNature = availableNatures.find(n => n.nome?.toLowerCase() === natureStr.toLowerCase());
                                         return foundNature?.definition ? (
-                                            <div className="absolute left-0 top-full mt-2 p-2 bg-black/95 border border-primary/30 rounded-sm text-[10px] font-tech text-primary/70 max-w-[250px] opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none">
+                                            <div className="absolute left-0 top-full mt-2 p-2 bg-black/95 border border-primary/30 rounded-sm text-[10px] font-tech text-primary/70 max-w-[250px] z-50 pointer-events-none">
                                                 <p>{foundNature.definition}</p>
                                                 {foundNature.gatilho_forca_vontade && (
                                                     <p className="mt-1 text-accent-foreground/70">Gatilho: {foundNature.gatilho_forca_vontade}</p>
