@@ -1,7 +1,10 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertCharacterSchema } from "@shared/schema";
+import { 
+  insertCharacterSchema, insertBoonSchema, insertKnackSchema,
+  insertCallingSchema, insertNatureSchema, insertAttackSchema
+} from "@shared/schema";
 import { fromError } from "zod-validation-error";
 
 export async function registerRoutes(
@@ -81,6 +84,320 @@ export async function registerRoutes(
     } catch (error) {
       console.error("Error deleting character:", error);
       res.status(500).json({ error: "Failed to delete character" });
+    }
+  });
+
+  // =====================
+  // COMPENDIUM ROUTES
+  // =====================
+  
+  // BOONS
+  app.get("/api/boons", async (req, res) => {
+    try {
+      const allBoons = await storage.getAllBoons();
+      res.json(allBoons);
+    } catch (error) {
+      console.error("Error fetching boons:", error);
+      res.status(500).json({ error: "Failed to fetch boons" });
+    }
+  });
+  
+  app.get("/api/boons/:id", async (req, res) => {
+    try {
+      const boon = await storage.getBoon(req.params.id);
+      if (!boon) return res.status(404).json({ error: "Boon not found" });
+      res.json(boon);
+    } catch (error) {
+      console.error("Error fetching boon:", error);
+      res.status(500).json({ error: "Failed to fetch boon" });
+    }
+  });
+  
+  app.post("/api/boons", async (req, res) => {
+    try {
+      const validatedData = insertBoonSchema.parse(req.body);
+      const newBoon = await storage.createBoon(validatedData);
+      res.status(201).json(newBoon);
+    } catch (error) {
+      if (error instanceof Error && error.name === "ZodError") {
+        return res.status(400).json({ error: fromError(error).toString() });
+      }
+      console.error("Error creating boon:", error);
+      res.status(500).json({ error: "Failed to create boon" });
+    }
+  });
+  
+  app.put("/api/boons/:id", async (req, res) => {
+    try {
+      const validatedData = insertBoonSchema.partial().parse(req.body);
+      const updated = await storage.updateBoon(req.params.id, validatedData);
+      if (!updated) return res.status(404).json({ error: "Boon not found" });
+      res.json(updated);
+    } catch (error) {
+      if (error instanceof Error && error.name === "ZodError") {
+        return res.status(400).json({ error: fromError(error).toString() });
+      }
+      console.error("Error updating boon:", error);
+      res.status(500).json({ error: "Failed to update boon" });
+    }
+  });
+  
+  app.delete("/api/boons/:id", async (req, res) => {
+    try {
+      const deleted = await storage.deleteBoon(req.params.id);
+      if (!deleted) return res.status(404).json({ error: "Boon not found" });
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting boon:", error);
+      res.status(500).json({ error: "Failed to delete boon" });
+    }
+  });
+  
+  // KNACKS
+  app.get("/api/knacks", async (req, res) => {
+    try {
+      const allKnacks = await storage.getAllKnacks();
+      res.json(allKnacks);
+    } catch (error) {
+      console.error("Error fetching knacks:", error);
+      res.status(500).json({ error: "Failed to fetch knacks" });
+    }
+  });
+  
+  app.get("/api/knacks/:id", async (req, res) => {
+    try {
+      const knack = await storage.getKnack(req.params.id);
+      if (!knack) return res.status(404).json({ error: "Knack not found" });
+      res.json(knack);
+    } catch (error) {
+      console.error("Error fetching knack:", error);
+      res.status(500).json({ error: "Failed to fetch knack" });
+    }
+  });
+  
+  app.post("/api/knacks", async (req, res) => {
+    try {
+      const validatedData = insertKnackSchema.parse(req.body);
+      const newKnack = await storage.createKnack(validatedData);
+      res.status(201).json(newKnack);
+    } catch (error) {
+      if (error instanceof Error && error.name === "ZodError") {
+        return res.status(400).json({ error: fromError(error).toString() });
+      }
+      console.error("Error creating knack:", error);
+      res.status(500).json({ error: "Failed to create knack" });
+    }
+  });
+  
+  app.put("/api/knacks/:id", async (req, res) => {
+    try {
+      const validatedData = insertKnackSchema.partial().parse(req.body);
+      const updated = await storage.updateKnack(req.params.id, validatedData);
+      if (!updated) return res.status(404).json({ error: "Knack not found" });
+      res.json(updated);
+    } catch (error) {
+      if (error instanceof Error && error.name === "ZodError") {
+        return res.status(400).json({ error: fromError(error).toString() });
+      }
+      console.error("Error updating knack:", error);
+      res.status(500).json({ error: "Failed to update knack" });
+    }
+  });
+  
+  app.delete("/api/knacks/:id", async (req, res) => {
+    try {
+      const deleted = await storage.deleteKnack(req.params.id);
+      if (!deleted) return res.status(404).json({ error: "Knack not found" });
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting knack:", error);
+      res.status(500).json({ error: "Failed to delete knack" });
+    }
+  });
+  
+  // CALLINGS
+  app.get("/api/callings", async (req, res) => {
+    try {
+      const allCallings = await storage.getAllCallings();
+      res.json(allCallings);
+    } catch (error) {
+      console.error("Error fetching callings:", error);
+      res.status(500).json({ error: "Failed to fetch callings" });
+    }
+  });
+  
+  app.get("/api/callings/:id", async (req, res) => {
+    try {
+      const calling = await storage.getCalling(req.params.id);
+      if (!calling) return res.status(404).json({ error: "Calling not found" });
+      res.json(calling);
+    } catch (error) {
+      console.error("Error fetching calling:", error);
+      res.status(500).json({ error: "Failed to fetch calling" });
+    }
+  });
+  
+  app.post("/api/callings", async (req, res) => {
+    try {
+      const validatedData = insertCallingSchema.parse(req.body);
+      const newCalling = await storage.createCalling(validatedData);
+      res.status(201).json(newCalling);
+    } catch (error) {
+      if (error instanceof Error && error.name === "ZodError") {
+        return res.status(400).json({ error: fromError(error).toString() });
+      }
+      console.error("Error creating calling:", error);
+      res.status(500).json({ error: "Failed to create calling" });
+    }
+  });
+  
+  app.put("/api/callings/:id", async (req, res) => {
+    try {
+      const validatedData = insertCallingSchema.partial().parse(req.body);
+      const updated = await storage.updateCalling(req.params.id, validatedData);
+      if (!updated) return res.status(404).json({ error: "Calling not found" });
+      res.json(updated);
+    } catch (error) {
+      if (error instanceof Error && error.name === "ZodError") {
+        return res.status(400).json({ error: fromError(error).toString() });
+      }
+      console.error("Error updating calling:", error);
+      res.status(500).json({ error: "Failed to update calling" });
+    }
+  });
+  
+  app.delete("/api/callings/:id", async (req, res) => {
+    try {
+      const deleted = await storage.deleteCalling(req.params.id);
+      if (!deleted) return res.status(404).json({ error: "Calling not found" });
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting calling:", error);
+      res.status(500).json({ error: "Failed to delete calling" });
+    }
+  });
+  
+  // NATURES
+  app.get("/api/natures", async (req, res) => {
+    try {
+      const allNatures = await storage.getAllNatures();
+      res.json(allNatures);
+    } catch (error) {
+      console.error("Error fetching natures:", error);
+      res.status(500).json({ error: "Failed to fetch natures" });
+    }
+  });
+  
+  app.get("/api/natures/:id", async (req, res) => {
+    try {
+      const nature = await storage.getNature(req.params.id);
+      if (!nature) return res.status(404).json({ error: "Nature not found" });
+      res.json(nature);
+    } catch (error) {
+      console.error("Error fetching nature:", error);
+      res.status(500).json({ error: "Failed to fetch nature" });
+    }
+  });
+  
+  app.post("/api/natures", async (req, res) => {
+    try {
+      const validatedData = insertNatureSchema.parse(req.body);
+      const newNature = await storage.createNature(validatedData);
+      res.status(201).json(newNature);
+    } catch (error) {
+      if (error instanceof Error && error.name === "ZodError") {
+        return res.status(400).json({ error: fromError(error).toString() });
+      }
+      console.error("Error creating nature:", error);
+      res.status(500).json({ error: "Failed to create nature" });
+    }
+  });
+  
+  app.put("/api/natures/:id", async (req, res) => {
+    try {
+      const validatedData = insertNatureSchema.partial().parse(req.body);
+      const updated = await storage.updateNature(req.params.id, validatedData);
+      if (!updated) return res.status(404).json({ error: "Nature not found" });
+      res.json(updated);
+    } catch (error) {
+      if (error instanceof Error && error.name === "ZodError") {
+        return res.status(400).json({ error: fromError(error).toString() });
+      }
+      console.error("Error updating nature:", error);
+      res.status(500).json({ error: "Failed to update nature" });
+    }
+  });
+  
+  app.delete("/api/natures/:id", async (req, res) => {
+    try {
+      const deleted = await storage.deleteNature(req.params.id);
+      if (!deleted) return res.status(404).json({ error: "Nature not found" });
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting nature:", error);
+      res.status(500).json({ error: "Failed to delete nature" });
+    }
+  });
+  
+  // ATTACKS
+  app.get("/api/attacks", async (req, res) => {
+    try {
+      const allAttacks = await storage.getAllAttacks();
+      res.json(allAttacks);
+    } catch (error) {
+      console.error("Error fetching attacks:", error);
+      res.status(500).json({ error: "Failed to fetch attacks" });
+    }
+  });
+  
+  app.get("/api/attacks/:id", async (req, res) => {
+    try {
+      const attack = await storage.getAttack(req.params.id);
+      if (!attack) return res.status(404).json({ error: "Attack not found" });
+      res.json(attack);
+    } catch (error) {
+      console.error("Error fetching attack:", error);
+      res.status(500).json({ error: "Failed to fetch attack" });
+    }
+  });
+  
+  app.post("/api/attacks", async (req, res) => {
+    try {
+      const validatedData = insertAttackSchema.parse(req.body);
+      const newAttack = await storage.createAttack(validatedData);
+      res.status(201).json(newAttack);
+    } catch (error) {
+      if (error instanceof Error && error.name === "ZodError") {
+        return res.status(400).json({ error: fromError(error).toString() });
+      }
+      console.error("Error creating attack:", error);
+      res.status(500).json({ error: "Failed to create attack" });
+    }
+  });
+  
+  app.put("/api/attacks/:id", async (req, res) => {
+    try {
+      const validatedData = insertAttackSchema.partial().parse(req.body);
+      const updated = await storage.updateAttack(req.params.id, validatedData);
+      if (!updated) return res.status(404).json({ error: "Attack not found" });
+      res.json(updated);
+    } catch (error) {
+      if (error instanceof Error && error.name === "ZodError") {
+        return res.status(400).json({ error: fromError(error).toString() });
+      }
+      console.error("Error updating attack:", error);
+      res.status(500).json({ error: "Failed to update attack" });
+    }
+  });
+  
+  app.delete("/api/attacks/:id", async (req, res) => {
+    try {
+      const deleted = await storage.deleteAttack(req.params.id);
+      if (!deleted) return res.status(404).json({ error: "Attack not found" });
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting attack:", error);
+      res.status(500).json({ error: "Failed to delete attack" });
     }
   });
 
