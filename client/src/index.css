@@ -132,13 +132,17 @@
 
   /* --- NEW FRAME SYSTEM --- */
   .frame-ethereal {
-    @apply relative border border-primary/20 bg-black/60 backdrop-blur-md shadow-lg overflow-hidden;
-    box-shadow: 0 0 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(212, 175, 55, 0.05);
+    @apply relative border border-primary/20 bg-black/80 backdrop-blur-md shadow-lg overflow-hidden;
+    box-shadow: 0 0 30px rgba(0,0,0,0.8), inset 0 0 20px rgba(212, 175, 55, 0.05);
     clip-path: polygon(
       0 0, 
+      20px 0, 
+      30px 10px, 
+      calc(100% - 30px) 10px, 
       calc(100% - 20px) 0, 
-      100% 20px, 
-      100% 100%, 
+      100% 0, 
+      100% calc(100% - 20px), 
+      calc(100% - 20px) 100%, 
       20px 100%, 
       0 calc(100% - 20px)
     );
@@ -147,36 +151,47 @@
   .frame-ethereal::before {
     content: "";
     position: absolute;
-    top: 0; left: 0; right: 0; height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.8), transparent);
-    opacity: 0.7;
+    top: 10px; left: 30px; right: 30px; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.5), transparent);
+    opacity: 0.5;
   }
   
-  .frame-ethereal::after {
-    content: "";
-    position: absolute;
-    bottom: 0; left: 0; right: 0; height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.8), transparent);
-    opacity: 0.7;
-  }
-  
-  /* Corner accents - simplified for clip-path compatibility (internal borders) */
-  .frame-ethereal-content {
-      @apply relative z-10 p-6;
+  .hud-panel {
+      position: relative;
+      background: rgba(10, 10, 12, 0.7);
+      border: 1px solid rgba(212, 175, 55, 0.15);
+      backdrop-filter: blur(8px);
   }
 
-  .frame-corner-tl {
-    position: absolute; top: 0; left: 0; width: 40px; height: 40px;
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, transparent 50%);
-    border-top: 1px solid rgba(212, 175, 55, 0.5);
-    border-left: 1px solid rgba(212, 175, 55, 0.5);
+  .hud-corner-tl {
+      position: absolute;
+      top: -1px; left: -1px;
+      width: 15px; height: 15px;
+      border-top: 2px solid var(--primary);
+      border-left: 2px solid var(--primary);
   }
-  .frame-corner-br {
-    position: absolute; bottom: 0; right: 0; width: 40px; height: 40px;
-    background: linear-gradient(-45deg, rgba(212, 175, 55, 0.2) 0%, transparent 50%);
-    border-bottom: 1px solid rgba(212, 175, 55, 0.5);
-    border-right: 1px solid rgba(212, 175, 55, 0.5);
+  .hud-corner-tr {
+      position: absolute;
+      top: -1px; right: -1px;
+      width: 15px; height: 15px;
+      border-top: 2px solid var(--primary);
+      border-right: 2px solid var(--primary);
   }
+  .hud-corner-bl {
+      position: absolute;
+      bottom: -1px; left: -1px;
+      width: 15px; height: 15px;
+      border-bottom: 2px solid var(--primary);
+      border-left: 2px solid var(--primary);
+  }
+  .hud-corner-br {
+      position: absolute;
+      bottom: -1px; right: -1px;
+      width: 15px; height: 15px;
+      border-bottom: 2px solid var(--primary);
+      border-right: 2px solid var(--primary);
+  }
+
 
 
   /* Overlays */
