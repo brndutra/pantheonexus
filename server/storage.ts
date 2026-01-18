@@ -133,20 +133,9 @@ export class SupabaseStorage implements IStorage {
     const { data: scrollData, error } = await supabase.from('scrolls').update(scrollUpdates).eq('id', id).select().single();
     if (error || !scrollData) return undefined;
     
-    const scionsightUpdates = this.characterToScionsight(updates as any);
-    if (Object.keys(scionsightUpdates).length > 0) {
-      scionsightUpdates.updated_at = new Date().toISOString();
-      const { data: existingScionsight } = await supabase.from('scionsight').select('scion_id').eq('scion_id', id).single();
-      
-      if (existingScionsight) {
-        const { error: ssError } = await supabase.from('scionsight').update(scionsightUpdates).eq('scion_id', id);
-        if (ssError) console.log('Error updating scionsight:', ssError);
-      } else {
-        scionsightUpdates.scion_id = id;
-        const { error: ssInsertError } = await supabase.from('scionsight').insert(scionsightUpdates);
-        if (ssInsertError) console.log('Error inserting scionsight:', ssInsertError);
-      }
-    }
+    // NOTE: scionsight is a VIEW in Supabase, not a table - it reads from scrolls.data
+    // All character data is saved in scrolls.data JSONB column, which the view reflects
+    // No need to update scionsight directly
     
     const attributeUpdates = this.characterToScionAttributes(updates as any);
     if (Object.keys(attributeUpdates).length > 0) {
@@ -545,8 +534,6 @@ export class SupabaseStorage implements IStorage {
 
   private characterToScionsight(char: Partial<InsertCharacter>): any {
     const result: any = {};
-    
-    console.log('characterToScionsight - birthrights:', char.birthrights);
     
     // NOTE: legend_level is computed/read-only in Supabase, don't update it
     if (char.legendPointsCurrent !== undefined) result.legend_pool_total = char.legendPointsCurrent;

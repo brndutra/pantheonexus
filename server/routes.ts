@@ -603,37 +603,47 @@ export async function registerRoutes(
     }
   });
   
-  // Update scionsight legend_pool_current
+  // Update legend_pool_current via scrolls.data
   app.patch("/api/scionsight/:scionId/legend-current", async (req, res) => {
     try {
       const { scionId } = req.params;
       const { legend_pool_current } = req.body;
       
+      // Get current data, update legend_points_current, save back
+      const { data: scroll } = await supabase.from('scrolls').select('data').eq('id', scionId).single();
+      const currentData = scroll?.data || {};
+      currentData.legend_points_current = legend_pool_current;
+      
       const { data, error } = await supabase
-        .from('scionsight')
-        .update({ legend_pool_current })
-        .eq('scion_id', scionId)
+        .from('scrolls')
+        .update({ data: currentData, updated_at: new Date().toISOString() })
+        .eq('id', scionId)
         .select()
         .single();
       
       if (error) throw error;
-      res.json(data);
+      res.json({ legend_pool_current });
     } catch (error) {
       console.error("Error updating legend pool:", error);
       res.status(500).json({ error: "Failed to update legend pool" });
     }
   });
   
-  // Update scionsight offensives (selected weapons array)
+  // Update offensives via scrolls.data (scionsight is a VIEW)
   app.patch("/api/scionsight/:scionId/offensives", async (req, res) => {
     try {
       const { scionId } = req.params;
       const { offensives } = req.body;
       
+      // Get current data, update offensives, save back
+      const { data: scroll } = await supabase.from('scrolls').select('data').eq('id', scionId).single();
+      const currentData = scroll?.data || {};
+      currentData.offensives = offensives;
+      
       const { error } = await supabase
-        .from('scionsight')
-        .update({ offensives })
-        .eq('scion_id', scionId);
+        .from('scrolls')
+        .update({ data: currentData, updated_at: new Date().toISOString() })
+        .eq('id', scionId);
       
       if (error) throw error;
       res.json({ success: true, offensives });
@@ -643,42 +653,50 @@ export async function registerRoutes(
     }
   });
   
-  // Update scionsight knacks_selected
+  // Update knacks_selected via scrolls.data
   app.patch("/api/scionsight/:scionId/knacks", async (req, res) => {
     try {
       const { scionId } = req.params;
       const { knacks_selected } = req.body;
       
+      const { data: scroll } = await supabase.from('scrolls').select('data').eq('id', scionId).single();
+      const currentData = scroll?.data || {};
+      currentData.knacks_selected = knacks_selected;
+      
       const { data, error } = await supabase
-        .from('scionsight')
-        .update({ knacks_selected })
-        .eq('scion_id', scionId)
+        .from('scrolls')
+        .update({ data: currentData, updated_at: new Date().toISOString() })
+        .eq('id', scionId)
         .select()
         .single();
       
       if (error) throw error;
-      res.json(data);
+      res.json({ knacks_selected });
     } catch (error) {
       console.error("Error updating knacks:", error);
       res.status(500).json({ error: "Failed to update knacks" });
     }
   });
   
-  // Update scionsight boons_selected
+  // Update boons_selected via scrolls.data
   app.patch("/api/scionsight/:scionId/boons", async (req, res) => {
     try {
       const { scionId } = req.params;
       const { boons_selected } = req.body;
       
+      const { data: scroll } = await supabase.from('scrolls').select('data').eq('id', scionId).single();
+      const currentData = scroll?.data || {};
+      currentData.boons_selected = boons_selected;
+      
       const { data, error } = await supabase
-        .from('scionsight')
-        .update({ boons_selected })
-        .eq('scion_id', scionId)
+        .from('scrolls')
+        .update({ data: currentData, updated_at: new Date().toISOString() })
+        .eq('id', scionId)
         .select()
         .single();
       
       if (error) throw error;
-      res.json(data);
+      res.json({ boons_selected });
     } catch (error) {
       console.error("Error updating boons:", error);
       res.status(500).json({ error: "Failed to update boons" });
