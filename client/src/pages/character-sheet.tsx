@@ -1589,37 +1589,37 @@ export default function CharacterSheet() {
         {/* ATTRIBUTES & ABILITIES ROW - 1/3 + 2/3 */}
         <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* ATTRIBUTES CORE - 1 column */}
-            <MythicHUDFrame title="Attributes Core" icon={Dna} subHeader="PHYSICAL / SOCIAL / MENTAL" className="md:col-span-1 h-[750px] flex flex-col" isEditing={editingAttributes} {...createEditHandlers(editingAttributes, setEditingAttributes)}>
-                <div className="space-y-6 flex-1 overflow-y-auto scion-scrollbar">
+            <MythicHUDFrame title="Attributes Core" icon={Dna} subHeader="PHYSICAL / SOCIAL / MENTAL" className="md:col-span-1 h-[520px] flex flex-col" isEditing={editingAttributes} {...createEditHandlers(editingAttributes, setEditingAttributes)}>
+                <div className="space-y-8 flex-1">
                     {(Object.entries(attributes) as [AttributeCategory, Attribute[]][]).map(([category, attrs]) => (
-                        <div key={category} className="space-y-2 relative">
-                            <h4 className="text-[10px] font-mythic uppercase tracking-[0.3em] text-primary/50 border-b border-primary/10 pb-1 mb-2">
+                        <div key={category} className="space-y-3 relative">
+                            <h4 className="text-xs font-mythic uppercase tracking-[0.3em] text-primary/50 border-b border-primary/10 pb-2 mb-3">
                                 {category}
                             </h4>
                             {attrs.map((attr, idx) => (
-                                <div key={attr.name} className="flex flex-col gap-1 group">
+                                <div key={attr.name} className="flex flex-col gap-2 group py-1">
                                     <div className="flex justify-between items-end mb-1">
-                                        <span className="text-xs font-bold font-tech text-foreground uppercase tracking-wider flex items-center gap-2">
-                                            <span className="text-primary/40 text-[10px] w-4">{attr.rune}</span>
+                                        <span className="text-sm font-bold font-tech text-foreground uppercase tracking-wider flex items-center gap-2">
+                                            <span className="text-primary/40 text-xs w-5">{attr.rune}</span>
                                             {attr.name}
                                         </span>
-                                        <div className="flex gap-2 text-[10px] font-mono text-primary/60">
+                                        <div className="flex gap-2 text-xs font-mono text-primary/60">
                                             <span>VAL: {attr.value}</span>
                                             {attr.epic > 0 && <span className="text-accent-foreground">EPIC: {attr.epic}</span>}
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-3">
                                         <DotRating 
                                             value={attr.value} 
                                             onChange={(v) => updateAttribute(category, idx, 'value', v)} 
                                             max={10}
                                             className="flex-1"
-                                            iconClassName="w-2 h-2 rounded-full border border-primary/30"
-                                            activeClassName="bg-primary shadow-[0_0_4px_gold] border-primary"
+                                            iconClassName="w-3 h-3 rounded-full border border-primary/30"
+                                            activeClassName="bg-primary shadow-[0_0_6px_gold] border-primary"
                                             readOnly={!editingAttributes}
                                         />
                                         {/* Epic Toggle - Expanded to 10 slots */}
-                                        <div className="flex gap-0.5 ml-auto">
+                                        <div className="flex gap-1 ml-auto">
                                             {Array.from({length: 10}).map((_, i) => {
                                                 const e = i + 1;
                                                 return (
@@ -1627,7 +1627,7 @@ export default function CharacterSheet() {
                                                         key={e} 
                                                         onClick={() => editingAttributes && updateAttribute(category, idx, 'epic', attr.epic === e ? 0 : e)}
                                                         className={cn(
-                                                            "w-1.5 h-3 border border-primary/30 transition-all",
+                                                            "w-2 h-4 border border-primary/30 transition-all",
                                                             editingAttributes ? "cursor-pointer hover:border-accent-foreground" : "cursor-default",
                                                             attr.epic >= e ? "bg-accent-foreground shadow-[0_0_5px_var(--color-accent-foreground)]" : "bg-black/40"
                                                         )}
@@ -1645,7 +1645,7 @@ export default function CharacterSheet() {
             </MythicHUDFrame>
 
             {/* ABILITIES SCROLL - 2 columns */}
-            <MythicHUDFrame title="Abilities Database" icon={Brain} subHeader="SKILL SET MATRIX" className="md:col-span-2 h-[750px] flex flex-col" isEditing={editingAbilities} {...createEditHandlers(editingAbilities, setEditingAbilities)}>
+            <MythicHUDFrame title="Abilities Database" icon={Brain} subHeader="SKILL SET MATRIX" className="md:col-span-2 h-[520px] flex flex-col" isEditing={editingAbilities} {...createEditHandlers(editingAbilities, setEditingAbilities)}>
                 <div className="flex-1 overflow-y-auto pr-2 scion-scrollbar custom-scroll-area">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-1 h-full content-start">
                         {abilitiesSchema.map((schema) => {
