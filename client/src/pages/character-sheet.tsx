@@ -204,16 +204,48 @@ const MythicHUDFrame = ({
     isLoading?: boolean
 }) => (
   <div className={cn("relative group", isEditing && "ring-1 ring-primary/50", className)}>
-    {/* Frame Background */}
-    <div className="absolute inset-0 bg-black/40 backdrop-blur-md border border-primary/20" 
-         style={{ clipPath: "polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%)" }} />
+    {/* Frame Background with gradient border effect */}
+    <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/50 to-black/70 backdrop-blur-md" 
+         style={{ clipPath: "polygon(0 8px, 8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 20px), calc(100% - 20px) 100%, 8px 100%, 0 calc(100% - 8px))" }} />
     
-    {/* Tech Corners */}
-    <div className="absolute -top-[1px] -left-[1px] w-4 h-4 border-t-2 border-l-2 border-primary/60" />
-    <div className="absolute -top-[1px] -right-[1px] w-4 h-4 border-t-2 border-r-2 border-primary/60" />
-    <div className="absolute -bottom-[1px] -left-[1px] w-4 h-4 border-b-2 border-l-2 border-primary/60" />
-    <div className="absolute bottom-[0px] right-[0px] w-6 h-6 border-b-2 border-r-2 border-primary/60" />
-    <div className="absolute bottom-[2px] right-[2px] w-2 h-2 bg-primary/40" />
+    {/* Outer glow border */}
+    <div className="absolute inset-0 opacity-60"
+         style={{ 
+           clipPath: "polygon(0 8px, 8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 20px), calc(100% - 20px) 100%, 8px 100%, 0 calc(100% - 8px))",
+           boxShadow: "inset 0 0 0 1px hsl(var(--primary) / 0.4), 0 0 15px hsl(var(--primary) / 0.1)"
+         }} />
+    
+    {/* Top-left corner accent */}
+    <div className="absolute top-0 left-0 w-3 h-[1px] bg-gradient-to-r from-primary/80 to-transparent" />
+    <div className="absolute top-0 left-0 w-[1px] h-3 bg-gradient-to-b from-primary/80 to-transparent" />
+    <div className="absolute top-[7px] left-[7px] w-2 h-2 border-t border-l border-primary/50" />
+    
+    {/* Top-right corner accent */}
+    <div className="absolute top-0 right-0 w-3 h-[1px] bg-gradient-to-l from-primary/80 to-transparent" />
+    <div className="absolute top-0 right-0 w-[1px] h-3 bg-gradient-to-b from-primary/80 to-transparent" />
+    <div className="absolute top-[7px] right-[7px] w-2 h-2 border-t border-r border-primary/50" />
+    
+    {/* Bottom-left corner accent */}
+    <div className="absolute bottom-0 left-0 w-3 h-[1px] bg-gradient-to-r from-primary/80 to-transparent" />
+    <div className="absolute bottom-0 left-0 w-[1px] h-3 bg-gradient-to-t from-primary/80 to-transparent" />
+    <div className="absolute bottom-[7px] left-[7px] w-2 h-2 border-b border-l border-primary/50" />
+    
+    {/* Bottom-right diagonal cut accent */}
+    <div className="absolute bottom-0 right-[19px] w-4 h-[1px] bg-gradient-to-l from-primary/80 to-transparent" />
+    <div className="absolute bottom-[19px] right-0 w-[1px] h-4 bg-gradient-to-t from-primary/80 to-transparent" />
+    <div className="absolute bottom-[3px] right-[3px] w-4 h-4 border-b-2 border-r-2 border-primary/60 rotate-0" 
+         style={{ clipPath: "polygon(100% 0, 100% 100%, 0 100%)" }} />
+    <div className="absolute bottom-[6px] right-[6px] w-2 h-2 bg-primary/30" />
+    
+    {/* Scan line effect overlay */}
+    <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
+         style={{ 
+           background: "repeating-linear-gradient(0deg, transparent, transparent 2px, hsl(var(--primary)) 2px, hsl(var(--primary)) 3px)",
+           clipPath: "polygon(0 8px, 8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 20px), calc(100% - 20px) 100%, 8px 100%, 0 calc(100% - 8px))"
+         }} />
+    
+    {/* Inner highlight line at top */}
+    <div className="absolute top-[1px] left-[12px] right-[12px] h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
 
     {/* Header Section */}
     {(title || Icon) && (
