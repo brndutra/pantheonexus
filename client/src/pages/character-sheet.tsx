@@ -458,9 +458,6 @@ export default function CharacterSheet() {
       })
       .catch(err => console.error('Failed to fetch natures:', err));
   }, []);
-  
-  // legend state is initialized above now
-  const [legendCurrent, setLegendCurrent] = useState(4); // Example value
 
   const [willpower, setWillpower] = useState(5);
   const [willpowerCurrent, setWillpowerCurrent] = useState(5);
@@ -796,6 +793,43 @@ export default function CharacterSheet() {
 
   // Loading state for saving
   const [isSaving, setIsSaving] = useState(false);
+
+  // Auto-save for interactive fields (no edit mode required)
+  const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isInitialMount = useRef(true);
+  
+  useEffect(() => {
+    // Skip initial mount to avoid saving on load
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+    
+    // Debounced auto-save for interactive fields
+    if (autoSaveTimeoutRef.current) {
+      clearTimeout(autoSaveTimeoutRef.current);
+    }
+    
+    autoSaveTimeoutRef.current = setTimeout(() => {
+      if (characterId) {
+        updateCharacter({
+          id: characterId,
+          updates: {
+            legendPointsCurrent,
+            willpowerCurrent,
+            healthDamage,
+            portrait: portrait || undefined,
+          },
+        });
+      }
+    }, 1000); // 1 second debounce
+    
+    return () => {
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+    };
+  }, [legendPointsCurrent, willpowerCurrent, healthDamage, portrait, characterId]);
 
   // Create edit handlers for each section
   const createEditHandlers = (isEditing: boolean, setEditing: (v: boolean) => void) => ({
