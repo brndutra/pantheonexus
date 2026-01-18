@@ -1377,6 +1377,7 @@ export default function CharacterSheet() {
             extraOxBody,
             healthDamage,
             portrait: portrait || undefined,
+            birthrights,
           },
         });
       }
@@ -1387,7 +1388,7 @@ export default function CharacterSheet() {
         clearTimeout(autoSaveTimeoutRef.current);
       }
     };
-  }, [legend, legendPointsCurrent, willpower, willpowerCurrent, extraOxBody, healthDamage, portrait, characterId]);
+  }, [legend, legendPointsCurrent, willpower, willpowerCurrent, extraOxBody, healthDamage, portrait, birthrights, characterId]);
   
 
   // Create edit handlers for each section
