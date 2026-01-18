@@ -434,6 +434,8 @@ export default function CharacterSheet() {
   // Available virtues from database for autocomplete
   const [availableVirtues, setAvailableVirtues] = useState<{id: string, name: string, description?: string}[]>([]);
   const [virtueSearchOpen, setVirtueSearchOpen] = useState<number | null>(null);
+  const [availableNatures, setAvailableNatures] = useState<{id: string, name: string, description?: string}[]>([]);
+  const [natureSearchOpen, setNatureSearchOpen] = useState(false);
   
   // Fetch available virtues from API
   useEffect(() => {
@@ -445,6 +447,16 @@ export default function CharacterSheet() {
         }
       })
       .catch(err => console.error('Failed to fetch virtues:', err));
+      
+    // Fetch available natures from API
+    fetch('/api/list-natures')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setAvailableNatures(data);
+        }
+      })
+      .catch(err => console.error('Failed to fetch natures:', err));
   }, []);
   
   // legend state is initialized above now
@@ -985,21 +997,6 @@ export default function CharacterSheet() {
                                             </div>
 
                                             <div>
-                                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">Nature Archetype</label>
-                                                <ScionInput 
-                                                   placeholder="SELECT NATURE" 
-                                                   className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
-                                                   list="natures-list"
-                                                   viewMode={!editingIdentity}
-                                                />
-                                                <datalist id="natures-list">
-                                                   {compendiumNatures.map((n: any) => (
-                                                       <option key={n.id} value={n.name} />
-                                                   ))}
-                                                </datalist>
-                                            </div>
-
-                                            <div>
                                                 <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">Date of Birth</label>
                                                 <ScionInput 
                                                    value={dateOfBirth} 
@@ -1331,11 +1328,67 @@ export default function CharacterSheet() {
                             </div>
                         ))}
                     </div>
+                    {/* Nature Section - Integrated with Callings */}
+                    <div className="mt-4 pt-3 border-t border-primary/20">
+                        <span className="text-[9px] uppercase tracking-widest text-muted-foreground font-tech block mb-2">NATURE ARCHETYPE</span>
+                        <div className="relative">
+                            <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent border-l-2 border-primary/60" />
+                            <div className="relative z-10 p-3 flex flex-col gap-2">
+                                <div className="flex justify-between items-center">
+                                    <div className="flex flex-col flex-1 relative">
+                                        <input 
+                                            value={nature} 
+                                            onChange={(e) => setNature(e.target.value)}
+                                            onFocus={() => editingCombat && setNatureSearchOpen(true)}
+                                            onBlur={() => setTimeout(() => setNatureSearchOpen(false), 200)}
+                                            className="text-base font-mythic uppercase tracking-wider text-primary bg-transparent border-none p-0 h-auto focus:ring-0 drop-shadow-md outline-none placeholder:text-primary/30" 
+                                            placeholder="SELECT NATURE"
+                                            disabled={!editingCombat}
+                                        />
+                                        {/* Nature Tooltip on hover */}
+                                        {nature && !editingCombat && (() => {
+                                            const foundNature = availableNatures.find(n => n.name.toLowerCase() === nature.toLowerCase());
+                                            return foundNature?.description ? (
+                                                <div className="absolute left-0 top-full mt-2 p-2 bg-black/95 border border-primary/30 rounded-sm text-[10px] font-tech text-primary/70 max-w-[250px] opacity-0 hover:opacity-100 transition-opacity z-50">
+                                                    {foundNature.description}
+                                                </div>
+                                            ) : null;
+                                        })()}
+                                        {/* Autocomplete dropdown */}
+                                        {natureSearchOpen && editingCombat && (
+                                            <div className="absolute top-full left-0 right-0 mt-1 bg-black/95 border border-primary/30 rounded-sm max-h-40 overflow-y-auto z-50">
+                                                {availableNatures
+                                                    .filter(n => n.name.toLowerCase().includes(nature.toLowerCase()))
+                                                    .slice(0, 10)
+                                                    .map(n => (
+                                                        <div
+                                                            key={n.id}
+                                                            onClick={() => {
+                                                                setNature(n.name);
+                                                                setNatureSearchOpen(false);
+                                                            }}
+                                                            className="w-full text-left px-2 py-1.5 text-xs font-tech text-primary/80 hover:bg-primary/20 hover:text-primary transition-colors cursor-pointer"
+                                                            title={n.description || ''}
+                                                        >
+                                                            <span className="block">{n.name}</span>
+                                                            {n.description && (
+                                                                <span className="block text-[9px] text-muted-foreground truncate">{n.description}</span>
+                                                            )}
+                                                        </div>
+                                                    ))
+                                                }
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </MythicHUDFrame>
 
-                {/* VIRTUES MODULE */}
+                {/* VIRTUES MODULE - Styled like Callings */}
                 <MythicHUDFrame title="Virtue Matrix" icon={Target} subHeader="MORAL COMPASS" isEditing={editingVirtues} {...createEditHandlers(editingVirtues, setEditingVirtues)}>
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                         {virtues.length === 0 ? (
                             <div className="text-center py-4">
                                 <p className="text-xs text-muted-foreground mb-3">Nenhuma virtude adicionada</p>
@@ -1352,76 +1405,79 @@ export default function CharacterSheet() {
                         ) : (
                             <>
                                 {virtues.map((virtue, idx) => (
-                                    <div key={virtue.id} className="relative group">
-                                        <div className="absolute inset-0 bg-primary/5 skew-x-[-5deg] border border-primary/10 group-hover:border-primary/30 transition-colors" />
+                                    <div key={virtue.id} className="relative">
+                                        {/* Virtue Card Background - Matching Callings Style */}
+                                        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent border-l-2 border-primary/60" />
                                         
-                                        <div className="relative z-10 flex items-center justify-between p-2 pl-3">
-                                            <div className="flex flex-col flex-1 relative group/virtue">
-                                                <input 
-                                                    value={virtue.name} 
-                                                    onChange={(e) => updateVirtue(idx, 'name', e.target.value)}
-                                                    onFocus={() => editingVirtues && setVirtueSearchOpen(idx)}
-                                                    onBlur={() => setTimeout(() => setVirtueSearchOpen(null), 200)}
-                                                    className="bg-transparent border-none focus:ring-0 outline-none w-full text-xs font-mythic uppercase tracking-widest text-primary/90 placeholder:text-primary/30" 
-                                                    placeholder="Selecione uma virtude..."
-                                                    disabled={!editingVirtues}
-                                                    list={`virtues-list-${idx}`}
-                                                />
-                                                {/* Description Tooltip on hover */}
-                                                {virtue.name && !editingVirtues && (() => {
-                                                    const foundVirtue = availableVirtues.find(v => v.name.toLowerCase() === virtue.name.toLowerCase());
-                                                    return foundVirtue?.description ? (
-                                                        <div className="absolute left-0 top-full mt-2 p-2 bg-black/95 border border-primary/30 rounded-sm text-[10px] font-tech text-primary/70 max-w-[200px] opacity-0 group-hover/virtue:opacity-100 transition-opacity z-50 pointer-events-none">
-                                                            {foundVirtue.description}
+                                        <div className="relative z-10 p-3 flex flex-col gap-2">
+                                            <div className="flex justify-between items-center">
+                                                <div className="flex flex-col flex-1 relative group/virtue">
+                                                    <span className="text-[9px] uppercase tracking-widest text-muted-foreground font-tech">VIRTUE 0{idx+1}</span>
+                                                    <input 
+                                                        value={virtue.name} 
+                                                        onChange={(e) => updateVirtue(idx, 'name', e.target.value)}
+                                                        onFocus={() => editingVirtues && setVirtueSearchOpen(idx)}
+                                                        onBlur={() => setTimeout(() => setVirtueSearchOpen(null), 200)}
+                                                        className="text-base font-mythic uppercase tracking-wider text-primary bg-transparent border-none p-0 h-auto focus:ring-0 drop-shadow-md outline-none placeholder:text-primary/30" 
+                                                        placeholder="SELECT VIRTUE"
+                                                        disabled={!editingVirtues}
+                                                    />
+                                                    {/* Description Tooltip on hover */}
+                                                    {virtue.name && !editingVirtues && (() => {
+                                                        const foundVirtue = availableVirtues.find(v => v.name.toLowerCase() === virtue.name.toLowerCase());
+                                                        return foundVirtue?.description ? (
+                                                            <div className="absolute left-0 top-full mt-2 p-2 bg-black/95 border border-primary/30 rounded-sm text-[10px] font-tech text-primary/70 max-w-[200px] opacity-0 group-hover/virtue:opacity-100 transition-opacity z-50 pointer-events-none">
+                                                                {foundVirtue.description}
+                                                            </div>
+                                                        ) : null;
+                                                    })()}
+                                                    {/* Autocomplete dropdown */}
+                                                    {virtueSearchOpen === idx && editingVirtues && (
+                                                        <div className="absolute top-full left-0 right-0 mt-1 bg-black/95 border border-primary/30 rounded-sm max-h-32 overflow-y-auto z-50">
+                                                            {availableVirtues
+                                                                .filter(v => v.name.toLowerCase().includes(virtue.name.toLowerCase()))
+                                                                .slice(0, 8)
+                                                                .map(v => (
+                                                                    <div
+                                                                        key={v.id}
+                                                                        onClick={() => {
+                                                                            updateVirtue(idx, 'name', v.name);
+                                                                            setVirtueSearchOpen(null);
+                                                                        }}
+                                                                        className="w-full text-left px-2 py-1.5 text-xs font-tech text-primary/80 hover:bg-primary/20 hover:text-primary transition-colors cursor-pointer"
+                                                                        title={v.description || ''}
+                                                                    >
+                                                                        <span className="block">{v.name}</span>
+                                                                        {v.description && (
+                                                                            <span className="block text-[9px] text-muted-foreground truncate">{v.description}</span>
+                                                                        )}
+                                                                    </div>
+                                                                ))
+                                                            }
                                                         </div>
-                                                    ) : null;
-                                                })()}
-                                                {/* Autocomplete dropdown */}
-                                                {virtueSearchOpen === idx && editingVirtues && (
-                                                    <div className="absolute top-full left-0 right-0 mt-1 bg-black/95 border border-primary/30 rounded-sm max-h-32 overflow-y-auto z-50">
-                                                        {availableVirtues
-                                                            .filter(v => v.name.toLowerCase().includes(virtue.name.toLowerCase()))
-                                                            .slice(0, 8)
-                                                            .map(v => (
-                                                                <div
-                                                                    key={v.id}
-                                                                    onClick={() => {
-                                                                        updateVirtue(idx, 'name', v.name);
-                                                                        setVirtueSearchOpen(null);
-                                                                    }}
-                                                                    className="w-full text-left px-2 py-1.5 text-xs font-tech text-primary/80 hover:bg-primary/20 hover:text-primary transition-colors cursor-pointer"
-                                                                    title={v.description || ''}
-                                                                >
-                                                                    <span className="block">{v.name}</span>
-                                                                    {v.description && (
-                                                                        <span className="block text-[9px] text-muted-foreground truncate">{v.description}</span>
-                                                                    )}
-                                                                </div>
-                                                            ))
-                                                        }
+                                                    )}
+                                                </div>
+                                                
+                                                <div className="flex items-center gap-2">
+                                                    <div className="flex items-center bg-black/40 p-1 rounded-sm border border-primary/20">
+                                                        <DotRating 
+                                                            value={virtue.value} 
+                                                            max={5} 
+                                                            onChange={(v) => updateVirtue(idx, 'value', v)} 
+                                                            iconClassName="w-2.5 h-2.5 rounded-sm border-primary/50"
+                                                            activeClassName="bg-primary shadow-[0_0_6px_gold]"
+                                                            readOnly={!editingVirtues}
+                                                        />
                                                     </div>
-                                                )}
-                                                <div className="h-[1px] w-full bg-gradient-to-r from-primary/30 to-transparent mt-0.5" />
-                                            </div>
-                                            
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-sm font-bold font-code text-primary opacity-50 group-hover:opacity-100 transition-opacity">{virtue.value}</span>
-                                                <DotRating 
-                                                    value={virtue.value} 
-                                                    max={5} 
-                                                    onChange={(v) => updateVirtue(idx, 'value', v)} 
-                                                    iconClassName="w-2 h-2 rotate-45 border-primary/40 group-hover:border-primary/70"
-                                                    activeClassName="bg-primary shadow-[0_0_6px_gold] scale-110"
-                                                    readOnly={!editingVirtues}
-                                                />
-                                                {editingVirtues && (
-                                                    <button 
-                                                        onClick={() => removeVirtue(idx)}
-                                                        className="opacity-0 group-hover:opacity-100 text-red-500/50 hover:text-red-500 transition-opacity"
-                                                    >
-                                                        <X className="w-3 h-3" />
-                                                    </button>
-                                                )}
+                                                    {editingVirtues && (
+                                                        <button 
+                                                            onClick={() => removeVirtue(idx)}
+                                                            className="text-red-500/50 hover:text-red-500 transition-colors"
+                                                        >
+                                                            <X className="w-3 h-3" />
+                                                        </button>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

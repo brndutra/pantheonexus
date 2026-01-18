@@ -512,6 +512,22 @@ export async function registerRoutes(
     }
   });
   
+  // NATURES - Fetch from Supabase list_nature table
+  app.get("/api/list-natures", async (req, res) => {
+    try {
+      const { data, error } = await supabase
+        .from('list_nature')
+        .select('*')
+        .order('name');
+      
+      if (error) throw error;
+      res.json(data || []);
+    } catch (error) {
+      console.error("Error fetching natures:", error);
+      res.status(500).json({ error: "Failed to fetch natures" });
+    }
+  });
+  
   // ATTACKS
   app.get("/api/attacks", async (req, res) => {
     try {
