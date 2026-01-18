@@ -1587,9 +1587,9 @@ export default function CharacterSheet() {
         {/* --- GRID END --- */}
 
         {/* ATTRIBUTES & ABILITIES ROW - 1/3 + 2/3 */}
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
             {/* ATTRIBUTES CORE - 1 column */}
-            <MythicHUDFrame title="Attributes Core" icon={Dna} subHeader="PHYSICAL / SOCIAL / MENTAL" className="md:col-span-1 h-[520px] flex flex-col" isEditing={editingAttributes} {...createEditHandlers(editingAttributes, setEditingAttributes)}>
+            <MythicHUDFrame title="Attributes Core" icon={Dna} subHeader="PHYSICAL / SOCIAL / MENTAL" className="md:col-span-1 flex flex-col" isEditing={editingAttributes} {...createEditHandlers(editingAttributes, setEditingAttributes)}>
                 <div className="space-y-8 flex-1">
                     {(Object.entries(attributes) as [AttributeCategory, Attribute[]][]).map(([category, attrs]) => (
                         <div key={category} className="space-y-3 relative">
@@ -1645,7 +1645,7 @@ export default function CharacterSheet() {
             </MythicHUDFrame>
 
             {/* ABILITIES SCROLL - 2 columns */}
-            <MythicHUDFrame title="Abilities Database" icon={Brain} subHeader="SKILL SET MATRIX" className="md:col-span-2 h-[520px] flex flex-col" isEditing={editingAbilities} {...createEditHandlers(editingAbilities, setEditingAbilities)}>
+            <MythicHUDFrame title="Abilities Database" icon={Brain} subHeader="SKILL SET MATRIX" className="md:col-span-2 flex flex-col" isEditing={editingAbilities} {...createEditHandlers(editingAbilities, setEditingAbilities)}>
                 <div className="flex-1 overflow-y-auto pr-2 scion-scrollbar custom-scroll-area">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-1 h-full content-start">
                         {abilitiesSchema.map((schema) => {
