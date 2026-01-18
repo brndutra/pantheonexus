@@ -2337,6 +2337,84 @@ export default function CharacterSheet() {
                 </div>
             </MythicHUDFrame>
 
+            {/* BIRTHRIGHTS SECTION */}
+            <MythicHUDFrame 
+                title="Direitos de Sangue" 
+                icon={Crown} 
+                subHeader="BIRTHRIGHTS"
+                className="md:col-span-1"
+            >
+                <div className="space-y-3">
+                    {/* Creatures */}
+                    <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                            <div className="w-5 h-5 flex items-center justify-center bg-primary/10 rounded-sm border border-primary/20">
+                                <span className="text-[10px]">🐺</span>
+                            </div>
+                            <span className="text-[9px] font-mythic uppercase text-primary/70 tracking-widest">Criaturas</span>
+                        </div>
+                        <textarea
+                            value={birthrights.creatures}
+                            onChange={e => setBirthrights({...birthrights, creatures: e.target.value})}
+                            placeholder="Animais míticos, companheiros sobrenaturais..."
+                            className="w-full bg-black/30 border border-primary/20 text-[10px] px-2 py-1.5 rounded-sm text-primary placeholder:text-primary/30 outline-none resize-none h-12 focus:border-primary"
+                            data-testid="input-birthrights-creatures"
+                        />
+                    </div>
+
+                    {/* Guides */}
+                    <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                            <div className="w-5 h-5 flex items-center justify-center bg-primary/10 rounded-sm border border-primary/20">
+                                <span className="text-[10px]">👁</span>
+                            </div>
+                            <span className="text-[9px] font-mythic uppercase text-primary/70 tracking-widest">Guias</span>
+                        </div>
+                        <textarea
+                            value={birthrights.guides}
+                            onChange={e => setBirthrights({...birthrights, guides: e.target.value})}
+                            placeholder="Mentores divinos, espíritos guia..."
+                            className="w-full bg-black/30 border border-primary/20 text-[10px] px-2 py-1.5 rounded-sm text-primary placeholder:text-primary/30 outline-none resize-none h-12 focus:border-primary"
+                            data-testid="input-birthrights-guides"
+                        />
+                    </div>
+
+                    {/* Followers */}
+                    <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                            <div className="w-5 h-5 flex items-center justify-center bg-primary/10 rounded-sm border border-primary/20">
+                                <span className="text-[10px]">⚔</span>
+                            </div>
+                            <span className="text-[9px] font-mythic uppercase text-primary/70 tracking-widest">Seguidores</span>
+                        </div>
+                        <textarea
+                            value={birthrights.followers}
+                            onChange={e => setBirthrights({...birthrights, followers: e.target.value})}
+                            placeholder="Guerreiros leais, cultos, servos..."
+                            className="w-full bg-black/30 border border-primary/20 text-[10px] px-2 py-1.5 rounded-sm text-primary placeholder:text-primary/30 outline-none resize-none h-12 focus:border-primary"
+                            data-testid="input-birthrights-followers"
+                        />
+                    </div>
+
+                    {/* Relics */}
+                    <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                            <div className="w-5 h-5 flex items-center justify-center bg-primary/10 rounded-sm border border-primary/20">
+                                <span className="text-[10px]">✧</span>
+                            </div>
+                            <span className="text-[9px] font-mythic uppercase text-primary/70 tracking-widest">Relíquias</span>
+                        </div>
+                        <textarea
+                            value={birthrights.relics}
+                            onChange={e => setBirthrights({...birthrights, relics: e.target.value})}
+                            placeholder="Artefatos divinos, itens encantados..."
+                            className="w-full bg-black/30 border border-primary/20 text-[10px] px-2 py-1.5 rounded-sm text-primary placeholder:text-primary/30 outline-none resize-none h-12 focus:border-primary"
+                            data-testid="input-birthrights-relics"
+                        />
+                    </div>
+                </div>
+            </MythicHUDFrame>
+
             {/* 2. OFFENSIVE CAPABILITIES - Takes 2 columns */}
             <MythicHUDFrame title="Offensive Capabilities" icon={Sword} subHeader="WEAPONRY & ATTACK VECTORS" className="md:col-span-2">
                 <div className="space-y-2">
