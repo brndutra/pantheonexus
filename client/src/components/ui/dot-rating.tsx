@@ -43,7 +43,7 @@ export function DotRating({
               dot <= value
                 ? variant === "mythic"
                   ? "border-primary bg-primary/20 shadow-[0_0_8px_rgba(255,215,0,0.6)]"
-                  : "border-secondary bg-secondary/20 shadow-[0_0_5px_rgba(0,255,255,0.6)]"
+                  : "border-secondary bg-secondary/20 shadow-[0_0_5px_rgba(200,200,200,0.6)]"
                 : "border-muted-foreground/30 bg-transparent"
             )}
           />
