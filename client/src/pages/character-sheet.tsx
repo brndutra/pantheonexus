@@ -2477,55 +2477,55 @@ export default function CharacterSheet() {
                     </div>
 
                     {/* Weapons Table Header - 11 columns */}
-                    <div className="grid grid-cols-[1.5fr_0.6fr_0.6fr_0.6fr_0.5fr_0.5fr_0.5fr_0.6fr_0.6fr_0.8fr_auto] gap-0.5 text-[6px] uppercase tracking-widest text-muted-foreground border-b border-primary/10 pb-1 bg-primary/5 p-1 rounded-t-sm">
-                        <div>Weapon</div>
-                        <div className="text-center">Atk Attr</div>
-                        <div className="text-center">Atk Abil</div>
-                        <div className="text-center">Acc</div>
-                        <div className="text-center">Dmg Attr</div>
-                        <div className="text-center">Dmg</div>
+                    <div className="grid grid-cols-[1.8fr_0.7fr_0.7fr_0.5fr_0.6fr_0.5fr_0.5fr_0.5fr_0.6fr_0.7fr_auto] gap-1 text-[8px] uppercase tracking-widest text-muted-foreground border-b border-primary/10 pb-1.5 bg-primary/5 p-1.5 rounded-t-sm">
+                        <div>Arma</div>
+                        <div className="text-center">Atrib Atk</div>
+                        <div className="text-center">Habil Atk</div>
+                        <div className="text-center">Prec</div>
+                        <div className="text-center">Atrib Dano</div>
+                        <div className="text-center">Dano</div>
                         <div className="text-center">Def</div>
-                        <div className="text-center">Spd</div>
-                        <div className="text-center">Range</div>
+                        <div className="text-center">Vel</div>
+                        <div className="text-center">Alcance</div>
                         <div className="text-center">Tags</div>
-                        <div className="w-4"></div>
+                        <div className="w-5"></div>
                     </div>
 
                     {/* Weapons List */}
-                    <div className="space-y-0 max-h-[200px] overflow-y-auto">
+                    <div className="space-y-0 max-h-[250px] overflow-y-auto">
                         {weapons.map((w, i) => (
-                            <div key={i} className={`grid grid-cols-[1.5fr_0.6fr_0.6fr_0.6fr_0.5fr_0.5fr_0.5fr_0.6fr_0.6fr_0.8fr_auto] gap-0.5 text-[8px] font-tech text-primary/80 items-center p-0.5 hover:bg-primary/10 transition-colors border-l-2 ${w.isInnate || w.category === 'innate' ? 'border-primary/30 bg-primary/5' : 'border-transparent hover:border-primary'} group`}>
-                                <div className="font-bold truncate flex items-center gap-1">
-                                    <Crosshair className="w-2 h-2 text-primary/40 shrink-0" />
+                            <div key={i} className={`grid grid-cols-[1.8fr_0.7fr_0.7fr_0.5fr_0.6fr_0.5fr_0.5fr_0.5fr_0.6fr_0.7fr_auto] gap-1 text-[10px] font-tech text-primary/90 items-center py-1.5 px-1 hover:bg-primary/10 transition-colors border-l-2 ${w.isInnate || w.category === 'innate' ? 'border-primary/30 bg-primary/5' : 'border-transparent hover:border-primary'} group`}>
+                                <div className="font-bold truncate flex items-center gap-1.5">
+                                    <Crosshair className="w-3 h-3 text-primary/50 shrink-0" />
                                     <span className="truncate">{w.name}</span>
-                                    <span className="text-[6px] text-muted-foreground/50 uppercase shrink-0">({w.category?.slice(0,3)})</span>
+                                    <span className="text-[7px] text-muted-foreground/60 uppercase shrink-0 px-1 py-0.5 bg-primary/10 rounded">({w.category?.slice(0,3)})</span>
                                 </div>
-                                <div className="text-center text-primary/60 text-[7px]">{w.attackAttribute || "-"}</div>
-                                <div className="text-center text-primary/60 text-[7px]">{w.attackAbility || "-"}</div>
-                                <div className="text-center text-muted-foreground">{w.accuracy >= 0 ? `+${w.accuracy}` : w.accuracy}</div>
-                                <div className="text-center text-primary/60 text-[7px]">{w.damageAttribute || "-"}</div>
-                                <div className="text-center text-primary/80">{w.damage}</div>
-                                <div className="text-center text-primary/70">{w.defense >= 0 ? `+${w.defense}` : w.defense}</div>
+                                <div className="text-center text-primary/70 text-[9px]">{w.attackAttribute || "-"}</div>
+                                <div className="text-center text-primary/70 text-[9px]">{w.attackAbility || "-"}</div>
+                                <div className="text-center text-muted-foreground font-bold">{w.accuracy >= 0 ? `+${w.accuracy}` : w.accuracy}</div>
+                                <div className="text-center text-primary/70 text-[9px]">{w.damageAttribute || "-"}</div>
+                                <div className="text-center text-primary font-bold">{w.damage}</div>
+                                <div className="text-center text-primary/80">{w.defense >= 0 ? `+${w.defense}` : w.defense}</div>
                                 <div className="text-center text-muted-foreground">{w.speed}</div>
-                                <div className="text-center text-muted-foreground/60">{w.range || "-"}</div>
-                                <div className="text-center text-[6px] uppercase opacity-60 truncate">{w.tags || "-"}</div>
+                                <div className="text-center text-muted-foreground/70">{w.range || "-"}</div>
+                                <div className="text-center text-[8px] uppercase opacity-70 truncate">{w.tags || "-"}</div>
                                 {w.isInnate || w.category === 'innate' ? (
-                                    <div className="w-4 h-4 flex items-center justify-center text-primary/30">
-                                        <span className="text-[6px]">●</span>
+                                    <div className="w-5 h-5 flex items-center justify-center text-primary/40">
+                                        <span className="text-[8px]">●</span>
                                     </div>
                                 ) : (
                                     <button 
                                         onClick={() => removeWeapon(i)}
-                                        className="w-4 h-4 flex items-center justify-center text-red-400/50 hover:text-red-400 hover:bg-red-400/10 rounded-sm transition-colors opacity-0 group-hover:opacity-100"
+                                        className="w-5 h-5 flex items-center justify-center text-red-400/50 hover:text-red-400 hover:bg-red-400/10 rounded-sm transition-colors opacity-0 group-hover:opacity-100"
                                     >
-                                        <Trash2 className="w-2.5 h-2.5" />
+                                        <Trash2 className="w-3 h-3" />
                                     </button>
                                 )}
                             </div>
                         ))}
                         
                         {/* Empty Row for Custom Offensive */}
-                        <div className="grid grid-cols-[1.5fr_0.6fr_0.6fr_0.6fr_0.5fr_0.5fr_0.5fr_0.6fr_0.6fr_0.8fr_auto] gap-0.5 text-[8px] font-tech items-center p-0.5 border-l-2 border-accent/30 bg-accent/5">
+                        <div className="grid grid-cols-[1.8fr_0.7fr_0.7fr_0.5fr_0.6fr_0.5fr_0.5fr_0.5fr_0.6fr_0.7fr_auto] gap-1 text-[10px] font-tech items-center py-1.5 px-1 border-l-2 border-accent/30 bg-accent/5">
                             <input 
                                 value={customOffensive.name || ''}
                                 onChange={e => setCustomOffensive({...customOffensive, name: e.target.value})}
