@@ -252,3 +252,108 @@ export const insertAttackSchema = createInsertSchema(attacks).omit({
 
 export type InsertAttack = z.infer<typeof insertAttackSchema>;
 export type Attack = typeof attacks.$inferSelect;
+
+// =====================
+// LEGACY DATA TABLES
+// =====================
+
+// Scionsight Table - Combat stats and powers reference
+export const scionsight = pgTable("scionsight", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  scionId: varchar("scion_id").notNull(),
+  legendLevel: integer("legend_level").default(1),
+  legendPoolTotal: integer("legend_pool_total").default(1),
+  willpowerPoolCurrent: integer("willpower_pool_current").default(0),
+  willpowerPoolTotal: integer("willpower_pool_total").default(1),
+  defenseDodge: integer("defense_dodge").default(0),
+  defenseParry: integer("defense_parry").default(0),
+  soakBash: integer("soak_bash").default(0),
+  soakLethal: integer("soak_lethal").default(0),
+  soakAggravated: integer("soak_aggravated").default(0),
+  boons: jsonb("boons").default([]),
+  knacks: jsonb("knacks").default([]),
+  featsWalk: integer("feats_walk").default(0),
+  featsRun: integer("feats_run").default(0),
+  featsJump: integer("feats_jump").default(0),
+  featsLift: integer("feats_lift").default(0),
+  birthrightCreatures: text("birthrights_creatures").default(""),
+  birthrightGuides: text("birthrights_guides").default(""),
+  birthrightFollowers: text("birthrights_followers").default(""),
+  birthrightRelics: text("birthrights_relics").default(""),
+  nature: text("nature").default(""),
+  calling1: text("calling_1").default(""),
+  calling1Rating: integer("calling_1_rating").default(1),
+  calling2: text("calling_2").default(""),
+  calling2Rating: integer("calling_2_rating").default(1),
+  calling3: text("calling_3").default(""),
+  calling3Rating: integer("calling_3_rating").default(1),
+  legendaryTitle: text("legendary_title").default(""),
+  virtue1: text("virtue_1").default(""),
+  virtue1Rating: integer("virtue_1_rating").default(1),
+  virtue2: text("virtue_2").default(""),
+  virtue2Rating: integer("virtue_2_rating").default(1),
+  virtue3: text("virtue_3").default(""),
+  virtue3Rating: integer("virtue_3_rating").default(1),
+  virtue4: text("virtue_4").default(""),
+  virtue4Rating: integer("virtue_4_rating").default(1),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const insertScionsightSchema = createInsertSchema(scionsight).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertScionsight = z.infer<typeof insertScionsightSchema>;
+export type Scionsight = typeof scionsight.$inferSelect;
+
+// Scrolls Table - Character profile and identity data
+export const scrolls = pgTable("scrolls", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").default(""),
+  name: text("name").notNull(),
+  pantheon: text("pantheon").default(""),
+  isPublic: text("is_public").default("true"),
+  data: jsonb("data").default({}),
+  zodiacSign: text("zodiac_sign").default(""),
+  playlistLink: text("playlist_link").default(""),
+  aetherPercentage: integer("aether_percentage").default(0),
+  originCity: text("origin_city").default(""),
+  originState: text("origin_state").default(""),
+  originCountry: text("origin_country").default(""),
+  birthDay: text("birth_day").default(""),
+  biography: text("biography").default(""),
+  serapeumAccountNumber: text("serapeum_account_number").default(""),
+  effigy: text("effigy").default(""),
+  psyDescription: text("psy_description").default(""),
+  psyTags: text("psy_tags").default(""),
+  psyStrengths: text("psy_strengths").default(""),
+  psyWeaknesses: text("psy_weaknesses").default(""),
+  psyBehaviors: text("psy_behaviors").default(""),
+  psyTemperament: text("psy_temperament").default(""),
+  psyIntp: text("psy_intp").default(""),
+  psyArchetypalArcana: text("psy_archetypal_arcana").default(""),
+  psyLastSynced: text("psy_last_synced").default(""),
+  profEducationHistory: text("prof_education_history").default(""),
+  profMentorInfo: text("prof_mentor_info").default(""),
+  profPupilInfo: text("prof_pupil_info").default(""),
+  profInterestedPurviews: text("prof_interested_purviews").default(""),
+  profInterestedAttributes: text("prof_interested_attributes").default(""),
+  profInterestedAbilities: text("prof_interested_abilities").default(""),
+  profProfessionalNotes: text("prof_professional_notes").default(""),
+  urlPrismCover: text("url_prism_cover").default(""),
+  urlPortraitPrism: text("url_portrait_prism").default(""),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const insertScrollsSchema = createInsertSchema(scrolls).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertScrolls = z.infer<typeof insertScrollsSchema>;
+export type Scrolls = typeof scrolls.$inferSelect;
