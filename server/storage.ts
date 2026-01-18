@@ -393,11 +393,11 @@ export class SupabaseStorage implements IStorage {
       nature: ss.nature || scrollData.nature || "",
       legendaryTitle: ss.legendary_title || scrollData.legendary_title || "",
       birthrights: ss.birthrights_creatures ? {
-        creatures: ss.birthrights_creatures || "",
-        guides: ss.birthrights_guides || "",
-        followers: ss.birthrights_followers || "",
-        relics: ss.birthrights_relics || ""
-      } : scrollData.birthrights || { creatures: "", guides: "", followers: "", relics: "" },
+        creatures: this.parseBirthrightField(ss.birthrights_creatures),
+        guides: this.parseBirthrightField(ss.birthrights_guides),
+        followers: this.parseBirthrightField(ss.birthrights_followers),
+        relics: this.parseBirthrightField(ss.birthrights_relics)
+      } : scrollData.birthrights || { creatures: [], guides: [], followers: [], relics: [] },
       movementFeats: ss.feats_walk !== undefined ? {
         walk: ss.feats_walk || 0,
         run: ss.feats_run || 0,
@@ -529,6 +529,18 @@ export class SupabaseStorage implements IStorage {
     return result;
   }
 
+  private parseBirthrightField(value: string | undefined): any[] {
+    if (!value) return [];
+    // Try to parse as JSON array first
+    try {
+      const parsed = JSON.parse(value);
+      if (Array.isArray(parsed)) return parsed;
+    } catch (e) {
+      // Not JSON, return empty array (old string format is ignored)
+    }
+    return [];
+  }
+
   private characterToScionsight(char: Partial<InsertCharacter>): any {
     const result: any = {};
     
@@ -583,10 +595,11 @@ export class SupabaseStorage implements IStorage {
     
     if (char.birthrights && typeof char.birthrights === 'object') {
       const br = char.birthrights as any;
-      result.birthrights_creatures = br.creatures || "";
-      result.birthrights_guides = br.guides || "";
-      result.birthrights_followers = br.followers || "";
-      result.birthrights_relics = br.relics || "";
+      // Support both string and array formats - serialize arrays to JSON for scionsight
+      result.birthrights_creatures = Array.isArray(br.creatures) ? JSON.stringify(br.creatures) : (br.creatures || "");
+      result.birthrights_guides = Array.isArray(br.guides) ? JSON.stringify(br.guides) : (br.guides || "");
+      result.birthrights_followers = Array.isArray(br.followers) ? JSON.stringify(br.followers) : (br.followers || "");
+      result.birthrights_relics = Array.isArray(br.relics) ? JSON.stringify(br.relics) : (br.relics || "");
     }
     
     if (char.movementFeats && typeof char.movementFeats === 'object') {
