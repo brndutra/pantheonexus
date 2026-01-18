@@ -329,23 +329,41 @@ export default function CharacterSheet() {
 
       {/* Main Container */}
       <div className="relative z-20 container mx-auto p-4 md:p-8 max-w-7xl">
+
+        {/* PANTHEONEXUS HEADER */}
+        <div className="flex justify-between items-end mb-8 border-b border-primary/20 pb-4">
+            <div className="flex flex-col">
+                <h1 className="font-mythic text-4xl text-primary tracking-[0.2em] drop-shadow-[0_0_15px_rgba(212,175,55,0.5)]">
+                    PANTHEON<span className="text-foreground">EXUS</span>
+                </h1>
+                <div className="flex items-center gap-2">
+                    <span className="font-tech text-xs text-muted-foreground tracking-[0.5em] uppercase">System v2.4 // Scion Scrolls</span>
+                </div>
+            </div>
+            <div className="text-right hidden md:block">
+                <div className="text-[10px] font-code text-primary/50 tracking-widest">SECURE CONNECTION</div>
+                <div className="flex items-center justify-end gap-2 mt-1">
+                    <span className="text-[10px] font-tech text-primary">ONLINE</span>
+                    <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse shadow-[0_0_8px_gold]"></div>
+                </div>
+            </div>
+        </div>
         
         {/* Navigation Tabs */}
         <div className="flex justify-center mb-8 gap-4 sticky top-4 z-50">
            <div className="flex bg-black/80 border border-primary/30 p-1 rounded-full backdrop-blur-md shadow-lg">
-             {['sheet', 'bio', 'powers'].map((tab) => (
+             {['sheet', 'powers'].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab as any)}
                   className={cn(
-                    "px-6 py-2 rounded-full text-xs font-mythic uppercase tracking-widest transition-all duration-300",
+                    "px-8 py-2 rounded-full text-xs font-mythic uppercase tracking-widest transition-all duration-300",
                     activeTab === tab 
                       ? "bg-primary text-black font-bold shadow-[0_0_15px_rgba(212,175,55,0.6)]" 
                       : "text-muted-foreground hover:text-white"
                   )}
                 >
-                  {tab === 'sheet' && <span className="flex items-center gap-2"><Activity className="w-3 h-3"/> Interface</span>}
-                  {tab === 'bio' && <span className="flex items-center gap-2"><User className="w-3 h-3"/> Dossier</span>}
+                  {tab === 'sheet' && <span className="flex items-center gap-2"><Scroll className="w-3 h-3"/> Scroll Data</span>}
                   {tab === 'powers' && <span className="flex items-center gap-2"><Zap className="w-3 h-3"/> Arsenal</span>}
                 </button>
              ))}
