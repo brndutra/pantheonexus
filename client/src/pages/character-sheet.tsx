@@ -224,22 +224,35 @@ const CyberSection = ({
     <div className="mt-6 relative">
         {isYellow && (
             <>
-                <div className="absolute -top-1 -left-1 w-5 h-5 border-t-2 border-l-2 border-[#111] pointer-events-none z-20" />
-                <div className="absolute -top-1 -right-1 pointer-events-none z-20" style={{ width: '40px', height: '40px' }}>
-                    <svg viewBox="0 0 40 40" className="w-full h-full">
-                        <path d="M0,0 L40,0 L40,28 L28,40" fill="none" stroke="#111" strokeWidth="2" />
-                        <path d="M8,0 L40,0 L40,20" fill="none" stroke="#111" strokeWidth="1" opacity="0.4" />
+                <div className="absolute -top-1 -left-1 w-6 h-6 pointer-events-none z-20">
+                    <svg viewBox="0 0 24 24" className="w-full h-full">
+                        <path d="M0,10 L0,0 L10,0" fill="none" stroke="hsl(var(--primary))" strokeWidth="2" opacity="0.6" />
+                        <path d="M0,6 L0,0 L6,0" fill="none" stroke="hsl(var(--primary))" strokeWidth="1" opacity="0.3" />
                     </svg>
                 </div>
-                <div className="absolute -bottom-1 -left-1 w-5 h-5 border-b-2 border-l-2 border-[#111] pointer-events-none z-20" />
-                <div className="absolute -bottom-1 -right-1 w-5 h-5 border-b-2 border-r-2 border-[#111] pointer-events-none z-20" />
-                <div className="absolute top-0 left-6 right-12 h-[3px] bg-[#111] pointer-events-none z-20" />
-                <div className="absolute bottom-0 left-6 right-6 h-[2px] bg-[#111]/60 pointer-events-none z-20" />
-                <div className="absolute top-8 -left-[3px] w-[3px] h-8 pointer-events-none z-20">
-                    {[0,1,2,3].map(i => <div key={i} className="w-full h-1.5 bg-[#111] mb-[2px]" />)}
+                <div className="absolute -top-1 -right-1 pointer-events-none z-20" style={{ width: '44px', height: '44px' }}>
+                    <svg viewBox="0 0 44 44" className="w-full h-full">
+                        <path d="M0,0 L44,0 L44,30 L30,44" fill="none" stroke="hsl(var(--primary))" strokeWidth="2" opacity="0.5" />
+                        <path d="M10,0 L44,0 L44,22" fill="none" stroke="hsl(var(--primary))" strokeWidth="1" opacity="0.25" />
+                    </svg>
                 </div>
-                <div className="absolute top-8 -right-[3px] w-[3px] h-8 pointer-events-none z-20">
-                    {[0,1,2,3].map(i => <div key={i} className="w-full h-1.5 bg-[#111]/60 mb-[2px]" />)}
+                <div className="absolute -bottom-1 -left-1 w-6 h-6 pointer-events-none z-20">
+                    <svg viewBox="0 0 24 24" className="w-full h-full">
+                        <path d="M0,14 L0,24 L10,24" fill="none" stroke="hsl(var(--primary))" strokeWidth="2" opacity="0.5" />
+                    </svg>
+                </div>
+                <div className="absolute -bottom-1 -right-1 w-6 h-6 pointer-events-none z-20">
+                    <svg viewBox="0 0 24 24" className="w-full h-full">
+                        <path d="M14,24 L24,24 L24,14" fill="none" stroke="hsl(var(--primary))" strokeWidth="2" opacity="0.5" />
+                    </svg>
+                </div>
+                <div className="absolute top-0 left-8 right-14 h-[2px] bg-gradient-to-r from-primary/50 via-primary/20 to-transparent pointer-events-none z-20" />
+                <div className="absolute bottom-0 left-8 right-8 h-[1px] bg-gradient-to-r from-transparent via-primary/15 to-primary/30 pointer-events-none z-20" />
+                <div className="absolute top-10 -left-[3px] w-[3px] h-8 pointer-events-none z-20 flex flex-col gap-[2px]">
+                    {[0,1,2,3].map(i => <div key={i} className="w-full h-1.5 bg-primary/30" />)}
+                </div>
+                <div className="absolute top-10 -right-[3px] w-[3px] h-8 pointer-events-none z-20 flex flex-col gap-[2px]">
+                    {[0,1,2,3].map(i => <div key={i} className="w-full h-1.5 bg-primary/20" />)}
                 </div>
             </>
         )}
@@ -275,15 +288,15 @@ const CyberSection = ({
         <div className={cn(
             "relative",
             isYellow 
-                ? "border-2 border-[#111] bg-[#0a0a0a]" 
+                ? "border border-primary/20 bg-[#0a0a0a]" 
                 : "border border-primary/25 bg-[#0a0a0a]"
         )}>
             {isYellow ? (
                 <>
-                    <div className="absolute top-0 left-0 right-0 h-[3px] bg-[#111]" />
-                    <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#111]/60" />
-                    <div className="absolute top-0 left-0 w-[3px] h-full bg-gradient-to-b from-[#111] via-[#111]/60 to-[#111]" />
-                    <div className="absolute top-0 right-0 w-[2px] h-full bg-gradient-to-b from-[#111]/60 via-[#111]/30 to-[#111]/60" />
+                    <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-primary/40 via-primary/20 to-primary/40" />
+                    <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20" />
+                    <div className="absolute top-0 left-0 w-[2px] h-full bg-gradient-to-b from-primary/40 via-primary/15 to-primary/30" />
+                    <div className="absolute top-0 right-0 w-[1px] h-full bg-gradient-to-b from-primary/30 via-primary/10 to-primary/20" />
                 </>
             ) : (
                 <>
@@ -362,7 +375,7 @@ const CyberSection = ({
             {!collapsed && (
                 <div className={cn(
                     "p-4 relative overflow-visible",
-                    isYellow ? "bg-[#111]" : ""
+                    isYellow ? "bg-[#161616]" : ""
                 )}>
                     <div className={cn(
                         "absolute inset-0 pointer-events-none",
