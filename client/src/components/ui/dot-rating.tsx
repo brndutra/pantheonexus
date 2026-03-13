@@ -1,6 +1,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { playDotChange } from "@/lib/sounds";
 
 export interface DotRatingProps {
   value: number;
@@ -30,7 +31,7 @@ export function DotRating({
       {dots.map((dot) => (
         <button
           key={dot}
-          onClick={() => !readOnly && onChange?.(dot === value ? 0 : dot)}
+          onClick={() => { if (!readOnly) { onChange?.(dot === value ? 0 : dot); playDotChange(); } }}
           className={cn(
             "rounded-[1px] transition-all duration-300 relative focus:outline-none",
             iconClassName || "w-3 h-3 md:w-4 md:h-4"
