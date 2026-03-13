@@ -1269,6 +1269,7 @@ export default function CharacterSheet() {
   const [editingCombat, setEditingCombat] = useState(false);
   const [combatRowCollapsed, setCombatRowCollapsed] = useState(false);
   const [attribAbilCollapsed, setAttribAbilCollapsed] = useState(false);
+  const [personalCollapsed, setPersonalCollapsed] = useState(false);
   const [editingPowers, setEditingPowers] = useState(false);
   const [editingEquipment, setEditingEquipment] = useState(false);
   const [editingVitality, setEditingVitality] = useState(false);
@@ -1440,8 +1441,21 @@ export default function CharacterSheet() {
             </div>
         </div>
 
-        {/* --- GRID LAYOUT START --- */}
-        <div className="grid grid-cols-12 gap-6 items-start md:items-stretch">
+        {/* --- PERSONAL PROFILES - Collapsible wrapper --- */}
+        <div className="mt-6 border border-primary/20 rounded-sm bg-black/20 overflow-hidden">
+            <button 
+                onClick={() => setPersonalCollapsed(!personalCollapsed)}
+                className="w-full flex items-center justify-between px-4 py-2.5 bg-black/40 hover:bg-black/60 transition-colors border-b border-primary/15 cursor-pointer"
+                data-testid="btn-toggle-personal"
+            >
+                <div className="flex items-center gap-2">
+                    <User className="w-4 h-4 text-primary/60" />
+                    <span className="text-sm font-display uppercase tracking-[0.15em] text-primary">Personal Profiles</span>
+                </div>
+                {personalCollapsed ? <ChevronDown className="w-4 h-4 text-primary/50" /> : <ChevronUp className="w-4 h-4 text-primary/50" />}
+            </button>
+            {!personalCollapsed && (
+        <div className="p-4 grid grid-cols-12 gap-6 items-start md:items-stretch">
 
             {/* LEFT COLUMN: IDENTITY & VIRTUES (Width 4) */}
             <div className="col-span-12 md:col-span-4 flex flex-col gap-6">
@@ -2250,6 +2264,8 @@ export default function CharacterSheet() {
 
             </div>
 
+        </div>
+            )}
         </div> 
         {/* --- TOP 3-COLUMN GRID END --- */}
 
