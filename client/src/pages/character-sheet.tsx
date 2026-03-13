@@ -1736,7 +1736,7 @@ export default function CharacterSheet() {
         </div>
 
         {/* --- PERSONAL PROFILES --- */}
-        <CyberSection title="Personal Profiles" collapsed={personalCollapsed} onToggle={() => setPersonalCollapsed(!personalCollapsed)} testId="btn-toggle-personal">
+        <CyberSection title="Personal Profiles" variant="combat" collapsed={personalCollapsed} onToggle={() => setPersonalCollapsed(!personalCollapsed)} testId="btn-toggle-personal">
         <div className="grid grid-cols-12 gap-6 items-start md:items-stretch">
 
             {/* LEFT COLUMN: IDENTITY & VIRTUES (Width 4) */}
@@ -3094,7 +3094,7 @@ export default function CharacterSheet() {
         {/* --- COMBAT ROW END --- */}
 
         {/* ATTRIBUTES & ABILITIES */}
-        <CyberSection title="Trait Profile" collapsed={attribAbilCollapsed} onToggle={() => setAttribAbilCollapsed(!attribAbilCollapsed)} testId="btn-toggle-attrib-abil">
+        <CyberSection title="Trait Profile" variant="combat" collapsed={attribAbilCollapsed} onToggle={() => setAttribAbilCollapsed(!attribAbilCollapsed)} testId="btn-toggle-attrib-abil">
         <div className="space-y-6">
             <MythicHUDFrame title="Attributes" icon={Dna} className="flex flex-col" titleSize="large" isEditing={editingAttributes} {...createEditHandlers(editingAttributes, setEditingAttributes)}>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-1">
@@ -3240,7 +3240,7 @@ export default function CharacterSheet() {
 
 
         {/* BOTTOM SECTION: POWERS (Full Width) */}
-        <CyberSection title="Legacy Profile" collapsed={legacyCollapsed} onToggle={() => setLegacyCollapsed(!legacyCollapsed)} testId="btn-toggle-legacy">
+        <CyberSection title="Legacy Profile" variant="combat" collapsed={legacyCollapsed} onToggle={() => setLegacyCollapsed(!legacyCollapsed)} testId="btn-toggle-legacy">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                      {/* Knacks Column */}
                      <div>
