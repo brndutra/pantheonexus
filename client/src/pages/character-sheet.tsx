@@ -361,7 +361,7 @@ const CyberSection = ({
             {!collapsed && (
                 <div className={cn(
                     "p-4 relative overflow-visible",
-                    isYellow ? "bg-[#e6db00]" : ""
+                    isYellow ? "bg-[#1a1a1a]" : ""
                 )}>
                     <div className={cn(
                         "absolute inset-0 pointer-events-none",
@@ -397,7 +397,7 @@ const MythicHUDFrame = ({
     icon: Icon, 
     action, 
     subHeader,
-    variant = "default" as "default" | "minimal" | "cyber" | "gold",
+    variant = "default" as "default" | "minimal" | "cyber" | "gold" | "blue",
     titleSize = "default",
     isEditing,
     onEdit,
@@ -411,7 +411,7 @@ const MythicHUDFrame = ({
     icon?: any, 
     action?: React.ReactNode, 
     subHeader?: string,
-    variant?: "default" | "minimal" | "cyber" | "gold",
+    variant?: "default" | "minimal" | "cyber" | "gold" | "blue",
     titleSize?: "default" | "large",
     isEditing?: boolean,
     onEdit?: () => void,
@@ -419,33 +419,53 @@ const MythicHUDFrame = ({
     onCancel?: () => void,
     isLoading?: boolean
 }) => (
-  <div className={cn("relative group", isEditing && "ring-1 ring-primary/30", variant === "gold" && "legend-gold-box", className)}>
-    <div className={cn("absolute inset-0 border", variant === "gold" ? "bg-gradient-to-br from-[#8a7520] via-[#7a6818] to-[#6a5a12] border-[#a08c2a]/60" : "bg-[#0a0a0a] border-primary/15")} />
+  <div className={cn("relative group", isEditing && "ring-1 ring-primary/30", className)}>
+    <div className={cn("absolute inset-0 border", 
+        variant === "gold" ? "bg-[#0c0c0c] border-[#e6db00]/50" : 
+        variant === "blue" ? "bg-[#0c0c0c] border-[#00b4ff]/50" : 
+        "bg-[#0a0a0a] border-primary/15"
+    )} />
 
     <div className="absolute top-0 right-0 pointer-events-none z-20" style={{ width: '20px', height: '20px' }}>
         <svg viewBox="0 0 20 20" className="w-full h-full">
-            <path d="M0,0 L20,0 L20,14 L14,20" fill="none" stroke={variant === "gold" ? "#1a1400" : "hsl(var(--primary))"} strokeWidth="1.5" opacity="0.5" />
+            <path d="M0,0 L20,0 L20,14 L14,20" fill="none" stroke={variant === "gold" ? "#e6db00" : variant === "blue" ? "#00b4ff" : "hsl(var(--primary))"} strokeWidth="1.5" opacity="0.5" />
         </svg>
     </div>
     <div className="absolute bottom-0 left-0 pointer-events-none z-20" style={{ width: '14px', height: '14px' }}>
         <svg viewBox="0 0 14 14" className="w-full h-full">
-            <path d="M0,8 L0,14 L6,14" fill="none" stroke={variant === "gold" ? "#1a1400" : "hsl(var(--primary))"} strokeWidth="1.5" opacity="0.4" />
+            <path d="M0,8 L0,14 L6,14" fill="none" stroke={variant === "gold" ? "#e6db00" : variant === "blue" ? "#00b4ff" : "hsl(var(--primary))"} strokeWidth="1.5" opacity="0.4" />
         </svg>
     </div>
     <div className="absolute top-[50%] -right-[2px] w-[2px] pointer-events-none z-20 flex flex-col gap-[2px]">
-        {[0,1,2].map(i => <div key={i} className={cn("w-full h-1", variant === "gold" ? "bg-[#1a1400]/40" : "bg-primary/30")} />)}
+        {[0,1,2].map(i => <div key={i} className={cn("w-full h-1", variant === "gold" ? "bg-[#e6db00]/40" : variant === "blue" ? "bg-[#00b4ff]/40" : "bg-primary/30")} />)}
     </div>
     
     {/* Header Section — Muller style: thick rule + condensed title */}
     {(title || Icon) && (
         <div className="relative z-10">
-            <div className={cn("h-[3px] w-full", variant === "gold" ? "bg-[#1a1400]" : "bg-primary")} />
+            <div className={cn("h-[3px] w-full", 
+                variant === "gold" ? "bg-[#e6db00]" : 
+                variant === "blue" ? "bg-[#00b4ff]" : 
+                "bg-primary"
+            )} />
             <div className="flex items-center justify-between px-4 py-2.5">
                 <div className="flex items-center gap-3">
-                    {Icon && <Icon className={cn("w-4 h-4", variant === "gold" ? "text-[#1a1400]/80" : "text-primary/70")} />}
+                    {Icon && <Icon className={cn("w-4 h-4", 
+                        variant === "gold" ? "text-[#e6db00]/80" : 
+                        variant === "blue" ? "text-[#00b4ff]/80" : 
+                        "text-primary/70"
+                    )} />}
                     <div className="flex flex-col">
-                        {title && <h3 className={cn("font-display tracking-wide uppercase", titleSize === "large" ? "text-2xl" : "text-xl", variant === "gold" ? "text-[#1a1400]" : "text-primary")}>{title}</h3>}
-                        {subHeader && <span className={cn("text-[8px] font-code uppercase tracking-[0.15em]", variant === "gold" ? "text-[#1a1400]/60" : "text-muted-foreground/60")}>{subHeader}</span>}
+                        {title && <h3 className={cn("font-display tracking-wide uppercase", titleSize === "large" ? "text-2xl" : "text-xl", 
+                            variant === "gold" ? "text-[#e6db00]" : 
+                            variant === "blue" ? "text-[#00b4ff]" : 
+                            "text-primary"
+                        )}>{title}</h3>}
+                        {subHeader && <span className={cn("text-[8px] font-code uppercase tracking-[0.15em]", 
+                            variant === "gold" ? "text-[#e6db00]/50" : 
+                            variant === "blue" ? "text-[#00b4ff]/50" : 
+                            "text-muted-foreground/60"
+                        )}>{subHeader}</span>}
                     </div>
                 </div>
             
@@ -504,7 +524,11 @@ const MythicHUDFrame = ({
                 {action && <div className="flex items-center ml-2">{action}</div>}
             </div>
             </div>
-            <div className={cn("h-[1px] w-full", variant === "gold" ? "bg-[#1a1400]/30" : "bg-primary/20")} />
+            <div className={cn("h-[1px] w-full", 
+                variant === "gold" ? "bg-[#e6db00]/20" : 
+                variant === "blue" ? "bg-[#00b4ff]/20" : 
+                "bg-primary/20"
+            )} />
         </div>
     )}
 
@@ -515,12 +539,16 @@ const MythicHUDFrame = ({
     
     <div className="absolute bottom-1 right-1 pointer-events-none z-20 flex gap-[2px] opacity-20">
         {[0,1,2,3,4].map(i => (
-            <div key={i} className={cn("w-[2px] h-2", variant === "gold" ? "bg-[#e6db00]" : "bg-primary")} style={{ transform: 'skewX(-15deg)' }} />
+            <div key={i} className={cn("w-[2px] h-2", 
+                variant === "gold" ? "bg-[#e6db00]" : 
+                variant === "blue" ? "bg-[#00b4ff]" : 
+                "bg-primary"
+            )} style={{ transform: 'skewX(-15deg)' }} />
         ))}
     </div>
     <div className="absolute top-0 left-0 pointer-events-none z-20" style={{ width: '10px', height: '10px' }}>
         <svg viewBox="0 0 10 10" className="w-full h-full">
-            <path d="M0,3 L0,0 L3,0" fill="none" stroke={variant === "gold" ? "#e6db00" : "hsl(var(--primary))"} strokeWidth="1.5" opacity="0.4" />
+            <path d="M0,3 L0,0 L3,0" fill="none" stroke={variant === "gold" ? "#e6db00" : variant === "blue" ? "#00b4ff" : "hsl(var(--primary))"} strokeWidth="1.5" opacity="0.4" />
         </svg>
     </div>
   </div>
@@ -2645,7 +2673,7 @@ export default function CharacterSheet() {
 
             {/* 2. WILLPOWER + RESISTANCE - Takes 1 column (stacked) */}
             <div className="md:col-span-1 flex flex-col gap-6">
-                <MythicHUDFrame title="Willpower" icon={Shield} subHeader="MENTAL FORTITUDE" isEditing={editingCombatAll}>
+                <MythicHUDFrame title="Willpower" icon={Shield} subHeader="MENTAL FORTITUDE" variant="blue" isEditing={editingCombatAll}>
                     <div className="space-y-3">
                         <div className="flex items-center justify-between p-2 bg-black/40 border-l-2 border-[hsl(var(--highlight-blue))]/60">
                             <div className="flex items-center gap-2">
