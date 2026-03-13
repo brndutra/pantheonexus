@@ -821,6 +821,10 @@ export default function CharacterSheet() {
     followers: { name: '', description: '', dots: 1 },
     relics: { name: '', description: '', dots: 1 }
   });
+  const [showBirthrightForm, setShowBirthrightForm] = useState(false);
+  const [newBirthrightForm, setNewBirthrightForm] = useState<{ name: string; description: string; dots: number; category: 'creatures' | 'guides' | 'followers' | 'relics' }>({
+    name: '', description: '', dots: 1, category: 'relics'
+  });
   
   const addBirthright = (category: 'creatures' | 'guides' | 'followers' | 'relics') => {
     const item = newBirthright[category];
@@ -3308,68 +3312,110 @@ export default function CharacterSheet() {
 
                      {/* Birthrights Column */}
                      <div>
-                         <h5 className="text-xl font-display text-primary tracking-wide uppercase border-b border-primary/20 pb-1 mb-3">Birthrights</h5>
-                         <div className="space-y-4">
-                             {(['creatures', 'guides', 'followers', 'relics'] as const).map((category) => {
-                                 const labels: Record<string, { icon: string; label: string }> = {
-                                     creatures: { icon: '🐺', label: 'Creatures' },
-                                     guides: { icon: '👁', label: 'Guides' },
-                                     followers: { icon: '⚔', label: 'Followers' },
-                                     relics: { icon: '✧', label: 'Relics' },
-                                 };
-                                 const { icon, label } = labels[category];
-                                 return (
-                                     <div key={category} className="space-y-1.5">
-                                         <div className="flex items-center gap-2 border-b border-primary/15 pb-1">
-                                             <span className="text-[10px]">{icon}</span>
-                                             <span className="text-[9px] font-display uppercase text-primary/70 tracking-widest">{label}</span>
-                                         </div>
-                                         <div className="space-y-1 max-h-24 overflow-y-auto">
-                                             {birthrights[category].map((item, idx) => (
-                                                 <div key={idx} className="flex items-start gap-2 p-1 bg-primary/5 border border-primary/10 rounded-sm group">
-                                                     <div className="flex-1 min-w-0">
-                                                         <div className="flex items-center gap-1">
-                                                             <span className="text-[9px] font-bold text-primary truncate">{item.name}</span>
-                                                             <span className="text-[7px] text-primary/60">{'●'.repeat(item.dots)}</span>
-                                                         </div>
-                                                         {item.description && <p className="text-[7px] text-muted-foreground truncate">{item.description}</p>}
-                                                     </div>
-                                                     <button onClick={() => removeBirthright(category, idx)} className="text-red-400/50 hover:text-red-400 opacity-0 group-hover:opacity-100">
-                                                         <X className="w-3 h-3" />
-                                                     </button>
-                                                 </div>
-                                             ))}
-                                         </div>
-                                         <div className="space-y-1 pt-1 border-t border-primary/10">
-                                             <div className="flex gap-1">
-                                                 <input
-                                                     value={newBirthright[category].name}
-                                                     onChange={e => setNewBirthright({...newBirthright, [category]: {...newBirthright[category], name: e.target.value}})}
-                                                     placeholder="Nome..."
-                                                     className="flex-1 bg-black/30 border border-primary/20 text-[8px] px-1.5 py-1 rounded-sm text-primary placeholder:text-primary/30 outline-none"
-                                                 />
-                                                 <select
-                                                     value={newBirthright[category].dots}
-                                                     onChange={e => setNewBirthright({...newBirthright, [category]: {...newBirthright[category], dots: Number(e.target.value)}})}
-                                                     className="bg-black border border-primary/20 text-[8px] px-1 py-1 rounded-sm text-primary outline-none w-10"
-                                                 >
-                                                     {[1,2,3,4,5].map(d => <option key={d} value={d} className="bg-black">{'●'.repeat(d)}</option>)}
-                                                 </select>
-                                             </div>
-                                             <div className="flex gap-1">
-                                                 <input
-                                                     value={newBirthright[category].description}
-                                                     onChange={e => setNewBirthright({...newBirthright, [category]: {...newBirthright[category], description: e.target.value}})}
-                                                     placeholder="Description..."
-                                                     className="flex-1 bg-black/30 border border-primary/20 text-[8px] px-1.5 py-1 rounded-sm text-primary placeholder:text-primary/30 outline-none"
-                                                 />
-                                                 <button onClick={() => addBirthright(category)} className="px-1.5 py-1 bg-primary/20 hover:bg-primary/30 text-primary text-[8px] rounded-sm">+</button>
-                                             </div>
-                                         </div>
-                                     </div>
-                                 );
-                             })}
+                         <div className="flex items-center justify-between border-b border-primary/20 pb-1 mb-3">
+                             <h5 className="text-xl font-display text-primary tracking-wide uppercase">Birthrights</h5>
+                             <button
+                                 onClick={() => setShowBirthrightForm(!showBirthrightForm)}
+                                 className="w-5 h-5 flex items-center justify-center bg-black/50 border border-primary/30 text-primary/70 hover:bg-primary/20 hover:text-primary rounded-sm text-xs transition-colors"
+                                 data-testid="btn-add-birthright"
+                             >
+                                 <Plus className="w-3 h-3" />
+                             </button>
                          </div>
+
+                         {showBirthrightForm && (
+                             <div className="mb-3 p-2 bg-black/30 border border-primary/15 rounded-sm space-y-1.5">
+                                 <div className="flex gap-1">
+                                     <input
+                                         value={newBirthrightForm.name}
+                                         onChange={e => setNewBirthrightForm({...newBirthrightForm, name: e.target.value})}
+                                         placeholder="Name..."
+                                         className="flex-1 bg-black/50 border border-primary/20 text-[9px] px-2 py-1.5 rounded-sm text-primary placeholder:text-primary/30 outline-none"
+                                         autoFocus
+                                         data-testid="input-birthright-name"
+                                     />
+                                     <select
+                                         value={newBirthrightForm.category}
+                                         onChange={e => setNewBirthrightForm({...newBirthrightForm, category: e.target.value as any})}
+                                         className="bg-black border border-primary/20 text-[9px] px-1.5 py-1.5 rounded-sm text-primary outline-none"
+                                         data-testid="select-birthright-type"
+                                     >
+                                         <option value="creatures" className="bg-black">Creature</option>
+                                         <option value="guides" className="bg-black">Guide</option>
+                                         <option value="followers" className="bg-black">Follower</option>
+                                         <option value="relics" className="bg-black">Relic</option>
+                                     </select>
+                                 </div>
+                                 <div className="flex gap-1">
+                                     <input
+                                         value={newBirthrightForm.description}
+                                         onChange={e => setNewBirthrightForm({...newBirthrightForm, description: e.target.value})}
+                                         placeholder="Description..."
+                                         className="flex-1 bg-black/50 border border-primary/20 text-[9px] px-2 py-1.5 rounded-sm text-primary placeholder:text-primary/30 outline-none"
+                                         data-testid="input-birthright-desc"
+                                     />
+                                     <select
+                                         value={newBirthrightForm.dots}
+                                         onChange={e => setNewBirthrightForm({...newBirthrightForm, dots: Number(e.target.value)})}
+                                         className="bg-black border border-primary/20 text-[9px] px-1 py-1.5 rounded-sm text-primary outline-none w-10"
+                                     >
+                                         {[1,2,3,4,5].map(d => <option key={d} value={d} className="bg-black">{'●'.repeat(d)}</option>)}
+                                     </select>
+                                     <button
+                                         onClick={() => {
+                                             if (!newBirthrightForm.name.trim()) return;
+                                             const cat = newBirthrightForm.category;
+                                             setBirthrights(prev => ({
+                                                 ...prev,
+                                                 [cat]: [...prev[cat], { name: newBirthrightForm.name, description: newBirthrightForm.description, dots: newBirthrightForm.dots }]
+                                             }));
+                                             setNewBirthrightForm({ name: '', description: '', dots: 1, category: 'relics' });
+                                             setShowBirthrightForm(false);
+                                         }}
+                                         className="px-2 py-1.5 bg-primary/20 hover:bg-primary/30 text-primary text-[9px] rounded-sm transition-colors"
+                                         data-testid="btn-confirm-birthright"
+                                     >
+                                         <Check className="w-3 h-3" />
+                                     </button>
+                                 </div>
+                             </div>
+                         )}
+
+                         {(() => {
+                             const allBirthrights = (['creatures', 'guides', 'followers', 'relics'] as const).flatMap(cat =>
+                                 birthrights[cat].map((item, idx) => ({ ...item, category: cat, idx }))
+                             );
+                             const categoryLabels: Record<string, { icon: string; label: string }> = {
+                                 creatures: { icon: '🐺', label: 'Creature' },
+                                 guides: { icon: '👁', label: 'Guide' },
+                                 followers: { icon: '⚔', label: 'Follower' },
+                                 relics: { icon: '✧', label: 'Relic' },
+                             };
+                             return allBirthrights.length === 0 ? (
+                                 <div className="text-[10px] text-muted-foreground/50 italic text-center py-4">
+                                     No birthrights added.
+                                 </div>
+                             ) : (
+                                 <div className="space-y-1.5">
+                                     {allBirthrights.map((item) => (
+                                         <div key={`${item.category}-${item.idx}`} className="flex items-center gap-2 p-1.5 bg-primary/5 border border-primary/10 rounded-sm group">
+                                             <span className="text-[10px]">{categoryLabels[item.category].icon}</span>
+                                             <div className="flex-1 min-w-0">
+                                                 <div className="flex items-center gap-1.5">
+                                                     <span className="text-[9px] font-bold text-primary truncate">{item.name}</span>
+                                                     <span className="text-[7px] text-primary/60">{'●'.repeat(item.dots)}</span>
+                                                     <span className="text-[7px] text-muted-foreground/50 font-code">{categoryLabels[item.category].label}</span>
+                                                 </div>
+                                                 {item.description && <p className="text-[7px] text-muted-foreground truncate">{item.description}</p>}
+                                             </div>
+                                             <button onClick={() => removeBirthright(item.category, item.idx)} className="text-red-400/50 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                 <X className="w-3 h-3" />
+                                             </button>
+                                         </div>
+                                     ))}
+                                 </div>
+                             );
+                         })()}
                      </div>
                 </div>
         </CyberSection>
