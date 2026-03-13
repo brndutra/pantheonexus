@@ -411,7 +411,7 @@ const MythicHUDFrame = ({
     icon: Icon, 
     action, 
     subHeader,
-    variant = "default" as "default" | "minimal" | "cyber" | "gold" | "blue" | "violet" | "turbo",
+    variant = "default" as "default" | "minimal" | "cyber" | "gold" | "blue" | "violet" | "turbo" | "nature",
     titleSize = "default",
     isEditing,
     onEdit,
@@ -425,7 +425,7 @@ const MythicHUDFrame = ({
     icon?: any, 
     action?: React.ReactNode, 
     subHeader?: string,
-    variant?: "default" | "minimal" | "cyber" | "gold" | "blue" | "violet" | "turbo",
+    variant?: "default" | "minimal" | "cyber" | "gold" | "blue" | "violet" | "turbo" | "nature",
     titleSize?: "default" | "large",
     isEditing?: boolean,
     onEdit?: () => void,
@@ -439,6 +439,7 @@ const MythicHUDFrame = ({
         variant === "blue" ? "bg-[#1a1a1a] border-[#00b4ff]/50" : 
         variant === "violet" ? "bg-[#1a1a1a] border-[#834DFB]/50" : 
         variant === "turbo" ? "bg-[#1a1a1a] border-[#F0E100]/50" : 
+        variant === "nature" ? "bg-[#1a1a1a] border-[#006AF9]/50" : 
         "bg-[#1a1a1a] border-primary/15"
     )} />
 
@@ -481,6 +482,7 @@ const MythicHUDFrame = ({
                             variant === "blue" ? "text-[#00b4ff]" : 
                             variant === "violet" ? "text-[#834DFB]" : 
                             variant === "turbo" ? "text-[#F0E100]" : 
+                            variant === "nature" ? "text-[#006AF9]" : 
                             "text-primary"
                         )}>{title}</h3>}
                         {subHeader && <span className={cn("text-[8px] font-code uppercase tracking-[0.15em]", 
@@ -488,6 +490,7 @@ const MythicHUDFrame = ({
                             variant === "blue" ? "text-[#00b4ff]/50" : 
                             variant === "violet" ? "text-[#834DFB]/50" : 
                             variant === "turbo" ? "text-[#F0E100]/50" : 
+                            variant === "nature" ? "text-[#006AF9]/50" : 
                             "text-muted-foreground/60"
                         )}>{subHeader}</span>}
                     </div>
@@ -2143,9 +2146,11 @@ export default function CharacterSheet() {
                         ))}
                     </div>
 
-                    {/* Nature - Inside Callings */}
-                    <div className="relative mt-3 pt-3 border-t border-primary/15">
-                        <div className="absolute inset-0 bg-gradient-to-r from-[hsl(var(--highlight-purple))]/10 to-transparent border-l-2 border-[hsl(var(--highlight-purple))]/60 rounded-sm" />
+                </MythicHUDFrame>
+
+                <MythicHUDFrame title="Nature" icon={Crosshair} subHeader="CHARACTER ARCHETYPE" variant="nature" isEditing={editingCombat} {...createEditHandlers(editingCombat, setEditingCombat)}>
+                    <div className="relative">
+                        <div className="absolute inset-0 bg-gradient-to-r from-[#006AF9]/10 to-transparent border-l-2 border-[#006AF9]/60 rounded-sm" />
                         <div className="relative z-10 px-3 py-2 flex items-center gap-2">
                             <span className="text-[8px] uppercase tracking-widest text-muted-foreground font-code shrink-0">NAT</span>
                             <div className="flex-1 relative">
@@ -2156,7 +2161,7 @@ export default function CharacterSheet() {
                                     onBlur={() => setTimeout(() => setNatureSearchOpen(false), 200)}
                                     onMouseEnter={() => !editingCombat && setShowNatureTooltip(true)}
                                     onMouseLeave={() => setShowNatureTooltip(false)}
-                                    className="w-full text-sm font-display uppercase tracking-wider text-[hsl(var(--highlight-purple))] bg-transparent border-none p-0 h-auto focus:ring-0 outline-none placeholder:text-primary/30 cursor-pointer" 
+                                    className="w-full text-sm font-display uppercase tracking-wider text-[#006AF9] bg-transparent border-none p-0 h-auto focus:ring-0 outline-none placeholder:text-[#006AF9]/30 cursor-pointer" 
                                     placeholder="SELECT NATURE"
                                     disabled={!editingCombat}
                                 />
@@ -2164,16 +2169,16 @@ export default function CharacterSheet() {
                                     const natureStr = String(nature || '');
                                     const foundNature = availableNatures.find(n => n.nome?.toLowerCase() === natureStr.toLowerCase());
                                     return foundNature?.definition ? (
-                                        <div className="absolute left-0 top-full mt-2 p-2 bg-black/95 border border-primary/30 rounded-sm text-[10px] font-code text-primary/70 max-w-[250px] z-50 pointer-events-none">
+                                        <div className="absolute left-0 top-full mt-2 p-2 bg-black/95 border border-[#006AF9]/30 rounded-sm text-[10px] font-code text-[#006AF9]/70 max-w-[250px] z-50 pointer-events-none">
                                             <p>{foundNature.definition}</p>
                                             {foundNature.gatilho_forca_vontade && (
-                                                <p className="mt-1 text-accent-foreground/70">Gatilho: {foundNature.gatilho_forca_vontade}</p>
+                                                <p className="mt-1 text-[#006AF9]/50">Trigger: {foundNature.gatilho_forca_vontade}</p>
                                             )}
                                         </div>
                                     ) : null;
                                 })()}
                                 {natureSearchOpen && editingCombat && (
-                                    <div className="absolute top-full left-0 right-0 mt-1 bg-black border border-primary/20 rounded-sm max-h-40 overflow-y-auto z-50 shadow-[0_4px_20px_rgba(0,0,0,0.8)]">
+                                    <div className="absolute top-full left-0 right-0 mt-1 bg-black border border-[#006AF9]/20 rounded-sm max-h-40 overflow-y-auto z-50 shadow-[0_4px_20px_rgba(0,0,0,0.8)]">
                                         {availableNatures
                                             .filter(n => n.nome?.toLowerCase().includes(String(nature || '').toLowerCase()))
                                             .slice(0, 10)
@@ -2184,7 +2189,7 @@ export default function CharacterSheet() {
                                                         setNature(n.nome);
                                                         setNatureSearchOpen(false);
                                                     }}
-                                                    className="w-full text-left px-2 py-1.5 text-[9px] font-code text-primary/80 hover:bg-primary/20 hover:text-primary transition-colors cursor-pointer"
+                                                    className="w-full text-left px-2 py-1.5 text-[9px] font-code text-[#006AF9]/80 hover:bg-[#006AF9]/20 hover:text-[#006AF9] transition-colors cursor-pointer"
                                                     title={n.definition || ''}
                                                 >
                                                     <span className="block">{n.nome}</span>
