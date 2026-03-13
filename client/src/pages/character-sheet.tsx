@@ -365,8 +365,8 @@ const CyberSection = ({
                 )}>
                     <div className={cn(
                         "absolute inset-0 pointer-events-none",
-                        isYellow ? "opacity-[0.08]" : "opacity-[0.03]"
-                    )} style={{ backgroundImage: 'url(/hexabump.png)', backgroundSize: '400px', backgroundRepeat: 'repeat' }} />
+                        isYellow ? "opacity-30" : "opacity-[0.03]"
+                    )} style={{ backgroundImage: isYellow ? 'url(/cyberbg.png)' : 'url(/hexabump.png)', backgroundSize: isYellow ? 'cover' : '400px', backgroundRepeat: isYellow ? 'no-repeat' : 'repeat' }} />
                     {isYellow && (
                         <>
                             <div className="absolute top-2 right-2 pointer-events-none z-10 opacity-10">
