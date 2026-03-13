@@ -2154,11 +2154,9 @@ export default function CharacterSheet() {
                         ))}
                     </div>
 
-                </MythicHUDFrame>
-
-                <MythicHUDFrame title="Nature" icon={Crosshair} subHeader="CHARACTER ARCHETYPE" variant="nature" isEditing={editingCombat} {...createEditHandlers(editingCombat, setEditingCombat)}>
-                    <div className="relative">
-                        <div className="absolute inset-0 bg-gradient-to-r from-[#006AF9]/10 to-transparent border-l-2 border-[#006AF9]/60 rounded-sm" />
+                    {/* Nature - Inside Callings */}
+                    <div className="relative mt-3 pt-3 border-t border-primary/15">
+                        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent border-l-2 border-primary/60 rounded-sm bg-primary/5" />
                         <div className="relative z-10 px-3 py-2 flex items-center gap-2">
                             <span className="text-[8px] uppercase tracking-widest text-muted-foreground font-code shrink-0">NAT</span>
                             <div className="flex-1 relative">
@@ -2169,7 +2167,7 @@ export default function CharacterSheet() {
                                     onBlur={() => setTimeout(() => setNatureSearchOpen(false), 200)}
                                     onMouseEnter={() => !editingCombat && setShowNatureTooltip(true)}
                                     onMouseLeave={() => setShowNatureTooltip(false)}
-                                    className="w-full text-sm font-display uppercase tracking-wider text-[#006AF9] bg-transparent border-none p-0 h-auto focus:ring-0 outline-none placeholder:text-[#006AF9]/30 cursor-pointer" 
+                                    className="w-full text-sm font-display uppercase tracking-wider text-primary bg-transparent border-none p-0 h-auto focus:ring-0 outline-none placeholder:text-primary/30 cursor-pointer" 
                                     placeholder="SELECT NATURE"
                                     disabled={!editingCombat}
                                 />
@@ -2177,16 +2175,16 @@ export default function CharacterSheet() {
                                     const natureStr = String(nature || '');
                                     const foundNature = availableNatures.find(n => n.nome?.toLowerCase() === natureStr.toLowerCase());
                                     return foundNature?.definition ? (
-                                        <div className="absolute left-0 top-full mt-2 p-2 bg-black/95 border border-[#006AF9]/30 rounded-sm text-[10px] font-code text-[#006AF9]/70 max-w-[250px] z-50 pointer-events-none">
+                                        <div className="absolute left-0 top-full mt-2 p-2 bg-black/95 border border-primary/30 rounded-sm text-[10px] font-code text-primary/70 max-w-[250px] z-50 pointer-events-none">
                                             <p>{foundNature.definition}</p>
                                             {foundNature.gatilho_forca_vontade && (
-                                                <p className="mt-1 text-[#006AF9]/50">Trigger: {foundNature.gatilho_forca_vontade}</p>
+                                                <p className="mt-1 text-accent-foreground/70">Trigger: {foundNature.gatilho_forca_vontade}</p>
                                             )}
                                         </div>
                                     ) : null;
                                 })()}
                                 {natureSearchOpen && editingCombat && (
-                                    <div className="absolute top-full left-0 right-0 mt-1 bg-black border border-[#006AF9]/20 rounded-sm max-h-40 overflow-y-auto z-50 shadow-[0_4px_20px_rgba(0,0,0,0.8)]">
+                                    <div className="absolute top-full left-0 right-0 mt-1 bg-black border border-primary/20 rounded-sm max-h-40 overflow-y-auto z-50 shadow-[0_4px_20px_rgba(0,0,0,0.8)]">
                                         {availableNatures
                                             .filter(n => n.nome?.toLowerCase().includes(String(nature || '').toLowerCase()))
                                             .slice(0, 10)
@@ -2197,7 +2195,7 @@ export default function CharacterSheet() {
                                                         setNature(n.nome);
                                                         setNatureSearchOpen(false);
                                                     }}
-                                                    className="w-full text-left px-2 py-1.5 text-[9px] font-code text-[#006AF9]/80 hover:bg-[#006AF9]/20 hover:text-[#006AF9] transition-colors cursor-pointer"
+                                                    className="w-full text-left px-2 py-1.5 text-[9px] font-code text-primary/80 hover:bg-primary/20 hover:text-primary transition-colors cursor-pointer"
                                                     title={n.definition || ''}
                                                 >
                                                     <span className="block">{n.nome}</span>
