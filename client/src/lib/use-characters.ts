@@ -55,12 +55,16 @@ export function useUpdateCharacter() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: ({ id, updates }: { id: string; updates: Partial<InsertCharacter> }) =>
+    mutationFn: ({ id, updates, silent }: { id: string; updates: Partial<InsertCharacter>; silent?: boolean }) =>
       charactersApi.update(id, updates),
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEY });
-      queryClient.invalidateQueries({ queryKey: [...QUERY_KEY, variables.id] });
-      toast.success("Character saved successfully");
+    onSuccess: (data, variables) => {
+      if (!variables.silent) {
+        queryClient.invalidateQueries({ queryKey: QUERY_KEY });
+        queryClient.invalidateQueries({ queryKey: [...QUERY_KEY, variables.id] });
+        toast.success("Character saved successfully");
+      } else {
+        queryClient.setQueryData([...QUERY_KEY, variables.id], data);
+      }
     },
     onError: (error: Error) => {
       toast.error(error.message || "Failed to update character");
