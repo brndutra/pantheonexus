@@ -2793,7 +2793,7 @@ export default function CharacterSheet() {
                                         <DotRating 
                                             value={attr.value} 
                                             onChange={(v) => updateAttribute(category, idx, 'value', v)} 
-                                            max={5}
+                                            max={10}
                                             iconClassName="w-2 h-2 rounded-full border border-primary/40"
                                             activeClassName="bg-primary shadow-[0_0_4px_gold] border-primary"
                                             readOnly={!editingAttributes}
