@@ -361,7 +361,7 @@ const CyberSection = ({
             {!collapsed && (
                 <div className={cn(
                     "p-4 relative overflow-visible",
-                    isYellow ? "bg-[#111]" : ""
+                    isYellow ? "bg-[#0a0a0a]" : ""
                 )}>
                     <div className={cn(
                         "absolute inset-0 pointer-events-none",
