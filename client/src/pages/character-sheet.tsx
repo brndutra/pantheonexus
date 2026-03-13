@@ -179,13 +179,17 @@ const CyberSection = ({
     title, 
     collapsed, 
     onToggle,
-    testId
+    testId,
+    isEditing,
+    onEditToggle
 }: { 
     children: React.ReactNode;
     title: string;
     collapsed: boolean;
     onToggle: () => void;
     testId?: string;
+    isEditing?: boolean;
+    onEditToggle?: () => void;
 }) => (
     <div className="mt-6 relative">
         <div className="absolute top-0 right-0 w-16 h-16 pointer-events-none z-20">
@@ -229,6 +233,21 @@ const CyberSection = ({
                     <span className="text-2xl font-display uppercase tracking-[0.3em] text-primary drop-shadow-[0_0_8px_hsl(var(--primary)/0.3)]">{title}</span>
                 </div>
                 <div className="flex items-center gap-2">
+                    {onEditToggle && !collapsed && (
+                        <button
+                            onClick={(e) => { e.stopPropagation(); onEditToggle(); }}
+                            className={cn(
+                                "h-6 px-2 flex items-center gap-1.5 border text-[9px] font-code uppercase tracking-wider transition-all rounded-sm",
+                                isEditing 
+                                    ? "border-primary/60 bg-primary/20 text-primary" 
+                                    : "border-primary/20 bg-black/40 text-primary/50 hover:border-primary/40 hover:text-primary/80"
+                            )}
+                            data-testid="btn-edit-section"
+                        >
+                            {isEditing ? <Check className="w-3 h-3" /> : <Pencil className="w-3 h-3" />}
+                            {isEditing ? "Save" : "Edit"}
+                        </button>
+                    )}
                     <div className="hidden md:flex items-center gap-1">
                         <div className="w-6 h-[2px] bg-primary/30" />
                         <div className="w-3 h-[2px] bg-primary/20" />
@@ -1340,6 +1359,7 @@ export default function CharacterSheet() {
   const [editingVirtues, setEditingVirtues] = useState(false);
   const [editingCombat, setEditingCombat] = useState(false);
   const [combatRowCollapsed, setCombatRowCollapsed] = useState(false);
+  const [editingCombatAll, setEditingCombatAll] = useState(false);
   const [attribAbilCollapsed, setAttribAbilCollapsed] = useState(false);
   const [personalCollapsed, setPersonalCollapsed] = useState(false);
   const [legacyCollapsed, setLegacyCollapsed] = useState(false);
@@ -2330,12 +2350,12 @@ export default function CharacterSheet() {
         {/* --- TOP 3-COLUMN GRID END --- */}
 
         {/* COMBAT ROW */}
-        <CyberSection title="Combat Profile" collapsed={combatRowCollapsed} onToggle={() => setCombatRowCollapsed(!combatRowCollapsed)} testId="btn-toggle-combat-row">
+        <CyberSection title="Combat Profile" collapsed={combatRowCollapsed} onToggle={() => setCombatRowCollapsed(!combatRowCollapsed)} testId="btn-toggle-combat-row" isEditing={editingCombatAll} onEditToggle={() => setEditingCombatAll(!editingCombatAll)}>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
 
             {/* 1. LEGEND + PHYSICAL STATS - Takes 1 column (stacked) */}
             <div className="md:col-span-1 flex flex-col gap-6">
-            <MythicHUDFrame title="Legend" icon={Flame} subHeader="DIVINE POWER">
+            <MythicHUDFrame title="Legend" icon={Flame} subHeader="DIVINE POWER" isEditing={editingCombatAll}>
                 <div className="space-y-3">
                     <div className="flex items-center justify-between p-2 bg-black/40 border-l-2 border-primary/60">
                         <div className="flex items-center gap-2">
@@ -2406,6 +2426,7 @@ export default function CharacterSheet() {
                 title="Physical Stats" 
                 icon={Activity} 
                 subHeader="BIOMETRICS & POOLS"
+                isEditing={editingCombatAll}
             >
                 <div className="space-y-6">
                     <div className="grid grid-cols-2 gap-2">
@@ -2451,7 +2472,7 @@ export default function CharacterSheet() {
 
             {/* 2. WILLPOWER + RESISTANCE - Takes 1 column (stacked) */}
             <div className="md:col-span-1 flex flex-col gap-6">
-                <MythicHUDFrame title="Willpower" icon={Shield} subHeader="MENTAL FORTITUDE">
+                <MythicHUDFrame title="Willpower" icon={Shield} subHeader="MENTAL FORTITUDE" isEditing={editingCombatAll}>
                     <div className="space-y-3">
                         <div className="flex items-center justify-between p-2 bg-black/40 border-l-2 border-[hsl(var(--highlight-blue))]/60">
                             <div className="flex items-center gap-2">
@@ -2499,6 +2520,7 @@ export default function CharacterSheet() {
                     title="Resistência" 
                     icon={Shield} 
                     subHeader="SOAK & ARMADURA"
+                    isEditing={editingCombatAll}
                 >
                 <div className="space-y-4">
                     {/* Soak Values */}
@@ -2583,6 +2605,7 @@ export default function CharacterSheet() {
                     title="Vitality" 
                     icon={Heart} 
                     subHeader="NÍVEIS DE VITALIDADE"
+                    isEditing={editingCombatAll}
                 >
                     <div className="space-y-2">
                         <div className="flex justify-between items-center text-xs font-display uppercase text-primary/70">
@@ -2620,7 +2643,7 @@ export default function CharacterSheet() {
                     </div>
                 </MythicHUDFrame>
 
-                <MythicHUDFrame title="Offensive Capabilities" icon={Sword} subHeader="WEAPONRY & ATTACK VECTORS">
+                <MythicHUDFrame title="Offensive Capabilities" icon={Sword} subHeader="WEAPONRY & ATTACK VECTORS" isEditing={editingCombatAll}>
                 <div className="space-y-2">
                     {/* Search + Categories Row */}
                     <div className="flex items-center gap-2 pb-2 border-b border-primary/10">
