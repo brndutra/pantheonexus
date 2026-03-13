@@ -397,7 +397,7 @@ const MythicHUDFrame = ({
     icon: Icon, 
     action, 
     subHeader,
-    variant = "default" as "default" | "minimal" | "cyber" | "gold" | "blue",
+    variant = "default" as "default" | "minimal" | "cyber" | "gold" | "blue" | "violet" | "turbo",
     titleSize = "default",
     isEditing,
     onEdit,
@@ -411,7 +411,7 @@ const MythicHUDFrame = ({
     icon?: any, 
     action?: React.ReactNode, 
     subHeader?: string,
-    variant?: "default" | "minimal" | "cyber" | "gold" | "blue",
+    variant?: "default" | "minimal" | "cyber" | "gold" | "blue" | "violet" | "turbo",
     titleSize?: "default" | "large",
     isEditing?: boolean,
     onEdit?: () => void,
@@ -423,21 +423,23 @@ const MythicHUDFrame = ({
     <div className={cn("absolute inset-0 border", 
         variant === "gold" ? "bg-[#1a1a1a] border-[#e6db00]/50" : 
         variant === "blue" ? "bg-[#1a1a1a] border-[#00b4ff]/50" : 
+        variant === "violet" ? "bg-[#1a1a1a] border-[#834DFB]/50" : 
+        variant === "turbo" ? "bg-[#1a1a1a] border-[#F0E100]/50" : 
         "bg-[#1a1a1a] border-primary/15"
     )} />
 
     <div className="absolute top-0 right-0 pointer-events-none z-20" style={{ width: '20px', height: '20px' }}>
         <svg viewBox="0 0 20 20" className="w-full h-full">
-            <path d="M0,0 L20,0 L20,14 L14,20" fill="none" stroke={variant === "gold" ? "#e6db00" : variant === "blue" ? "#00b4ff" : "hsl(var(--primary))"} strokeWidth="1.5" opacity="0.5" />
+            <path d="M0,0 L20,0 L20,14 L14,20" fill="none" stroke={variant === "gold" ? "#e6db00" : variant === "blue" ? "#00b4ff" : variant === "violet" ? "#834DFB" : variant === "turbo" ? "#F0E100" : "hsl(var(--primary))"} strokeWidth="1.5" opacity="0.5" />
         </svg>
     </div>
     <div className="absolute bottom-0 left-0 pointer-events-none z-20" style={{ width: '14px', height: '14px' }}>
         <svg viewBox="0 0 14 14" className="w-full h-full">
-            <path d="M0,8 L0,14 L6,14" fill="none" stroke={variant === "gold" ? "#e6db00" : variant === "blue" ? "#00b4ff" : "hsl(var(--primary))"} strokeWidth="1.5" opacity="0.4" />
+            <path d="M0,8 L0,14 L6,14" fill="none" stroke={variant === "gold" ? "#e6db00" : variant === "blue" ? "#00b4ff" : variant === "violet" ? "#834DFB" : variant === "turbo" ? "#F0E100" : "hsl(var(--primary))"} strokeWidth="1.5" opacity="0.4" />
         </svg>
     </div>
     <div className="absolute top-[50%] -right-[2px] w-[2px] pointer-events-none z-20 flex flex-col gap-[2px]">
-        {[0,1,2].map(i => <div key={i} className={cn("w-full h-1", variant === "gold" ? "bg-[#e6db00]/40" : variant === "blue" ? "bg-[#00b4ff]/40" : "bg-primary/30")} />)}
+        {[0,1,2].map(i => <div key={i} className={cn("w-full h-1", variant === "gold" ? "bg-[#e6db00]/40" : variant === "blue" ? "bg-[#00b4ff]/40" : variant === "violet" ? "bg-[#834DFB]/40" : variant === "turbo" ? "bg-[#F0E100]/40" : "bg-primary/30")} />)}
     </div>
     
     {/* Header Section — Muller style: thick rule + condensed title */}
@@ -446,6 +448,8 @@ const MythicHUDFrame = ({
             <div className={cn("h-[3px] w-full", 
                 variant === "gold" ? "bg-[#e6db00]" : 
                 variant === "blue" ? "bg-[#00b4ff]" : 
+                variant === "violet" ? "bg-[#834DFB]" : 
+                variant === "turbo" ? "bg-[#F0E100]" : 
                 "bg-primary"
             )} />
             <div className="flex items-center justify-between px-4 py-2.5">
@@ -453,17 +457,23 @@ const MythicHUDFrame = ({
                     {Icon && <Icon className={cn("w-4 h-4", 
                         variant === "gold" ? "text-[#e6db00]/80" : 
                         variant === "blue" ? "text-[#00b4ff]/80" : 
+                        variant === "violet" ? "text-[#834DFB]/80" : 
+                        variant === "turbo" ? "text-[#F0E100]/80" : 
                         "text-primary/70"
                     )} />}
                     <div className="flex flex-col">
                         {title && <h3 className={cn("font-display tracking-wide uppercase", titleSize === "large" ? "text-2xl" : "text-xl", 
                             variant === "gold" ? "text-[#e6db00]" : 
                             variant === "blue" ? "text-[#00b4ff]" : 
+                            variant === "violet" ? "text-[#834DFB]" : 
+                            variant === "turbo" ? "text-[#F0E100]" : 
                             "text-primary"
                         )}>{title}</h3>}
                         {subHeader && <span className={cn("text-[8px] font-code uppercase tracking-[0.15em]", 
                             variant === "gold" ? "text-[#e6db00]/50" : 
                             variant === "blue" ? "text-[#00b4ff]/50" : 
+                            variant === "violet" ? "text-[#834DFB]/50" : 
+                            variant === "turbo" ? "text-[#F0E100]/50" : 
                             "text-muted-foreground/60"
                         )}>{subHeader}</span>}
                     </div>
@@ -527,6 +537,8 @@ const MythicHUDFrame = ({
             <div className={cn("h-[1px] w-full", 
                 variant === "gold" ? "bg-[#e6db00]/20" : 
                 variant === "blue" ? "bg-[#00b4ff]/20" : 
+                variant === "violet" ? "bg-[#834DFB]/20" : 
+                variant === "turbo" ? "bg-[#F0E100]/20" : 
                 "bg-primary/20"
             )} />
         </div>
@@ -542,13 +554,15 @@ const MythicHUDFrame = ({
             <div key={i} className={cn("w-[2px] h-2", 
                 variant === "gold" ? "bg-[#e6db00]" : 
                 variant === "blue" ? "bg-[#00b4ff]" : 
+                variant === "violet" ? "bg-[#834DFB]" : 
+                variant === "turbo" ? "bg-[#F0E100]" : 
                 "bg-primary"
             )} style={{ transform: 'skewX(-15deg)' }} />
         ))}
     </div>
     <div className="absolute top-0 left-0 pointer-events-none z-20" style={{ width: '10px', height: '10px' }}>
         <svg viewBox="0 0 10 10" className="w-full h-full">
-            <path d="M0,3 L0,0 L3,0" fill="none" stroke={variant === "gold" ? "#e6db00" : variant === "blue" ? "#00b4ff" : "hsl(var(--primary))"} strokeWidth="1.5" opacity="0.4" />
+            <path d="M0,3 L0,0 L3,0" fill="none" stroke={variant === "gold" ? "#e6db00" : variant === "blue" ? "#00b4ff" : variant === "violet" ? "#834DFB" : variant === "turbo" ? "#F0E100" : "hsl(var(--primary))"} strokeWidth="1.5" opacity="0.4" />
         </svg>
     </div>
   </div>
@@ -601,7 +615,7 @@ export default function CharacterSheet() {
   const { callings: compendiumCallings, natures: compendiumNatures, virtues: compendiumVirtues } = useCompendium();
   const [supabaseCallings, setSupabaseCallings] = useState<{id: number; name: string; description: string}[]>([]);
   const [activeTab, setActiveTab] = useState<"sheet" | "powers" | "bio">("sheet");
-  const [idCardTab, setIdCardTab] = useState<"identity" | "psychic" | "presence" | "professional">("identity");
+  const [idCardTab, setIdCardTab] = useState<"identity" | "professional">("identity");
   
   
   // State
@@ -1791,7 +1805,7 @@ export default function CharacterSheet() {
                             
                             {/* Tab Navigation */}
                             <div className="flex gap-3 border-b border-primary/20 pb-1 relative z-10">
-                              {['identity', 'psychic', 'presence', 'professional'].map((tab) => (
+                              {['identity', 'professional'].map((tab) => (
                                   <button
                                     key={tab}
                                     onClick={() => setIdCardTab(tab as any)}
@@ -1903,164 +1917,6 @@ export default function CharacterSheet() {
                                         </div>
                                     </motion.div>
                                 )}
-                                {idCardTab === 'psychic' && (
-                                    <motion.div 
-                                      key="psychic"
-                                      initial={{ opacity: 0, height: 0 }}
-                                      animate={{ opacity: 1, height: 'auto' }}
-                                      exit={{ opacity: 0, height: 0 }}
-                                      className="space-y-3 mt-4"
-                                    >
-                                        <h5 className="text-[10px] font-display uppercase text-[hsl(var(--highlight-purple))] border-b border-[hsl(var(--highlight-purple))]/20 pb-1">Psychological Matrix</h5>
-                                        
-                                        <div className="space-y-2">
-                                            <ScionInput 
-                                                label="Deep Analysis" 
-                                                className="h-16 text-xs bg-black/40 border-primary/20 resize-none"
-                                                textarea
-                                                value={psychicProfile.analysis}
-                                                onChange={(e) => setPsychicProfile({...psychicProfile, analysis: e.target.value})}
-                                                viewMode={!editingIdentity}
-                                            />
-                                            
-                                            <div className="grid grid-cols-2 gap-3">
-                                                <ScionInput 
-                                                    label="Keywords" 
-                                                    className="h-8 text-xs bg-black/40 border-primary/20"
-                                                    value={psychicProfile.keywords}
-                                                    onChange={(e) => setPsychicProfile({...psychicProfile, keywords: e.target.value})}
-                                                    viewMode={!editingIdentity}
-                                                />
-                                                <ScionInput 
-                                                    label="Major Arcana" 
-                                                    className="h-8 text-xs bg-black/40 border-primary/20 text-[hsl(var(--highlight-purple))]"
-                                                    value={psychicProfile.majorArcana}
-                                                    onChange={(e) => setPsychicProfile({...psychicProfile, majorArcana: e.target.value})}
-                                                    viewMode={!editingIdentity}
-                                                />
-                                            </div>
-
-                                            <div className="grid grid-cols-2 gap-3">
-                                                <ScionInput 
-                                                    label="Temperament" 
-                                                    className="h-8 text-xs bg-black/40 border-primary/20"
-                                                    value={psychicProfile.temperament}
-                                                    onChange={(e) => setPsychicProfile({...psychicProfile, temperament: e.target.value})}
-                                                    viewMode={!editingIdentity}
-                                                />
-                                                <ScionInput 
-                                                    label="Cognitive Type" 
-                                                    className="h-8 text-xs bg-black/40 border-primary/20"
-                                                    value={psychicProfile.cognitiveType}
-                                                    onChange={(e) => setPsychicProfile({...psychicProfile, cognitiveType: e.target.value})}
-                                                    viewMode={!editingIdentity}
-                                                />
-                                            </div>
-
-                                            <div className="grid grid-cols-2 gap-3">
-                                                <ScionInput 
-                                                    label="Strengths" 
-                                                    className="h-8 text-xs bg-black/40 border-primary/20 text-green-400/80"
-                                                    value={psychicProfile.strengths}
-                                                    onChange={(e) => setPsychicProfile({...psychicProfile, strengths: e.target.value})}
-                                                    viewMode={!editingIdentity}
-                                                />
-                                                <ScionInput 
-                                                    label="Weaknesses" 
-                                                    className="h-8 text-xs bg-black/40 border-primary/20 text-red-400/80"
-                                                    value={psychicProfile.weaknesses}
-                                                    onChange={(e) => setPsychicProfile({...psychicProfile, weaknesses: e.target.value})}
-                                                    viewMode={!editingIdentity}
-                                                />
-                                            </div>
-
-                                            <ScionInput 
-                                                label="Behaviors" 
-                                                className="h-8 text-xs bg-black/40 border-primary/20"
-                                                value={psychicProfile.behaviors}
-                                                onChange={(e) => setPsychicProfile({...psychicProfile, behaviors: e.target.value})}
-                                                viewMode={!editingIdentity}
-                                            />
-                                        </div>
-                                    </motion.div>
-                                )}
-                                {idCardTab === 'presence' && (
-                                    <motion.div 
-                                      key="presence"
-                                      initial={{ opacity: 0, height: 0 }}
-                                      animate={{ opacity: 1, height: 'auto' }}
-                                      exit={{ opacity: 0, height: 0 }}
-                                      className="space-y-3 mt-4"
-                                    >
-                                         <h5 className="text-[10px] font-display uppercase text-[hsl(var(--highlight-blue))] border-b border-[hsl(var(--highlight-blue))]/20 pb-1">Physical Presence</h5>
-                                         
-                                         <div className="grid grid-cols-3 gap-3">
-                                            <ScionInput 
-                                                label="Height" 
-                                                className="h-8 text-xs bg-black/40 border-primary/20"
-                                                value={presenceProfile.height}
-                                                onChange={(e) => setPresenceProfile({...presenceProfile, height: e.target.value})}
-                                                viewMode={!editingIdentity}
-                                            />
-                                            <ScionInput 
-                                                label="Eye Color" 
-                                                className="h-8 text-xs bg-black/40 border-primary/20"
-                                                value={presenceProfile.eyeColor}
-                                                onChange={(e) => setPresenceProfile({...presenceProfile, eyeColor: e.target.value})}
-                                                viewMode={!editingIdentity}
-                                            />
-                                            <ScionInput 
-                                                label="Hair Color" 
-                                                className="h-8 text-xs bg-black/40 border-primary/20"
-                                                value={presenceProfile.hairColor}
-                                                onChange={(e) => setPresenceProfile({...presenceProfile, hairColor: e.target.value})}
-                                                viewMode={!editingIdentity}
-                                            />
-                                         </div>
-
-                                         <div className="grid grid-cols-2 gap-3">
-                                            <ScionInput 
-                                                label="Aura Signature" 
-                                                className="h-8 text-xs bg-black/40 border-primary/20 text-[hsl(var(--highlight-blue))]"
-                                                value={presenceProfile.auraSignature}
-                                                onChange={(e) => setPresenceProfile({...presenceProfile, auraSignature: e.target.value})}
-                                                viewMode={!editingIdentity}
-                                            />
-                                            <ScionInput 
-                                                label="Scent / Essence" 
-                                                className="h-8 text-xs bg-black/40 border-primary/20"
-                                                value={presenceProfile.scent}
-                                                onChange={(e) => setPresenceProfile({...presenceProfile, scent: e.target.value})}
-                                                viewMode={!editingIdentity}
-                                            />
-                                         </div>
-
-                                         <ScionInput 
-                                            label="Fashion & Style" 
-                                            className="h-8 text-xs bg-black/40 border-primary/20"
-                                            value={presenceProfile.fashion}
-                                            onChange={(e) => setPresenceProfile({...presenceProfile, fashion: e.target.value})}
-                                            viewMode={!editingIdentity}
-                                         />
-
-                                         <ScionInput 
-                                            label="Distinguishing Marks" 
-                                            className="h-8 text-xs bg-black/40 border-primary/20"
-                                            value={presenceProfile.distinguishingMark}
-                                            onChange={(e) => setPresenceProfile({...presenceProfile, distinguishingMark: e.target.value})}
-                                            viewMode={!editingIdentity}
-                                         />
-                                         
-                                         <ScionInput 
-                                            label="Visual Notes" 
-                                            className="h-16 text-xs bg-black/40 border-primary/20 resize-none"
-                                            textarea
-                                            value={presenceProfile.visualNotes}
-                                            onChange={(e) => setPresenceProfile({...presenceProfile, visualNotes: e.target.value})}
-                                            viewMode={!editingIdentity}
-                                         />
-                                    </motion.div>
-                                )}
                                 {idCardTab === 'professional' && (
                                     <motion.div 
                                       key="professional"
@@ -2147,7 +2003,7 @@ export default function CharacterSheet() {
             <div className="col-span-12 md:col-span-4 flex flex-col gap-6">
                 
                 {/* CALLINGS MODULE - Compact Design */}
-                <MythicHUDFrame title="Psychic Profile" icon={Brain} subHeader="PSYCHOLOGICAL MATRIX" isEditing={editingIdentity} {...createEditHandlers(editingIdentity, setEditingIdentity)}>
+                <MythicHUDFrame title="Psychic Profile" icon={Brain} subHeader="PSYCHOLOGICAL MATRIX" variant="violet" isEditing={editingIdentity} {...createEditHandlers(editingIdentity, setEditingIdentity)}>
                     <div className="space-y-2">
                         <ScionInput 
                             label="Deep Analysis" 
@@ -2330,7 +2186,7 @@ export default function CharacterSheet() {
             {/* RIGHT COLUMN: PRESENCE + VIRTUES (Width 4) */}
             <div className="col-span-12 md:col-span-4 flex flex-col gap-6">
 
-                <MythicHUDFrame title="Presence Profile" icon={User} subHeader="PHYSICAL PRESENCE" isEditing={editingIdentity} {...createEditHandlers(editingIdentity, setEditingIdentity)}>
+                <MythicHUDFrame title="Presence Profile" icon={User} subHeader="PHYSICAL PRESENCE" variant="turbo" isEditing={editingIdentity} {...createEditHandlers(editingIdentity, setEditingIdentity)}>
                     <div className="space-y-2">
                         <div className="grid grid-cols-3 gap-2">
                             <ScionInput 
