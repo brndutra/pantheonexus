@@ -1962,132 +1962,60 @@ export default function CharacterSheet() {
                             </div>
                         ))}
                     </div>
-                </MythicHUDFrame>
 
-                {/* Nature Section - Below Callings */}
-                <div className="relative">
-                    <div className="absolute inset-0 bg-gradient-to-r from-[hsl(var(--highlight-purple))]/10 to-transparent border-l-2 border-[hsl(var(--highlight-purple))]/60 rounded-sm" />
-                    <div className="relative z-10 px-3 py-2 flex items-center gap-2">
-                        <span className="text-[8px] uppercase tracking-widest text-muted-foreground font-code shrink-0">NAT</span>
-                        <div className="flex-1 relative">
-                            <input 
-                                value={nature} 
-                                onChange={(e) => setNature(e.target.value)}
-                                onFocus={() => editingCombat && setNatureSearchOpen(true)}
-                                onBlur={() => setTimeout(() => setNatureSearchOpen(false), 200)}
-                                onMouseEnter={() => !editingCombat && setShowNatureTooltip(true)}
-                                onMouseLeave={() => setShowNatureTooltip(false)}
-                                className="w-full text-sm font-display uppercase tracking-wider text-[hsl(var(--highlight-purple))] bg-transparent border-none p-0 h-auto focus:ring-0 outline-none placeholder:text-primary/30 cursor-pointer" 
-                                placeholder="SELECT NATURE"
-                                disabled={!editingCombat}
-                            />
-                            {nature && !editingCombat && showNatureTooltip && (() => {
-                                const natureStr = String(nature || '');
-                                const foundNature = availableNatures.find(n => n.nome?.toLowerCase() === natureStr.toLowerCase());
-                                return foundNature?.definition ? (
-                                    <div className="absolute left-0 top-full mt-2 p-2 bg-black/95 border border-primary/30 rounded-sm text-[10px] font-code text-primary/70 max-w-[250px] z-50 pointer-events-none">
-                                        <p>{foundNature.definition}</p>
-                                        {foundNature.gatilho_forca_vontade && (
-                                            <p className="mt-1 text-accent-foreground/70">Gatilho: {foundNature.gatilho_forca_vontade}</p>
-                                        )}
+                    {/* Nature - Inside Callings */}
+                    <div className="relative mt-3 pt-3 border-t border-primary/15">
+                        <div className="absolute inset-0 bg-gradient-to-r from-[hsl(var(--highlight-purple))]/10 to-transparent border-l-2 border-[hsl(var(--highlight-purple))]/60 rounded-sm" />
+                        <div className="relative z-10 px-3 py-2 flex items-center gap-2">
+                            <span className="text-[8px] uppercase tracking-widest text-muted-foreground font-code shrink-0">NAT</span>
+                            <div className="flex-1 relative">
+                                <input 
+                                    value={nature} 
+                                    onChange={(e) => setNature(e.target.value)}
+                                    onFocus={() => editingCombat && setNatureSearchOpen(true)}
+                                    onBlur={() => setTimeout(() => setNatureSearchOpen(false), 200)}
+                                    onMouseEnter={() => !editingCombat && setShowNatureTooltip(true)}
+                                    onMouseLeave={() => setShowNatureTooltip(false)}
+                                    className="w-full text-sm font-display uppercase tracking-wider text-[hsl(var(--highlight-purple))] bg-transparent border-none p-0 h-auto focus:ring-0 outline-none placeholder:text-primary/30 cursor-pointer" 
+                                    placeholder="SELECT NATURE"
+                                    disabled={!editingCombat}
+                                />
+                                {nature && !editingCombat && showNatureTooltip && (() => {
+                                    const natureStr = String(nature || '');
+                                    const foundNature = availableNatures.find(n => n.nome?.toLowerCase() === natureStr.toLowerCase());
+                                    return foundNature?.definition ? (
+                                        <div className="absolute left-0 top-full mt-2 p-2 bg-black/95 border border-primary/30 rounded-sm text-[10px] font-code text-primary/70 max-w-[250px] z-50 pointer-events-none">
+                                            <p>{foundNature.definition}</p>
+                                            {foundNature.gatilho_forca_vontade && (
+                                                <p className="mt-1 text-accent-foreground/70">Gatilho: {foundNature.gatilho_forca_vontade}</p>
+                                            )}
+                                        </div>
+                                    ) : null;
+                                })()}
+                                {natureSearchOpen && editingCombat && (
+                                    <div className="absolute top-full left-0 right-0 mt-1 bg-black border border-primary/20 rounded-sm max-h-40 overflow-y-auto z-50 shadow-[0_4px_20px_rgba(0,0,0,0.8)]">
+                                        {availableNatures
+                                            .filter(n => n.nome?.toLowerCase().includes(String(nature || '').toLowerCase()))
+                                            .slice(0, 10)
+                                            .map((n, idx) => (
+                                                <div
+                                                    key={n.nome + idx}
+                                                    onClick={() => {
+                                                        setNature(n.nome);
+                                                        setNatureSearchOpen(false);
+                                                    }}
+                                                    className="w-full text-left px-2 py-1.5 text-[9px] font-code text-primary/80 hover:bg-primary/20 hover:text-primary transition-colors cursor-pointer"
+                                                    title={n.definition || ''}
+                                                >
+                                                    <span className="block">{n.nome}</span>
+                                                    {n.definition && (
+                                                        <span className="block text-[8px] text-muted-foreground truncate">{n.definition}</span>
+                                                    )}
+                                                </div>
+                                            ))
+                                        }
                                     </div>
-                                ) : null;
-                            })()}
-                            {natureSearchOpen && editingCombat && (
-                                <div className="absolute top-full left-0 right-0 mt-1 bg-black border border-primary/20 rounded-sm max-h-40 overflow-y-auto z-50 shadow-[0_4px_20px_rgba(0,0,0,0.8)]">
-                                    {availableNatures
-                                        .filter(n => n.nome?.toLowerCase().includes(String(nature || '').toLowerCase()))
-                                        .slice(0, 10)
-                                        .map((n, idx) => (
-                                            <div
-                                                key={n.nome + idx}
-                                                onClick={() => {
-                                                    setNature(n.nome);
-                                                    setNatureSearchOpen(false);
-                                                }}
-                                                className="w-full text-left px-2 py-1.5 text-[9px] font-code text-primary/80 hover:bg-primary/20 hover:text-primary transition-colors cursor-pointer"
-                                                title={n.definition || ''}
-                                            >
-                                                <span className="block">{n.nome}</span>
-                                                {n.definition && (
-                                                    <span className="block text-[8px] text-muted-foreground truncate">{n.definition}</span>
-                                                )}
-                                            </div>
-                                        ))
-                                    }
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-                
-                {/* LEGEND MODULE */}
-                <MythicHUDFrame title="Legend" icon={Flame} subHeader="DIVINE POWER">
-                    <div className="space-y-3">
-                        {/* Legend Level (Read-only, from Supabase Admin) */}
-                        <div className="flex items-center justify-between p-2 bg-black/40 border-l-2 border-primary/60">
-                            <div className="flex items-center gap-2">
-                                <Flame className="w-4 h-4 text-primary/60" />
-                                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-code">Legend Level</span>
-                            </div>
-                            <span className="text-xl font-display text-primary drop-shadow-[0_0_10px_gold]">
-                                {scionsight?.legend_level || 1}
-                            </span>
-                        </div>
-                        
-                        {/* Legend Pool: Current / Total (Level²) */}
-                        <div className="p-2 bg-black/40 border-l-2 border-[hsl(var(--highlight-orange))]/60">
-                            <div className="flex items-center justify-between mb-2">
-                                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-code">Legend Pool</span>
-                                <span className="text-[8px] text-muted-foreground">(Level² = {scionsight?.legend_pool_total || 1})</span>
-                            </div>
-                            <div className="flex items-center justify-center gap-3">
-                                {/* Current (Editable by Scion) */}
-                                <div className="flex items-center gap-2">
-                                    <button 
-                                        onClick={() => {
-                                            const newVal = Math.max(0, legendPoolCurrent - 1);
-                                            setLegendPoolCurrent(newVal);
-                                            if (loadedCharacter?.id) {
-                                                fetch(`/api/scionsight/${loadedCharacter.id}/legend-current`, {
-                                                    method: 'PATCH',
-                                                    headers: { 'Content-Type': 'application/json' },
-                                                    body: JSON.stringify({ legend_pool_current: newVal })
-                                                });
-                                            }
-                                        }}
-                                        className="w-6 h-6 flex items-center justify-center rounded bg-black/60 border border-primary/30 text-primary hover:bg-primary/20 transition-colors"
-                                    >
-                                        <Minus className="w-3 h-3" />
-                                    </button>
-                                    <span className="text-2xl font-display text-[hsl(var(--highlight-orange))] min-w-[60px] text-center drop-shadow-[0_0_8px_orange]">
-                                        {legendPoolCurrent}
-                                    </span>
-                                    <button 
-                                        onClick={() => {
-                                            const legendTotal = scionsight?.legend_pool_total || Math.pow(scionsight?.legend_level || 1, 2);
-                                            const newVal = Math.min(legendTotal, legendPoolCurrent + 1);
-                                            setLegendPoolCurrent(newVal);
-                                            if (loadedCharacter?.id) {
-                                                fetch(`/api/scionsight/${loadedCharacter.id}/legend-current`, {
-                                                    method: 'PATCH',
-                                                    headers: { 'Content-Type': 'application/json' },
-                                                    body: JSON.stringify({ legend_pool_current: newVal })
-                                                });
-                                            }
-                                        }}
-                                        className="w-6 h-6 flex items-center justify-center rounded bg-black/60 border border-primary/30 text-primary hover:bg-primary/20 transition-colors"
-                                    >
-                                        <Plus className="w-3 h-3" />
-                                    </button>
-                                </div>
-                                
-                                <span className="text-xl text-muted-foreground">/</span>
-                                
-                                {/* Total (from Supabase, calculated as Legend²) */}
-                                <span className="text-2xl font-display text-primary/60">
-                                    {scionsight?.legend_pool_total || Math.pow(scionsight?.legend_level || 1, 2)}
-                                </span>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -2350,6 +2278,84 @@ export default function CharacterSheet() {
                     </div>
                 </MythicHUDFrame>
 
+            </div>
+
+        </div> 
+        {/* --- TOP 3-COLUMN GRID END --- */}
+
+        {/* COMBAT ROW - Legend, Willpower+Resistance, Vitality+Offensive */}
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-4 gap-6">
+
+            {/* 1. LEGEND MODULE - Takes 1 column */}
+            <MythicHUDFrame title="Legend" icon={Flame} subHeader="DIVINE POWER" className="md:col-span-1">
+                <div className="space-y-3">
+                    <div className="flex items-center justify-between p-2 bg-black/40 border-l-2 border-primary/60">
+                        <div className="flex items-center gap-2">
+                            <Flame className="w-4 h-4 text-primary/60" />
+                            <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-code">Legend Level</span>
+                        </div>
+                        <span className="text-xl font-display text-primary drop-shadow-[0_0_10px_gold]">
+                            {scionsight?.legend_level || 1}
+                        </span>
+                    </div>
+                    
+                    <div className="p-2 bg-black/40 border-l-2 border-[hsl(var(--highlight-orange))]/60">
+                        <div className="flex items-center justify-between mb-2">
+                            <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-code">Legend Pool</span>
+                            <span className="text-[8px] text-muted-foreground">(Level² = {scionsight?.legend_pool_total || 1})</span>
+                        </div>
+                        <div className="flex items-center justify-center gap-3">
+                            <div className="flex items-center gap-2">
+                                <button 
+                                    onClick={() => {
+                                        const newVal = Math.max(0, legendPoolCurrent - 1);
+                                        setLegendPoolCurrent(newVal);
+                                        if (loadedCharacter?.id) {
+                                            fetch(`/api/scionsight/${loadedCharacter.id}/legend-current`, {
+                                                method: 'PATCH',
+                                                headers: { 'Content-Type': 'application/json' },
+                                                body: JSON.stringify({ legend_pool_current: newVal })
+                                            });
+                                        }
+                                    }}
+                                    className="w-6 h-6 flex items-center justify-center rounded bg-black/60 border border-primary/30 text-primary hover:bg-primary/20 transition-colors"
+                                >
+                                    <Minus className="w-3 h-3" />
+                                </button>
+                                <span className="text-2xl font-display text-[hsl(var(--highlight-orange))] min-w-[60px] text-center drop-shadow-[0_0_8px_orange]">
+                                    {legendPoolCurrent}
+                                </span>
+                                <button 
+                                    onClick={() => {
+                                        const legendTotal = scionsight?.legend_pool_total || Math.pow(scionsight?.legend_level || 1, 2);
+                                        const newVal = Math.min(legendTotal, legendPoolCurrent + 1);
+                                        setLegendPoolCurrent(newVal);
+                                        if (loadedCharacter?.id) {
+                                            fetch(`/api/scionsight/${loadedCharacter.id}/legend-current`, {
+                                                method: 'PATCH',
+                                                headers: { 'Content-Type': 'application/json' },
+                                                body: JSON.stringify({ legend_pool_current: newVal })
+                                            });
+                                        }
+                                    }}
+                                    className="w-6 h-6 flex items-center justify-center rounded bg-black/60 border border-primary/30 text-primary hover:bg-primary/20 transition-colors"
+                                >
+                                    <Plus className="w-3 h-3" />
+                                </button>
+                            </div>
+                            
+                            <span className="text-xl text-muted-foreground">/</span>
+                            
+                            <span className="text-2xl font-display text-primary/60">
+                                {scionsight?.legend_pool_total || Math.pow(scionsight?.legend_level || 1, 2)}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </MythicHUDFrame>
+
+            {/* 2. WILLPOWER + RESISTANCE - Takes 1 column (stacked) */}
+            <div className="md:col-span-1 flex flex-col gap-6">
                 <MythicHUDFrame title="Willpower" icon={Shield} subHeader="MENTAL FORTITUDE">
                     <div className="space-y-3">
                         <div className="flex items-center justify-between p-2 bg-black/40 border-l-2 border-[hsl(var(--highlight-blue))]/60">
@@ -2394,71 +2400,11 @@ export default function CharacterSheet() {
                     </div>
                 </MythicHUDFrame>
 
-            </div>
-
-        </div> 
-        {/* --- TOP 3-COLUMN GRID END --- */}
-
-        {/* VITALITY ROW - Vitality, Resistance, Offensive */}
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-4 gap-6">
-
-            {/* 1. VITALITY MONITOR - Takes 1 column */}
-            <MythicHUDFrame 
-                title="Vitality & Energy" 
-                icon={Activity} 
-                subHeader="BIOMETRICS & POOLS"
-                className="md:col-span-1"
-            >
-                    <div className="space-y-6">
-                        {/* Combat Derived Stats - Compact Grid */}
-                        <div className="grid grid-cols-2 gap-2">
-                            <div className="bg-black/40 p-2 flex justify-between items-center border-l-2 border-primary/40">
-                                <span className="text-[8px] uppercase tracking-wider text-muted-foreground">Dodge DV</span>
-                                <span className="font-display text-primary text-sm">{dodgeDV}</span>
-                            </div>
-                            <div className="bg-black/40 p-2 flex justify-between items-center border-l-2 border-primary/40">
-                                <span className="text-[8px] uppercase tracking-wider text-muted-foreground">Parry DV</span>
-                                <span className="font-display text-primary text-sm">{parryDV}</span>
-                            </div>
-                            <div className="bg-black/40 p-2 flex justify-between items-center border-l-2 border-primary/40">
-                                <span className="text-[8px] uppercase tracking-wider text-muted-foreground">Armed DV</span>
-                                <span className="font-display text-primary text-sm">{armedDV}</span>
-                            </div>
-                            <div className="bg-black/40 p-2 flex justify-between items-center border-l-2 border-primary/40">
-                                <span className="text-[8px] uppercase tracking-wider text-muted-foreground">Join Battle</span>
-                                <span className="font-display text-primary text-sm">{joinBattle}</span>
-                            </div>
-                        </div>
-                        
-                        {/* Movement & Feats */}
-                        <div className="grid grid-cols-2 gap-2 pt-2 border-t border-primary/10">
-                            <div className="bg-black/40 p-1.5 flex justify-between items-center border-l-2 border-primary/30">
-                                <span className="text-[7px] uppercase tracking-wider text-muted-foreground">Move</span>
-                                <span className="font-code text-primary/80 text-xs">{moveSpeed}m</span>
-                            </div>
-                            <div className="bg-black/40 p-1.5 flex justify-between items-center border-l-2 border-primary/30">
-                                <span className="text-[7px] uppercase tracking-wider text-muted-foreground">Dash</span>
-                                <span className="font-code text-primary/80 text-xs">{dashSpeed}m</span>
-                            </div>
-                            <div className="bg-black/40 p-1.5 flex justify-between items-center border-l-2 border-primary/30">
-                                <span className="text-[7px] uppercase tracking-wider text-muted-foreground">Jump V/H</span>
-                                <span className="font-code text-primary/80 text-xs">{verticalJump}/{horizontalJump}m</span>
-                            </div>
-                            <div className="bg-black/40 p-1.5 flex justify-between items-center border-l-2 border-primary/30">
-                                <span className="text-[7px] uppercase tracking-wider text-muted-foreground">Lift</span>
-                                <span className="font-code text-primary/80 text-xs">{liftCapacity}kg</span>
-                            </div>
-                        </div>
-                    </div>
-                </MythicHUDFrame>
-
-            {/* RESISTANCE SECTION */}
-            <MythicHUDFrame 
-                title="Resistência" 
-                icon={Shield} 
-                subHeader="SOAK & ARMADURA"
-                className="md:col-span-1"
-            >
+                <MythicHUDFrame 
+                    title="Resistência" 
+                    icon={Shield} 
+                    subHeader="SOAK & ARMADURA"
+                >
                 <div className="space-y-4">
                     {/* Soak Values */}
                     <div className="space-y-2">
@@ -2533,10 +2479,58 @@ export default function CharacterSheet() {
                         </div>
                     )}
                 </div>
-            </MythicHUDFrame>
+                </MythicHUDFrame>
+            </div>
 
-            {/* 2. OFFENSIVE CAPABILITIES - Takes 2 columns */}
-            <MythicHUDFrame title="Offensive Capabilities" icon={Sword} subHeader="WEAPONRY & ATTACK VECTORS" className="md:col-span-2">
+            {/* 3. VITALITY & OFFENSIVE - Takes 2 columns (stacked) */}
+            <div className="md:col-span-2 flex flex-col gap-6">
+                <MythicHUDFrame 
+                    title="Vitality & Energy" 
+                    icon={Activity} 
+                    subHeader="BIOMETRICS & POOLS"
+                >
+                    <div className="space-y-6">
+                        <div className="grid grid-cols-2 gap-2">
+                            <div className="bg-black/40 p-2 flex justify-between items-center border-l-2 border-primary/40">
+                                <span className="text-[8px] uppercase tracking-wider text-muted-foreground">Dodge DV</span>
+                                <span className="font-display text-primary text-sm">{dodgeDV}</span>
+                            </div>
+                            <div className="bg-black/40 p-2 flex justify-between items-center border-l-2 border-primary/40">
+                                <span className="text-[8px] uppercase tracking-wider text-muted-foreground">Parry DV</span>
+                                <span className="font-display text-primary text-sm">{parryDV}</span>
+                            </div>
+                            <div className="bg-black/40 p-2 flex justify-between items-center border-l-2 border-primary/40">
+                                <span className="text-[8px] uppercase tracking-wider text-muted-foreground">Armed DV</span>
+                                <span className="font-display text-primary text-sm">{armedDV}</span>
+                            </div>
+                            <div className="bg-black/40 p-2 flex justify-between items-center border-l-2 border-primary/40">
+                                <span className="text-[8px] uppercase tracking-wider text-muted-foreground">Join Battle</span>
+                                <span className="font-display text-primary text-sm">{joinBattle}</span>
+                            </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-2 pt-2 border-t border-primary/10">
+                            <div className="bg-black/40 p-1.5 flex justify-between items-center border-l-2 border-primary/30">
+                                <span className="text-[7px] uppercase tracking-wider text-muted-foreground">Move</span>
+                                <span className="font-code text-primary/80 text-xs">{moveSpeed}m</span>
+                            </div>
+                            <div className="bg-black/40 p-1.5 flex justify-between items-center border-l-2 border-primary/30">
+                                <span className="text-[7px] uppercase tracking-wider text-muted-foreground">Dash</span>
+                                <span className="font-code text-primary/80 text-xs">{dashSpeed}m</span>
+                            </div>
+                            <div className="bg-black/40 p-1.5 flex justify-between items-center border-l-2 border-primary/30">
+                                <span className="text-[7px] uppercase tracking-wider text-muted-foreground">Jump V/H</span>
+                                <span className="font-code text-primary/80 text-xs">{verticalJump}/{horizontalJump}m</span>
+                            </div>
+                            <div className="bg-black/40 p-1.5 flex justify-between items-center border-l-2 border-primary/30">
+                                <span className="text-[7px] uppercase tracking-wider text-muted-foreground">Lift</span>
+                                <span className="font-code text-primary/80 text-xs">{liftCapacity}kg</span>
+                            </div>
+                        </div>
+                    </div>
+                </MythicHUDFrame>
+
+                <MythicHUDFrame title="Offensive Capabilities" icon={Sword} subHeader="WEAPONRY & ATTACK VECTORS">
                 <div className="space-y-2">
                     {/* Search + Categories Row */}
                     <div className="flex items-center gap-2 pb-2 border-b border-primary/10">
@@ -2731,10 +2725,11 @@ export default function CharacterSheet() {
                         </div>
                     </div>
                 </div>
-            </MythicHUDFrame>
+                </MythicHUDFrame>
+            </div>
 
         </div> 
-        {/* --- VITALITY ROW END --- */}
+        {/* --- COMBAT ROW END --- */}
 
         {/* ATTRIBUTES & ABILITIES ROW - 1/3 + 2/3 */}
         <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
