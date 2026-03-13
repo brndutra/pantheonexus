@@ -295,7 +295,7 @@ const MythicHUDFrame = ({
     isLoading?: boolean
 }) => (
   <div className={cn("relative group", isEditing && "ring-1 ring-primary/30", className)}>
-    <div className="absolute inset-0 bg-black/70 backdrop-blur-sm border border-primary/15" />
+    <div className="absolute inset-0 bg-[#0a0a0a] border border-primary/15" />
     
     {/* Header Section — Muller style: thick rule + condensed title */}
     {(title || Icon) && (
@@ -1281,18 +1281,18 @@ export default function CharacterSheet() {
   const legendPoolTotal = legend * legend;
   const [legendPointsCurrent, setLegendPointsCurrent] = useState(legendPoolTotal);
 
-  // Combat Stats (Scion 1st Ed - Portuguese ability names used)
-  // Join Battle = Raciocínio (Wits) + Prontidão (Awareness)
-  const joinBattle = getAttributeTotal("Wits") + getAbilityValue("Prontidão");
+  // Combat Stats (Scion 1st Ed)
+  // Join Battle = Wits + Awareness
+  const joinBattle = getAttributeTotal("Wits") + getAbilityValue("Awareness");
   
-  // Dodge DV = (Destreza + Atletismo + Lenda) / 2
-  const dodgeDV = Math.floor((getAttributeTotal("Dexterity") + getAbilityValue("Atletismo") + legend) / 2);
+  // Dodge DV = (Dexterity + Athletics + Legend) / 2
+  const dodgeDV = Math.floor((getAttributeTotal("Dexterity") + getAbilityValue("Athletics") + legend) / 2);
   
-  // Parry DV = (Destreza + Briga ou Armas Brancas) / 2
-  const parryDV = Math.floor((getAttributeTotal("Dexterity") + Math.max(getAbilityValue("Armas Brancas"), getAbilityValue("Briga"))) / 2);
+  // Parry DV = (Dexterity + Brawl or Melee) / 2
+  const parryDV = Math.floor((getAttributeTotal("Dexterity") + Math.max(getAbilityValue("Melee"), getAbilityValue("Brawl"))) / 2);
   
-  // Armed DV = (Força + Hoplomaquia) / 2 + Defesa da arma equipada
-  const armedDVBase = Math.floor((getAttributeTotal("Strength") + getAbilityValue("Hoplomaquia")) / 2);
+  // Armed DV = (Strength + Hoplomachy) / 2 + equipped weapon defense
+  const armedDVBase = Math.floor((getAttributeTotal("Strength") + getAbilityValue("Hoplomachy")) / 2);
   // Add weapon defense from first equipped weapon (if any)
   const equippedWeaponDefense = weapons.length > 0 ? (weapons[0].defense || 0) : 0;
   const armedDV = armedDVBase + equippedWeaponDefense;
@@ -1300,7 +1300,7 @@ export default function CharacterSheet() {
   // Movement & Feats (Scion 1st Ed)
   const dexterityTotal = getAttributeTotal("Dexterity");
   const strengthTotal = getAttributeTotal("Strength");
-  const athleticsValue = getAbilityValue("Atletismo");
+  const athleticsValue = getAbilityValue("Athletics");
   
   // Move = Dexterity + 6 yards
   const moveSpeed = dexterityTotal + 6;
@@ -1313,38 +1313,38 @@ export default function CharacterSheet() {
   // Lift capacity based on Strength (simplified)
   const liftCapacity = strengthTotal * 50; // lbs base 
   
-  // Soak (Scion 1st Ed - Regras do usuário)
-  // Bashing Soak = Vitalidade (Stamina base, SEM Epic)
-  // Lethal Soak = Vitalidade / 2 (arredondado para baixo, SEM Epic)
-  // Aggravated Soak = Apenas Armadura (0 sem armadura)
-  const staminaBase = getAttributeBase("Stamina"); // Apenas Stamina base
+  // Soak (Scion 1st Ed)
+  // Bashing Soak = Stamina base (no Epic)
+  // Lethal Soak = Stamina base / 2 (rounded down, no Epic)
+  // Aggravated Soak = Armor only (0 without armor)
+  const staminaBase = getAttributeBase("Stamina");
   const epicStamina = getAttributeEpic("Stamina");
   
-  const baseBashingSoak = staminaBase; // Apenas Vitalidade base
-  const baseLethalSoak = Math.floor(staminaBase / 2); // Vitalidade base / 2
-  const baseAggSoak = 0; // Apenas armadura
+  const baseBashingSoak = staminaBase;
+  const baseLethalSoak = Math.floor(staminaBase / 2);
+  const baseAggSoak = 0;
 
   const [armorList, setArmorList] = useState<{name: string, soakB: number, soakL: number, soakA: number, mobility: number, fatigue: number}[]>([]);
   const [armorSearch, setArmorSearch] = useState("");
   const [showArmorDropdown, setShowArmorDropdown] = useState(false);
   
   const ARMOR_OPTIONS = [
-    { name: "Roupas Pesadas", soakB: 1, soakL: 0, soakA: 0, mobility: 0, fatigue: 0 },
-    { name: "Couro Reforçado", soakB: 2, soakL: 1, soakA: 0, mobility: 0, fatigue: 1 },
-    { name: "Colete Kevlar", soakB: 2, soakL: 2, soakA: 0, mobility: 0, fatigue: 1 },
-    { name: "Colete Balístico", soakB: 3, soakL: 3, soakA: 0, mobility: -1, fatigue: 1 },
-    { name: "Colete Tático", soakB: 4, soakL: 4, soakA: 0, mobility: -1, fatigue: 2 },
-    { name: "Armadura Riot", soakB: 5, soakL: 5, soakA: 0, mobility: -2, fatigue: 2 },
-    { name: "Armadura de Batalha", soakB: 6, soakL: 6, soakA: 0, mobility: -2, fatigue: 3 },
-    { name: "Cota de Malha", soakB: 4, soakL: 3, soakA: 0, mobility: -1, fatigue: 2 },
-    { name: "Armadura de Placas", soakB: 6, soakL: 5, soakA: 0, mobility: -3, fatigue: 3 },
-    { name: "Armadura Mítica (Leve)", soakB: 4, soakL: 4, soakA: 2, mobility: 0, fatigue: 0 },
-    { name: "Armadura Mítica (Média)", soakB: 6, soakL: 6, soakA: 3, mobility: 0, fatigue: 0 },
-    { name: "Armadura Mítica (Pesada)", soakB: 8, soakL: 8, soakA: 4, mobility: 0, fatigue: 0 },
-    { name: "Capacete", soakB: 1, soakL: 1, soakA: 0, mobility: 0, fatigue: 0 },
-    { name: "Escudo Leve", soakB: 1, soakL: 1, soakA: 0, mobility: 0, fatigue: 0 },
-    { name: "Escudo Pesado", soakB: 2, soakL: 2, soakA: 0, mobility: -1, fatigue: 1 },
-    { name: "Grevas / Braçadeiras", soakB: 1, soakL: 1, soakA: 0, mobility: 0, fatigue: 0 },
+    { name: "Heavy Clothing", soakB: 1, soakL: 0, soakA: 0, mobility: 0, fatigue: 0 },
+    { name: "Reinforced Leather", soakB: 2, soakL: 1, soakA: 0, mobility: 0, fatigue: 1 },
+    { name: "Kevlar Vest", soakB: 2, soakL: 2, soakA: 0, mobility: 0, fatigue: 1 },
+    { name: "Ballistic Vest", soakB: 3, soakL: 3, soakA: 0, mobility: -1, fatigue: 1 },
+    { name: "Tactical Vest", soakB: 4, soakL: 4, soakA: 0, mobility: -1, fatigue: 2 },
+    { name: "Riot Armor", soakB: 5, soakL: 5, soakA: 0, mobility: -2, fatigue: 2 },
+    { name: "Battle Armor", soakB: 6, soakL: 6, soakA: 0, mobility: -2, fatigue: 3 },
+    { name: "Chain Mail", soakB: 4, soakL: 3, soakA: 0, mobility: -1, fatigue: 2 },
+    { name: "Plate Armor", soakB: 6, soakL: 5, soakA: 0, mobility: -3, fatigue: 3 },
+    { name: "Mythic Armor (Light)", soakB: 4, soakL: 4, soakA: 2, mobility: 0, fatigue: 0 },
+    { name: "Mythic Armor (Medium)", soakB: 6, soakL: 6, soakA: 3, mobility: 0, fatigue: 0 },
+    { name: "Mythic Armor (Heavy)", soakB: 8, soakL: 8, soakA: 4, mobility: 0, fatigue: 0 },
+    { name: "Helmet", soakB: 1, soakL: 1, soakA: 0, mobility: 0, fatigue: 0 },
+    { name: "Light Shield", soakB: 1, soakL: 1, soakA: 0, mobility: 0, fatigue: 0 },
+    { name: "Heavy Shield", soakB: 2, soakL: 2, soakA: 0, mobility: -1, fatigue: 1 },
+    { name: "Greaves / Bracers", soakB: 1, soakL: 1, soakA: 0, mobility: 0, fatigue: 0 },
   ];
   
   const filteredArmors = armorSearch 
@@ -2261,14 +2261,14 @@ export default function CharacterSheet() {
                     <div className="space-y-1.5">
                         {virtues.length === 0 ? (
                             <div className="text-center py-3">
-                                <p className="text-[10px] text-muted-foreground mb-2">Nenhuma virtude</p>
+                                <p className="text-[10px] text-muted-foreground mb-2">No virtues added</p>
                                 {editingVirtues && (
                                     <button 
                                         onClick={() => addVirtue()}
                                         className="flex items-center gap-1 mx-auto text-[10px] text-primary hover:text-primary/80 transition-colors"
                                     >
                                         <Plus className="w-3 h-3" />
-                                        Adicionar
+                                        Add
                                     </button>
                                 )}
                             </div>
@@ -2354,7 +2354,7 @@ export default function CharacterSheet() {
                                         className="flex items-center gap-2 text-xs text-primary/50 hover:text-primary transition-colors mt-2"
                                     >
                                         <Plus className="w-3 h-3" />
-                                        Adicionar Virtude
+                                        Add Virtue
                                     </button>
                                 )}
                             </>
@@ -2536,15 +2536,15 @@ export default function CharacterSheet() {
                 </MythicHUDFrame>
 
                 <MythicHUDFrame 
-                    title="Resistência" 
+                    title="Resistance" 
                     icon={Shield} 
-                    subHeader="SOAK & ARMADURA"
+                    subHeader="SOAK & ARMOR"
                     isEditing={editingCombatAll}
                 >
                 <div className="space-y-4">
                     {/* Soak Values */}
                     <div className="space-y-2">
-                        <div className="text-[10px] font-display uppercase text-primary/70 tracking-widest">Absorção (Soak)</div>
+                        <div className="text-[10px] font-display uppercase text-primary/70 tracking-widest">Soak</div>
                         <div className="grid grid-cols-3 gap-2">
                             <div className="bg-black/40 p-2 text-center border border-primary/20 rounded-sm">
                                 <div className="text-[8px] text-muted-foreground uppercase">Bashing</div>
@@ -2567,7 +2567,7 @@ export default function CharacterSheet() {
                     {/* Armor List */}
                     <div className="space-y-2 pt-2 border-t border-primary/10">
                         <div className="flex items-center justify-between">
-                            <div className="text-[10px] font-display uppercase text-primary/70 tracking-widest">Armadura Equipada</div>
+                            <div className="text-[10px] font-display uppercase text-primary/70 tracking-widest">Equipped Armor</div>
                             <div className="relative">
                                 <button
                                     onClick={() => setShowArmorDropdown(!showArmorDropdown)}
@@ -2582,7 +2582,7 @@ export default function CharacterSheet() {
                                             <input
                                                 value={armorSearch}
                                                 onChange={(e) => setArmorSearch(e.target.value)}
-                                                placeholder="Buscar armadura..."
+                                                placeholder="Search armor..."
                                                 className="w-full bg-black/60 border border-primary/20 text-[9px] px-2 py-1 rounded-sm text-primary placeholder:text-primary/30 outline-none"
                                                 autoFocus
                                                 data-testid="input-armor-search"
@@ -2609,7 +2609,7 @@ export default function CharacterSheet() {
                         </div>
 
                         {armorList.length === 0 ? (
-                            <div className="text-[9px] text-muted-foreground/50 italic text-center py-2">Sem armadura equipada</div>
+                            <div className="text-[9px] text-muted-foreground/50 italic text-center py-2">No armor equipped</div>
                         ) : (
                             <div className="space-y-1">
                                 {armorList.map((armor, idx) => (
@@ -2633,11 +2633,11 @@ export default function CharacterSheet() {
                         {armorList.length > 0 && (
                             <div className="grid grid-cols-2 gap-2 text-[9px] pt-1 border-t border-primary/10">
                                 <div className="flex justify-between">
-                                    <span className="text-muted-foreground">Mobilidade:</span>
+                                    <span className="text-muted-foreground">Mobility:</span>
                                     <span className={cn("font-code", mobilityPenalty < 0 ? "text-red-400" : "text-primary")}>{mobilityPenalty}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-muted-foreground">Fadiga:</span>
+                                    <span className="text-muted-foreground">Fatigue:</span>
                                     <span className={cn("font-code", fatiguePenalty > 0 ? "text-amber-400" : "text-primary")}>{fatiguePenalty}</span>
                                 </div>
                             </div>
@@ -2662,7 +2662,7 @@ export default function CharacterSheet() {
                 <MythicHUDFrame 
                     title="Vitality" 
                     icon={Heart} 
-                    subHeader="NÍVEIS DE VITALIDADE"
+                    subHeader="HEALTH LEVELS"
                     isEditing={editingCombatAll}
                 >
                     <div className="space-y-2">
@@ -2725,7 +2725,7 @@ export default function CharacterSheet() {
                                     setShowOffensiveDropdown(true);
                                 }}
                                 onFocus={() => setShowOffensiveDropdown(true)}
-                                placeholder="Buscar armas do compêndio..." 
+                                placeholder="Search weapons..." 
                                 className="w-full bg-black border border-primary/20 text-[9px] px-2 py-1.5 rounded-sm focus:border-primary text-primary placeholder:text-primary/30 outline-none"
                             />
                             {showOffensiveDropdown && filteredOffensives.length > 0 && (
@@ -2901,7 +2901,7 @@ export default function CharacterSheet() {
                                         ? "text-green-400 hover:text-green-300 hover:bg-green-400/10" 
                                         : "text-muted-foreground/30 cursor-not-allowed"
                                 )}
-                                title="Salvar arma customizada"
+                                title="Save custom weapon"
                             >
                                 <Check className="w-2.5 h-2.5" />
                             </button>
@@ -3070,7 +3070,7 @@ export default function CharacterSheet() {
                          <div className="space-y-2">
                              {knacks.length === 0 ? (
                                  <div className="text-[10px] text-muted-foreground/50 italic text-center py-4">
-                                     Nenhum knack adicionado. Use a busca abaixo.
+                                     No knacks added. Use the search below.
                                  </div>
                              ) : (
                                  <div className="grid grid-cols-1 gap-2">
@@ -3123,7 +3123,7 @@ export default function CharacterSheet() {
                                          onChange={e => setKnackAttributeFilter(e.target.value)}
                                          className="bg-black border border-primary/20 text-[9px] px-2 py-1.5 rounded-sm focus:border-primary text-primary outline-none"
                                      >
-                                         <option value="all" className="bg-black text-primary">Todos Atributos</option>
+                                         <option value="all" className="bg-black text-primary">All Attributes</option>
                                          {knackAttributes.map(attr => (
                                              <option key={attr} value={attr} className="bg-black text-primary">{attr}</option>
                                          ))}
@@ -3135,7 +3135,7 @@ export default function CharacterSheet() {
                                              setShowKnackDropdown(true);
                                          }}
                                          onFocus={() => setShowKnackDropdown(true)}
-                                         placeholder="Buscar por nome..."
+                                         placeholder="Search by name..."
                                          className="flex-1 bg-black border border-primary/20 text-[9px] px-2 py-1.5 rounded-sm focus:border-primary text-primary placeholder:text-primary/30 outline-none"
                                      />
                                  </div>
@@ -3191,7 +3191,7 @@ export default function CharacterSheet() {
                                      </button>
                                  )}
                                  <div className="text-[8px] text-muted-foreground mt-2">
-                                     {availableKnacks.length} knacks disponíveis
+                                     {availableKnacks.length} knacks available
                                  </div>
                              </div>
                          </div>
@@ -3203,7 +3203,7 @@ export default function CharacterSheet() {
                          <div className="space-y-2">
                              {selectedBoons.length === 0 ? (
                                  <div className="text-[10px] text-muted-foreground/50 italic text-center py-4">
-                                     Nenhum boon adicionado. Use a busca abaixo.
+                                     No boons added. Use the search below.
                                  </div>
                              ) : (
                                  <div className="grid grid-cols-1 gap-2">
@@ -3241,7 +3241,7 @@ export default function CharacterSheet() {
                                          onChange={e => setBoonPurviewFilter(e.target.value)}
                                          className="bg-black border border-accent/20 text-[9px] px-2 py-1.5 rounded-sm focus:border-accent text-accent-foreground outline-none"
                                      >
-                                         <option value="all" className="bg-black text-primary">Todos Purviews</option>
+                                         <option value="all" className="bg-black text-primary">All Purviews</option>
                                          {boonPurviews.map(purview => (
                                              <option key={purview} value={purview} className="bg-black text-primary">{purview}</option>
                                          ))}
@@ -3253,7 +3253,7 @@ export default function CharacterSheet() {
                                              setShowBoonDropdown(true);
                                          }}
                                          onFocus={() => setShowBoonDropdown(true)}
-                                         placeholder="Buscar por nome..."
+                                         placeholder="Search by name..."
                                          className="flex-1 bg-black border border-accent/20 text-[9px] px-2 py-1.5 rounded-sm focus:border-accent text-accent-foreground placeholder:text-accent-foreground/30 outline-none"
                                      />
                                  </div>
@@ -3300,7 +3300,7 @@ export default function CharacterSheet() {
                                      </button>
                                  )}
                                  <div className="text-[8px] text-muted-foreground mt-2">
-                                     {availableBoons.length} boons disponíveis
+                                     {availableBoons.length} boons available
                                  </div>
                              </div>
                          </div>
@@ -3312,10 +3312,10 @@ export default function CharacterSheet() {
                          <div className="space-y-4">
                              {(['creatures', 'guides', 'followers', 'relics'] as const).map((category) => {
                                  const labels: Record<string, { icon: string; label: string }> = {
-                                     creatures: { icon: '🐺', label: 'Criaturas' },
-                                     guides: { icon: '👁', label: 'Guias' },
-                                     followers: { icon: '⚔', label: 'Seguidores' },
-                                     relics: { icon: '✧', label: 'Relíquias' },
+                                     creatures: { icon: '🐺', label: 'Creatures' },
+                                     guides: { icon: '👁', label: 'Guides' },
+                                     followers: { icon: '⚔', label: 'Followers' },
+                                     relics: { icon: '✧', label: 'Relics' },
                                  };
                                  const { icon, label } = labels[category];
                                  return (
@@ -3360,7 +3360,7 @@ export default function CharacterSheet() {
                                                  <input
                                                      value={newBirthright[category].description}
                                                      onChange={e => setNewBirthright({...newBirthright, [category]: {...newBirthright[category], description: e.target.value}})}
-                                                     placeholder="Descrição..."
+                                                     placeholder="Description..."
                                                      className="flex-1 bg-black/30 border border-primary/20 text-[8px] px-1.5 py-1 rounded-sm text-primary placeholder:text-primary/30 outline-none"
                                                  />
                                                  <button onClick={() => addBirthright(category)} className="px-1.5 py-1 bg-primary/20 hover:bg-primary/30 text-primary text-[8px] rounded-sm">+</button>
