@@ -1557,90 +1557,7 @@ export default function CharacterSheet() {
                                       exit={{ opacity: 0, height: 0 }}
                                       className="space-y-3 mt-4"
                                     >
-                                        <h5 className="text-[10px] font-mythic uppercase text-primary border-b border-primary/20 pb-1">Basic Data</h5>
-                                        
-                                        <div className="grid grid-cols-2 gap-3">
-                                            <div className="col-span-2">
-                                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">Designation (Name)</label>
-                                                <ScionInput 
-                                                   value={scionName} 
-                                                   onChange={(e) => setScionName(e.target.value)}
-                                                   className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
-                                                   viewMode={!editingIdentity}
-                                                />
-                                            </div>
-                                            
-                                            <div>
-                                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">Pantheon</label>
-                                                <ScionInput 
-                                                   value={scionPantheon} 
-                                                   onChange={(e) => setScionPantheon(e.target.value)}
-                                                   className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
-                                                   viewMode={!editingIdentity}
-                                                   list="pantheons-list"
-                                                />
-                                                <datalist id="pantheons-list">
-                                                   <option value="Aesir" />
-                                                   <option value="Kami" />
-                                                   <option value="Manitou" />
-                                                   <option value="Netjer" />
-                                                   <option value="Theoi" />
-                                                   <option value="Tuatha Dé Danann" />
-                                                   <option value="Yazata" />
-                                                </datalist>
-                                            </div>
-
-                                            <div>
-                                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">Heritage (Divine Parent)</label>
-                                                <ScionInput 
-                                                   value={divineParent} 
-                                                   onChange={(e) => setDivineParent(e.target.value)}
-                                                   className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-[hsl(var(--highlight-amber))]" 
-                                                   viewMode={!editingIdentity}
-                                                />
-                                            </div>
-
-                                            <div>
-                                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">Date of Birth</label>
-                                                <ScionInput 
-                                                   value={dateOfBirth} 
-                                                   onChange={(e) => setDateOfBirth(e.target.value)}
-                                                   className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
-                                                   viewMode={!editingIdentity}
-                                                   type="date"
-                                                />
-                                            </div>
-
-                                            <div>
-                                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">Nationality</label>
-                                                <ScionInput 
-                                                   value={nationality} 
-                                                   onChange={(e) => setNationality(e.target.value)}
-                                                   className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
-                                                   viewMode={!editingIdentity}
-                                                />
-                                            </div>
-
-                                            <div>
-                                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">City of Origin</label>
-                                                <ScionInput 
-                                                   value={cityOfOrigin} 
-                                                   onChange={(e) => setCityOfOrigin(e.target.value)}
-                                                   className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
-                                                   viewMode={!editingIdentity}
-                                                />
-                                            </div>
-
-                                            <div>
-                                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">State / Region</label>
-                                                <ScionInput 
-                                                   value={stateRegion} 
-                                                   onChange={(e) => setStateRegion(e.target.value)}
-                                                   className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
-                                                   viewMode={!editingIdentity}
-                                                />
-                                            </div>
-                                        </div>
+                                        <p className="text-[9px] text-muted-foreground italic text-center py-2">Dados básicos na seção de Callings acima.</p>
                                     </motion.div>
                                 )}
                                 {idCardTab === 'psychic' && (
@@ -1888,6 +1805,85 @@ export default function CharacterSheet() {
                 
                 {/* CALLINGS MODULE - Compact Design */}
                 <MythicHUDFrame title="Divine Callings" icon={Crosshair} subHeader="ROLE SPECIALIZATIONS" className="flex-1" isEditing={editingCombat} {...createEditHandlers(editingCombat, setEditingCombat)}>
+                    <div className="mb-4">
+                        <h5 className="text-[10px] font-mythic uppercase text-primary border-b border-primary/20 pb-1 mb-2">Basic Data</h5>
+                        <div className="grid grid-cols-2 gap-2">
+                            <div className="col-span-2">
+                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-0.5">Designation (Name)</label>
+                                <ScionInput 
+                                   value={scionName} 
+                                   onChange={(e) => setScionName(e.target.value)}
+                                   className="h-7 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
+                                   viewMode={!editingCombat}
+                                />
+                            </div>
+                            <div>
+                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-0.5">Pantheon</label>
+                                <ScionInput 
+                                   value={scionPantheon} 
+                                   onChange={(e) => setScionPantheon(e.target.value)}
+                                   className="h-7 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
+                                   viewMode={!editingCombat}
+                                   list="pantheons-list-callings"
+                                />
+                                <datalist id="pantheons-list-callings">
+                                   <option value="Aesir" />
+                                   <option value="Kami" />
+                                   <option value="Manitou" />
+                                   <option value="Netjer" />
+                                   <option value="Theoi" />
+                                   <option value="Tuatha Dé Danann" />
+                                   <option value="Yazata" />
+                                </datalist>
+                            </div>
+                            <div>
+                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-0.5">Heritage (Divine Parent)</label>
+                                <ScionInput 
+                                   value={divineParent} 
+                                   onChange={(e) => setDivineParent(e.target.value)}
+                                   className="h-7 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-[hsl(var(--highlight-amber))]" 
+                                   viewMode={!editingCombat}
+                                />
+                            </div>
+                            <div>
+                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-0.5">Date of Birth</label>
+                                <ScionInput 
+                                   value={dateOfBirth} 
+                                   onChange={(e) => setDateOfBirth(e.target.value)}
+                                   className="h-7 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
+                                   viewMode={!editingCombat}
+                                   type="date"
+                                />
+                            </div>
+                            <div>
+                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-0.5">Nationality</label>
+                                <ScionInput 
+                                   value={nationality} 
+                                   onChange={(e) => setNationality(e.target.value)}
+                                   className="h-7 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
+                                   viewMode={!editingCombat}
+                                />
+                            </div>
+                            <div>
+                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-0.5">City of Origin</label>
+                                <ScionInput 
+                                   value={cityOfOrigin} 
+                                   onChange={(e) => setCityOfOrigin(e.target.value)}
+                                   className="h-7 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
+                                   viewMode={!editingCombat}
+                                />
+                            </div>
+                            <div>
+                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-0.5">State / Region</label>
+                                <ScionInput 
+                                   value={stateRegion} 
+                                   onChange={(e) => setStateRegion(e.target.value)}
+                                   className="h-7 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
+                                   viewMode={!editingCombat}
+                                />
+                            </div>
+                        </div>
+                    </div>
                     <div className="space-y-1.5">
                         {callings.map((calling, idx) => (
                             <div key={idx} className="relative group">
