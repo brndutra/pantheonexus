@@ -244,6 +244,17 @@ export async function registerRoutes(
     }
   });
 
+  // Delete all characters
+  app.delete("/api/characters", async (req, res) => {
+    try {
+      const deleted = await storage.deleteAllCharacters();
+      res.json({ message: `Deleted ${deleted} characters`, deleted });
+    } catch (error) {
+      console.error("Error deleting all characters:", error);
+      res.status(500).json({ error: "Failed to delete all characters" });
+    }
+  });
+
   // =====================
   // COMPENDIUM ROUTES
   // =====================

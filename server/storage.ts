@@ -156,8 +156,29 @@ export class SupabaseStorage implements IStorage {
   }
 
   async deleteCharacter(id: string): Promise<boolean> {
-    const { error } = await supabase.from('scrolls').delete().eq('id', id);
-    return !error;
+    const { error, count } = await supabase.from('scrolls').delete({ count: 'exact' }).eq('id', id);
+    if (error) {
+      console.error('Delete error for', id, ':', error.message);
+      return false;
+    }
+    return true;
+  }
+
+  async deleteAllCharacters(): Promise<number> {
+    const { data: allScrolls } = await supabase.from('scrolls').select('id');
+    if (!allScrolls || allScrolls.length === 0) return 0;
+    let deleted = 0;
+    const dependentTables = ['scion_abilities', 'scion_attributes', 'stats', 'scionsight'];
+    for (const scroll of allScrolls) {
+      for (const table of dependentTables) {
+        const { error } = await supabase.from(table).delete().eq('scion_id', scroll.id);
+        if (error) console.log(`Note: ${table} delete for ${scroll.id}: ${error.message}`);
+      }
+      const { error } = await supabase.from('scrolls').delete().eq('id', scroll.id);
+      if (!error) deleted++;
+      else console.error('Failed to delete scroll', scroll.id, ':', error.message);
+    }
+    return deleted;
   }
 
   private normalizeAttributes(attrs: any): any {
