@@ -1268,6 +1268,7 @@ export default function CharacterSheet() {
   const [editingVirtues, setEditingVirtues] = useState(false);
   const [editingCombat, setEditingCombat] = useState(false);
   const [combatRowCollapsed, setCombatRowCollapsed] = useState(false);
+  const [attribAbilCollapsed, setAttribAbilCollapsed] = useState(false);
   const [editingPowers, setEditingPowers] = useState(false);
   const [editingEquipment, setEditingEquipment] = useState(false);
   const [editingVitality, setEditingVitality] = useState(false);
@@ -2758,10 +2759,22 @@ export default function CharacterSheet() {
         </div> 
         {/* --- COMBAT ROW END --- */}
 
-        {/* ATTRIBUTES & ABILITIES - Stacked, 3-column aligned */}
-        <div className="mt-6 space-y-6">
-            {/* ATTRIBUTES CORE - 3 columns matching abilities */}
-            <MythicHUDFrame title="Attributes Core" icon={Dna} subHeader="PHYSICAL / SOCIAL / MENTAL" className="flex flex-col" titleSize="large" isEditing={editingAttributes} {...createEditHandlers(editingAttributes, setEditingAttributes)}>
+        {/* ATTRIBUTES & ABILITIES - Collapsible wrapper */}
+        <div className="mt-6 border border-primary/20 rounded-sm bg-black/20 overflow-hidden">
+            <button 
+                onClick={() => setAttribAbilCollapsed(!attribAbilCollapsed)}
+                className="w-full flex items-center justify-between px-4 py-2.5 bg-black/40 hover:bg-black/60 transition-colors border-b border-primary/15 cursor-pointer"
+                data-testid="btn-toggle-attrib-abil"
+            >
+                <div className="flex items-center gap-2">
+                    <Dna className="w-4 h-4 text-primary/60" />
+                    <span className="text-sm font-display uppercase tracking-[0.15em] text-primary">Attributes & Abilities</span>
+                </div>
+                {attribAbilCollapsed ? <ChevronDown className="w-4 h-4 text-primary/50" /> : <ChevronUp className="w-4 h-4 text-primary/50" />}
+            </button>
+            {!attribAbilCollapsed && (
+        <div className="p-4 space-y-6">
+            <MythicHUDFrame title="Attributes" icon={Dna} subHeader="PHYSICAL / SOCIAL / MENTAL" className="flex flex-col" titleSize="large" isEditing={editingAttributes} {...createEditHandlers(editingAttributes, setEditingAttributes)}>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-1">
                     {(Object.entries(attributes) as [AttributeCategory, Attribute[]][]).map(([category, attrs]) => (
                         <div key={category} className="space-y-1.5 relative">
@@ -2812,7 +2825,7 @@ export default function CharacterSheet() {
             </MythicHUDFrame>
 
             {/* ABILITIES DATABASE - 3 columns aligned with attributes above */}
-            <MythicHUDFrame title="Abilities Database" icon={Brain} subHeader="SKILL SET MATRIX" className="flex flex-col" titleSize="large" isEditing={editingAbilities} {...createEditHandlers(editingAbilities, setEditingAbilities)}>
+            <MythicHUDFrame title="Abilities" icon={Brain} subHeader="SKILL SET MATRIX" className="flex flex-col" titleSize="large" isEditing={editingAbilities} {...createEditHandlers(editingAbilities, setEditingAbilities)}>
                 <div className="flex-1">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-1 h-full content-start">
                         {abilitiesSchema.map((schema) => {
@@ -2900,6 +2913,8 @@ export default function CharacterSheet() {
                     </div>
                 </div>
             </MythicHUDFrame>
+        </div>
+            )}
         </div>
 
 
