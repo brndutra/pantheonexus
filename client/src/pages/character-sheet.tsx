@@ -4,7 +4,7 @@ import { DotRating } from "@/components/ui/dot-rating";
 import { ScionInput } from "@/components/ui/scion-input";
 import { Link, useRoute } from "wouter";
 import { cn } from "@/lib/utils";
-import { Shield, Zap, Skull, Scroll, Activity, Cpu, Hexagon, Plus, Trash2, Crown, Heart, Radar, Minus, Upload, Image as ImageIcon, X, FileText, User, LayoutGrid, ArrowLeft, Target, Sword, Crosshair, Fingerprint, Dna, Brain, Pencil, Check, Loader2, Star, Flame } from "lucide-react";
+import { Shield, Zap, Skull, Scroll, Activity, Cpu, Hexagon, Plus, Trash2, Crown, Heart, Radar, Minus, Upload, Image as ImageIcon, X, FileText, User, LayoutGrid, ArrowLeft, Target, Sword, Crosshair, Fingerprint, Dna, Brain, Pencil, Check, Loader2, Star, Flame, ChevronDown, ChevronUp } from "lucide-react";
 import { useCharacter, useUpdateCharacter } from "@/lib/use-characters";
 import { useCompendium } from "@/lib/compendium-store";
 import { Button } from "@/components/ui/button";
@@ -1267,6 +1267,7 @@ export default function CharacterSheet() {
   const [editingAbilities, setEditingAbilities] = useState(false);
   const [editingVirtues, setEditingVirtues] = useState(false);
   const [editingCombat, setEditingCombat] = useState(false);
+  const [combatRowCollapsed, setCombatRowCollapsed] = useState(false);
   const [editingPowers, setEditingPowers] = useState(false);
   const [editingEquipment, setEditingEquipment] = useState(false);
   const [editingVitality, setEditingVitality] = useState(false);
@@ -2251,8 +2252,21 @@ export default function CharacterSheet() {
         </div> 
         {/* --- TOP 3-COLUMN GRID END --- */}
 
-        {/* COMBAT ROW - Legend, Willpower+Resistance, Vitality+Offensive */}
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-4 gap-6">
+        {/* COMBAT ROW - Collapsible wrapper */}
+        <div className="mt-6 border border-primary/20 rounded-sm bg-black/20 overflow-hidden">
+            <button 
+                onClick={() => setCombatRowCollapsed(!combatRowCollapsed)}
+                className="w-full flex items-center justify-between px-4 py-2.5 bg-black/40 hover:bg-black/60 transition-colors border-b border-primary/15 cursor-pointer"
+                data-testid="btn-toggle-combat-row"
+            >
+                <div className="flex items-center gap-2">
+                    <Activity className="w-4 h-4 text-primary/60" />
+                    <span className="text-sm font-display uppercase tracking-[0.15em] text-primary">Combat & Vitality</span>
+                </div>
+                {combatRowCollapsed ? <ChevronDown className="w-4 h-4 text-primary/50" /> : <ChevronUp className="w-4 h-4 text-primary/50" />}
+            </button>
+            {!combatRowCollapsed && (
+        <div className="p-4 grid grid-cols-1 md:grid-cols-4 gap-6">
 
             {/* 1. LEGEND + PHYSICAL STATS - Takes 1 column (stacked) */}
             <div className="md:col-span-1 flex flex-col gap-6">
@@ -2739,6 +2753,8 @@ export default function CharacterSheet() {
                 </MythicHUDFrame>
             </div>
 
+        </div>
+            )}
         </div> 
         {/* --- COMBAT ROW END --- */}
 
