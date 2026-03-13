@@ -374,6 +374,7 @@ export default function CharacterSheet() {
   const { data: loadedCharacter, isLoading } = useCharacter(characterId);
   const { mutate: updateCharacter } = useUpdateCharacter();
   const { callings: compendiumCallings, natures: compendiumNatures, virtues: compendiumVirtues } = useCompendium();
+  const [supabaseCallings, setSupabaseCallings] = useState<{id: number; name: string; description: string}[]>([]);
   const [activeTab, setActiveTab] = useState<"sheet" | "powers" | "bio">("sheet");
   const [idCardTab, setIdCardTab] = useState<"identity" | "psychic" | "presence" | "professional">("identity");
   
@@ -390,6 +391,15 @@ export default function CharacterSheet() {
   const [nationality, setNationality] = useState("");
   const [cityOfOrigin, setCityOfOrigin] = useState("");
   const [stateRegion, setStateRegion] = useState("");
+
+  useEffect(() => {
+    fetch('/api/callings')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setSupabaseCallings(data);
+      })
+      .catch(err => console.error('Failed to load callings:', err));
+  }, []);
 
   // Sync with URL params
   useEffect(() => {
@@ -1459,7 +1469,7 @@ export default function CharacterSheet() {
                 <div className="flex items-center gap-2">
                   <Link href="/">
                     <button className="flex items-center gap-2 text-[10px] font-mythic uppercase tracking-widest text-primary border border-primary/30 px-3 py-1 hover:bg-primary/10 transition-colors rounded-sm hover:shadow-[0_0_10px_rgba(212,175,55,0.2)] group">
-                      <ArrowLeft className="w-3 h-3 group-hover:-translate-x-1 transition-transform" /> TERMINATE SESSION
+                      <ArrowLeft className="w-3 h-3 group-hover:-translate-x-1 transition-transform" /> BACK TO PANT-HOME
                     </button>
                   </Link>
                 </div>
@@ -1887,13 +1897,23 @@ export default function CharacterSheet() {
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-2">
                                             <span className="text-[8px] uppercase tracking-widest text-muted-foreground font-tech shrink-0">0{idx+1}</span>
-                                            <ScionInput 
-                                                value={calling.name} 
+                                            {editingCombat ? (
+                                              <select
+                                                data-testid={`select-calling-${idx}`}
+                                                value={calling.name}
                                                 onChange={(e) => updateCalling(idx, 'name', e.target.value)}
-                                                placeholder="CALLING"
-                                                className="text-sm font-mythic uppercase tracking-wider text-primary bg-transparent border-none p-0 h-auto focus:ring-0 drop-shadow-md" 
-                                                viewMode={!editingCombat}
-                                            />
+                                                className="text-sm font-mythic uppercase tracking-wider text-primary bg-black/60 border border-primary/30 rounded-sm px-1 py-0.5 h-auto focus:ring-1 focus:ring-primary/50 focus:outline-none drop-shadow-md cursor-pointer"
+                                              >
+                                                <option value="">CALLING</option>
+                                                {supabaseCallings.map((c) => (
+                                                  <option key={c.id} value={c.name}>{c.name}</option>
+                                                ))}
+                                              </select>
+                                            ) : (
+                                              <span className="text-sm font-mythic uppercase tracking-wider text-primary drop-shadow-md">
+                                                {calling.name || "—"}
+                                              </span>
+                                            )}
                                         </div>
                                         <div className="flex items-center gap-1.5 mt-0.5">
                                             <span className="text-[8px] text-primary/40">»</span>
