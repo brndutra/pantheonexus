@@ -2443,15 +2443,15 @@ export default function CharacterSheet() {
                                 }}
                                 onFocus={() => setShowOffensiveDropdown(true)}
                                 placeholder="Buscar armas do compêndio..." 
-                                className="w-full bg-black/30 border border-primary/20 text-[10px] px-2 py-1.5 rounded-sm focus:border-primary text-primary placeholder:text-primary/30 outline-none"
+                                className="w-full bg-black border border-primary/20 text-[9px] px-2 py-1.5 rounded-sm focus:border-primary text-primary placeholder:text-primary/30 outline-none"
                             />
                             {showOffensiveDropdown && filteredOffensives.length > 0 && (
-                                <div className="absolute top-full left-0 right-0 mt-1 bg-black/95 border border-primary/30 rounded-sm max-h-[200px] overflow-y-auto z-50 shadow-xl">
+                                <div className="absolute top-full left-0 right-0 mt-1 bg-black border border-primary/20 rounded-sm max-h-[200px] overflow-y-auto z-50 shadow-[0_4px_20px_rgba(0,0,0,0.8)]">
                                     {filteredOffensives.slice(0, 15).map((o, i) => (
                                         <button
                                             key={`${o.offensive_name}-${i}`}
                                             onClick={() => addOffensiveFromDatabase(o)}
-                                            className="w-full text-left px-2 py-1.5 text-[9px] font-tech hover:bg-primary/20 transition-colors flex items-center justify-between gap-2 border-b border-primary/10 last:border-0"
+                                            className="w-full text-left px-2 py-1.5 text-[9px] font-tech hover:bg-primary/20 text-primary transition-colors flex items-center justify-between gap-2 border-b border-primary/10 last:border-0"
                                         >
                                             <div className="flex items-center gap-2">
                                                 <Crosshair className="w-3 h-3 text-primary/50" />
@@ -2854,27 +2854,26 @@ export default function CharacterSheet() {
                                          }}
                                          onFocus={() => setShowKnackDropdown(true)}
                                          placeholder="Buscar por nome..."
-                                         className="flex-1 bg-black/30 border border-primary/20 text-[10px] px-3 py-2 rounded-sm focus:border-primary text-primary placeholder:text-primary/30 outline-none"
+                                         className="flex-1 bg-black border border-primary/20 text-[9px] px-2 py-1.5 rounded-sm focus:border-primary text-primary placeholder:text-primary/30 outline-none"
                                      />
                                  </div>
                                  <div className="relative">
                                      {showKnackDropdown && filteredKnacks.length > 0 && (
-                                         <div className="absolute top-full left-0 right-0 mt-1 bg-black/95 border border-primary/30 rounded-sm max-h-[400px] overflow-y-auto z-50 shadow-xl">
+                                         <div className="absolute top-full left-0 right-0 mt-1 bg-black border border-primary/20 rounded-sm max-h-[400px] overflow-y-auto z-50 shadow-[0_4px_20px_rgba(0,0,0,0.8)]">
                                              {filteredKnacks.map((k) => (
                                                  <button
                                                      key={k.id}
                                                      onClick={() => addKnackFromDatabase(k)}
                                                      disabled={knacks.some(kk => kk.id === k.id)}
                                                      className={cn(
-                                                         "w-full text-left px-3 py-2 text-[10px] font-tech transition-colors flex items-center gap-3 border-b border-primary/10 last:border-0",
+                                                         "w-full text-left px-2 py-1.5 text-[9px] font-tech transition-colors flex items-center gap-3 border-b border-primary/10 last:border-0",
                                                          knacks.some(kk => kk.id === k.id) 
                                                              ? "opacity-40 cursor-not-allowed" 
-                                                             : "hover:bg-primary/20"
+                                                             : "hover:bg-primary/20 text-primary"
                                                      )}
                                                  >
-                                                     {/* Mini Hex Icon */}
                                                      <div className="relative shrink-0">
-                                                         <svg viewBox="0 0 40 46" className="w-5 h-6">
+                                                         <svg viewBox="0 0 40 46" className="w-4 h-5">
                                                              <polygon 
                                                                  points="20,0 40,11.5 40,34.5 20,46 0,34.5 0,11.5" 
                                                                  fill="none" 
@@ -2883,7 +2882,7 @@ export default function CharacterSheet() {
                                                                  className="text-primary/40"
                                                              />
                                                          </svg>
-                                                         <Zap className="w-2.5 h-2.5 text-primary/60 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                                                         <Zap className="w-2 h-2 text-primary/60 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
                                                      </div>
                                                      <div className="flex-1 min-w-0">
                                                          <span className="text-primary font-bold">{k.name}</span>
@@ -2973,22 +2972,22 @@ export default function CharacterSheet() {
                                          }}
                                          onFocus={() => setShowBoonDropdown(true)}
                                          placeholder="Buscar por nome..."
-                                         className="flex-1 bg-black/30 border border-accent/20 text-[10px] px-3 py-2 rounded-sm focus:border-accent text-accent-foreground placeholder:text-accent-foreground/30 outline-none"
+                                         className="flex-1 bg-black border border-accent/20 text-[9px] px-2 py-1.5 rounded-sm focus:border-accent text-accent-foreground placeholder:text-accent-foreground/30 outline-none"
                                      />
                                  </div>
                                  <div className="relative">
                                      {showBoonDropdown && filteredBoons.length > 0 && (
-                                         <div className="absolute top-0 left-0 right-0 bg-black/95 border border-accent/30 rounded-sm max-h-[400px] overflow-y-auto z-50 shadow-xl">
+                                         <div className="absolute top-full left-0 right-0 mt-1 bg-black border border-accent/20 rounded-sm max-h-[400px] overflow-y-auto z-50 shadow-[0_4px_20px_rgba(0,0,0,0.8)]">
                                              {filteredBoons.map((b) => (
                                                  <button
                                                      key={b.id}
                                                      onClick={() => addBoonFromDatabase(b)}
                                                      disabled={selectedBoons.some(sb => sb.id === b.id)}
                                                      className={cn(
-                                                         "w-full text-left px-3 py-2 text-[10px] font-tech transition-colors flex items-center gap-3 border-b border-accent/10 last:border-0",
+                                                         "w-full text-left px-2 py-1.5 text-[9px] font-tech transition-colors flex items-center gap-3 border-b border-accent/10 last:border-0",
                                                          selectedBoons.some(sb => sb.id === b.id) 
                                                              ? "opacity-40 cursor-not-allowed" 
-                                                             : "hover:bg-accent/20"
+                                                             : "hover:bg-accent/20 text-accent-foreground"
                                                      )}
                                                  >
                                                      <div className="w-4 h-4 rounded-full bg-accent/30 flex items-center justify-center shrink-0">
