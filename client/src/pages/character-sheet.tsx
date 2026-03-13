@@ -3065,7 +3065,7 @@ export default function CharacterSheet() {
                                         <span className={cn(
                                             "text-[11px] uppercase tracking-wide font-code transition-colors truncate",
                                             isHeritage ? "text-[hsl(var(--highlight-amber))] font-bold" : 
-                                            (ability.value || 0) > 0 ? "text-foreground" : "text-muted-foreground group-hover:text-primary/70"
+                                            (ability.value || 0) > 0 ? "text-white" : "text-white/40 group-hover:text-white/70"
                                         )}>
                                             {abilityName}
                                         </span>
