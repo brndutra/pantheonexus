@@ -357,9 +357,14 @@ export default function CharacterSheet() {
       .catch(err => console.error('Failed to load callings:', err));
   }, []);
 
-  // Sync with URL params
+  const hasInitializedRef = useRef(false);
+  const loadedCharacterIdRef = useRef<string | null>(null);
+
+  // Sync with URL params - only on initial load or character change
   useEffect(() => {
-    if (loadedCharacter) {
+    if (loadedCharacter && (!hasInitializedRef.current || loadedCharacterIdRef.current !== loadedCharacter.id)) {
+      hasInitializedRef.current = true;
+      loadedCharacterIdRef.current = loadedCharacter.id;
       // Basic identity
       setScionName(loadedCharacter.name);
       setScionPlayer(loadedCharacter.player || "");
@@ -1335,6 +1340,7 @@ export default function CharacterSheet() {
       if (characterId) {
         updateCharacter({
           id: characterId,
+          silent: true,
           updates: {
             legend,
             legendPointsCurrent,
