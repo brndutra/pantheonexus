@@ -458,16 +458,17 @@ const MythicHUDFrame = ({
     </div>
     
     {/* Header Section — Muller style: thick rule + condensed title */}
-    {(title || Icon) && (
+    {(title || Icon || onEdit) && (
         <div className="relative z-10">
-            <div className={cn("h-[3px] w-full", 
+            {(title || Icon) && <div className={cn("h-[3px] w-full", 
                 variant === "gold" ? "bg-[#e6db00]" : 
                 variant === "blue" ? "bg-[#00b4ff]" : 
                 variant === "violet" ? "bg-[#834DFB]" : 
                 variant === "turbo" ? "bg-[#F0E100]" : 
+                variant === "nature" ? "bg-[#006AF9]" : 
                 "bg-primary"
-            )} />
-            <div className="flex items-center justify-between px-4 py-2.5">
+            )} />}
+            <div className={cn("flex items-center justify-between px-4", (title || Icon) ? "py-2.5" : "py-1.5")}>
                 <div className="flex items-center gap-3">
                     {Icon && <Icon className={cn("w-4 h-4", 
                         variant === "gold" ? "text-[#e6db00]/80" : 
@@ -1584,6 +1585,8 @@ export default function CharacterSheet() {
 
   // Edit mode states for each section
   const [editingIdentity, setEditingIdentity] = useState(false);
+  const [editingPresence, setEditingPresence] = useState(false);
+  const [editingPsychic, setEditingPsychic] = useState(false);
   const [editingAttributes, setEditingAttributes] = useState(false);
   const [editingAbilities, setEditingAbilities] = useState(false);
   const [editingVirtues, setEditingVirtues] = useState(false);
@@ -1775,7 +1778,7 @@ export default function CharacterSheet() {
             <div className="col-span-12 md:col-span-4 flex flex-col gap-6">
                 
                 {/* 1. IDENTITY MODULE */}
-                <MythicHUDFrame title="Identity Matrix" icon={Fingerprint} subHeader="SUBJECT DESIGNATION" className="flex-1" isEditing={editingIdentity} {...createEditHandlers(editingIdentity, setEditingIdentity)}>
+                <MythicHUDFrame title="" icon={undefined} subHeader="" className="flex-1" isEditing={editingIdentity} {...createEditHandlers(editingIdentity, setEditingIdentity)}>
                      <div className="flex flex-col gap-4">
                          {/* Portrait + Name - Always visible */}
                          <div className="relative aspect-[3/4] w-full border border-primary/20 bg-black/50 overflow-hidden group">
@@ -1783,15 +1786,20 @@ export default function CharacterSheet() {
                              <div className="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-primary/40 z-10" />
                              
                              <div 
-                                className="w-full h-full cursor-pointer relative"
-                                onClick={() => fileInputRef.current?.click()}
+                                className={cn("w-full h-full relative", editingIdentity ? "cursor-pointer" : "cursor-default")}
+                                onClick={() => editingIdentity && fileInputRef.current?.click()}
                              >
                                 {portrait ? (
                                     <img src={portrait} alt="Scion Portrait" className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
                                 ) : (
                                     <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground/30">
                                         <ImageIcon className="w-12 h-12 mb-2 opacity-30" />
-                                        <span className="text-[10px] tracking-widest uppercase">No Visual Data</span>
+                                        <span className="text-[10px] tracking-widest uppercase">{editingIdentity ? "Click to Upload" : "No Visual Data"}</span>
+                                    </div>
+                                )}
+                                {editingIdentity && portrait && (
+                                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none">
+                                        <Upload className="w-8 h-8 text-primary/70" />
                                     </div>
                                 )}
                                 <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
@@ -2020,7 +2028,7 @@ export default function CharacterSheet() {
             {/* MIDDLE COLUMN: CALLINGS (Width 4) */}
             <div className="col-span-12 md:col-span-4 flex flex-col gap-6">
                 
-                <MythicHUDFrame title="Presence Profile" icon={User} subHeader="PHYSICAL PRESENCE" variant="turbo" isEditing={editingIdentity} {...createEditHandlers(editingIdentity, setEditingIdentity)}>
+                <MythicHUDFrame title="Presence Profile" icon={User} subHeader="PHYSICAL PRESENCE" variant="turbo" isEditing={editingPresence} {...createEditHandlers(editingPresence, setEditingPresence)}>
                     <div className="space-y-2">
                         <div className="grid grid-cols-3 gap-2">
                             <ScionInput 
@@ -2029,7 +2037,7 @@ export default function CharacterSheet() {
                                 className="h-7 text-xs text-muted-foreground/60 bg-black/40 border-[#F0E100]/20"
                                 value={presenceProfile.height}
                                 onChange={(e) => setPresenceProfile({...presenceProfile, height: e.target.value})}
-                                viewMode={!editingIdentity}
+                                viewMode={!editingPresence}
                             />
                             <ScionInput 
                                 label="Eye Color" 
@@ -2037,7 +2045,7 @@ export default function CharacterSheet() {
                                 className="h-7 text-xs text-muted-foreground/60 bg-black/40 border-[#F0E100]/20"
                                 value={presenceProfile.eyeColor}
                                 onChange={(e) => setPresenceProfile({...presenceProfile, eyeColor: e.target.value})}
-                                viewMode={!editingIdentity}
+                                viewMode={!editingPresence}
                             />
                             <ScionInput 
                                 label="Hair Color" 
@@ -2045,7 +2053,7 @@ export default function CharacterSheet() {
                                 className="h-7 text-xs text-muted-foreground/60 bg-black/40 border-[#F0E100]/20"
                                 value={presenceProfile.hairColor}
                                 onChange={(e) => setPresenceProfile({...presenceProfile, hairColor: e.target.value})}
-                                viewMode={!editingIdentity}
+                                viewMode={!editingPresence}
                             />
                         </div>
                         <div className="grid grid-cols-2 gap-2">
@@ -2055,7 +2063,7 @@ export default function CharacterSheet() {
                                 className="h-7 text-xs bg-black/40 border-[#F0E100]/20 text-[#d4c84a]"
                                 value={presenceProfile.auraSignature}
                                 onChange={(e) => setPresenceProfile({...presenceProfile, auraSignature: e.target.value})}
-                                viewMode={!editingIdentity}
+                                viewMode={!editingPresence}
                             />
                             <ScionInput 
                                 label="Scent / Essence" 
@@ -2063,7 +2071,7 @@ export default function CharacterSheet() {
                                 className="h-7 text-xs text-muted-foreground/60 bg-black/40 border-[#F0E100]/20"
                                 value={presenceProfile.scent}
                                 onChange={(e) => setPresenceProfile({...presenceProfile, scent: e.target.value})}
-                                viewMode={!editingIdentity}
+                                viewMode={!editingPresence}
                             />
                         </div>
                         <ScionInput 
@@ -2072,7 +2080,7 @@ export default function CharacterSheet() {
                             className="h-7 text-xs text-muted-foreground/60 bg-black/40 border-[#F0E100]/20"
                             value={presenceProfile.fashion}
                             onChange={(e) => setPresenceProfile({...presenceProfile, fashion: e.target.value})}
-                            viewMode={!editingIdentity}
+                            viewMode={!editingPresence}
                         />
                         <ScionInput 
                             label="Distinguishing Marks" 
@@ -2080,7 +2088,7 @@ export default function CharacterSheet() {
                             className="h-7 text-xs text-muted-foreground/60 bg-black/40 border-[#F0E100]/20"
                             value={presenceProfile.distinguishingMark}
                             onChange={(e) => setPresenceProfile({...presenceProfile, distinguishingMark: e.target.value})}
-                            viewMode={!editingIdentity}
+                            viewMode={!editingPresence}
                         />
                         <ScionInput 
                             label="Visual Notes" 
@@ -2089,7 +2097,7 @@ export default function CharacterSheet() {
                             textarea
                             value={presenceProfile.visualNotes}
                             onChange={(e) => setPresenceProfile({...presenceProfile, visualNotes: e.target.value})}
-                            viewMode={!editingIdentity}
+                            viewMode={!editingPresence}
                         />
                     </div>
                 </MythicHUDFrame>
@@ -2211,7 +2219,7 @@ export default function CharacterSheet() {
             {/* RIGHT COLUMN: PSYCHIC + VIRTUES (Width 4) */}
             <div className="col-span-12 md:col-span-4 flex flex-col gap-6">
 
-                <MythicHUDFrame title="Psychic Profile" icon={Brain} subHeader="PSYCHOLOGICAL MATRIX" variant="violet" isEditing={editingIdentity} {...createEditHandlers(editingIdentity, setEditingIdentity)}>
+                <MythicHUDFrame title="Psychic Profile" icon={Brain} subHeader="PSYCHOLOGICAL MATRIX" variant="violet" isEditing={editingPsychic} {...createEditHandlers(editingPsychic, setEditingPsychic)}>
                     <div className="space-y-2">
                         <ScionInput 
                             label="Deep Analysis" 
@@ -2220,7 +2228,7 @@ export default function CharacterSheet() {
                             textarea
                             value={psychicProfile.analysis}
                             onChange={(e) => setPsychicProfile({...psychicProfile, analysis: e.target.value})}
-                            viewMode={!editingIdentity}
+                            viewMode={!editingPsychic}
                         />
                         <div className="grid grid-cols-2 gap-2">
                             <ScionInput 
@@ -2229,7 +2237,7 @@ export default function CharacterSheet() {
                                 className="h-7 text-xs text-muted-foreground/60 bg-black/40 border-[#834DFB]/20"
                                 value={psychicProfile.keywords}
                                 onChange={(e) => setPsychicProfile({...psychicProfile, keywords: e.target.value})}
-                                viewMode={!editingIdentity}
+                                viewMode={!editingPsychic}
                             />
                             <ScionInput 
                                 label="Major Arcana" 
@@ -2237,7 +2245,7 @@ export default function CharacterSheet() {
                                 className="h-7 text-xs bg-black/40 border-[#834DFB]/20 text-[#a78bfa]"
                                 value={psychicProfile.majorArcana}
                                 onChange={(e) => setPsychicProfile({...psychicProfile, majorArcana: e.target.value})}
-                                viewMode={!editingIdentity}
+                                viewMode={!editingPsychic}
                             />
                         </div>
                         <div className="grid grid-cols-2 gap-2">
@@ -2247,7 +2255,7 @@ export default function CharacterSheet() {
                                 className="h-7 text-xs text-muted-foreground/60 bg-black/40 border-[#834DFB]/20"
                                 value={psychicProfile.temperament}
                                 onChange={(e) => setPsychicProfile({...psychicProfile, temperament: e.target.value})}
-                                viewMode={!editingIdentity}
+                                viewMode={!editingPsychic}
                             />
                             <ScionInput 
                                 label="Cognitive Type" 
@@ -2255,7 +2263,7 @@ export default function CharacterSheet() {
                                 className="h-7 text-xs text-muted-foreground/60 bg-black/40 border-[#834DFB]/20"
                                 value={psychicProfile.cognitiveType}
                                 onChange={(e) => setPsychicProfile({...psychicProfile, cognitiveType: e.target.value})}
-                                viewMode={!editingIdentity}
+                                viewMode={!editingPsychic}
                             />
                         </div>
                         <div className="grid grid-cols-2 gap-2">
@@ -2265,7 +2273,7 @@ export default function CharacterSheet() {
                                 className="h-7 text-xs bg-black/40 border-[#834DFB]/20 text-green-400/60"
                                 value={psychicProfile.strengths}
                                 onChange={(e) => setPsychicProfile({...psychicProfile, strengths: e.target.value})}
-                                viewMode={!editingIdentity}
+                                viewMode={!editingPsychic}
                             />
                             <ScionInput 
                                 label="Weaknesses" 
@@ -2273,7 +2281,7 @@ export default function CharacterSheet() {
                                 className="h-7 text-xs bg-black/40 border-[#834DFB]/20 text-red-400/60"
                                 value={psychicProfile.weaknesses}
                                 onChange={(e) => setPsychicProfile({...psychicProfile, weaknesses: e.target.value})}
-                                viewMode={!editingIdentity}
+                                viewMode={!editingPsychic}
                             />
                         </div>
                         <ScionInput 
@@ -2282,7 +2290,7 @@ export default function CharacterSheet() {
                             className="h-7 text-xs text-muted-foreground/60 bg-black/40 border-[#834DFB]/20"
                             value={psychicProfile.behaviors}
                             onChange={(e) => setPsychicProfile({...psychicProfile, behaviors: e.target.value})}
-                            viewMode={!editingIdentity}
+                            viewMode={!editingPsychic}
                         />
                     </div>
                 </MythicHUDFrame>
