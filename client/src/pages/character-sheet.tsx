@@ -2922,11 +2922,11 @@ export default function CharacterSheet() {
         <div className="mt-6">
             
             {/* POWERS */}
-            <MythicHUDFrame title="Supernatural Arsenal" icon={Zap} subHeader="KNACKS & BOONS" className="min-h-[300px]">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <MythicHUDFrame title="Supernatural Arsenal" icon={Zap} subHeader="KNACKS, BOONS & BIRTHRIGHTS" className="min-h-[300px]">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                      {/* Knacks Column */}
                      <div>
-                         <h5 className="text-xs font-display text-primary/60 border-b border-primary/20 pb-1 mb-3 uppercase">Knacks Registry</h5>
+                         <h5 className="text-xs font-display text-primary/60 border-b border-primary/20 pb-1 mb-3 uppercase">Knacks</h5>
                          <div className="space-y-2">
                              {knacks.length === 0 ? (
                                  <div className="text-[10px] text-muted-foreground/50 italic text-center py-4">
@@ -3059,7 +3059,7 @@ export default function CharacterSheet() {
 
                      {/* Boons Column */}
                      <div>
-                         <h5 className="text-xs font-display text-accent-foreground/60 border-b border-accent-foreground/20 pb-1 mb-3 uppercase">Boons Registry</h5>
+                         <h5 className="text-xs font-display text-accent-foreground/60 border-b border-accent-foreground/20 pb-1 mb-3 uppercase">Boons</h5>
                          <div className="space-y-2">
                              {selectedBoons.length === 0 ? (
                                  <div className="text-[10px] text-muted-foreground/50 italic text-center py-4">
@@ -3165,232 +3165,72 @@ export default function CharacterSheet() {
                              </div>
                          </div>
                      </div>
-                </div>
-            </MythicHUDFrame>
 
-            {/* BIRTHRIGHTS SECTION - Below Supernatural Arsenal */}
-            <MythicHUDFrame 
-                title="Direitos de Sangue" 
-                icon={Crown} 
-                subHeader="BIRTHRIGHTS"
-                className="mt-6"
-            >
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {/* Creatures */}
-                    <div className="space-y-2">
-                        <div className="flex items-center gap-2 border-b border-primary/20 pb-1">
-                            <div className="w-6 h-6 flex items-center justify-center bg-primary/10 rounded-sm border border-primary/20">
-                                <span className="text-xs">🐺</span>
-                            </div>
-                            <span className="text-[10px] font-display uppercase text-primary/80 tracking-widest">Criaturas</span>
-                        </div>
-                        {/* List of creatures */}
-                        <div className="space-y-1 max-h-32 overflow-y-auto">
-                            {birthrights.creatures.map((item, idx) => (
-                                <div key={idx} className="flex items-start gap-2 p-1.5 bg-primary/5 border border-primary/10 rounded-sm group">
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-1">
-                                            <span className="text-[10px] font-bold text-primary truncate">{item.name}</span>
-                                            <span className="text-[8px] text-primary/60">{'●'.repeat(item.dots)}</span>
-                                        </div>
-                                        {item.description && <p className="text-[8px] text-muted-foreground truncate">{item.description}</p>}
-                                    </div>
-                                    <button onClick={() => removeBirthright('creatures', idx)} className="text-red-400/50 hover:text-red-400 opacity-0 group-hover:opacity-100">
-                                        <X className="w-3 h-3" />
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-                        {/* Add form */}
-                        <div className="space-y-1 pt-1 border-t border-primary/10">
-                            <div className="flex gap-1">
-                                <input
-                                    value={newBirthright.creatures.name}
-                                    onChange={e => setNewBirthright({...newBirthright, creatures: {...newBirthright.creatures, name: e.target.value}})}
-                                    placeholder="Nome..."
-                                    className="flex-1 bg-black/30 border border-primary/20 text-[9px] px-1.5 py-1 rounded-sm text-primary placeholder:text-primary/30 outline-none"
-                                />
-                                <select
-                                    value={newBirthright.creatures.dots}
-                                    onChange={e => setNewBirthright({...newBirthright, creatures: {...newBirthright.creatures, dots: Number(e.target.value)}})}
-                                    className="bg-black border border-primary/20 text-[9px] px-1 py-1 rounded-sm text-primary outline-none w-12"
-                                >
-                                    {[1,2,3,4,5].map(d => <option key={d} value={d} className="bg-black">{'●'.repeat(d)}</option>)}
-                                </select>
-                            </div>
-                            <div className="flex gap-1">
-                                <input
-                                    value={newBirthright.creatures.description}
-                                    onChange={e => setNewBirthright({...newBirthright, creatures: {...newBirthright.creatures, description: e.target.value}})}
-                                    placeholder="Descrição..."
-                                    className="flex-1 bg-black/30 border border-primary/20 text-[9px] px-1.5 py-1 rounded-sm text-primary placeholder:text-primary/30 outline-none"
-                                />
-                                <button onClick={() => addBirthright('creatures')} className="px-2 py-1 bg-primary/20 hover:bg-primary/30 text-primary text-[9px] rounded-sm">+</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Guides */}
-                    <div className="space-y-2">
-                        <div className="flex items-center gap-2 border-b border-primary/20 pb-1">
-                            <div className="w-6 h-6 flex items-center justify-center bg-primary/10 rounded-sm border border-primary/20">
-                                <span className="text-xs">👁</span>
-                            </div>
-                            <span className="text-[10px] font-display uppercase text-primary/80 tracking-widest">Guias</span>
-                        </div>
-                        {/* List of guides */}
-                        <div className="space-y-1 max-h-32 overflow-y-auto">
-                            {birthrights.guides.map((item, idx) => (
-                                <div key={idx} className="flex items-start gap-2 p-1.5 bg-primary/5 border border-primary/10 rounded-sm group">
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-1">
-                                            <span className="text-[10px] font-bold text-primary truncate">{item.name}</span>
-                                            <span className="text-[8px] text-primary/60">{'●'.repeat(item.dots)}</span>
-                                        </div>
-                                        {item.description && <p className="text-[8px] text-muted-foreground truncate">{item.description}</p>}
-                                    </div>
-                                    <button onClick={() => removeBirthright('guides', idx)} className="text-red-400/50 hover:text-red-400 opacity-0 group-hover:opacity-100">
-                                        <X className="w-3 h-3" />
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-                        {/* Add form */}
-                        <div className="space-y-1 pt-1 border-t border-primary/10">
-                            <div className="flex gap-1">
-                                <input
-                                    value={newBirthright.guides.name}
-                                    onChange={e => setNewBirthright({...newBirthright, guides: {...newBirthright.guides, name: e.target.value}})}
-                                    placeholder="Nome..."
-                                    className="flex-1 bg-black/30 border border-primary/20 text-[9px] px-1.5 py-1 rounded-sm text-primary placeholder:text-primary/30 outline-none"
-                                />
-                                <select
-                                    value={newBirthright.guides.dots}
-                                    onChange={e => setNewBirthright({...newBirthright, guides: {...newBirthright.guides, dots: Number(e.target.value)}})}
-                                    className="bg-black border border-primary/20 text-[9px] px-1 py-1 rounded-sm text-primary outline-none w-12"
-                                >
-                                    {[1,2,3,4,5].map(d => <option key={d} value={d} className="bg-black">{'●'.repeat(d)}</option>)}
-                                </select>
-                            </div>
-                            <div className="flex gap-1">
-                                <input
-                                    value={newBirthright.guides.description}
-                                    onChange={e => setNewBirthright({...newBirthright, guides: {...newBirthright.guides, description: e.target.value}})}
-                                    placeholder="Descrição..."
-                                    className="flex-1 bg-black/30 border border-primary/20 text-[9px] px-1.5 py-1 rounded-sm text-primary placeholder:text-primary/30 outline-none"
-                                />
-                                <button onClick={() => addBirthright('guides')} className="px-2 py-1 bg-primary/20 hover:bg-primary/30 text-primary text-[9px] rounded-sm">+</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Followers */}
-                    <div className="space-y-2">
-                        <div className="flex items-center gap-2 border-b border-primary/20 pb-1">
-                            <div className="w-6 h-6 flex items-center justify-center bg-primary/10 rounded-sm border border-primary/20">
-                                <span className="text-xs">⚔</span>
-                            </div>
-                            <span className="text-[10px] font-display uppercase text-primary/80 tracking-widest">Seguidores</span>
-                        </div>
-                        {/* List of followers */}
-                        <div className="space-y-1 max-h-32 overflow-y-auto">
-                            {birthrights.followers.map((item, idx) => (
-                                <div key={idx} className="flex items-start gap-2 p-1.5 bg-primary/5 border border-primary/10 rounded-sm group">
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-1">
-                                            <span className="text-[10px] font-bold text-primary truncate">{item.name}</span>
-                                            <span className="text-[8px] text-primary/60">{'●'.repeat(item.dots)}</span>
-                                        </div>
-                                        {item.description && <p className="text-[8px] text-muted-foreground truncate">{item.description}</p>}
-                                    </div>
-                                    <button onClick={() => removeBirthright('followers', idx)} className="text-red-400/50 hover:text-red-400 opacity-0 group-hover:opacity-100">
-                                        <X className="w-3 h-3" />
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-                        {/* Add form */}
-                        <div className="space-y-1 pt-1 border-t border-primary/10">
-                            <div className="flex gap-1">
-                                <input
-                                    value={newBirthright.followers.name}
-                                    onChange={e => setNewBirthright({...newBirthright, followers: {...newBirthright.followers, name: e.target.value}})}
-                                    placeholder="Nome..."
-                                    className="flex-1 bg-black/30 border border-primary/20 text-[9px] px-1.5 py-1 rounded-sm text-primary placeholder:text-primary/30 outline-none"
-                                />
-                                <select
-                                    value={newBirthright.followers.dots}
-                                    onChange={e => setNewBirthright({...newBirthright, followers: {...newBirthright.followers, dots: Number(e.target.value)}})}
-                                    className="bg-black border border-primary/20 text-[9px] px-1 py-1 rounded-sm text-primary outline-none w-12"
-                                >
-                                    {[1,2,3,4,5].map(d => <option key={d} value={d} className="bg-black">{'●'.repeat(d)}</option>)}
-                                </select>
-                            </div>
-                            <div className="flex gap-1">
-                                <input
-                                    value={newBirthright.followers.description}
-                                    onChange={e => setNewBirthright({...newBirthright, followers: {...newBirthright.followers, description: e.target.value}})}
-                                    placeholder="Descrição..."
-                                    className="flex-1 bg-black/30 border border-primary/20 text-[9px] px-1.5 py-1 rounded-sm text-primary placeholder:text-primary/30 outline-none"
-                                />
-                                <button onClick={() => addBirthright('followers')} className="px-2 py-1 bg-primary/20 hover:bg-primary/30 text-primary text-[9px] rounded-sm">+</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Relics */}
-                    <div className="space-y-2">
-                        <div className="flex items-center gap-2 border-b border-primary/20 pb-1">
-                            <div className="w-6 h-6 flex items-center justify-center bg-primary/10 rounded-sm border border-primary/20">
-                                <span className="text-xs">✧</span>
-                            </div>
-                            <span className="text-[10px] font-display uppercase text-primary/80 tracking-widest">Relíquias</span>
-                        </div>
-                        {/* List of relics */}
-                        <div className="space-y-1 max-h-32 overflow-y-auto">
-                            {birthrights.relics.map((item, idx) => (
-                                <div key={idx} className="flex items-start gap-2 p-1.5 bg-primary/5 border border-primary/10 rounded-sm group">
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-1">
-                                            <span className="text-[10px] font-bold text-primary truncate">{item.name}</span>
-                                            <span className="text-[8px] text-primary/60">{'●'.repeat(item.dots)}</span>
-                                        </div>
-                                        {item.description && <p className="text-[8px] text-muted-foreground truncate">{item.description}</p>}
-                                    </div>
-                                    <button onClick={() => removeBirthright('relics', idx)} className="text-red-400/50 hover:text-red-400 opacity-0 group-hover:opacity-100">
-                                        <X className="w-3 h-3" />
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-                        {/* Add form */}
-                        <div className="space-y-1 pt-1 border-t border-primary/10">
-                            <div className="flex gap-1">
-                                <input
-                                    value={newBirthright.relics.name}
-                                    onChange={e => setNewBirthright({...newBirthright, relics: {...newBirthright.relics, name: e.target.value}})}
-                                    placeholder="Nome..."
-                                    className="flex-1 bg-black/30 border border-primary/20 text-[9px] px-1.5 py-1 rounded-sm text-primary placeholder:text-primary/30 outline-none"
-                                />
-                                <select
-                                    value={newBirthright.relics.dots}
-                                    onChange={e => setNewBirthright({...newBirthright, relics: {...newBirthright.relics, dots: Number(e.target.value)}})}
-                                    className="bg-black border border-primary/20 text-[9px] px-1 py-1 rounded-sm text-primary outline-none w-12"
-                                >
-                                    {[1,2,3,4,5].map(d => <option key={d} value={d} className="bg-black">{'●'.repeat(d)}</option>)}
-                                </select>
-                            </div>
-                            <div className="flex gap-1">
-                                <input
-                                    value={newBirthright.relics.description}
-                                    onChange={e => setNewBirthright({...newBirthright, relics: {...newBirthright.relics, description: e.target.value}})}
-                                    placeholder="Descrição..."
-                                    className="flex-1 bg-black/30 border border-primary/20 text-[9px] px-1.5 py-1 rounded-sm text-primary placeholder:text-primary/30 outline-none"
-                                />
-                                <button onClick={() => addBirthright('relics')} className="px-2 py-1 bg-primary/20 hover:bg-primary/30 text-primary text-[9px] rounded-sm">+</button>
-                            </div>
-                        </div>
-                    </div>
+                     {/* Birthrights Column */}
+                     <div>
+                         <h5 className="text-xs font-display text-primary/60 border-b border-primary/20 pb-1 mb-3 uppercase">Birthrights</h5>
+                         <div className="space-y-4">
+                             {(['creatures', 'guides', 'followers', 'relics'] as const).map((category) => {
+                                 const labels: Record<string, { icon: string; label: string }> = {
+                                     creatures: { icon: '🐺', label: 'Criaturas' },
+                                     guides: { icon: '👁', label: 'Guias' },
+                                     followers: { icon: '⚔', label: 'Seguidores' },
+                                     relics: { icon: '✧', label: 'Relíquias' },
+                                 };
+                                 const { icon, label } = labels[category];
+                                 return (
+                                     <div key={category} className="space-y-1.5">
+                                         <div className="flex items-center gap-2 border-b border-primary/15 pb-1">
+                                             <span className="text-[10px]">{icon}</span>
+                                             <span className="text-[9px] font-display uppercase text-primary/70 tracking-widest">{label}</span>
+                                         </div>
+                                         <div className="space-y-1 max-h-24 overflow-y-auto">
+                                             {birthrights[category].map((item, idx) => (
+                                                 <div key={idx} className="flex items-start gap-2 p-1 bg-primary/5 border border-primary/10 rounded-sm group">
+                                                     <div className="flex-1 min-w-0">
+                                                         <div className="flex items-center gap-1">
+                                                             <span className="text-[9px] font-bold text-primary truncate">{item.name}</span>
+                                                             <span className="text-[7px] text-primary/60">{'●'.repeat(item.dots)}</span>
+                                                         </div>
+                                                         {item.description && <p className="text-[7px] text-muted-foreground truncate">{item.description}</p>}
+                                                     </div>
+                                                     <button onClick={() => removeBirthright(category, idx)} className="text-red-400/50 hover:text-red-400 opacity-0 group-hover:opacity-100">
+                                                         <X className="w-3 h-3" />
+                                                     </button>
+                                                 </div>
+                                             ))}
+                                         </div>
+                                         <div className="space-y-1 pt-1 border-t border-primary/10">
+                                             <div className="flex gap-1">
+                                                 <input
+                                                     value={newBirthright[category].name}
+                                                     onChange={e => setNewBirthright({...newBirthright, [category]: {...newBirthright[category], name: e.target.value}})}
+                                                     placeholder="Nome..."
+                                                     className="flex-1 bg-black/30 border border-primary/20 text-[8px] px-1.5 py-1 rounded-sm text-primary placeholder:text-primary/30 outline-none"
+                                                 />
+                                                 <select
+                                                     value={newBirthright[category].dots}
+                                                     onChange={e => setNewBirthright({...newBirthright, [category]: {...newBirthright[category], dots: Number(e.target.value)}})}
+                                                     className="bg-black border border-primary/20 text-[8px] px-1 py-1 rounded-sm text-primary outline-none w-10"
+                                                 >
+                                                     {[1,2,3,4,5].map(d => <option key={d} value={d} className="bg-black">{'●'.repeat(d)}</option>)}
+                                                 </select>
+                                             </div>
+                                             <div className="flex gap-1">
+                                                 <input
+                                                     value={newBirthright[category].description}
+                                                     onChange={e => setNewBirthright({...newBirthright, [category]: {...newBirthright[category], description: e.target.value}})}
+                                                     placeholder="Descrição..."
+                                                     className="flex-1 bg-black/30 border border-primary/20 text-[8px] px-1.5 py-1 rounded-sm text-primary placeholder:text-primary/30 outline-none"
+                                                 />
+                                                 <button onClick={() => addBirthright(category)} className="px-1.5 py-1 bg-primary/20 hover:bg-primary/30 text-primary text-[8px] rounded-sm">+</button>
+                                             </div>
+                                         </div>
+                                     </div>
+                                 );
+                             })}
+                         </div>
+                     </div>
                 </div>
             </MythicHUDFrame>
 
