@@ -177,14 +177,12 @@ const DEFAULT_ABILITIES_LIST = [
 const CyberSection = ({ 
     children, 
     title, 
-    icon: Icon, 
     collapsed, 
     onToggle,
     testId
 }: { 
     children: React.ReactNode;
     title: string;
-    icon: any;
     collapsed: boolean;
     onToggle: () => void;
     testId?: string;
@@ -228,8 +226,7 @@ const CyberSection = ({
                 <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-primary/20" />
                 <div className="flex items-center gap-3">
                     <div className="w-[3px] h-5 bg-primary/70 rounded-full" />
-                    {Icon && <Icon className="w-4 h-4 text-primary/70" />}
-                    <span className="text-lg font-display uppercase tracking-[0.2em] text-primary">{title}</span>
+                    <span className="text-2xl font-display uppercase tracking-[0.3em] text-primary drop-shadow-[0_0_8px_hsl(var(--primary)/0.3)]">{title}</span>
                 </div>
                 <div className="flex items-center gap-2">
                     <div className="hidden md:flex items-center gap-1">
@@ -1345,6 +1342,7 @@ export default function CharacterSheet() {
   const [combatRowCollapsed, setCombatRowCollapsed] = useState(false);
   const [attribAbilCollapsed, setAttribAbilCollapsed] = useState(false);
   const [personalCollapsed, setPersonalCollapsed] = useState(false);
+  const [legacyCollapsed, setLegacyCollapsed] = useState(false);
   const [editingPowers, setEditingPowers] = useState(false);
   const [editingEquipment, setEditingEquipment] = useState(false);
   const [editingVitality, setEditingVitality] = useState(false);
@@ -1517,7 +1515,7 @@ export default function CharacterSheet() {
         </div>
 
         {/* --- PERSONAL PROFILES --- */}
-        <CyberSection title="Personal Profiles" icon={User} collapsed={personalCollapsed} onToggle={() => setPersonalCollapsed(!personalCollapsed)} testId="btn-toggle-personal">
+        <CyberSection title="Personal Profiles" collapsed={personalCollapsed} onToggle={() => setPersonalCollapsed(!personalCollapsed)} testId="btn-toggle-personal">
         <div className="grid grid-cols-12 gap-6 items-start md:items-stretch">
 
             {/* LEFT COLUMN: IDENTITY & VIRTUES (Width 4) */}
@@ -2332,7 +2330,7 @@ export default function CharacterSheet() {
         {/* --- TOP 3-COLUMN GRID END --- */}
 
         {/* COMBAT ROW */}
-        <CyberSection title="Combat Profile" icon={Activity} collapsed={combatRowCollapsed} onToggle={() => setCombatRowCollapsed(!combatRowCollapsed)} testId="btn-toggle-combat-row">
+        <CyberSection title="Combat Profile" collapsed={combatRowCollapsed} onToggle={() => setCombatRowCollapsed(!combatRowCollapsed)} testId="btn-toggle-combat-row">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
 
             {/* 1. LEGEND + PHYSICAL STATS - Takes 1 column (stacked) */}
@@ -2825,7 +2823,7 @@ export default function CharacterSheet() {
         {/* --- COMBAT ROW END --- */}
 
         {/* ATTRIBUTES & ABILITIES */}
-        <CyberSection title="Trait Profile" icon={Dna} collapsed={attribAbilCollapsed} onToggle={() => setAttribAbilCollapsed(!attribAbilCollapsed)} testId="btn-toggle-attrib-abil">
+        <CyberSection title="Trait Profile" collapsed={attribAbilCollapsed} onToggle={() => setAttribAbilCollapsed(!attribAbilCollapsed)} testId="btn-toggle-attrib-abil">
         <div className="space-y-6">
             <MythicHUDFrame title="Attributes" icon={Dna} className="flex flex-col" titleSize="large" isEditing={editingAttributes} {...createEditHandlers(editingAttributes, setEditingAttributes)}>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-1">
@@ -2971,10 +2969,7 @@ export default function CharacterSheet() {
 
 
         {/* BOTTOM SECTION: POWERS (Full Width) */}
-        <div className="mt-6">
-            
-            {/* POWERS */}
-            <MythicHUDFrame title="Legacy Profile" icon={Zap} className="min-h-[300px]" titleSize="large">
+        <CyberSection title="Legacy Profile" collapsed={legacyCollapsed} onToggle={() => setLegacyCollapsed(!legacyCollapsed)} testId="btn-toggle-legacy">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                      {/* Knacks Column */}
                      <div>
@@ -3284,9 +3279,7 @@ export default function CharacterSheet() {
                          </div>
                      </div>
                 </div>
-            </MythicHUDFrame>
-
-        </div>
+        </CyberSection>
 
         <SectionDivider label="END OF LINE" />
 
