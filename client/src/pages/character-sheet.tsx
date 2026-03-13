@@ -3018,7 +3018,7 @@ export default function CharacterSheet() {
                                             readOnly={!editingAttributes}
                                         />
                                         <span className="text-xs font-display text-primary w-3 text-center">{attr.value}</span>
-                                        <div className="flex gap-0.5">
+                                        <div className="relative group/epic flex gap-0.5">
                                             {Array.from({length: 5}).map((_, i) => {
                                                 const e = i + 1;
                                                 return (
@@ -3030,10 +3030,14 @@ export default function CharacterSheet() {
                                                             editingAttributes ? "cursor-pointer hover:border-accent-foreground" : "cursor-default",
                                                             attr.epic >= e ? "bg-accent-foreground shadow-[0_0_4px_cyan]" : "bg-black/40"
                                                         )}
-                                                        title={`Epic ${e}`}
                                                     />
                                                 );
                                             })}
+                                            {attr.epic > 0 && (
+                                                <div className="absolute -top-7 left-1/2 -translate-x-1/2 px-1.5 py-0.5 bg-black/95 border border-accent-foreground/40 rounded-sm text-[10px] font-code text-accent-foreground opacity-0 group-hover/epic:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap shadow-[0_0_6px_rgba(0,180,255,0.3)]">
+                                                    {attr.epic}
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
