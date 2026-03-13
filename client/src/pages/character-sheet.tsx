@@ -1857,7 +1857,6 @@ export default function CharacterSheet() {
                                       exit={{ opacity: 0, height: 0 }}
                                       className="space-y-3 mt-4"
                                     >
-                                        <h5 className="text-[10px] font-display uppercase text-primary border-b border-primary/20 pb-1">Basic Data</h5>
                                         
                                         <div className="grid grid-cols-2 gap-3">
                                             <div className="col-span-2">
@@ -1951,7 +1950,6 @@ export default function CharacterSheet() {
                                       exit={{ opacity: 0, height: 0 }}
                                       className="space-y-3 mt-4"
                                     >
-                                        <h5 className="text-[10px] font-display uppercase text-[hsl(var(--highlight-orange))] border-b border-[hsl(var(--highlight-orange))]/20 pb-1">Professional Profile</h5>
                                         
                                         <ScionInput 
                                             label="Education History" 
