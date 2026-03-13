@@ -174,6 +174,81 @@ const DEFAULT_ABILITIES_LIST = [
 
 // --- New Components ---
 
+const CyberSection = ({ 
+    children, 
+    title, 
+    icon: Icon, 
+    collapsed, 
+    onToggle,
+    testId
+}: { 
+    children: React.ReactNode;
+    title: string;
+    icon: any;
+    collapsed: boolean;
+    onToggle: () => void;
+    testId?: string;
+}) => (
+    <div className="mt-6 relative">
+        <div className="absolute top-0 right-0 w-16 h-16 pointer-events-none z-20">
+            <svg viewBox="0 0 64 64" className="w-full h-full">
+                <path d="M12,0 L64,0 L64,52 L52,64" fill="none" stroke="hsl(var(--primary))" strokeWidth="1.5" opacity="0.4" />
+                <path d="M24,0 L64,0 L64,40" fill="none" stroke="hsl(var(--primary))" strokeWidth="1" opacity="0.25" />
+                <line x1="20" y1="4" x2="56" y2="4" stroke="hsl(var(--primary))" strokeWidth="2" opacity="0.6" />
+                <line x1="58" y1="8" x2="58" y2="36" stroke="hsl(var(--primary))" strokeWidth="1" opacity="0.3" />
+            </svg>
+        </div>
+        <div className="absolute top-0 left-0 w-10 h-10 pointer-events-none z-20">
+            <svg viewBox="0 0 40 40" className="w-full h-full">
+                <path d="M0,8 L0,0 L8,0" fill="none" stroke="hsl(var(--primary))" strokeWidth="2" opacity="0.5" />
+            </svg>
+        </div>
+        <div className="absolute bottom-0 left-0 w-10 h-10 pointer-events-none z-20">
+            <svg viewBox="0 0 40 40" className="w-full h-full">
+                <path d="M0,32 L0,40 L8,40" fill="none" stroke="hsl(var(--primary))" strokeWidth="2" opacity="0.5" />
+            </svg>
+        </div>
+        <div className="absolute bottom-0 right-0 w-10 h-10 pointer-events-none z-20">
+            <svg viewBox="0 0 40 40" className="w-full h-full">
+                <path d="M32,40 L40,40 L40,32" fill="none" stroke="hsl(var(--primary))" strokeWidth="2" opacity="0.5" />
+            </svg>
+        </div>
+
+        <div className="border border-primary/25 bg-black/30 overflow-hidden relative"
+             style={{ clipPath: 'polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px))' }}>
+            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-primary/60 via-primary/30 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-primary/40" />
+            <div className="absolute top-0 left-0 w-[2px] h-full bg-gradient-to-b from-primary/50 via-primary/15 to-primary/30" />
+
+            <button 
+                onClick={onToggle}
+                className="w-full flex items-center justify-between px-5 py-3 bg-black/50 hover:bg-black/70 transition-colors cursor-pointer relative"
+                data-testid={testId}
+            >
+                <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-primary/20" />
+                <div className="flex items-center gap-3">
+                    <div className="w-[3px] h-5 bg-primary/70 rounded-full" />
+                    {Icon && <Icon className="w-4 h-4 text-primary/70" />}
+                    <span className="text-lg font-display uppercase tracking-[0.2em] text-primary">{title}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                    <div className="hidden md:flex items-center gap-1">
+                        <div className="w-6 h-[2px] bg-primary/30" />
+                        <div className="w-3 h-[2px] bg-primary/20" />
+                        <div className="w-1.5 h-[2px] bg-primary/15" />
+                    </div>
+                    {collapsed ? <ChevronDown className="w-4 h-4 text-primary/50" /> : <ChevronUp className="w-4 h-4 text-primary/50" />}
+                </div>
+            </button>
+            {!collapsed && (
+                <div className="p-4 relative">
+                    {children}
+                </div>
+            )}
+        </div>
+    </div>
+);
+
 const MythicHUDFrame = ({ 
     children, 
     title, 
@@ -1441,21 +1516,9 @@ export default function CharacterSheet() {
             </div>
         </div>
 
-        {/* --- PERSONAL PROFILES - Collapsible wrapper --- */}
-        <div className="mt-6 border border-primary/20 rounded-sm bg-black/20 overflow-hidden">
-            <button 
-                onClick={() => setPersonalCollapsed(!personalCollapsed)}
-                className="w-full flex items-center justify-between px-4 py-2.5 bg-black/40 hover:bg-black/60 transition-colors border-b border-primary/15 cursor-pointer"
-                data-testid="btn-toggle-personal"
-            >
-                <div className="flex items-center gap-2">
-                    <User className="w-4 h-4 text-primary/60" />
-                    <span className="text-sm font-display uppercase tracking-[0.15em] text-primary">Personal Profiles</span>
-                </div>
-                {personalCollapsed ? <ChevronDown className="w-4 h-4 text-primary/50" /> : <ChevronUp className="w-4 h-4 text-primary/50" />}
-            </button>
-            {!personalCollapsed && (
-        <div className="p-4 grid grid-cols-12 gap-6 items-start md:items-stretch">
+        {/* --- PERSONAL PROFILES --- */}
+        <CyberSection title="Personal Profiles" icon={User} collapsed={personalCollapsed} onToggle={() => setPersonalCollapsed(!personalCollapsed)} testId="btn-toggle-personal">
+        <div className="grid grid-cols-12 gap-6 items-start md:items-stretch">
 
             {/* LEFT COLUMN: IDENTITY & VIRTUES (Width 4) */}
             <div className="col-span-12 md:col-span-4 flex flex-col gap-6">
@@ -2265,25 +2328,12 @@ export default function CharacterSheet() {
             </div>
 
         </div>
-            )}
-        </div> 
+        </CyberSection>
         {/* --- TOP 3-COLUMN GRID END --- */}
 
-        {/* COMBAT ROW - Collapsible wrapper */}
-        <div className="mt-6 border border-primary/20 rounded-sm bg-black/20 overflow-hidden">
-            <button 
-                onClick={() => setCombatRowCollapsed(!combatRowCollapsed)}
-                className="w-full flex items-center justify-between px-4 py-2.5 bg-black/40 hover:bg-black/60 transition-colors border-b border-primary/15 cursor-pointer"
-                data-testid="btn-toggle-combat-row"
-            >
-                <div className="flex items-center gap-2">
-                    <Activity className="w-4 h-4 text-primary/60" />
-                    <span className="text-sm font-display uppercase tracking-[0.15em] text-primary">Combat Profile</span>
-                </div>
-                {combatRowCollapsed ? <ChevronDown className="w-4 h-4 text-primary/50" /> : <ChevronUp className="w-4 h-4 text-primary/50" />}
-            </button>
-            {!combatRowCollapsed && (
-        <div className="p-4 grid grid-cols-1 md:grid-cols-4 gap-6">
+        {/* COMBAT ROW */}
+        <CyberSection title="Combat Profile" icon={Activity} collapsed={combatRowCollapsed} onToggle={() => setCombatRowCollapsed(!combatRowCollapsed)} testId="btn-toggle-combat-row">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
 
             {/* 1. LEGEND + PHYSICAL STATS - Takes 1 column (stacked) */}
             <div className="md:col-span-1 flex flex-col gap-6">
@@ -2771,25 +2821,12 @@ export default function CharacterSheet() {
             </div>
 
         </div>
-            )}
-        </div> 
+        </CyberSection>
         {/* --- COMBAT ROW END --- */}
 
-        {/* ATTRIBUTES & ABILITIES - Collapsible wrapper */}
-        <div className="mt-6 border border-primary/20 rounded-sm bg-black/20 overflow-hidden">
-            <button 
-                onClick={() => setAttribAbilCollapsed(!attribAbilCollapsed)}
-                className="w-full flex items-center justify-between px-4 py-2.5 bg-black/40 hover:bg-black/60 transition-colors border-b border-primary/15 cursor-pointer"
-                data-testid="btn-toggle-attrib-abil"
-            >
-                <div className="flex items-center gap-2">
-                    <Dna className="w-4 h-4 text-primary/60" />
-                    <span className="text-sm font-display uppercase tracking-[0.15em] text-primary">Trait Profile</span>
-                </div>
-                {attribAbilCollapsed ? <ChevronDown className="w-4 h-4 text-primary/50" /> : <ChevronUp className="w-4 h-4 text-primary/50" />}
-            </button>
-            {!attribAbilCollapsed && (
-        <div className="p-4 space-y-6">
+        {/* ATTRIBUTES & ABILITIES */}
+        <CyberSection title="Trait Profile" icon={Dna} collapsed={attribAbilCollapsed} onToggle={() => setAttribAbilCollapsed(!attribAbilCollapsed)} testId="btn-toggle-attrib-abil">
+        <div className="space-y-6">
             <MythicHUDFrame title="Attributes" icon={Dna} className="flex flex-col" titleSize="large" isEditing={editingAttributes} {...createEditHandlers(editingAttributes, setEditingAttributes)}>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-1">
                     {(Object.entries(attributes) as [AttributeCategory, Attribute[]][]).map(([category, attrs]) => (
@@ -2930,8 +2967,7 @@ export default function CharacterSheet() {
                 </div>
             </MythicHUDFrame>
         </div>
-            )}
-        </div>
+        </CyberSection>
 
 
         {/* BOTTOM SECTION: POWERS (Full Width) */}
