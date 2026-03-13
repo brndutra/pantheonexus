@@ -1325,11 +1325,10 @@ export default function CharacterSheet() {
   const baseAggSoak = 0; // Apenas armadura
 
   const [armorList, setArmorList] = useState<{name: string, soakB: number, soakL: number, soakA: number, mobility: number, fatigue: number}[]>([]);
-  const [selectedArmor, setSelectedArmor] = useState<string>("");
+  const [armorSearch, setArmorSearch] = useState("");
+  const [showArmorDropdown, setShowArmorDropdown] = useState(false);
   
-  // Scion 1st Edition Armor Options
   const ARMOR_OPTIONS = [
-    { name: "Nenhuma", soakB: 0, soakL: 0, soakA: 0, mobility: 0, fatigue: 0 },
     { name: "Roupas Pesadas", soakB: 1, soakL: 0, soakA: 0, mobility: 0, fatigue: 0 },
     { name: "Couro Reforçado", soakB: 2, soakL: 1, soakA: 0, mobility: 0, fatigue: 1 },
     { name: "Colete Kevlar", soakB: 2, soakL: 2, soakA: 0, mobility: 0, fatigue: 1 },
@@ -1342,17 +1341,29 @@ export default function CharacterSheet() {
     { name: "Armadura Mítica (Leve)", soakB: 4, soakL: 4, soakA: 2, mobility: 0, fatigue: 0 },
     { name: "Armadura Mítica (Média)", soakB: 6, soakL: 6, soakA: 3, mobility: 0, fatigue: 0 },
     { name: "Armadura Mítica (Pesada)", soakB: 8, soakL: 8, soakA: 4, mobility: 0, fatigue: 0 },
+    { name: "Capacete", soakB: 1, soakL: 1, soakA: 0, mobility: 0, fatigue: 0 },
+    { name: "Escudo Leve", soakB: 1, soakL: 1, soakA: 0, mobility: 0, fatigue: 0 },
+    { name: "Escudo Pesado", soakB: 2, soakL: 2, soakA: 0, mobility: -1, fatigue: 1 },
+    { name: "Grevas / Braçadeiras", soakB: 1, soakL: 1, soakA: 0, mobility: 0, fatigue: 0 },
   ];
   
-  // Get current armor stats
-  const currentArmor = ARMOR_OPTIONS.find(a => a.name === selectedArmor) || ARMOR_OPTIONS[0];
+  const filteredArmors = armorSearch 
+    ? ARMOR_OPTIONS.filter(a => a.name.toLowerCase().includes(armorSearch.toLowerCase()))
+    : ARMOR_OPTIONS;
   
-  // Calculate total soak with armor
-  const totalBashingSoak = baseBashingSoak + currentArmor.soakB;
-  const totalLethalSoak = baseLethalSoak + currentArmor.soakL;
-  const totalAggSoak = baseAggSoak + currentArmor.soakA;
-  const mobilityPenalty = currentArmor.mobility;
-  const fatiguePenalty = currentArmor.fatigue;
+  const armorSoakTotals = armorList.reduce((acc, a) => ({
+    soakB: acc.soakB + a.soakB,
+    soakL: acc.soakL + a.soakL,
+    soakA: acc.soakA + a.soakA,
+    mobility: acc.mobility + a.mobility,
+    fatigue: acc.fatigue + a.fatigue,
+  }), { soakB: 0, soakL: 0, soakA: 0, mobility: 0, fatigue: 0 });
+  
+  const totalBashingSoak = baseBashingSoak + armorSoakTotals.soakB;
+  const totalLethalSoak = baseLethalSoak + armorSoakTotals.soakL;
+  const totalAggSoak = baseAggSoak + armorSoakTotals.soakA;
+  const mobilityPenalty = armorSoakTotals.mobility;
+  const fatiguePenalty = armorSoakTotals.fatigue;
 
   // New State for Feats / Merits (if separate from Knacks)
   const [feats, setFeats] = useState<{name: string, type: string, cost: string, desc: string}[]>([]);
@@ -2538,57 +2549,96 @@ export default function CharacterSheet() {
                             <div className="bg-black/40 p-2 text-center border border-primary/20 rounded-sm">
                                 <div className="text-[8px] text-muted-foreground uppercase">Bashing</div>
                                 <div className="text-lg font-display text-primary">{totalBashingSoak}</div>
-                                <div className="text-[7px] text-muted-foreground">({baseBashingSoak} + {currentArmor.soakB})</div>
+                                <div className="text-[7px] text-muted-foreground">({baseBashingSoak} + {armorSoakTotals.soakB})</div>
                             </div>
                             <div className="bg-black/40 p-2 text-center border border-primary/20 rounded-sm">
                                 <div className="text-[8px] text-muted-foreground uppercase">Lethal</div>
                                 <div className="text-lg font-display text-primary">{totalLethalSoak}</div>
-                                <div className="text-[7px] text-muted-foreground">({baseLethalSoak} + {currentArmor.soakL})</div>
+                                <div className="text-[7px] text-muted-foreground">({baseLethalSoak} + {armorSoakTotals.soakL})</div>
                             </div>
                             <div className="bg-black/40 p-2 text-center border border-red-500/20 rounded-sm">
                                 <div className="text-[8px] text-red-400/70 uppercase">Aggravated</div>
                                 <div className="text-lg font-display text-red-400">{totalAggSoak}</div>
-                                <div className="text-[7px] text-muted-foreground">({baseAggSoak} + {currentArmor.soakA})</div>
+                                <div className="text-[7px] text-muted-foreground">({baseAggSoak} + {armorSoakTotals.soakA})</div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Armor Selection */}
+                    {/* Armor List */}
                     <div className="space-y-2 pt-2 border-t border-primary/10">
-                        <div className="text-[10px] font-display uppercase text-primary/70 tracking-widest">Armadura Equipada</div>
-                        <select
-                            value={selectedArmor}
-                            onChange={(e) => setSelectedArmor(e.target.value)}
-                            className="w-full bg-black/40 border border-primary/20 text-xs px-2 py-1.5 rounded-sm text-primary focus:border-primary outline-none"
-                            data-testid="select-armor"
-                        >
-                            {ARMOR_OPTIONS.map((armor) => (
-                                <option key={armor.name} value={armor.name} className="bg-black text-primary">
-                                    {armor.name}
-                                </option>
-                            ))}
-                        </select>
+                        <div className="flex items-center justify-between">
+                            <div className="text-[10px] font-display uppercase text-primary/70 tracking-widest">Armadura Equipada</div>
+                            <div className="relative">
+                                <button
+                                    onClick={() => setShowArmorDropdown(!showArmorDropdown)}
+                                    className="w-5 h-5 flex items-center justify-center bg-black/50 border border-primary/30 text-primary/70 hover:bg-primary/20 hover:text-primary rounded-sm text-xs transition-colors"
+                                    data-testid="btn-add-armor"
+                                >
+                                    <Plus className="w-3 h-3" />
+                                </button>
+                                {showArmorDropdown && (
+                                    <div className="absolute top-full right-0 mt-1 w-56 bg-black border border-primary/20 rounded-sm max-h-[200px] overflow-y-auto z-50 shadow-[0_4px_20px_rgba(0,0,0,0.8)]">
+                                        <div className="sticky top-0 bg-black p-1 border-b border-primary/10">
+                                            <input
+                                                value={armorSearch}
+                                                onChange={(e) => setArmorSearch(e.target.value)}
+                                                placeholder="Buscar armadura..."
+                                                className="w-full bg-black/60 border border-primary/20 text-[9px] px-2 py-1 rounded-sm text-primary placeholder:text-primary/30 outline-none"
+                                                autoFocus
+                                                data-testid="input-armor-search"
+                                            />
+                                        </div>
+                                        {filteredArmors.map((armor, i) => (
+                                            <button
+                                                key={`${armor.name}-${i}`}
+                                                onClick={() => {
+                                                    setArmorList([...armorList, armor]);
+                                                    setShowArmorDropdown(false);
+                                                    setArmorSearch("");
+                                                }}
+                                                className="w-full text-left px-2 py-1.5 text-[9px] text-primary/80 hover:bg-primary/10 hover:text-primary border-b border-primary/5 transition-colors"
+                                                data-testid={`btn-add-armor-${i}`}
+                                            >
+                                                <div className="font-code">{armor.name}</div>
+                                                <div className="text-[8px] text-muted-foreground">B:{armor.soakB} L:{armor.soakL} A:{armor.soakA} Mob:{armor.mobility} Fad:{armor.fatigue}</div>
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
 
-                        {/* Armor Stats Display */}
-                        {selectedArmor && selectedArmor !== "Nenhuma" && (
-                            <div className="bg-black/30 p-2 rounded-sm border border-primary/10 space-y-1">
-                                <div className="grid grid-cols-2 gap-2 text-[9px]">
-                                    <div className="flex justify-between">
-                                        <span className="text-muted-foreground">Soak B/L/A:</span>
-                                        <span className="text-primary font-code">{currentArmor.soakB}/{currentArmor.soakL}/{currentArmor.soakA}</span>
+                        {armorList.length === 0 ? (
+                            <div className="text-[9px] text-muted-foreground/50 italic text-center py-2">Sem armadura equipada</div>
+                        ) : (
+                            <div className="space-y-1">
+                                {armorList.map((armor, idx) => (
+                                    <div key={idx} className="flex items-center justify-between bg-black/30 px-2 py-1.5 rounded-sm border border-primary/10 group">
+                                        <div>
+                                            <div className="text-[9px] font-code text-primary">{armor.name}</div>
+                                            <div className="text-[8px] text-muted-foreground">B:{armor.soakB} L:{armor.soakL} A:{armor.soakA} Mob:{armor.mobility} Fad:{armor.fatigue}</div>
+                                        </div>
+                                        <button
+                                            onClick={() => setArmorList(armorList.filter((_, i) => i !== idx))}
+                                            className="w-4 h-4 flex items-center justify-center text-red-400/50 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                                            data-testid={`btn-remove-armor-${idx}`}
+                                        >
+                                            <X className="w-3 h-3" />
+                                        </button>
                                     </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-muted-foreground">Mobilidade:</span>
-                                        <span className={cn("font-code", mobilityPenalty < 0 ? "text-red-400" : "text-primary")}>
-                                            {mobilityPenalty}
-                                        </span>
-                                    </div>
-                                    <div className="flex justify-between col-span-2">
-                                        <span className="text-muted-foreground">Fadiga:</span>
-                                        <span className={cn("font-code", fatiguePenalty > 0 ? "text-amber-400" : "text-primary")}>
-                                            {fatiguePenalty}
-                                        </span>
-                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {armorList.length > 0 && (
+                            <div className="grid grid-cols-2 gap-2 text-[9px] pt-1 border-t border-primary/10">
+                                <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Mobilidade:</span>
+                                    <span className={cn("font-code", mobilityPenalty < 0 ? "text-red-400" : "text-primary")}>{mobilityPenalty}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Fadiga:</span>
+                                    <span className={cn("font-code", fatiguePenalty > 0 ? "text-amber-400" : "text-primary")}>{fatiguePenalty}</span>
                                 </div>
                             </div>
                         )}
@@ -2616,8 +2666,7 @@ export default function CharacterSheet() {
                     isEditing={editingCombatAll}
                 >
                     <div className="space-y-2">
-                        <div className="flex justify-between items-center text-xs font-display uppercase text-primary/70">
-                             <span>Níveis de Vitalidade</span>
+                        <div className="flex justify-end items-center text-xs font-display uppercase text-primary/70">
                              <div className="flex items-center gap-2">
                                  <div className="flex items-center gap-1 text-[9px] text-muted-foreground">
                                      <span className="w-2 h-2 border border-primary/50 bg-black/50 block" /> B
