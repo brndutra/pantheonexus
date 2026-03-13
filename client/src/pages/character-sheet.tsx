@@ -1557,7 +1557,90 @@ export default function CharacterSheet() {
                                       exit={{ opacity: 0, height: 0 }}
                                       className="space-y-3 mt-4"
                                     >
-                                        <p className="text-[9px] text-muted-foreground italic text-center py-2">Dados básicos na seção de Callings acima.</p>
+                                        <h5 className="text-[10px] font-mythic uppercase text-primary border-b border-primary/20 pb-1">Basic Data</h5>
+                                        
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <div className="col-span-2">
+                                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">Designation (Name)</label>
+                                                <ScionInput 
+                                                   value={scionName} 
+                                                   onChange={(e) => setScionName(e.target.value)}
+                                                   className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
+                                                   viewMode={!editingIdentity}
+                                                />
+                                            </div>
+                                            
+                                            <div>
+                                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">Pantheon</label>
+                                                <ScionInput 
+                                                   value={scionPantheon} 
+                                                   onChange={(e) => setScionPantheon(e.target.value)}
+                                                   className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
+                                                   viewMode={!editingIdentity}
+                                                   list="pantheons-list"
+                                                />
+                                                <datalist id="pantheons-list">
+                                                   <option value="Aesir" />
+                                                   <option value="Kami" />
+                                                   <option value="Manitou" />
+                                                   <option value="Netjer" />
+                                                   <option value="Theoi" />
+                                                   <option value="Tuatha Dé Danann" />
+                                                   <option value="Yazata" />
+                                                </datalist>
+                                            </div>
+
+                                            <div>
+                                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">Heritage (Divine Parent)</label>
+                                                <ScionInput 
+                                                   value={divineParent} 
+                                                   onChange={(e) => setDivineParent(e.target.value)}
+                                                   className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-[hsl(var(--highlight-amber))]" 
+                                                   viewMode={!editingIdentity}
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">Date of Birth</label>
+                                                <ScionInput 
+                                                   value={dateOfBirth} 
+                                                   onChange={(e) => setDateOfBirth(e.target.value)}
+                                                   className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
+                                                   viewMode={!editingIdentity}
+                                                   type="date"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">Nationality</label>
+                                                <ScionInput 
+                                                   value={nationality} 
+                                                   onChange={(e) => setNationality(e.target.value)}
+                                                   className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
+                                                   viewMode={!editingIdentity}
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">City of Origin</label>
+                                                <ScionInput 
+                                                   value={cityOfOrigin} 
+                                                   onChange={(e) => setCityOfOrigin(e.target.value)}
+                                                   className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
+                                                   viewMode={!editingIdentity}
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-1">State / Region</label>
+                                                <ScionInput 
+                                                   value={stateRegion} 
+                                                   onChange={(e) => setStateRegion(e.target.value)}
+                                                   className="h-8 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
+                                                   viewMode={!editingIdentity}
+                                                />
+                                            </div>
+                                        </div>
                                     </motion.div>
                                 )}
                                 {idCardTab === 'psychic' && (
@@ -1804,86 +1887,75 @@ export default function CharacterSheet() {
             <div className="col-span-12 md:col-span-4 flex flex-col gap-6">
                 
                 {/* CALLINGS MODULE - Compact Design */}
-                <MythicHUDFrame title="Divine Callings" icon={Crosshair} subHeader="ROLE SPECIALIZATIONS" className="flex-1" isEditing={editingCombat} {...createEditHandlers(editingCombat, setEditingCombat)}>
-                    <div className="mb-4">
-                        <h5 className="text-[10px] font-mythic uppercase text-primary border-b border-primary/20 pb-1 mb-2">Basic Data</h5>
+                <MythicHUDFrame title="Psychic Profile" icon={Brain} subHeader="PSYCHOLOGICAL MATRIX" isEditing={editingIdentity} {...createEditHandlers(editingIdentity, setEditingIdentity)}>
+                    <div className="space-y-2">
+                        <ScionInput 
+                            label="Deep Analysis" 
+                            className="h-16 text-xs bg-black/40 border-primary/20 resize-none"
+                            textarea
+                            value={psychicProfile.analysis}
+                            onChange={(e) => setPsychicProfile({...psychicProfile, analysis: e.target.value})}
+                            viewMode={!editingIdentity}
+                        />
                         <div className="grid grid-cols-2 gap-2">
-                            <div className="col-span-2">
-                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-0.5">Designation (Name)</label>
-                                <ScionInput 
-                                   value={scionName} 
-                                   onChange={(e) => setScionName(e.target.value)}
-                                   className="h-7 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
-                                   viewMode={!editingCombat}
-                                />
-                            </div>
-                            <div>
-                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-0.5">Pantheon</label>
-                                <ScionInput 
-                                   value={scionPantheon} 
-                                   onChange={(e) => setScionPantheon(e.target.value)}
-                                   className="h-7 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
-                                   viewMode={!editingCombat}
-                                   list="pantheons-list-callings"
-                                />
-                                <datalist id="pantheons-list-callings">
-                                   <option value="Aesir" />
-                                   <option value="Kami" />
-                                   <option value="Manitou" />
-                                   <option value="Netjer" />
-                                   <option value="Theoi" />
-                                   <option value="Tuatha Dé Danann" />
-                                   <option value="Yazata" />
-                                </datalist>
-                            </div>
-                            <div>
-                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-0.5">Heritage (Divine Parent)</label>
-                                <ScionInput 
-                                   value={divineParent} 
-                                   onChange={(e) => setDivineParent(e.target.value)}
-                                   className="h-7 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-[hsl(var(--highlight-amber))]" 
-                                   viewMode={!editingCombat}
-                                />
-                            </div>
-                            <div>
-                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-0.5">Date of Birth</label>
-                                <ScionInput 
-                                   value={dateOfBirth} 
-                                   onChange={(e) => setDateOfBirth(e.target.value)}
-                                   className="h-7 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
-                                   viewMode={!editingCombat}
-                                   type="date"
-                                />
-                            </div>
-                            <div>
-                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-0.5">Nationality</label>
-                                <ScionInput 
-                                   value={nationality} 
-                                   onChange={(e) => setNationality(e.target.value)}
-                                   className="h-7 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
-                                   viewMode={!editingCombat}
-                                />
-                            </div>
-                            <div>
-                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-0.5">City of Origin</label>
-                                <ScionInput 
-                                   value={cityOfOrigin} 
-                                   onChange={(e) => setCityOfOrigin(e.target.value)}
-                                   className="h-7 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
-                                   viewMode={!editingCombat}
-                                />
-                            </div>
-                            <div>
-                                <label className="text-[9px] uppercase tracking-widest text-muted-foreground block mb-0.5">State / Region</label>
-                                <ScionInput 
-                                   value={stateRegion} 
-                                   onChange={(e) => setStateRegion(e.target.value)}
-                                   className="h-7 text-sm bg-black/40 border-primary/20 focus:border-primary/50 font-code text-primary" 
-                                   viewMode={!editingCombat}
-                                />
-                            </div>
+                            <ScionInput 
+                                label="Keywords" 
+                                className="h-7 text-xs bg-black/40 border-primary/20"
+                                value={psychicProfile.keywords}
+                                onChange={(e) => setPsychicProfile({...psychicProfile, keywords: e.target.value})}
+                                viewMode={!editingIdentity}
+                            />
+                            <ScionInput 
+                                label="Major Arcana" 
+                                className="h-7 text-xs bg-black/40 border-primary/20 text-[hsl(var(--highlight-purple))]"
+                                value={psychicProfile.majorArcana}
+                                onChange={(e) => setPsychicProfile({...psychicProfile, majorArcana: e.target.value})}
+                                viewMode={!editingIdentity}
+                            />
                         </div>
+                        <div className="grid grid-cols-2 gap-2">
+                            <ScionInput 
+                                label="Temperament" 
+                                className="h-7 text-xs bg-black/40 border-primary/20"
+                                value={psychicProfile.temperament}
+                                onChange={(e) => setPsychicProfile({...psychicProfile, temperament: e.target.value})}
+                                viewMode={!editingIdentity}
+                            />
+                            <ScionInput 
+                                label="Cognitive Type" 
+                                className="h-7 text-xs bg-black/40 border-primary/20"
+                                value={psychicProfile.cognitiveType}
+                                onChange={(e) => setPsychicProfile({...psychicProfile, cognitiveType: e.target.value})}
+                                viewMode={!editingIdentity}
+                            />
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                            <ScionInput 
+                                label="Strengths" 
+                                className="h-7 text-xs bg-black/40 border-primary/20 text-green-400/80"
+                                value={psychicProfile.strengths}
+                                onChange={(e) => setPsychicProfile({...psychicProfile, strengths: e.target.value})}
+                                viewMode={!editingIdentity}
+                            />
+                            <ScionInput 
+                                label="Weaknesses" 
+                                className="h-7 text-xs bg-black/40 border-primary/20 text-red-400/80"
+                                value={psychicProfile.weaknesses}
+                                onChange={(e) => setPsychicProfile({...psychicProfile, weaknesses: e.target.value})}
+                                viewMode={!editingIdentity}
+                            />
+                        </div>
+                        <ScionInput 
+                            label="Behaviors" 
+                            className="h-7 text-xs bg-black/40 border-primary/20"
+                            value={psychicProfile.behaviors}
+                            onChange={(e) => setPsychicProfile({...psychicProfile, behaviors: e.target.value})}
+                            viewMode={!editingIdentity}
+                        />
                     </div>
+                </MythicHUDFrame>
+
+                <MythicHUDFrame title="Divine Callings" icon={Crosshair} subHeader="ROLE SPECIALIZATIONS" className="flex-1" isEditing={editingCombat} {...createEditHandlers(editingCombat, setEditingCombat)}>
                     <div className="space-y-1.5">
                         {callings.map((calling, idx) => (
                             <div key={idx} className="relative group">
@@ -2010,8 +2082,74 @@ export default function CharacterSheet() {
 
             </div>
 
-            {/* RIGHT COLUMN: VIRTUES (Width 4) */}
+            {/* RIGHT COLUMN: PRESENCE + VIRTUES (Width 4) */}
             <div className="col-span-12 md:col-span-4 flex flex-col gap-6">
+
+                <MythicHUDFrame title="Presence Profile" icon={User} subHeader="PHYSICAL PRESENCE" isEditing={editingIdentity} {...createEditHandlers(editingIdentity, setEditingIdentity)}>
+                    <div className="space-y-2">
+                        <div className="grid grid-cols-3 gap-2">
+                            <ScionInput 
+                                label="Height" 
+                                className="h-7 text-xs bg-black/40 border-primary/20"
+                                value={presenceProfile.height}
+                                onChange={(e) => setPresenceProfile({...presenceProfile, height: e.target.value})}
+                                viewMode={!editingIdentity}
+                            />
+                            <ScionInput 
+                                label="Eye Color" 
+                                className="h-7 text-xs bg-black/40 border-primary/20"
+                                value={presenceProfile.eyeColor}
+                                onChange={(e) => setPresenceProfile({...presenceProfile, eyeColor: e.target.value})}
+                                viewMode={!editingIdentity}
+                            />
+                            <ScionInput 
+                                label="Hair Color" 
+                                className="h-7 text-xs bg-black/40 border-primary/20"
+                                value={presenceProfile.hairColor}
+                                onChange={(e) => setPresenceProfile({...presenceProfile, hairColor: e.target.value})}
+                                viewMode={!editingIdentity}
+                            />
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                            <ScionInput 
+                                label="Aura Signature" 
+                                className="h-7 text-xs bg-black/40 border-primary/20 text-[hsl(var(--highlight-blue))]"
+                                value={presenceProfile.auraSignature}
+                                onChange={(e) => setPresenceProfile({...presenceProfile, auraSignature: e.target.value})}
+                                viewMode={!editingIdentity}
+                            />
+                            <ScionInput 
+                                label="Scent / Essence" 
+                                className="h-7 text-xs bg-black/40 border-primary/20"
+                                value={presenceProfile.scent}
+                                onChange={(e) => setPresenceProfile({...presenceProfile, scent: e.target.value})}
+                                viewMode={!editingIdentity}
+                            />
+                        </div>
+                        <ScionInput 
+                            label="Fashion & Style" 
+                            className="h-7 text-xs bg-black/40 border-primary/20"
+                            value={presenceProfile.fashion}
+                            onChange={(e) => setPresenceProfile({...presenceProfile, fashion: e.target.value})}
+                            viewMode={!editingIdentity}
+                        />
+                        <ScionInput 
+                            label="Distinguishing Marks" 
+                            className="h-7 text-xs bg-black/40 border-primary/20"
+                            value={presenceProfile.distinguishingMark}
+                            onChange={(e) => setPresenceProfile({...presenceProfile, distinguishingMark: e.target.value})}
+                            viewMode={!editingIdentity}
+                        />
+                        <ScionInput 
+                            label="Visual Notes" 
+                            className="h-16 text-xs bg-black/40 border-primary/20 resize-none"
+                            textarea
+                            value={presenceProfile.visualNotes}
+                            onChange={(e) => setPresenceProfile({...presenceProfile, visualNotes: e.target.value})}
+                            viewMode={!editingIdentity}
+                        />
+                    </div>
+                </MythicHUDFrame>
 
                 {/* VIRTUES MODULE - Compact like Callings */}
                 <MythicHUDFrame title="Virtue Matrix" icon={Target} subHeader="MORAL COMPASS" className="flex-1" isEditing={editingVirtues} {...createEditHandlers(editingVirtues, setEditingVirtues)}>
