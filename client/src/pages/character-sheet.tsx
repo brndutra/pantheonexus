@@ -202,7 +202,8 @@ const CyberSection = ({
     onToggle,
     testId,
     isEditing,
-    onEditToggle
+    onEditToggle,
+    variant = "default"
 }: { 
     children: React.ReactNode;
     title: string;
@@ -211,46 +212,114 @@ const CyberSection = ({
     testId?: string;
     isEditing?: boolean;
     onEditToggle?: () => void;
-}) => (
-    <div className="mt-6 relative">
-        <div className="absolute top-0 right-0 w-16 h-16 pointer-events-none z-20">
-            <svg viewBox="0 0 64 64" className="w-full h-full">
-                <path d="M12,0 L64,0 L64,52 L52,64" fill="none" stroke="hsl(var(--primary))" strokeWidth="1.5" opacity="0.4" />
-                <path d="M24,0 L64,0 L64,40" fill="none" stroke="hsl(var(--primary))" strokeWidth="1" opacity="0.25" />
-                <line x1="20" y1="4" x2="56" y2="4" stroke="hsl(var(--primary))" strokeWidth="2" opacity="0.6" />
-                <line x1="58" y1="8" x2="58" y2="36" stroke="hsl(var(--primary))" strokeWidth="1" opacity="0.3" />
-            </svg>
-        </div>
-        <div className="absolute top-0 left-0 w-10 h-10 pointer-events-none z-20">
-            <svg viewBox="0 0 40 40" className="w-full h-full">
-                <path d="M0,8 L0,0 L8,0" fill="none" stroke="hsl(var(--primary))" strokeWidth="2" opacity="0.5" />
-            </svg>
-        </div>
-        <div className="absolute bottom-0 left-0 w-10 h-10 pointer-events-none z-20">
-            <svg viewBox="0 0 40 40" className="w-full h-full">
-                <path d="M0,32 L0,40 L8,40" fill="none" stroke="hsl(var(--primary))" strokeWidth="2" opacity="0.5" />
-            </svg>
-        </div>
-        <div className="absolute bottom-0 right-0 w-10 h-10 pointer-events-none z-20">
-            <svg viewBox="0 0 40 40" className="w-full h-full">
-                <path d="M32,40 L40,40 L40,32" fill="none" stroke="hsl(var(--primary))" strokeWidth="2" opacity="0.5" />
-            </svg>
-        </div>
+    variant?: "default" | "combat";
+}) => {
+    const isYellow = variant === "combat";
+    const accentColor = isYellow ? "#e6db00" : "hsl(var(--primary))";
+    const accentBg = isYellow ? "bg-[#e6db00]" : "bg-primary";
+    const accentText = isYellow ? "text-[#e6db00]" : "text-primary";
 
-        <div className="border border-primary/25 bg-[#0a0a0a] relative">
-            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-primary/60 via-primary/30 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-primary/40" />
-            <div className="absolute top-0 left-0 w-[2px] h-full bg-gradient-to-b from-primary/50 via-primary/15 to-primary/30" />
+    return (
+    <div className="mt-6 relative">
+        {isYellow && (
+            <>
+                <div className="absolute -top-1 -left-1 w-5 h-5 border-t-2 border-l-2 border-[#e6db00] pointer-events-none z-20" />
+                <div className="absolute -top-1 -right-1 pointer-events-none z-20" style={{ width: '40px', height: '40px' }}>
+                    <svg viewBox="0 0 40 40" className="w-full h-full">
+                        <path d="M0,0 L40,0 L40,28 L28,40" fill="none" stroke="#e6db00" strokeWidth="2" />
+                        <path d="M8,0 L40,0 L40,20" fill="none" stroke="#e6db00" strokeWidth="1" opacity="0.4" />
+                    </svg>
+                </div>
+                <div className="absolute -bottom-1 -left-1 w-5 h-5 border-b-2 border-l-2 border-[#e6db00] pointer-events-none z-20" />
+                <div className="absolute -bottom-1 -right-1 w-5 h-5 border-b-2 border-r-2 border-[#e6db00] pointer-events-none z-20" />
+                <div className="absolute top-0 left-6 right-12 h-[3px] bg-[#e6db00] pointer-events-none z-20" />
+                <div className="absolute bottom-0 left-6 right-6 h-[2px] bg-[#e6db00]/40 pointer-events-none z-20" />
+                <div className="absolute top-8 -left-[3px] w-[3px] h-8 pointer-events-none z-20">
+                    {[0,1,2,3].map(i => <div key={i} className="w-full h-1.5 bg-[#e6db00] mb-[2px]" />)}
+                </div>
+                <div className="absolute top-8 -right-[3px] w-[3px] h-8 pointer-events-none z-20">
+                    {[0,1,2,3].map(i => <div key={i} className="w-full h-1.5 bg-[#e6db00]/60 mb-[2px]" />)}
+                </div>
+            </>
+        )}
+
+        {!isYellow && (
+            <>
+                <div className="absolute top-0 right-0 w-16 h-16 pointer-events-none z-20">
+                    <svg viewBox="0 0 64 64" className="w-full h-full">
+                        <path d="M12,0 L64,0 L64,52 L52,64" fill="none" stroke="hsl(var(--primary))" strokeWidth="1.5" opacity="0.4" />
+                        <path d="M24,0 L64,0 L64,40" fill="none" stroke="hsl(var(--primary))" strokeWidth="1" opacity="0.25" />
+                        <line x1="20" y1="4" x2="56" y2="4" stroke="hsl(var(--primary))" strokeWidth="2" opacity="0.6" />
+                        <line x1="58" y1="8" x2="58" y2="36" stroke="hsl(var(--primary))" strokeWidth="1" opacity="0.3" />
+                    </svg>
+                </div>
+                <div className="absolute top-0 left-0 w-10 h-10 pointer-events-none z-20">
+                    <svg viewBox="0 0 40 40" className="w-full h-full">
+                        <path d="M0,8 L0,0 L8,0" fill="none" stroke="hsl(var(--primary))" strokeWidth="2" opacity="0.5" />
+                    </svg>
+                </div>
+                <div className="absolute bottom-0 left-0 w-10 h-10 pointer-events-none z-20">
+                    <svg viewBox="0 0 40 40" className="w-full h-full">
+                        <path d="M0,32 L0,40 L8,40" fill="none" stroke="hsl(var(--primary))" strokeWidth="2" opacity="0.5" />
+                    </svg>
+                </div>
+                <div className="absolute bottom-0 right-0 w-10 h-10 pointer-events-none z-20">
+                    <svg viewBox="0 0 40 40" className="w-full h-full">
+                        <path d="M32,40 L40,40 L40,32" fill="none" stroke="hsl(var(--primary))" strokeWidth="2" opacity="0.5" />
+                    </svg>
+                </div>
+            </>
+        )}
+
+        <div className={cn(
+            "relative",
+            isYellow 
+                ? "border-2 border-[#e6db00]/70 bg-[#0a0a0a]" 
+                : "border border-primary/25 bg-[#0a0a0a]"
+        )}>
+            {isYellow ? (
+                <>
+                    <div className="absolute top-0 left-0 right-0 h-[3px] bg-[#e6db00]" />
+                    <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#e6db00]/30" />
+                    <div className="absolute top-0 left-0 w-[3px] h-full bg-gradient-to-b from-[#e6db00] via-[#e6db00]/40 to-[#e6db00]/60" />
+                    <div className="absolute top-0 right-0 w-[2px] h-full bg-gradient-to-b from-[#e6db00]/60 via-[#e6db00]/15 to-[#e6db00]/40" />
+                </>
+            ) : (
+                <>
+                    <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-primary/60 via-primary/30 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-primary/40" />
+                    <div className="absolute top-0 left-0 w-[2px] h-full bg-gradient-to-b from-primary/50 via-primary/15 to-primary/30" />
+                </>
+            )}
 
             <button 
                 onClick={onToggle}
-                className="w-full flex items-center justify-between px-5 py-2.5 bg-[#0a0a0a] hover:bg-[#111] transition-colors cursor-pointer relative"
+                className={cn(
+                    "w-full flex items-center justify-between px-5 py-2.5 transition-colors cursor-pointer relative",
+                    isYellow
+                        ? "bg-[#e6db00] hover:bg-[#d4c900]"
+                        : "bg-[#0a0a0a] hover:bg-[#111]"
+                )}
                 data-testid={testId}
             >
-                <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-primary/20" />
+                <div className={cn(
+                    "absolute bottom-0 left-0 right-0 h-[1px]",
+                    isYellow ? "bg-black/20" : "bg-primary/20"
+                )} />
                 <div className="flex items-center gap-3">
-                    <div className="w-[3px] h-5 bg-primary/70 rounded-full" />
-                    <span className="text-xs font-code uppercase tracking-[0.25em] text-primary/80">{title}</span>
+                    {isYellow ? (
+                        <>
+                            <div className="flex gap-[2px]">
+                                {[0,1,2].map(i => <div key={i} className="w-[3px] h-5 bg-black/80" style={{ transform: `skewX(-12deg)` }} />)}
+                            </div>
+                            <span className="text-xs font-code uppercase tracking-[0.25em] text-black font-bold">{title}</span>
+                        </>
+                    ) : (
+                        <>
+                            <div className="w-[3px] h-5 bg-primary/70 rounded-full" />
+                            <span className="text-xs font-code uppercase tracking-[0.25em] text-primary/80">{title}</span>
+                        </>
+                    )}
                 </div>
                 <div className="flex items-center gap-2">
                     {onEditToggle && !collapsed && (
@@ -258,9 +327,13 @@ const CyberSection = ({
                             onClick={(e) => { e.stopPropagation(); onEditToggle(); }}
                             className={cn(
                                 "h-6 px-2 flex items-center gap-1.5 border text-[9px] font-code uppercase tracking-wider transition-all rounded-sm",
-                                isEditing 
-                                    ? "border-primary/60 bg-primary/20 text-primary" 
-                                    : "border-primary/20 bg-black/40 text-primary/50 hover:border-primary/40 hover:text-primary/80"
+                                isYellow
+                                    ? (isEditing 
+                                        ? "border-black/60 bg-black/20 text-black" 
+                                        : "border-black/30 bg-black/10 text-black/60 hover:border-black/50 hover:text-black/80")
+                                    : (isEditing 
+                                        ? "border-primary/60 bg-primary/20 text-primary" 
+                                        : "border-primary/20 bg-black/40 text-primary/50 hover:border-primary/40 hover:text-primary/80")
                             )}
                             data-testid="btn-edit-section"
                         >
@@ -268,23 +341,48 @@ const CyberSection = ({
                             {isEditing ? "Save" : "Edit"}
                         </button>
                     )}
-                    <div className="hidden md:flex items-center gap-1">
-                        <div className="w-6 h-[2px] bg-primary/30" />
-                        <div className="w-3 h-[2px] bg-primary/20" />
-                        <div className="w-1.5 h-[2px] bg-primary/15" />
-                    </div>
-                    {collapsed ? <ChevronDown className="w-4 h-4 text-primary/50" /> : <ChevronUp className="w-4 h-4 text-primary/50" />}
+                    {isYellow ? (
+                        <div className="hidden md:flex items-center gap-[3px]">
+                            {[0,1,2,3,4,5].map(i => <div key={i} className="w-1.5 h-[3px] bg-black/40" />)}
+                        </div>
+                    ) : (
+                        <div className="hidden md:flex items-center gap-1">
+                            <div className="w-6 h-[2px] bg-primary/30" />
+                            <div className="w-3 h-[2px] bg-primary/20" />
+                            <div className="w-1.5 h-[2px] bg-primary/15" />
+                        </div>
+                    )}
+                    {collapsed 
+                        ? <ChevronDown className={cn("w-4 h-4", isYellow ? "text-black/60" : "text-primary/50")} /> 
+                        : <ChevronUp className={cn("w-4 h-4", isYellow ? "text-black/60" : "text-primary/50")} />
+                    }
                 </div>
             </button>
             {!collapsed && (
                 <div className="p-4 relative overflow-visible">
                     <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'url(/hexabump.png)', backgroundSize: '400px', backgroundRepeat: 'repeat' }} />
+                    {isYellow && (
+                        <>
+                            <div className="absolute top-2 right-2 pointer-events-none z-10 opacity-20">
+                                <svg viewBox="0 0 24 24" className="w-5 h-5">
+                                    <path d="M4,4 L20,20 M20,4 L4,20" stroke="#e6db00" strokeWidth="3" />
+                                    <rect x="1" y="1" width="22" height="22" fill="none" stroke="#e6db00" strokeWidth="1.5" />
+                                </svg>
+                            </div>
+                            <div className="absolute bottom-3 left-3 pointer-events-none z-10 flex gap-[2px] opacity-30">
+                                {[0,1,2,3,4,5,6,7].map(i => (
+                                    <div key={i} className="w-[3px] h-3 bg-[#e6db00]" style={{ transform: 'skewX(-15deg)' }} />
+                                ))}
+                            </div>
+                        </>
+                    )}
                     <div className="relative">{children}</div>
                 </div>
             )}
         </div>
     </div>
-);
+    );
+};
 
 const MythicHUDFrame = ({ 
     children, 
@@ -2394,7 +2492,7 @@ export default function CharacterSheet() {
         {/* --- TOP 3-COLUMN GRID END --- */}
 
         {/* COMBAT ROW */}
-        <CyberSection title="Combat Profile" collapsed={combatRowCollapsed} onToggle={() => setCombatRowCollapsed(!combatRowCollapsed)} testId="btn-toggle-combat-row" isEditing={editingCombatAll} onEditToggle={() => setEditingCombatAll(!editingCombatAll)}>
+        <CyberSection title="Combat Profile" variant="combat" collapsed={combatRowCollapsed} onToggle={() => setCombatRowCollapsed(!combatRowCollapsed)} testId="btn-toggle-combat-row" isEditing={editingCombatAll} onEditToggle={() => setEditingCombatAll(!editingCombatAll)}>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
 
             {/* 1. LEGEND + PHYSICAL STATS - Takes 1 column (stacked) */}
