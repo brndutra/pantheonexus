@@ -2007,7 +2007,7 @@ export default function CharacterSheet() {
                     <div className="space-y-2">
                         <ScionInput 
                             label="Deep Analysis" 
-                            className="h-16 text-xs bg-black/40 border-primary/20 resize-none"
+                            className="h-16 text-xs bg-black/40 border-[#834DFB]/20 resize-none"
                             textarea
                             value={psychicProfile.analysis}
                             onChange={(e) => setPsychicProfile({...psychicProfile, analysis: e.target.value})}
@@ -2016,14 +2016,14 @@ export default function CharacterSheet() {
                         <div className="grid grid-cols-2 gap-2">
                             <ScionInput 
                                 label="Keywords" 
-                                className="h-7 text-xs bg-black/40 border-primary/20"
+                                className="h-7 text-xs bg-black/40 border-[#834DFB]/20"
                                 value={psychicProfile.keywords}
                                 onChange={(e) => setPsychicProfile({...psychicProfile, keywords: e.target.value})}
                                 viewMode={!editingIdentity}
                             />
                             <ScionInput 
                                 label="Major Arcana" 
-                                className="h-7 text-xs bg-black/40 border-primary/20 text-[hsl(var(--highlight-purple))]"
+                                className="h-7 text-xs bg-black/40 border-[#834DFB]/20 text-[#834DFB]"
                                 value={psychicProfile.majorArcana}
                                 onChange={(e) => setPsychicProfile({...psychicProfile, majorArcana: e.target.value})}
                                 viewMode={!editingIdentity}
@@ -2032,14 +2032,14 @@ export default function CharacterSheet() {
                         <div className="grid grid-cols-2 gap-2">
                             <ScionInput 
                                 label="Temperament" 
-                                className="h-7 text-xs bg-black/40 border-primary/20"
+                                className="h-7 text-xs bg-black/40 border-[#834DFB]/20"
                                 value={psychicProfile.temperament}
                                 onChange={(e) => setPsychicProfile({...psychicProfile, temperament: e.target.value})}
                                 viewMode={!editingIdentity}
                             />
                             <ScionInput 
                                 label="Cognitive Type" 
-                                className="h-7 text-xs bg-black/40 border-primary/20"
+                                className="h-7 text-xs bg-black/40 border-[#834DFB]/20"
                                 value={psychicProfile.cognitiveType}
                                 onChange={(e) => setPsychicProfile({...psychicProfile, cognitiveType: e.target.value})}
                                 viewMode={!editingIdentity}
@@ -2048,14 +2048,14 @@ export default function CharacterSheet() {
                         <div className="grid grid-cols-2 gap-2">
                             <ScionInput 
                                 label="Strengths" 
-                                className="h-7 text-xs bg-black/40 border-primary/20 text-green-400/80"
+                                className="h-7 text-xs bg-black/40 border-[#834DFB]/20 text-green-400/80"
                                 value={psychicProfile.strengths}
                                 onChange={(e) => setPsychicProfile({...psychicProfile, strengths: e.target.value})}
                                 viewMode={!editingIdentity}
                             />
                             <ScionInput 
                                 label="Weaknesses" 
-                                className="h-7 text-xs bg-black/40 border-primary/20 text-red-400/80"
+                                className="h-7 text-xs bg-black/40 border-[#834DFB]/20 text-red-400/80"
                                 value={psychicProfile.weaknesses}
                                 onChange={(e) => setPsychicProfile({...psychicProfile, weaknesses: e.target.value})}
                                 viewMode={!editingIdentity}
@@ -2063,7 +2063,7 @@ export default function CharacterSheet() {
                         </div>
                         <ScionInput 
                             label="Behaviors" 
-                            className="h-7 text-xs bg-black/40 border-primary/20"
+                            className="h-7 text-xs bg-black/40 border-[#834DFB]/20"
                             value={psychicProfile.behaviors}
                             onChange={(e) => setPsychicProfile({...psychicProfile, behaviors: e.target.value})}
                             viewMode={!editingIdentity}
@@ -2191,21 +2191,21 @@ export default function CharacterSheet() {
                         <div className="grid grid-cols-3 gap-2">
                             <ScionInput 
                                 label="Height" 
-                                className="h-7 text-xs bg-black/40 border-primary/20"
+                                className="h-7 text-xs bg-black/40 border-[#F0E100]/20"
                                 value={presenceProfile.height}
                                 onChange={(e) => setPresenceProfile({...presenceProfile, height: e.target.value})}
                                 viewMode={!editingIdentity}
                             />
                             <ScionInput 
                                 label="Eye Color" 
-                                className="h-7 text-xs bg-black/40 border-primary/20"
+                                className="h-7 text-xs bg-black/40 border-[#F0E100]/20"
                                 value={presenceProfile.eyeColor}
                                 onChange={(e) => setPresenceProfile({...presenceProfile, eyeColor: e.target.value})}
                                 viewMode={!editingIdentity}
                             />
                             <ScionInput 
                                 label="Hair Color" 
-                                className="h-7 text-xs bg-black/40 border-primary/20"
+                                className="h-7 text-xs bg-black/40 border-[#F0E100]/20"
                                 value={presenceProfile.hairColor}
                                 onChange={(e) => setPresenceProfile({...presenceProfile, hairColor: e.target.value})}
                                 viewMode={!editingIdentity}
@@ -2214,14 +2214,14 @@ export default function CharacterSheet() {
                         <div className="grid grid-cols-2 gap-2">
                             <ScionInput 
                                 label="Aura Signature" 
-                                className="h-7 text-xs bg-black/40 border-primary/20 text-[hsl(var(--highlight-blue))]"
+                                className="h-7 text-xs bg-black/40 border-[#F0E100]/20 text-[#F0E100]"
                                 value={presenceProfile.auraSignature}
                                 onChange={(e) => setPresenceProfile({...presenceProfile, auraSignature: e.target.value})}
                                 viewMode={!editingIdentity}
                             />
                             <ScionInput 
                                 label="Scent / Essence" 
-                                className="h-7 text-xs bg-black/40 border-primary/20"
+                                className="h-7 text-xs bg-black/40 border-[#F0E100]/20"
                                 value={presenceProfile.scent}
                                 onChange={(e) => setPresenceProfile({...presenceProfile, scent: e.target.value})}
                                 viewMode={!editingIdentity}
@@ -2229,21 +2229,21 @@ export default function CharacterSheet() {
                         </div>
                         <ScionInput 
                             label="Fashion & Style" 
-                            className="h-7 text-xs bg-black/40 border-primary/20"
+                            className="h-7 text-xs bg-black/40 border-[#F0E100]/20"
                             value={presenceProfile.fashion}
                             onChange={(e) => setPresenceProfile({...presenceProfile, fashion: e.target.value})}
                             viewMode={!editingIdentity}
                         />
                         <ScionInput 
                             label="Distinguishing Marks" 
-                            className="h-7 text-xs bg-black/40 border-primary/20"
+                            className="h-7 text-xs bg-black/40 border-[#F0E100]/20"
                             value={presenceProfile.distinguishingMark}
                             onChange={(e) => setPresenceProfile({...presenceProfile, distinguishingMark: e.target.value})}
                             viewMode={!editingIdentity}
                         />
                         <ScionInput 
                             label="Visual Notes" 
-                            className="h-16 text-xs bg-black/40 border-primary/20 resize-none"
+                            className="h-16 text-xs bg-black/40 border-[#F0E100]/20 resize-none"
                             textarea
                             value={presenceProfile.visualNotes}
                             onChange={(e) => setPresenceProfile({...presenceProfile, visualNotes: e.target.value})}
