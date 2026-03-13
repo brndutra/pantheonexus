@@ -6,16 +6,20 @@ interface ScionInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   variant?: "mythic" | "tech";
   textarea?: boolean;
   viewMode?: boolean;
+  labelColor?: string;
 }
 
 export const ScionInput = React.forwardRef<HTMLInputElement, ScionInputProps>(
-  ({ className, label, variant = "mythic", textarea, viewMode, value, ...props }, ref) => {
+  ({ className, label, variant = "mythic", textarea, viewMode, value, labelColor, ...props }, ref) => {
     
     if (viewMode) {
       return (
         <div className="relative group w-full mb-4">
           {label && (
-             <label className="block text-[9px] uppercase tracking-[0.2em] mb-1 font-display text-primary/40">
+             <label
+               className={cn("block text-[9px] uppercase tracking-[0.2em] mb-1 font-display", !labelColor && "text-primary/40")}
+               style={labelColor ? { color: labelColor } : undefined}
+             >
                {label}
              </label>
           )}
@@ -34,8 +38,10 @@ export const ScionInput = React.forwardRef<HTMLInputElement, ScionInputProps>(
         {label && (
           <label
             className={cn(
-              "block text-[10px] md:text-xs uppercase tracking-[0.2em] mb-2 transition-colors font-display text-primary/70"
+              "block text-[10px] md:text-xs uppercase tracking-[0.2em] mb-2 transition-colors font-display",
+              !labelColor && "text-primary/70"
             )}
+            style={labelColor ? { color: labelColor } : undefined}
           >
             {label}
           </label>

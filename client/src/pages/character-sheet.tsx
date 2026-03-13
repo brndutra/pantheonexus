@@ -2022,6 +2022,7 @@ export default function CharacterSheet() {
                     <div className="space-y-2">
                         <ScionInput 
                             label="Deep Analysis" 
+                            labelColor="#834DFB80"
                             className="h-16 text-xs text-gray-400 bg-black/40 border-[#834DFB]/20 resize-none"
                             textarea
                             value={psychicProfile.analysis}
@@ -2031,6 +2032,7 @@ export default function CharacterSheet() {
                         <div className="grid grid-cols-2 gap-2">
                             <ScionInput 
                                 label="Keywords" 
+                                labelColor="#834DFB80"
                                 className="h-7 text-xs text-gray-400 bg-black/40 border-[#834DFB]/20"
                                 value={psychicProfile.keywords}
                                 onChange={(e) => setPsychicProfile({...psychicProfile, keywords: e.target.value})}
@@ -2038,6 +2040,7 @@ export default function CharacterSheet() {
                             />
                             <ScionInput 
                                 label="Major Arcana" 
+                                labelColor="#834DFB80"
                                 className="h-7 text-xs bg-black/40 border-[#834DFB]/20 text-[#a78bfa]"
                                 value={psychicProfile.majorArcana}
                                 onChange={(e) => setPsychicProfile({...psychicProfile, majorArcana: e.target.value})}
@@ -2047,6 +2050,7 @@ export default function CharacterSheet() {
                         <div className="grid grid-cols-2 gap-2">
                             <ScionInput 
                                 label="Temperament" 
+                                labelColor="#834DFB80"
                                 className="h-7 text-xs text-gray-400 bg-black/40 border-[#834DFB]/20"
                                 value={psychicProfile.temperament}
                                 onChange={(e) => setPsychicProfile({...psychicProfile, temperament: e.target.value})}
@@ -2054,6 +2058,7 @@ export default function CharacterSheet() {
                             />
                             <ScionInput 
                                 label="Cognitive Type" 
+                                labelColor="#834DFB80"
                                 className="h-7 text-xs text-gray-400 bg-black/40 border-[#834DFB]/20"
                                 value={psychicProfile.cognitiveType}
                                 onChange={(e) => setPsychicProfile({...psychicProfile, cognitiveType: e.target.value})}
@@ -2063,6 +2068,7 @@ export default function CharacterSheet() {
                         <div className="grid grid-cols-2 gap-2">
                             <ScionInput 
                                 label="Strengths" 
+                                labelColor="#834DFB80"
                                 className="h-7 text-xs bg-black/40 border-[#834DFB]/20 text-green-400/60"
                                 value={psychicProfile.strengths}
                                 onChange={(e) => setPsychicProfile({...psychicProfile, strengths: e.target.value})}
@@ -2070,6 +2076,7 @@ export default function CharacterSheet() {
                             />
                             <ScionInput 
                                 label="Weaknesses" 
+                                labelColor="#834DFB80"
                                 className="h-7 text-xs bg-black/40 border-[#834DFB]/20 text-red-400/60"
                                 value={psychicProfile.weaknesses}
                                 onChange={(e) => setPsychicProfile({...psychicProfile, weaknesses: e.target.value})}
@@ -2078,6 +2085,7 @@ export default function CharacterSheet() {
                         </div>
                         <ScionInput 
                             label="Behaviors" 
+                            labelColor="#834DFB80"
                             className="h-7 text-xs text-gray-400 bg-black/40 border-[#834DFB]/20"
                             value={psychicProfile.behaviors}
                             onChange={(e) => setPsychicProfile({...psychicProfile, behaviors: e.target.value})}
@@ -2206,6 +2214,7 @@ export default function CharacterSheet() {
                         <div className="grid grid-cols-3 gap-2">
                             <ScionInput 
                                 label="Height" 
+                                labelColor="#F0E10080"
                                 className="h-7 text-xs text-gray-400 bg-black/40 border-[#F0E100]/20"
                                 value={presenceProfile.height}
                                 onChange={(e) => setPresenceProfile({...presenceProfile, height: e.target.value})}
@@ -2213,6 +2222,7 @@ export default function CharacterSheet() {
                             />
                             <ScionInput 
                                 label="Eye Color" 
+                                labelColor="#F0E10080"
                                 className="h-7 text-xs text-gray-400 bg-black/40 border-[#F0E100]/20"
                                 value={presenceProfile.eyeColor}
                                 onChange={(e) => setPresenceProfile({...presenceProfile, eyeColor: e.target.value})}
@@ -2220,6 +2230,7 @@ export default function CharacterSheet() {
                             />
                             <ScionInput 
                                 label="Hair Color" 
+                                labelColor="#F0E10080"
                                 className="h-7 text-xs text-gray-400 bg-black/40 border-[#F0E100]/20"
                                 value={presenceProfile.hairColor}
                                 onChange={(e) => setPresenceProfile({...presenceProfile, hairColor: e.target.value})}
@@ -2229,6 +2240,7 @@ export default function CharacterSheet() {
                         <div className="grid grid-cols-2 gap-2">
                             <ScionInput 
                                 label="Aura Signature" 
+                                labelColor="#F0E10080"
                                 className="h-7 text-xs bg-black/40 border-[#F0E100]/20 text-[#d4c84a]"
                                 value={presenceProfile.auraSignature}
                                 onChange={(e) => setPresenceProfile({...presenceProfile, auraSignature: e.target.value})}
@@ -2236,6 +2248,7 @@ export default function CharacterSheet() {
                             />
                             <ScionInput 
                                 label="Scent / Essence" 
+                                labelColor="#F0E10080"
                                 className="h-7 text-xs text-gray-400 bg-black/40 border-[#F0E100]/20"
                                 value={presenceProfile.scent}
                                 onChange={(e) => setPresenceProfile({...presenceProfile, scent: e.target.value})}
@@ -2244,6 +2257,7 @@ export default function CharacterSheet() {
                         </div>
                         <ScionInput 
                             label="Fashion & Style" 
+                            labelColor="#F0E10080"
                             className="h-7 text-xs text-gray-400 bg-black/40 border-[#F0E100]/20"
                             value={presenceProfile.fashion}
                             onChange={(e) => setPresenceProfile({...presenceProfile, fashion: e.target.value})}
@@ -2251,6 +2265,7 @@ export default function CharacterSheet() {
                         />
                         <ScionInput 
                             label="Distinguishing Marks" 
+                            labelColor="#F0E10080"
                             className="h-7 text-xs text-gray-400 bg-black/40 border-[#F0E100]/20"
                             value={presenceProfile.distinguishingMark}
                             onChange={(e) => setPresenceProfile({...presenceProfile, distinguishingMark: e.target.value})}
@@ -2258,6 +2273,7 @@ export default function CharacterSheet() {
                         />
                         <ScionInput 
                             label="Visual Notes" 
+                            labelColor="#F0E10080"
                             className="h-16 text-xs text-gray-400 bg-black/40 border-[#F0E100]/20 resize-none"
                             textarea
                             value={presenceProfile.visualNotes}
