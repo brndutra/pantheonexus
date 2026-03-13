@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { Link, useLocation } from "wouter";
+import { Link } from "wouter";
 import { cn } from "@/lib/utils";
-import { Shield, BookOpen, Crown, ChevronRight, User, Plus, Zap, Sword, MapPin, Archive, Globe, Skull, Users, Flame, Lock, ExternalLink, Sparkles, Loader2 } from "lucide-react";
-import { useCharacters, useCreateCharacter, useDeleteCharacter } from "@/lib/use-characters";
+import { Shield, BookOpen, Crown, ChevronRight, User, Plus, Zap, Sword, MapPin, Archive, Globe, Skull, Users, Flame, Lock, ExternalLink, Sparkles } from "lucide-react";
+import { useCharacters } from "@/lib/use-characters";
 import { BoonsCatalogModal } from "@/components/boon-catalog";
 import {
   Carousel,
@@ -110,34 +110,10 @@ const LOCATIONS = [
 
 export default function Home() {
   const { data: characters = [], isLoading } = useCharacters();
-  const createCharacter = useCreateCharacter();
-  const [, navigate] = useLocation();
-  const [creatingScion, setCreatingScion] = useState(false);
   const [epicTab, setEpicTab] = useState<"Physical" | "Social" | "Mental">("Physical");
   const [selectedPurview, setSelectedPurview] = useState("Animal");
   const [selectedLocation, setSelectedLocation] = useState(LOCATIONS[0]);
   const [boonModalOpen, setBoonModalOpen] = useState(false);
-
-  const handleCreateScion = async () => {
-    if (creatingScion) return;
-    setCreatingScion(true);
-    try {
-      const newScion = await createCharacter.mutateAsync({
-        name: "Novo Scion",
-        player: "",
-        concept: "",
-        pantheon: "",
-        divineParent: "",
-      });
-      if (newScion?.id) {
-        navigate(`/character-sheet/${newScion.id}`);
-      }
-    } catch (err) {
-      console.error("Failed to create scion:", err);
-    } finally {
-      setCreatingScion(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-mythic-void text-foreground overflow-x-hidden font-tech selection:bg-primary/30 relative">
@@ -206,7 +182,7 @@ export default function Home() {
               <div className="h-64 flex items-center justify-center">
                 <p className="font-tech text-sm text-muted-foreground uppercase tracking-widest animate-pulse">Loading Scions...</p>
               </div>
-            ) : (
+            ) : characters.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 py-4">
                 {characters.map((char) => (
                   <Link key={char.id} href={`/character-sheet/${char.id}`}>
@@ -233,32 +209,15 @@ export default function Home() {
                     </div>
                   </Link>
                 ))}
-
-                <button
-                  onClick={handleCreateScion}
-                  disabled={creatingScion}
-                  className="group relative h-[340px] bg-black/40 border-2 border-dashed border-primary/20 hover:border-primary/60 transition-all duration-500 rounded-sm overflow-hidden cursor-pointer hover:shadow-[0_0_40px_rgba(212,175,55,0.15)] hover:-translate-y-2 flex flex-col items-center justify-center gap-4"
-                  data-testid="button-create-scion"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <div className="relative z-10 flex flex-col items-center gap-4">
-                    {creatingScion ? (
-                      <Loader2 className="w-12 h-12 text-primary/40 animate-spin" />
-                    ) : (
-                      <div className="w-16 h-16 rounded-full border-2 border-primary/30 group-hover:border-primary/80 flex items-center justify-center transition-all duration-300 group-hover:shadow-[0_0_20px_rgba(212,175,55,0.3)]">
-                        <Plus className="w-8 h-8 text-primary/40 group-hover:text-primary transition-colors" />
-                      </div>
-                    )}
-                    <div className="text-center">
-                      <p className="font-mythic text-lg text-primary/50 group-hover:text-primary tracking-widest uppercase transition-colors">
-                        {creatingScion ? "Criando..." : "Criar Scion"}
-                      </p>
-                      <p className="text-[9px] font-tech text-muted-foreground/50 uppercase tracking-[0.2em] mt-1">
-                        Inicializar Nova Ficha
-                      </p>
-                    </div>
-                  </div>
-                </button>
+              </div>
+            ) : (
+              <div className="py-16 flex flex-col items-center justify-center border border-dashed border-primary/20 rounded-sm bg-black/30 backdrop-blur-sm">
+                <p className="font-tech text-sm text-muted-foreground uppercase tracking-widest mb-4">No Active Scions Found</p>
+                <Link href="/admin">
+                  <button className="text-xs text-primary hover:text-white border border-primary/30 hover:border-primary px-6 py-3 rounded-sm font-mythic uppercase tracking-wider flex items-center gap-2 transition-all hover:shadow-[0_0_15px_rgba(212,175,55,0.3)] hover:bg-primary/10" data-testid="button-go-admin">
+                    <Plus className="w-4 h-4" /> Criar no Admin Dashboard
+                  </button>
+                </Link>
               </div>
             )}
           </div>
