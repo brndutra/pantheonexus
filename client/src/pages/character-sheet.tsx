@@ -216,8 +216,7 @@ const CyberSection = ({
             </svg>
         </div>
 
-        <div className="border border-primary/25 bg-[#0a0a0a] overflow-hidden relative"
-             style={{ clipPath: 'polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px))' }}>
+        <div className="border border-primary/25 bg-[#0a0a0a] relative">
             <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-primary/60 via-primary/30 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-primary/40" />
             <div className="absolute top-0 left-0 w-[2px] h-full bg-gradient-to-b from-primary/50 via-primary/15 to-primary/30" />
@@ -257,8 +256,8 @@ const CyberSection = ({
                 </div>
             </button>
             {!collapsed && (
-                <div className="p-4 relative">
-                    <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'url(/hexabump.png)', backgroundSize: '400px', backgroundRepeat: 'repeat' }} />
+                <div className="p-4 relative overflow-visible">
+                    <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'url(/hexabump.png)', backgroundSize: '400px', backgroundRepeat: 'repeat' }} />
                     <div className="relative">{children}</div>
                 </div>
             )}
