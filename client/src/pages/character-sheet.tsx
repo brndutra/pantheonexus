@@ -499,6 +499,9 @@ export default function CharacterSheet() {
       if (Array.isArray(loadedCharacter.healthDamage)) {
         setHealthDamage(loadedCharacter.healthDamage as any);
       }
+      if (Array.isArray(loadedCharacter.customHealthPenalties)) {
+        setCustomHealthPenalties(loadedCharacter.customHealthPenalties as string[]);
+      }
       
       // Powers
       if (Array.isArray(loadedCharacter.knacks)) {
@@ -714,6 +717,7 @@ export default function CharacterSheet() {
   // Health State
   const [extraOxBody, setExtraOxBody] = useState(0);
   const [healthDamage, setHealthDamage] = useState<DamageType[]>(new Array(7 + 10).fill(0));
+  const [customHealthPenalties, setCustomHealthPenalties] = useState<string[] | null>(null);
 
   const [knacks, setKnacks] = useState<CharacterKnack[]>([]);
   const [availableKnacks, setAvailableKnacks] = useState<SupabaseKnack[]>([]);
@@ -1216,11 +1220,13 @@ export default function CharacterSheet() {
       )
     : allOffensives;
 
-  // Build current health levels array
-  const currentHealthLevels = [
+  const defaultHealthLevels = [
     ...Array(1 + extraOxBody).fill("-0"),
     "-1", "-1", "-2", "-2", "-4", "Incap"
   ];
+  const currentHealthLevels = customHealthPenalties && customHealthPenalties.length === defaultHealthLevels.length
+    ? customHealthPenalties
+    : defaultHealthLevels;
 
   // Prepare Radar Data (with safety checks for attribute arrays)
   const radarData = [
@@ -1392,6 +1398,7 @@ export default function CharacterSheet() {
         willpowerCurrent,
         extraOxBody,
         healthDamage,
+        customHealthPenalties,
         knacks,
         boons,
         weapons,
@@ -1444,6 +1451,7 @@ export default function CharacterSheet() {
             willpowerCurrent,
             extraOxBody,
             healthDamage,
+            customHealthPenalties,
             portrait: portrait || undefined,
             birthrights,
           },
@@ -1456,7 +1464,7 @@ export default function CharacterSheet() {
         clearTimeout(autoSaveTimeoutRef.current);
       }
     };
-  }, [legend, legendPointsCurrent, willpower, willpowerCurrent, extraOxBody, healthDamage, portrait, birthrights, characterId]);
+  }, [legend, legendPointsCurrent, willpower, willpowerCurrent, extraOxBody, healthDamage, customHealthPenalties, portrait, birthrights, characterId]);
   
 
   // Create edit handlers for each section
@@ -2636,7 +2644,20 @@ export default function CharacterSheet() {
                              {currentHealthLevels.map((level, idx) => (
                                  <div key={idx} className="flex flex-col items-center gap-1">
                                      <HealthBox status={healthDamage[idx]} onClick={() => toggleHealth(idx)} />
-                                     <span className="text-[9px] font-code text-muted-foreground">{level}</span>
+                                     {editingCombatAll ? (
+                                         <input
+                                             value={level}
+                                             onChange={(e) => {
+                                                 const updated = [...currentHealthLevels];
+                                                 updated[idx] = e.target.value;
+                                                 setCustomHealthPenalties(updated);
+                                             }}
+                                             className="w-10 text-center text-[9px] font-code text-primary bg-black/60 border border-primary/30 rounded-sm px-0.5 py-0.5 outline-none focus:border-primary/60"
+                                             data-testid={`input-health-penalty-${idx}`}
+                                         />
+                                     ) : (
+                                         <span className="text-[9px] font-code text-muted-foreground">{level}</span>
+                                     )}
                                  </div>
                              ))}
                          </div>
