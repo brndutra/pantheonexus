@@ -2737,13 +2737,13 @@ export default function CharacterSheet() {
         </div> 
         {/* --- COMBAT ROW END --- */}
 
-        {/* ATTRIBUTES & ABILITIES ROW - 1/3 + 2/3 */}
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
-            {/* ATTRIBUTES CORE - 1 column */}
-            <MythicHUDFrame title="Attributes Core" icon={Dna} subHeader="PHYSICAL / SOCIAL / MENTAL" className="md:col-span-1 flex flex-col" titleSize="large" isEditing={editingAttributes} {...createEditHandlers(editingAttributes, setEditingAttributes)}>
-                <div className="space-y-4 flex-1 flex flex-col justify-between">
+        {/* ATTRIBUTES & ABILITIES - Stacked, 3-column aligned */}
+        <div className="mt-6 space-y-6">
+            {/* ATTRIBUTES CORE - 3 columns matching abilities */}
+            <MythicHUDFrame title="Attributes Core" icon={Dna} subHeader="PHYSICAL / SOCIAL / MENTAL" className="flex flex-col" titleSize="large" isEditing={editingAttributes} {...createEditHandlers(editingAttributes, setEditingAttributes)}>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-1">
                     {(Object.entries(attributes) as [AttributeCategory, Attribute[]][]).map(([category, attrs]) => (
-                        <div key={category} className="space-y-1.5 relative flex-1">
+                        <div key={category} className="space-y-1.5 relative">
                             <h4 className="text-[11px] font-display uppercase tracking-[0.2em] text-primary/60 border-b border-primary/20 pb-1.5 mb-2">
                                 {category}
                             </h4>
@@ -2765,7 +2765,6 @@ export default function CharacterSheet() {
                                             readOnly={!editingAttributes}
                                         />
                                         <span className="text-xs font-display text-primary w-3 text-center">{attr.value}</span>
-                                        {/* Epic indicator */}
                                         <div className="flex gap-0.5">
                                             {Array.from({length: 5}).map((_, i) => {
                                                 const e = i + 1;
@@ -2791,8 +2790,8 @@ export default function CharacterSheet() {
                 </div>
             </MythicHUDFrame>
 
-            {/* ABILITIES SCROLL - 2 columns */}
-            <MythicHUDFrame title="Abilities Database" icon={Brain} subHeader="SKILL SET MATRIX" className="md:col-span-2 flex flex-col" titleSize="large" isEditing={editingAbilities} {...createEditHandlers(editingAbilities, setEditingAbilities)}>
+            {/* ABILITIES DATABASE - 3 columns aligned with attributes above */}
+            <MythicHUDFrame title="Abilities Database" icon={Brain} subHeader="SKILL SET MATRIX" className="flex flex-col" titleSize="large" isEditing={editingAbilities} {...createEditHandlers(editingAbilities, setEditingAbilities)}>
                 <div className="flex-1">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-1 h-full content-start">
                         {abilitiesSchema.map((schema) => {
