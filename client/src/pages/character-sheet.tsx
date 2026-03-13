@@ -2244,44 +2244,6 @@ export default function CharacterSheet() {
                             </>
                         )}
                     </div>
-                    
-                    
-                    
-                    {/* Health Track - Moved here below Virtues */}
-                    <div className="mt-3 pt-3 border-t border-primary/15 space-y-2">
-                        <div className="flex justify-between items-center text-xs font-display uppercase text-primary/70">
-                             <span>Níveis de Vitalidade</span>
-                             <div className="flex items-center gap-2">
-                                 <div className="flex items-center gap-1 text-[9px] text-muted-foreground">
-                                     <span className="w-2 h-2 border border-primary/50 bg-black/50 block" /> B
-                                     <span className="w-2 h-2 border border-primary/50 bg-black/50 flex items-center justify-center text-[8px]" >x</span> L
-                                     <span className="w-2 h-2 border border-red-500/50 bg-black/50 flex items-center justify-center text-[8px] text-red-500" >*</span> A
-                                 </div>
-                                 <div className="flex items-center gap-1 border-l border-primary/20 pl-2">
-                                     <span className="text-[8px] text-muted-foreground">-0:</span>
-                                     <button 
-                                         onClick={() => setExtraOxBody(Math.max(0, extraOxBody - 1))}
-                                         className="w-4 h-4 flex items-center justify-center bg-black/50 border border-primary/30 text-primary/70 hover:bg-primary/20 hover:text-primary rounded-sm text-[10px] transition-colors"
-                                         data-testid="btn-decrease-ox"
-                                     >-</button>
-                                     <span className="text-[9px] font-code text-primary w-4 text-center">{1 + extraOxBody}</span>
-                                     <button 
-                                         onClick={() => setExtraOxBody(extraOxBody + 1)}
-                                         className="w-4 h-4 flex items-center justify-center bg-black/50 border border-primary/30 text-primary/70 hover:bg-primary/20 hover:text-primary rounded-sm text-[10px] transition-colors"
-                                         data-testid="btn-increase-ox"
-                                     >+</button>
-                                 </div>
-                             </div>
-                         </div>
-                         <div className="flex flex-wrap gap-2 justify-center">
-                             {currentHealthLevels.map((level, idx) => (
-                                 <div key={idx} className="flex flex-col items-center gap-1">
-                                     <HealthBox status={healthDamage[idx]} onClick={() => toggleHealth(idx)} />
-                                     <span className="text-[9px] font-code text-muted-foreground">{level}</span>
-                                 </div>
-                             ))}
-                         </div>
-                    </div>
                 </MythicHUDFrame>
 
             </div>
@@ -2292,8 +2254,9 @@ export default function CharacterSheet() {
         {/* COMBAT ROW - Legend, Willpower+Resistance, Vitality+Offensive */}
         <div className="mt-6 grid grid-cols-1 md:grid-cols-4 gap-6">
 
-            {/* 1. LEGEND MODULE - Takes 1 column */}
-            <MythicHUDFrame title="Legend" icon={Flame} subHeader="DIVINE POWER" className="md:col-span-1">
+            {/* 1. LEGEND + PHYSICAL STATS - Takes 1 column (stacked) */}
+            <div className="md:col-span-1 flex flex-col gap-6">
+            <MythicHUDFrame title="Legend" icon={Flame} subHeader="DIVINE POWER">
                 <div className="space-y-3">
                     <div className="flex items-center justify-between p-2 bg-black/40 border-l-2 border-primary/60">
                         <div className="flex items-center gap-2">
@@ -2359,6 +2322,53 @@ export default function CharacterSheet() {
                     </div>
                 </div>
             </MythicHUDFrame>
+
+            <MythicHUDFrame 
+                title="Physical Stats" 
+                icon={Activity} 
+                subHeader="BIOMETRICS & POOLS"
+            >
+                <div className="space-y-6">
+                    <div className="grid grid-cols-2 gap-2">
+                        <div className="bg-black/40 p-2 flex justify-between items-center border-l-2 border-primary/40">
+                            <span className="text-[8px] uppercase tracking-wider text-muted-foreground">Dodge DV</span>
+                            <span className="font-display text-primary text-sm">{dodgeDV}</span>
+                        </div>
+                        <div className="bg-black/40 p-2 flex justify-between items-center border-l-2 border-primary/40">
+                            <span className="text-[8px] uppercase tracking-wider text-muted-foreground">Parry DV</span>
+                            <span className="font-display text-primary text-sm">{parryDV}</span>
+                        </div>
+                        <div className="bg-black/40 p-2 flex justify-between items-center border-l-2 border-primary/40">
+                            <span className="text-[8px] uppercase tracking-wider text-muted-foreground">Armed DV</span>
+                            <span className="font-display text-primary text-sm">{armedDV}</span>
+                        </div>
+                        <div className="bg-black/40 p-2 flex justify-between items-center border-l-2 border-primary/40">
+                            <span className="text-[8px] uppercase tracking-wider text-muted-foreground">Join Battle</span>
+                            <span className="font-display text-primary text-sm">{joinBattle}</span>
+                        </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-2 pt-2 border-t border-primary/10">
+                        <div className="bg-black/40 p-1.5 flex justify-between items-center border-l-2 border-primary/30">
+                            <span className="text-[7px] uppercase tracking-wider text-muted-foreground">Move</span>
+                            <span className="font-code text-primary/80 text-xs">{moveSpeed}m</span>
+                        </div>
+                        <div className="bg-black/40 p-1.5 flex justify-between items-center border-l-2 border-primary/30">
+                            <span className="text-[7px] uppercase tracking-wider text-muted-foreground">Dash</span>
+                            <span className="font-code text-primary/80 text-xs">{dashSpeed}m</span>
+                        </div>
+                        <div className="bg-black/40 p-1.5 flex justify-between items-center border-l-2 border-primary/30">
+                            <span className="text-[7px] uppercase tracking-wider text-muted-foreground">Jump V/H</span>
+                            <span className="font-code text-primary/80 text-xs">{verticalJump}/{horizontalJump}m</span>
+                        </div>
+                        <div className="bg-black/40 p-1.5 flex justify-between items-center border-l-2 border-primary/30">
+                            <span className="text-[7px] uppercase tracking-wider text-muted-foreground">Lift</span>
+                            <span className="font-code text-primary/80 text-xs">{liftCapacity}kg</span>
+                        </div>
+                    </div>
+                </div>
+            </MythicHUDFrame>
+            </div>
 
             {/* 2. WILLPOWER + RESISTANCE - Takes 1 column (stacked) */}
             <div className="md:col-span-1 flex flex-col gap-6">
@@ -2488,51 +2498,46 @@ export default function CharacterSheet() {
                 </MythicHUDFrame>
             </div>
 
-            {/* 3. VITALITY & OFFENSIVE - Takes 2 columns (stacked) */}
+            {/* 3. VITALITY + OFFENSIVE - Takes 2 columns (stacked) */}
             <div className="md:col-span-2 flex flex-col gap-6">
                 <MythicHUDFrame 
-                    title="Vitality & Energy" 
-                    icon={Activity} 
-                    subHeader="BIOMETRICS & POOLS"
+                    title="Vitality" 
+                    icon={Heart} 
+                    subHeader="NÍVEIS DE VITALIDADE"
                 >
-                    <div className="space-y-6">
-                        <div className="grid grid-cols-2 gap-2">
-                            <div className="bg-black/40 p-2 flex justify-between items-center border-l-2 border-primary/40">
-                                <span className="text-[8px] uppercase tracking-wider text-muted-foreground">Dodge DV</span>
-                                <span className="font-display text-primary text-sm">{dodgeDV}</span>
-                            </div>
-                            <div className="bg-black/40 p-2 flex justify-between items-center border-l-2 border-primary/40">
-                                <span className="text-[8px] uppercase tracking-wider text-muted-foreground">Parry DV</span>
-                                <span className="font-display text-primary text-sm">{parryDV}</span>
-                            </div>
-                            <div className="bg-black/40 p-2 flex justify-between items-center border-l-2 border-primary/40">
-                                <span className="text-[8px] uppercase tracking-wider text-muted-foreground">Armed DV</span>
-                                <span className="font-display text-primary text-sm">{armedDV}</span>
-                            </div>
-                            <div className="bg-black/40 p-2 flex justify-between items-center border-l-2 border-primary/40">
-                                <span className="text-[8px] uppercase tracking-wider text-muted-foreground">Join Battle</span>
-                                <span className="font-display text-primary text-sm">{joinBattle}</span>
-                            </div>
-                        </div>
-                        
-                        <div className="grid grid-cols-2 gap-2 pt-2 border-t border-primary/10">
-                            <div className="bg-black/40 p-1.5 flex justify-between items-center border-l-2 border-primary/30">
-                                <span className="text-[7px] uppercase tracking-wider text-muted-foreground">Move</span>
-                                <span className="font-code text-primary/80 text-xs">{moveSpeed}m</span>
-                            </div>
-                            <div className="bg-black/40 p-1.5 flex justify-between items-center border-l-2 border-primary/30">
-                                <span className="text-[7px] uppercase tracking-wider text-muted-foreground">Dash</span>
-                                <span className="font-code text-primary/80 text-xs">{dashSpeed}m</span>
-                            </div>
-                            <div className="bg-black/40 p-1.5 flex justify-between items-center border-l-2 border-primary/30">
-                                <span className="text-[7px] uppercase tracking-wider text-muted-foreground">Jump V/H</span>
-                                <span className="font-code text-primary/80 text-xs">{verticalJump}/{horizontalJump}m</span>
-                            </div>
-                            <div className="bg-black/40 p-1.5 flex justify-between items-center border-l-2 border-primary/30">
-                                <span className="text-[7px] uppercase tracking-wider text-muted-foreground">Lift</span>
-                                <span className="font-code text-primary/80 text-xs">{liftCapacity}kg</span>
-                            </div>
-                        </div>
+                    <div className="space-y-2">
+                        <div className="flex justify-between items-center text-xs font-display uppercase text-primary/70">
+                             <span>Níveis de Vitalidade</span>
+                             <div className="flex items-center gap-2">
+                                 <div className="flex items-center gap-1 text-[9px] text-muted-foreground">
+                                     <span className="w-2 h-2 border border-primary/50 bg-black/50 block" /> B
+                                     <span className="w-2 h-2 border border-primary/50 bg-black/50 flex items-center justify-center text-[8px]" >x</span> L
+                                     <span className="w-2 h-2 border border-red-500/50 bg-black/50 flex items-center justify-center text-[8px] text-red-500" >*</span> A
+                                 </div>
+                                 <div className="flex items-center gap-1 border-l border-primary/20 pl-2">
+                                     <span className="text-[8px] text-muted-foreground">-0:</span>
+                                     <button 
+                                         onClick={() => setExtraOxBody(Math.max(0, extraOxBody - 1))}
+                                         className="w-4 h-4 flex items-center justify-center bg-black/50 border border-primary/30 text-primary/70 hover:bg-primary/20 hover:text-primary rounded-sm text-[10px] transition-colors"
+                                         data-testid="btn-decrease-ox"
+                                     >-</button>
+                                     <span className="text-[9px] font-code text-primary w-4 text-center">{1 + extraOxBody}</span>
+                                     <button 
+                                         onClick={() => setExtraOxBody(extraOxBody + 1)}
+                                         className="w-4 h-4 flex items-center justify-center bg-black/50 border border-primary/30 text-primary/70 hover:bg-primary/20 hover:text-primary rounded-sm text-[10px] transition-colors"
+                                         data-testid="btn-increase-ox"
+                                     >+</button>
+                                 </div>
+                             </div>
+                         </div>
+                         <div className="flex flex-wrap gap-2 justify-center">
+                             {currentHealthLevels.map((level, idx) => (
+                                 <div key={idx} className="flex flex-col items-center gap-1">
+                                     <HealthBox status={healthDamage[idx]} onClick={() => toggleHealth(idx)} />
+                                     <span className="text-[9px] font-code text-muted-foreground">{level}</span>
+                                 </div>
+                             ))}
+                         </div>
                     </div>
                 </MythicHUDFrame>
 
