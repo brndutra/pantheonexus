@@ -36,7 +36,7 @@ export default function Alleybrary() {
   });
 
   return (
-    <div className="min-h-screen bg-mythic-void text-foreground overflow-x-hidden font-tech selection:bg-primary/30 relative">
+    <div className="min-h-screen bg-mythic-void text-foreground overflow-x-hidden font-code selection:bg-primary/30 relative">
       <div className="fixed inset-0 pointer-events-none z-10 overlay-vignette opacity-70" />
       <div className="fixed inset-0 pointer-events-none z-10 overlay-scanline opacity-20" />
       <div className="fixed inset-0 pointer-events-none z-10 overlay-noise opacity-30 mix-blend-overlay" />
@@ -46,16 +46,16 @@ export default function Alleybrary() {
         {/* Header */}
         <div className="flex justify-between items-center mb-12 border-b border-primary/20 pb-6">
             <div className="flex flex-col">
-                <h1 className="font-mythic text-4xl md:text-5xl text-primary tracking-[0.2em] drop-shadow-[0_0_15px_rgba(212,175,55,0.5)] flex items-center gap-4">
+                <h1 className="font-display text-4xl md:text-5xl text-primary tracking-[0.2em] drop-shadow-[0_0_15px_rgba(212,175,55,0.5)] flex items-center gap-4">
                     <BookOpen className="w-10 h-10" />
                     ALLEY<span className="text-foreground">BRARY</span>
                 </h1>
-                <p className="font-tech text-xs text-muted-foreground tracking-[0.4em] uppercase mt-2 ml-1">
+                <p className="font-code text-xs text-muted-foreground tracking-[0.4em] uppercase mt-2 ml-1">
                     Forbidden Archives // Access Granted
                 </p>
             </div>
             <Link href="/">
-              <button className="flex items-center gap-2 text-[10px] font-mythic uppercase tracking-widest text-primary border border-primary/30 px-4 py-2 hover:bg-primary/10 transition-colors rounded-sm group">
+              <button className="flex items-center gap-2 text-[10px] font-display uppercase tracking-widest text-primary border border-primary/30 px-4 py-2 hover:bg-primary/10 transition-colors rounded-sm group">
                 <ArrowLeft className="w-3 h-3 group-hover:-translate-x-1 transition-transform" /> Return
               </button>
             </Link>
@@ -66,7 +66,7 @@ export default function Alleybrary() {
            <div className="relative w-full md:w-96">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/50" />
               <input 
-                 className="w-full bg-black/40 border border-primary/20 rounded-sm pl-10 pr-4 py-3 text-sm font-tech text-foreground outline-none focus:border-primary/50 placeholder:text-muted-foreground/30 transition-all focus:bg-black/60 focus:shadow-[0_0_15px_rgba(212,175,55,0.1)]"
+                 className="w-full bg-black/40 border border-primary/20 rounded-sm pl-10 pr-4 py-3 text-sm font-code text-foreground outline-none focus:border-primary/50 placeholder:text-muted-foreground/30 transition-all focus:bg-black/60 focus:shadow-[0_0_15px_rgba(212,175,55,0.1)]"
                  placeholder="Search the archives..."
                  value={searchTerm}
                  onChange={(e) => setSearchTerm(e.target.value)}
@@ -77,7 +77,7 @@ export default function Alleybrary() {
               <button 
                  onClick={() => setSelectedTag(null)}
                  className={cn(
-                    "px-3 py-1 text-[10px] uppercase tracking-wider font-mythic border rounded-sm transition-all",
+                    "px-3 py-1 text-[10px] uppercase tracking-wider font-display border rounded-sm transition-all",
                     selectedTag === null ? "bg-primary/20 border-primary text-primary" : "bg-black/20 border-white/10 text-muted-foreground hover:border-primary/30"
                  )}
               >
@@ -88,7 +88,7 @@ export default function Alleybrary() {
                     key={tag}
                     onClick={() => setSelectedTag(tag === selectedTag ? null : tag)}
                     className={cn(
-                       "px-3 py-1 text-[10px] uppercase tracking-wider font-mythic border rounded-sm transition-all",
+                       "px-3 py-1 text-[10px] uppercase tracking-wider font-display border rounded-sm transition-all",
                        selectedTag === tag ? "bg-primary/20 border-primary text-primary" : "bg-black/20 border-white/10 text-muted-foreground hover:border-primary/30"
                     )}
                  >
@@ -129,10 +129,10 @@ export default function Alleybrary() {
                                      </span>
                                   ))}
                                </div>
-                               <h2 className="font-mythic text-2xl text-primary tracking-wide mb-1 group-hover:text-white transition-colors">
+                               <h2 className="font-display text-2xl text-primary tracking-wide mb-1 group-hover:text-white transition-colors">
                                   {article.title}
                                </h2>
-                               <p className="font-tech text-sm text-muted-foreground/80 italic">
+                               <p className="font-code text-sm text-muted-foreground/80 italic">
                                   {article.summary}
                                </p>
                             </div>
@@ -156,8 +156,8 @@ export default function Alleybrary() {
            ) : (
              <div className="text-center py-20 border border-dashed border-primary/20 rounded-sm bg-black/20">
                 <BookOpen className="w-12 h-12 text-primary/20 mx-auto mb-4" />
-                <p className="font-mythic text-xl text-primary/40 tracking-widest uppercase">No Records Found</p>
-                <p className="font-tech text-xs text-muted-foreground mt-2">Adjust your search parameters or query the Oracle.</p>
+                <p className="font-display text-xl text-primary/40 tracking-widest uppercase">No Records Found</p>
+                <p className="font-code text-xs text-muted-foreground mt-2">Adjust your search parameters or query the Oracle.</p>
              </div>
            )}
         </div>

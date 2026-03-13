@@ -63,10 +63,10 @@ export const BoonCard = ({ boon, onSelect, isSelected }: BoonCardProps) => {
 
             <div className="flex justify-between items-start border-b border-[#333] pb-3 pr-24">
                 <div>
-                    <h4 className="text-[#E3963E] font-mythic text-xl uppercase tracking-wider leading-none flex items-center gap-2">
+                    <h4 className="text-[#E3963E] font-display text-xl uppercase tracking-wider leading-none flex items-center gap-2">
                         {name}
                     </h4>
-                    <span className="text-[10px] text-gray-500 font-tech uppercase tracking-widest mt-1 block">
+                    <span className="text-[10px] text-gray-500 font-code uppercase tracking-widest mt-1 block">
                         Level {tier} {purview && `// ${purview}`} {duration && `// ${duration}`}
                     </span>
                 </div>
@@ -191,10 +191,10 @@ export const BoonsCatalogModal = ({ isOpen, onClose, purview, onAddBoon, current
                                 <Sparkles size={24} className="text-[#E3963E]" />
                              </div>
                              <div>
-                                <DialogTitle className="text-3xl font-mythic uppercase tracking-widest text-white">
+                                <DialogTitle className="text-3xl font-display uppercase tracking-widest text-white">
                                     Divine <span className="text-[#E3963E]">Boons</span>
                                 </DialogTitle>
-                                <DialogDescription className="text-gray-500 font-tech uppercase tracking-wider text-xs">
+                                <DialogDescription className="text-gray-500 font-code uppercase tracking-wider text-xs">
                                     Capital Domain Registry
                                 </DialogDescription>
                              </div>

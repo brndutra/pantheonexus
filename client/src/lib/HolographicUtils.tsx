@@ -18,8 +18,8 @@ export const HOLO_COLORS = {
 
 export const HOLO_STYLES = {
   container: "bg-[#000000] border border-[#D4AF37] border-opacity-70 rounded-lg relative overflow-hidden transition-all duration-300 shadow-[0_4px_20px_rgba(212,175,55,0.15)]",
-  header: "font-mythic text-[#D4AF37] font-bold uppercase tracking-[0.05em] text-lg mb-1 drop-shadow-[0_0_8px_rgba(212,175,55,0.4)]",
-  label: "font-tech text-[#E8E8E8] text-xs uppercase tracking-wider opacity-80",
+  header: "font-display text-[#D4AF37] font-bold uppercase tracking-[0.05em] text-lg mb-1 drop-shadow-[0_0_8px_rgba(212,175,55,0.4)]",
+  label: "font-code text-[#E8E8E8] text-xs uppercase tracking-wider opacity-80",
   value: "font-mono text-[#E8E8E8] font-bold tracking-tight",
   subtext: "text-[#A9A9A9] text-[10px] font-mono tracking-wide",
   divider: "h-px w-full bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent opacity-30 my-2",
@@ -82,7 +82,7 @@ export const HoloHeader = ({ title, subtitle, onEdit, isEditing, onSave, onCance
               onClick={onSave}
               disabled={isLoading}
               data-testid="button-save-section"
-              className="h-6 px-3 bg-black/40 border border-green-500/50 text-green-400 hover:bg-green-900/20 hover:text-green-300 hover:border-green-400 font-tech uppercase text-[10px] tracking-wider"
+              className="h-6 px-3 bg-black/40 border border-green-500/50 text-green-400 hover:bg-green-900/20 hover:text-green-300 hover:border-green-400 font-code uppercase text-[10px] tracking-wider"
             >
               {isLoading ? <Loader2 size={10} className="animate-spin" /> : <><Check size={10} className="mr-1" /> Save</>}
             </Button>
@@ -92,7 +92,7 @@ export const HoloHeader = ({ title, subtitle, onEdit, isEditing, onSave, onCance
               onClick={onCancel}
               disabled={isLoading}
               data-testid="button-cancel-edit"
-              className="h-6 px-3 bg-black/40 border border-red-500/50 text-red-400 hover:bg-red-900/20 hover:text-red-300 hover:border-red-400 font-tech uppercase text-[10px] tracking-wider"
+              className="h-6 px-3 bg-black/40 border border-red-500/50 text-red-400 hover:bg-red-900/20 hover:text-red-300 hover:border-red-400 font-code uppercase text-[10px] tracking-wider"
             >
               <X size={10} className="mr-1" /> Cancel
             </Button>

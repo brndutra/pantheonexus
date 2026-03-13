@@ -20,10 +20,10 @@ const SectionFrame = ({ children, title, className, subHeader }: { children: Rea
 
     <div className="flex justify-between items-start mb-6 border-b border-primary/30 pb-2 relative z-10 px-6 pt-6 bg-gradient-to-b from-primary/5 to-transparent">
        <div>
-          <h3 className="font-mythic text-primary text-xl tracking-[0.15em] uppercase drop-shadow-md flex items-center gap-2">
+          <h3 className="font-display text-primary text-xl tracking-[0.15em] uppercase drop-shadow-md flex items-center gap-2">
             <span className="text-shadow-glow">{title}</span>
           </h3>
-          {subHeader && <p className="text-[10px] text-muted-foreground uppercase tracking-[0.2em] mt-1 font-tech pl-1">{subHeader}</p>}
+          {subHeader && <p className="text-[10px] text-muted-foreground uppercase tracking-[0.2em] mt-1 font-code pl-1">{subHeader}</p>}
        </div>
     </div>
     <div className="relative z-10 px-6 pb-6">
@@ -34,10 +34,10 @@ const SectionFrame = ({ children, title, className, subHeader }: { children: Rea
 
 const ScionInput = ({ label, className, as: Component = "input", ...props }: React.InputHTMLAttributes<HTMLInputElement> & { label?: string, as?: any }) => (
   <div className="flex flex-col gap-1 w-full">
-    {label && <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic">{label}</label>}
+    {label && <label className="text-[10px] uppercase tracking-widest text-primary/70 font-display">{label}</label>}
     <Component 
       className={cn(
-        "bg-black/50 border border-white/10 rounded-sm px-3 py-2 text-sm font-tech text-foreground outline-none focus:border-primary/50 placeholder:text-muted-foreground/30 transition-colors focus:bg-primary/5",
+        "bg-black/50 border border-white/10 rounded-sm px-3 py-2 text-sm font-code text-foreground outline-none focus:border-primary/50 placeholder:text-muted-foreground/30 transition-colors focus:bg-primary/5",
         className
       )}
       {...props} 
@@ -168,7 +168,7 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-mythic-void text-foreground overflow-x-hidden font-tech selection:bg-primary/30 relative">
+    <div className="min-h-screen bg-mythic-void text-foreground overflow-x-hidden font-code selection:bg-primary/30 relative">
       <div className="fixed inset-0 pointer-events-none z-10 overlay-vignette opacity-70" />
       <div className="fixed inset-0 pointer-events-none z-10 overlay-scanline opacity-20" />
       <div className="fixed inset-0 pointer-events-none z-10 overlay-noise opacity-30 mix-blend-overlay" />
@@ -178,22 +178,22 @@ export default function AdminDashboard() {
         <div className="flex justify-between items-end mb-8 border-b border-primary/20 pb-4 relative">
              <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary to-transparent opacity-50 shadow-[0_0_10px_gold]" />
             <div className="flex flex-col relative z-10">
-                <h1 className="font-mythic text-4xl md:text-5xl text-primary tracking-[0.2em] drop-shadow-[0_0_15px_rgba(212,175,55,0.5)] animate-glitch" data-text="PANTHEONEXUS">
+                <h1 className="font-display text-4xl md:text-5xl text-primary tracking-[0.2em] drop-shadow-[0_0_15px_rgba(212,175,55,0.5)] animate-glitch" data-text="PANTHEONEXUS">
                     PANTHEON<span className="text-foreground">EXUS</span>
                 </h1>
                 <div className="flex items-center gap-2 mt-1">
                     <div className="h-px w-8 bg-primary/50" />
-                    <span className="font-tech text-xs text-muted-foreground tracking-[0.5em] uppercase text-shadow-tech">Admin Console v2.0 // Override Access</span>
+                    <span className="font-code text-xs text-muted-foreground tracking-[0.5em] uppercase text-shadow-tech">Admin Console v2.0 // Override Access</span>
                 </div>
             </div>
             <div className="flex gap-4 relative z-10">
               <Link href="/character-sheet/victorious-sun">
-                <button className="flex items-center gap-2 text-[10px] font-mythic uppercase tracking-widest text-primary border border-primary/30 px-3 py-1 hover:bg-primary/10 transition-colors rounded-sm hover:shadow-[0_0_10px_rgba(212,175,55,0.2)]">
+                <button className="flex items-center gap-2 text-[10px] font-display uppercase tracking-widest text-primary border border-primary/30 px-3 py-1 hover:bg-primary/10 transition-colors rounded-sm hover:shadow-[0_0_10px_rgba(212,175,55,0.2)]">
                   <LayoutGrid className="w-3 h-3" /> Character Sheet
                 </button>
               </Link>
               <Link href="/">
-                <button className="flex items-center gap-2 text-[10px] font-mythic uppercase tracking-widest text-primary border border-primary/30 px-3 py-1 hover:bg-primary/10 transition-colors rounded-sm hover:shadow-[0_0_10px_rgba(212,175,55,0.2)]">
+                <button className="flex items-center gap-2 text-[10px] font-display uppercase tracking-widest text-primary border border-primary/30 px-3 py-1 hover:bg-primary/10 transition-colors rounded-sm hover:shadow-[0_0_10px_rgba(212,175,55,0.2)]">
                    Return Home
                 </button>
               </Link>
@@ -205,7 +205,7 @@ export default function AdminDashboard() {
             <button 
                 onClick={() => setActiveTab("scrolls")}
                 className={cn(
-                    "flex items-center gap-2 px-6 py-2 text-xs uppercase tracking-[0.2em] font-mythic border rounded-sm transition-all",
+                    "flex items-center gap-2 px-6 py-2 text-xs uppercase tracking-[0.2em] font-display border rounded-sm transition-all",
                     activeTab === "scrolls" 
                         ? "bg-primary/20 border-primary text-primary shadow-[0_0_10px_rgba(212,175,55,0.2)]" 
                         : "bg-black/40 border-white/10 text-muted-foreground hover:border-primary/40 hover:text-primary/70"
@@ -216,7 +216,7 @@ export default function AdminDashboard() {
             <button 
                 onClick={() => setActiveTab("alleybrary")}
                 className={cn(
-                    "flex items-center gap-2 px-6 py-2 text-xs uppercase tracking-[0.2em] font-mythic border rounded-sm transition-all",
+                    "flex items-center gap-2 px-6 py-2 text-xs uppercase tracking-[0.2em] font-display border rounded-sm transition-all",
                     activeTab === "alleybrary" 
                         ? "bg-primary/20 border-primary text-primary shadow-[0_0_10px_rgba(212,175,55,0.2)]" 
                         : "bg-black/40 border-white/10 text-muted-foreground hover:border-primary/40 hover:text-primary/70"
@@ -227,7 +227,7 @@ export default function AdminDashboard() {
             <button 
                 onClick={() => setActiveTab("compendium")}
                 className={cn(
-                    "flex items-center gap-2 px-6 py-2 text-xs uppercase tracking-[0.2em] font-mythic border rounded-sm transition-all",
+                    "flex items-center gap-2 px-6 py-2 text-xs uppercase tracking-[0.2em] font-display border rounded-sm transition-all",
                     activeTab === "compendium" 
                         ? "bg-primary/20 border-primary text-primary shadow-[0_0_10px_rgba(212,175,55,0.2)]" 
                         : "bg-black/40 border-white/10 text-muted-foreground hover:border-primary/40 hover:text-primary/70"
@@ -252,7 +252,7 @@ export default function AdminDashboard() {
                             key={tab.id}
                             onClick={() => setCompendiumTab(tab.id as any)}
                             className={cn(
-                                "flex items-center gap-2 px-4 py-1.5 text-[10px] uppercase tracking-[0.2em] font-mythic border rounded-sm transition-all",
+                                "flex items-center gap-2 px-4 py-1.5 text-[10px] uppercase tracking-[0.2em] font-display border rounded-sm transition-all",
                                 compendiumTab === tab.id
                                     ? "bg-primary/20 border-primary text-primary"
                                     : "bg-black/30 border-white/10 text-muted-foreground hover:border-primary/40"
@@ -272,10 +272,10 @@ export default function AdminDashboard() {
                                 <ScionInput label="Epic Attribute" placeholder="e.g. Dexterity" value={newKnack.epicAttribute} onChange={e => setNewKnack({...newKnack, epicAttribute: e.target.value})} />
                                 <ScionInput label="Prerequisite" placeholder="e.g. None" value={newKnack.prerequisite} onChange={e => setNewKnack({...newKnack, prerequisite: e.target.value})} />
                                 <div className="flex flex-col gap-1 w-full">
-                                    <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic">Description</label>
-                                    <textarea className="bg-black/20 border border-white/10 rounded-sm px-3 py-2 text-sm font-tech text-foreground outline-none focus:border-primary/50 h-24 resize-none" value={newKnack.description} onChange={e => setNewKnack({...newKnack, description: e.target.value})} />
+                                    <label className="text-[10px] uppercase tracking-widest text-primary/70 font-display">Description</label>
+                                    <textarea className="bg-black/20 border border-white/10 rounded-sm px-3 py-2 text-sm font-code text-foreground outline-none focus:border-primary/50 h-24 resize-none" value={newKnack.description} onChange={e => setNewKnack({...newKnack, description: e.target.value})} />
                                 </div>
-                                <button onClick={handleAddKnack} className="w-full mt-2 bg-primary/10 hover:bg-primary/20 border border-primary/40 text-primary py-2 px-4 rounded-sm flex items-center justify-center gap-2 uppercase tracking-widest font-mythic text-xs"><Plus className="w-3 h-3" /> Add Knack</button>
+                                <button onClick={handleAddKnack} className="w-full mt-2 bg-primary/10 hover:bg-primary/20 border border-primary/40 text-primary py-2 px-4 rounded-sm flex items-center justify-center gap-2 uppercase tracking-widest font-display text-xs"><Plus className="w-3 h-3" /> Add Knack</button>
                              </div>
                         )}
                         {compendiumTab === "boons" && (
@@ -284,8 +284,8 @@ export default function AdminDashboard() {
                                 <div className="grid grid-cols-2 gap-4">
                                     <ScionInput label="Purview" placeholder="e.g. Sky" value={newBoon.purview} onChange={e => setNewBoon({...newBoon, purview: e.target.value})} />
                                     <div className="flex flex-col gap-1">
-                                         <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic">Level</label>
-                                         <input type="number" min="1" max="10" className="bg-black/20 border border-white/10 rounded-sm px-3 py-2 text-sm font-tech text-foreground" value={newBoon.level} onChange={e => setNewBoon({...newBoon, level: parseInt(e.target.value)})} />
+                                         <label className="text-[10px] uppercase tracking-widest text-primary/70 font-display">Level</label>
+                                         <input type="number" min="1" max="10" className="bg-black/20 border border-white/10 rounded-sm px-3 py-2 text-sm font-code text-foreground" value={newBoon.level} onChange={e => setNewBoon({...newBoon, level: parseInt(e.target.value)})} />
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
@@ -293,40 +293,40 @@ export default function AdminDashboard() {
                                     <ScionInput label="Type" placeholder="e.g. Reflexive" value={newBoon.type} onChange={e => setNewBoon({...newBoon, type: e.target.value})} />
                                 </div>
                                 <div className="flex flex-col gap-1 w-full">
-                                    <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic">Description</label>
-                                    <textarea className="bg-black/20 border border-white/10 rounded-sm px-3 py-2 text-sm font-tech text-foreground outline-none focus:border-primary/50 h-24 resize-none" value={newBoon.description} onChange={e => setNewBoon({...newBoon, description: e.target.value})} />
+                                    <label className="text-[10px] uppercase tracking-widest text-primary/70 font-display">Description</label>
+                                    <textarea className="bg-black/20 border border-white/10 rounded-sm px-3 py-2 text-sm font-code text-foreground outline-none focus:border-primary/50 h-24 resize-none" value={newBoon.description} onChange={e => setNewBoon({...newBoon, description: e.target.value})} />
                                 </div>
-                                <button onClick={handleAddBoon} className="w-full mt-2 bg-primary/10 hover:bg-primary/20 border border-primary/40 text-primary py-2 px-4 rounded-sm flex items-center justify-center gap-2 uppercase tracking-widest font-mythic text-xs"><Plus className="w-3 h-3" /> Add Boon</button>
+                                <button onClick={handleAddBoon} className="w-full mt-2 bg-primary/10 hover:bg-primary/20 border border-primary/40 text-primary py-2 px-4 rounded-sm flex items-center justify-center gap-2 uppercase tracking-widest font-display text-xs"><Plus className="w-3 h-3" /> Add Boon</button>
                              </div>
                         )}
                         {compendiumTab === "virtues" && (
                              <div className="space-y-4">
                                 <ScionInput label="Virtue Name" placeholder="e.g. Valor" value={newVirtue.name} onChange={e => setNewVirtue({...newVirtue, name: e.target.value})} />
                                 <div className="flex flex-col gap-1 w-full">
-                                    <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic">Description</label>
-                                    <textarea className="bg-black/20 border border-white/10 rounded-sm px-3 py-2 text-sm font-tech text-foreground outline-none focus:border-primary/50 h-24 resize-none" value={newVirtue.description} onChange={e => setNewVirtue({...newVirtue, description: e.target.value})} />
+                                    <label className="text-[10px] uppercase tracking-widest text-primary/70 font-display">Description</label>
+                                    <textarea className="bg-black/20 border border-white/10 rounded-sm px-3 py-2 text-sm font-code text-foreground outline-none focus:border-primary/50 h-24 resize-none" value={newVirtue.description} onChange={e => setNewVirtue({...newVirtue, description: e.target.value})} />
                                 </div>
-                                <button onClick={handleAddVirtue} className="w-full mt-2 bg-primary/10 hover:bg-primary/20 border border-primary/40 text-primary py-2 px-4 rounded-sm flex items-center justify-center gap-2 uppercase tracking-widest font-mythic text-xs"><Plus className="w-3 h-3" /> Add Virtue</button>
+                                <button onClick={handleAddVirtue} className="w-full mt-2 bg-primary/10 hover:bg-primary/20 border border-primary/40 text-primary py-2 px-4 rounded-sm flex items-center justify-center gap-2 uppercase tracking-widest font-display text-xs"><Plus className="w-3 h-3" /> Add Virtue</button>
                              </div>
                         )}
                         {compendiumTab === "natures" && (
                              <div className="space-y-4">
                                 <ScionInput label="Nature / Archetype" placeholder="e.g. Architect" value={newNature.name} onChange={e => setNewNature({...newNature, name: e.target.value})} />
                                 <div className="flex flex-col gap-1 w-full">
-                                    <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic">Description</label>
-                                    <textarea className="bg-black/20 border border-white/10 rounded-sm px-3 py-2 text-sm font-tech text-foreground outline-none focus:border-primary/50 h-24 resize-none" value={newNature.description} onChange={e => setNewNature({...newNature, description: e.target.value})} />
+                                    <label className="text-[10px] uppercase tracking-widest text-primary/70 font-display">Description</label>
+                                    <textarea className="bg-black/20 border border-white/10 rounded-sm px-3 py-2 text-sm font-code text-foreground outline-none focus:border-primary/50 h-24 resize-none" value={newNature.description} onChange={e => setNewNature({...newNature, description: e.target.value})} />
                                 </div>
-                                <button onClick={handleAddNature} className="w-full mt-2 bg-primary/10 hover:bg-primary/20 border border-primary/40 text-primary py-2 px-4 rounded-sm flex items-center justify-center gap-2 uppercase tracking-widest font-mythic text-xs"><Plus className="w-3 h-3" /> Add Nature</button>
+                                <button onClick={handleAddNature} className="w-full mt-2 bg-primary/10 hover:bg-primary/20 border border-primary/40 text-primary py-2 px-4 rounded-sm flex items-center justify-center gap-2 uppercase tracking-widest font-display text-xs"><Plus className="w-3 h-3" /> Add Nature</button>
                              </div>
                         )}
                         {compendiumTab === "callings" && (
                              <div className="space-y-4">
                                 <ScionInput label="Calling Name" placeholder="e.g. Warrior" value={newCalling.name} onChange={e => setNewCalling({...newCalling, name: e.target.value})} />
                                 <div className="flex flex-col gap-1 w-full">
-                                    <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic">Description</label>
-                                    <textarea className="bg-black/20 border border-white/10 rounded-sm px-3 py-2 text-sm font-tech text-foreground outline-none focus:border-primary/50 h-24 resize-none" value={newCalling.description} onChange={e => setNewCalling({...newCalling, description: e.target.value})} />
+                                    <label className="text-[10px] uppercase tracking-widest text-primary/70 font-display">Description</label>
+                                    <textarea className="bg-black/20 border border-white/10 rounded-sm px-3 py-2 text-sm font-code text-foreground outline-none focus:border-primary/50 h-24 resize-none" value={newCalling.description} onChange={e => setNewCalling({...newCalling, description: e.target.value})} />
                                 </div>
-                                <button onClick={handleAddCalling} className="w-full mt-2 bg-primary/10 hover:bg-primary/20 border border-primary/40 text-primary py-2 px-4 rounded-sm flex items-center justify-center gap-2 uppercase tracking-widest font-mythic text-xs"><Plus className="w-3 h-3" /> Add Calling</button>
+                                <button onClick={handleAddCalling} className="w-full mt-2 bg-primary/10 hover:bg-primary/20 border border-primary/40 text-primary py-2 px-4 rounded-sm flex items-center justify-center gap-2 uppercase tracking-widest font-display text-xs"><Plus className="w-3 h-3" /> Add Calling</button>
                              </div>
                         )}
                     </SectionFrame>
@@ -340,7 +340,7 @@ export default function AdminDashboard() {
                                 <div key={item.id} className="p-3 bg-black/30 border border-white/5 rounded-sm hover:border-primary/30 group">
                                     <div className="flex justify-between items-start">
                                         <div>
-                                            <h4 className="font-mythic text-primary text-sm">{item.name}</h4>
+                                            <h4 className="font-display text-primary text-sm">{item.name}</h4>
                                             <div className="flex gap-2 text-[10px] text-muted-foreground uppercase mb-1">
                                                 <span>{item.epicAttribute}</span>
                                                 {item.prerequisite && <span>• Req: {item.prerequisite}</span>}
@@ -355,7 +355,7 @@ export default function AdminDashboard() {
                                 <div key={item.id} className="p-3 bg-black/30 border border-white/5 rounded-sm hover:border-primary/30 group">
                                     <div className="flex justify-between items-start">
                                         <div>
-                                            <h4 className="font-mythic text-primary text-sm">{item.name} <span className="text-muted-foreground ml-2 text-[10px] tracking-wider">Lvl {item.level}</span></h4>
+                                            <h4 className="font-display text-primary text-sm">{item.name} <span className="text-muted-foreground ml-2 text-[10px] tracking-wider">Lvl {item.level}</span></h4>
                                             <div className="flex gap-2 text-[10px] text-muted-foreground uppercase mb-1">
                                                 <span className="text-primary/70">{item.purview}</span>
                                                 <span>• {item.cost}</span>
@@ -371,7 +371,7 @@ export default function AdminDashboard() {
                                 <div key={item.id} className="p-3 bg-black/30 border border-white/5 rounded-sm hover:border-primary/30 group">
                                     <div className="flex justify-between items-start">
                                         <div>
-                                            <h4 className="font-mythic text-primary text-sm">{item.name}</h4>
+                                            <h4 className="font-display text-primary text-sm">{item.name}</h4>
                                             <p className="text-xs text-muted-foreground/80 font-serif mt-1">{item.description}</p>
                                         </div>
                                         <button onClick={() => compendiumTab === "virtues" ? deleteVirtue(item.id) : compendiumTab === "natures" ? deleteNature(item.id) : deleteCalling(item.id)} className="text-destructive/50 hover:text-destructive"><Trash2 className="w-3 h-3" /></button>
@@ -385,7 +385,7 @@ export default function AdminDashboard() {
                               (compendiumTab === "virtues" && virtues.length === 0) ||
                               (compendiumTab === "natures" && natures.length === 0) ||
                               (compendiumTab === "callings" && callings.length === 0)) && (
-                                <div className="text-center py-8 text-muted-foreground/50 font-tech text-xs uppercase tracking-widest border border-dashed border-white/10">
+                                <div className="text-center py-8 text-muted-foreground/50 font-code text-xs uppercase tracking-widest border border-dashed border-white/10">
                                     No records found in this registry.
                                 </div>
                             )}
@@ -422,7 +422,7 @@ export default function AdminDashboard() {
                             onChange={(e) => setNewScroll({...newScroll, pantheon: e.target.value})}
                         />
                         <div className="flex flex-col gap-1">
-                            <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic">Legend Rank</label>
+                            <label className="text-[10px] uppercase tracking-widest text-primary/70 font-display">Legend Rank</label>
                             <div className="flex items-center h-[38px] bg-black/20 border border-white/10 rounded-sm px-3">
                             <input 
                                 type="range" 
@@ -432,14 +432,14 @@ export default function AdminDashboard() {
                                 value={newScroll.legend}
                                 onChange={(e) => setNewScroll({...newScroll, legend: parseInt(e.target.value)})}
                             />
-                            <span className="ml-3 font-mythic text-primary text-lg w-6 text-center">{newScroll.legend}</span>
+                            <span className="ml-3 font-display text-primary text-lg w-6 text-center">{newScroll.legend}</span>
                             </div>
                         </div>
                     </div>
 
                     <button 
                         onClick={handleAddScroll}
-                        className="w-full mt-4 bg-primary/10 hover:bg-primary/20 border border-primary/40 text-primary py-3 px-4 rounded-sm flex items-center justify-center gap-2 uppercase tracking-widest font-mythic text-sm transition-all hover:shadow-[0_0_15px_rgba(212,175,55,0.2)]"
+                        className="w-full mt-4 bg-primary/10 hover:bg-primary/20 border border-primary/40 text-primary py-3 px-4 rounded-sm flex items-center justify-center gap-2 uppercase tracking-widest font-display text-sm transition-all hover:shadow-[0_0_15px_rgba(212,175,55,0.2)]"
                     >
                         <Plus className="w-4 h-4" /> Create Scroll
                     </button>
@@ -458,7 +458,7 @@ export default function AdminDashboard() {
                                 <Scroll className="w-6 h-6 text-primary/60" />
                                 </div>
                                 <div>
-                                <h4 className="font-mythic text-lg text-primary tracking-wide">{scroll.name}</h4>
+                                <h4 className="font-display text-lg text-primary tracking-wide">{scroll.name}</h4>
                                 <div className="flex items-center gap-4 text-[10px] text-muted-foreground font-code uppercase tracking-wider">
                                     <span className="flex items-center gap-1"><User className="w-3 h-3" /> {scroll.player}</span>
                                     <span className="flex items-center gap-1"><Shield className="w-3 h-3" /> {scroll.pantheon}</span>
@@ -469,7 +469,7 @@ export default function AdminDashboard() {
                             <div className="flex items-center gap-6">
                                 <div className="flex flex-col items-end">
                                 <span className="text-[9px] uppercase tracking-widest text-primary/50">Legend</span>
-                                <span className="font-mythic text-2xl text-primary">{scroll.legend}</span>
+                                <span className="font-display text-2xl text-primary">{scroll.legend}</span>
                                 </div>
                                 
                                 <div className="h-8 w-px bg-white/10 mx-2" />
@@ -517,9 +517,9 @@ export default function AdminDashboard() {
                             />
                             
                             <div className="flex flex-col gap-1 w-full">
-                                <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic">Abstract</label>
+                                <label className="text-[10px] uppercase tracking-widest text-primary/70 font-display">Abstract</label>
                                 <textarea 
-                                    className="bg-black/20 border border-white/10 rounded-sm px-3 py-2 text-sm font-tech text-foreground outline-none focus:border-primary/50 placeholder:text-muted-foreground/30 transition-colors h-20 resize-none"
+                                    className="bg-black/20 border border-white/10 rounded-sm px-3 py-2 text-sm font-code text-foreground outline-none focus:border-primary/50 placeholder:text-muted-foreground/30 transition-colors h-20 resize-none"
                                     placeholder="Brief summary..."
                                     value={newArticle.summary}
                                     onChange={(e) => setNewArticle({...newArticle, summary: e.target.value})}
@@ -527,9 +527,9 @@ export default function AdminDashboard() {
                             </div>
 
                             <div className="flex flex-col gap-1 w-full">
-                                <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic">Full Content</label>
+                                <label className="text-[10px] uppercase tracking-widest text-primary/70 font-display">Full Content</label>
                                 <textarea 
-                                    className="bg-black/20 border border-white/10 rounded-sm px-3 py-2 text-sm font-tech text-foreground outline-none focus:border-primary/50 placeholder:text-muted-foreground/30 transition-colors h-40 resize-y"
+                                    className="bg-black/20 border border-white/10 rounded-sm px-3 py-2 text-sm font-code text-foreground outline-none focus:border-primary/50 placeholder:text-muted-foreground/30 transition-colors h-40 resize-y"
                                     placeholder="Article body content..."
                                     value={newArticle.content}
                                     onChange={(e) => setNewArticle({...newArticle, content: e.target.value})}
@@ -553,7 +553,7 @@ export default function AdminDashboard() {
 
                             <div className="grid grid-cols-2 gap-4">
                                <div className="flex flex-col gap-1 w-full">
-                                  <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic">Cover Image</label>
+                                  <label className="text-[10px] uppercase tracking-widest text-primary/70 font-display">Cover Image</label>
                                   <div className="bg-black/20 border border-white/10 rounded-sm p-2 flex items-center justify-between">
                                      <span className="text-[9px] text-muted-foreground truncate w-20">{newArticle.coverImage ? "Image Loaded" : "No Image"}</span>
                                      <label className="cursor-pointer bg-primary/10 hover:bg-primary/20 text-primary px-2 py-1 rounded-sm text-[9px] uppercase tracking-widest transition-colors">
@@ -563,7 +563,7 @@ export default function AdminDashboard() {
                                   </div>
                                </div>
                                <div className="flex flex-col gap-1 w-full">
-                                  <label className="text-[10px] uppercase tracking-widest text-primary/70 font-mythic">Portrait Image</label>
+                                  <label className="text-[10px] uppercase tracking-widest text-primary/70 font-display">Portrait Image</label>
                                   <div className="bg-black/20 border border-white/10 rounded-sm p-2 flex items-center justify-between">
                                      <span className="text-[9px] text-muted-foreground truncate w-20">{newArticle.portraitImage ? "Image Loaded" : "No Image"}</span>
                                      <label className="cursor-pointer bg-primary/10 hover:bg-primary/20 text-primary px-2 py-1 rounded-sm text-[9px] uppercase tracking-widest transition-colors">
@@ -576,7 +576,7 @@ export default function AdminDashboard() {
 
                             <button 
                                 onClick={handlePublishArticle}
-                                className="w-full mt-2 bg-primary/10 hover:bg-primary/20 border border-primary/40 text-primary py-3 px-4 rounded-sm flex items-center justify-center gap-2 uppercase tracking-widest font-mythic text-sm transition-all hover:shadow-[0_0_15px_rgba(212,175,55,0.2)]"
+                                className="w-full mt-2 bg-primary/10 hover:bg-primary/20 border border-primary/40 text-primary py-3 px-4 rounded-sm flex items-center justify-center gap-2 uppercase tracking-widest font-display text-sm transition-all hover:shadow-[0_0_15px_rgba(212,175,55,0.2)]"
                             >
                                 <Send className="w-4 h-4" /> Publish Transmission
                             </button>
@@ -591,7 +591,7 @@ export default function AdminDashboard() {
                              {articles.map(article => (
                                  <div key={article.id} className="p-4 bg-black/30 border border-white/5 rounded-sm group hover:border-primary/30 transition-colors">
                                      <div className="flex justify-between items-start mb-2">
-                                         <h4 className="font-mythic text-primary tracking-wide text-lg">{article.title}</h4>
+                                         <h4 className="font-display text-primary tracking-wide text-lg">{article.title}</h4>
                                          <button 
                                             onClick={() => deleteArticle(article.id)}
                                             className="text-destructive/50 hover:text-destructive transition-colors p-1"
@@ -599,7 +599,7 @@ export default function AdminDashboard() {
                                              <Trash2 className="w-4 h-4" />
                                          </button>
                                      </div>
-                                     <p className="text-xs text-muted-foreground font-tech mb-3 line-clamp-2">{article.summary}</p>
+                                     <p className="text-xs text-muted-foreground font-code mb-3 line-clamp-2">{article.summary}</p>
                                      <div className="flex items-center gap-3 text-[10px] text-primary/50 font-code uppercase">
                                          <span>{article.date}</span>
                                          <span>//</span>
@@ -613,7 +613,7 @@ export default function AdminDashboard() {
                                  </div>
                              ))}
                              {articles.length === 0 && (
-                                <div className="text-center py-10 text-muted-foreground/50 font-tech text-xs uppercase tracking-widest">
+                                <div className="text-center py-10 text-muted-foreground/50 font-code text-xs uppercase tracking-widest">
                                     No transmissions logged.
                                 </div>
                              )}

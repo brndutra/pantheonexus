@@ -203,64 +203,21 @@ const MythicHUDFrame = ({
     onCancel?: () => void,
     isLoading?: boolean
 }) => (
-  <div className={cn("relative group", isEditing && "ring-1 ring-primary/50", className)}>
-    {/* Frame Background with gradient border effect */}
-    <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/50 to-black/70 backdrop-blur-md" 
-         style={{ clipPath: "polygon(0 8px, 8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 20px), calc(100% - 20px) 100%, 8px 100%, 0 calc(100% - 8px))" }} />
+  <div className={cn("relative group", isEditing && "ring-1 ring-primary/30", className)}>
+    <div className="absolute inset-0 bg-black/70 backdrop-blur-sm border border-primary/15" />
     
-    {/* Outer glow border */}
-    <div className="absolute inset-0 opacity-60"
-         style={{ 
-           clipPath: "polygon(0 8px, 8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 20px), calc(100% - 20px) 100%, 8px 100%, 0 calc(100% - 8px))",
-           boxShadow: "inset 0 0 0 1px hsl(var(--primary) / 0.4), 0 0 15px hsl(var(--primary) / 0.1)"
-         }} />
-    
-    {/* Top-left corner accent */}
-    <div className="absolute top-0 left-0 w-3 h-[1px] bg-gradient-to-r from-primary/80 to-transparent" />
-    <div className="absolute top-0 left-0 w-[1px] h-3 bg-gradient-to-b from-primary/80 to-transparent" />
-    <div className="absolute top-[7px] left-[7px] w-2 h-2 border-t border-l border-primary/50" />
-    
-    {/* Top-right corner accent */}
-    <div className="absolute top-0 right-0 w-3 h-[1px] bg-gradient-to-l from-primary/80 to-transparent" />
-    <div className="absolute top-0 right-0 w-[1px] h-3 bg-gradient-to-b from-primary/80 to-transparent" />
-    <div className="absolute top-[7px] right-[7px] w-2 h-2 border-t border-r border-primary/50" />
-    
-    {/* Bottom-left corner accent */}
-    <div className="absolute bottom-0 left-0 w-3 h-[1px] bg-gradient-to-r from-primary/80 to-transparent" />
-    <div className="absolute bottom-0 left-0 w-[1px] h-3 bg-gradient-to-t from-primary/80 to-transparent" />
-    <div className="absolute bottom-[7px] left-[7px] w-2 h-2 border-b border-l border-primary/50" />
-    
-    {/* Bottom-right diagonal cut accent */}
-    <div className="absolute bottom-0 right-[19px] w-4 h-[1px] bg-gradient-to-l from-primary/80 to-transparent" />
-    <div className="absolute bottom-[19px] right-0 w-[1px] h-4 bg-gradient-to-t from-primary/80 to-transparent" />
-    <div className="absolute bottom-[3px] right-[3px] w-4 h-4 border-b-2 border-r-2 border-primary/60 rotate-0" 
-         style={{ clipPath: "polygon(100% 0, 100% 100%, 0 100%)" }} />
-    <div className="absolute bottom-[6px] right-[6px] w-2 h-2 bg-primary/30" />
-    
-    {/* Scan line effect overlay */}
-    <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
-         style={{ 
-           background: "repeating-linear-gradient(0deg, transparent, transparent 2px, hsl(var(--primary)) 2px, hsl(var(--primary)) 3px)",
-           clipPath: "polygon(0 8px, 8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 20px), calc(100% - 20px) 100%, 8px 100%, 0 calc(100% - 8px))"
-         }} />
-    
-    {/* Inner highlight line at top */}
-    <div className="absolute top-[1px] left-[12px] right-[12px] h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
-
-    {/* Header Section */}
+    {/* Header Section — Muller style: thick rule + condensed title */}
     {(title || Icon) && (
-        <div className="relative z-10 flex items-center justify-between p-3 border-b border-primary/10 bg-gradient-to-r from-primary/5 to-transparent">
-            <div className="flex items-center gap-3">
-                {Icon && (
-                    <div className="p-1.5 bg-primary/10 rounded-sm border border-primary/30 text-primary shadow-[0_0_10px_rgba(212,175,55,0.2)]">
-                        <Icon className="w-4 h-4" />
+        <div className="relative z-10">
+            <div className="h-[3px] bg-primary w-full" />
+            <div className="flex items-center justify-between px-4 py-2.5">
+                <div className="flex items-center gap-3">
+                    {Icon && <Icon className="w-4 h-4 text-primary/70" />}
+                    <div className="flex flex-col">
+                        {title && <h3 className={cn("font-display text-primary tracking-wide uppercase", titleSize === "large" ? "text-2xl" : "text-xl")}>{title}</h3>}
+                        {subHeader && <span className="text-[8px] font-code uppercase tracking-[0.15em] text-muted-foreground/60">{subHeader}</span>}
                     </div>
-                )}
-                <div className="flex flex-col">
-                    {title && <h3 className={cn("font-mythic text-primary tracking-widest uppercase text-shadow-glow", titleSize === "large" ? "text-xl" : "text-lg")}>{title}</h3>}
-                    {subHeader && <span className="text-[9px] font-tech uppercase tracking-[0.2em] text-muted-foreground">{subHeader}</span>}
                 </div>
-            </div>
             
             <div className="flex items-center gap-2">
                 <AnimatePresence mode="wait">
@@ -272,7 +229,7 @@ const MythicHUDFrame = ({
                             exit={{ opacity: 0, scale: 0.8 }}
                             onClick={onEdit}
                             data-testid="button-edit-section"
-                            className="h-6 w-6 p-1 rounded-full border border-primary/30 hover:border-primary hover:bg-primary/10 hover:shadow-[0_0_10px_rgba(212,175,55,0.2)] text-primary transition-all flex items-center justify-center"
+                            className="h-6 w-6 p-1 border border-primary/30 hover:border-primary hover:bg-primary/10 text-primary transition-all flex items-center justify-center"
                             title="Edit"
                         >
                             <Pencil size={12} />
@@ -290,7 +247,7 @@ const MythicHUDFrame = ({
                                 onClick={onSave}
                                 disabled={isLoading}
                                 data-testid="button-save-section"
-                                className="h-6 px-3 bg-black/40 border border-green-500/50 text-green-400 hover:bg-green-900/20 hover:text-green-300 hover:border-green-400 font-tech uppercase text-[10px] tracking-wider rounded-sm flex items-center gap-1 transition-all disabled:opacity-50"
+                                className="h-6 px-3 bg-black/40 border border-green-500/50 text-green-400 hover:bg-green-900/20 hover:text-green-300 hover:border-green-400 font-code uppercase text-[10px] tracking-wider rounded-sm flex items-center gap-1 transition-all disabled:opacity-50"
                             >
                                 {isLoading ? <Loader2 size={10} className="animate-spin" /> : <><Check size={10} /> Save</>}
                             </button>
@@ -298,7 +255,7 @@ const MythicHUDFrame = ({
                                 onClick={onCancel}
                                 disabled={isLoading}
                                 data-testid="button-cancel-edit"
-                                className="h-6 px-3 bg-black/40 border border-red-500/50 text-red-400 hover:bg-red-900/20 hover:text-red-300 hover:border-red-400 font-tech uppercase text-[10px] tracking-wider rounded-sm flex items-center gap-1 transition-all disabled:opacity-50"
+                                className="h-6 px-3 bg-black/40 border border-red-500/50 text-red-400 hover:bg-red-900/20 hover:text-red-300 hover:border-red-400 font-code uppercase text-[10px] tracking-wider rounded-sm flex items-center gap-1 transition-all disabled:opacity-50"
                             >
                                 <X size={10} /> Cancel
                             </button>
@@ -316,6 +273,8 @@ const MythicHUDFrame = ({
                 
                 {action && <div className="flex items-center ml-2">{action}</div>}
             </div>
+            </div>
+            <div className="h-[1px] bg-primary/20 w-full" />
         </div>
     )}
 
@@ -323,22 +282,19 @@ const MythicHUDFrame = ({
     <div className="relative z-10 p-4">
         {children}
     </div>
-
-    {/* Scanline Effect */}
-    <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(212,175,55,0.02)_50%)] bg-[length:100%_4px] pointer-events-none z-0" />
   </div>
 );
 
 const SectionDivider = ({ label }: { label?: string }) => (
-    <div className="flex items-center gap-4 my-8 opacity-70">
-        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-primary/50 to-primary/20" />
+    <div className="flex items-center gap-4 my-8">
+        <div className="h-[2px] flex-1 bg-primary/30" />
         {label && (
             <div className="relative px-4 py-1">
                 <div className="absolute inset-0 border border-primary/30 transform skew-x-[-20deg] bg-black/60" />
-                <span className="relative z-10 font-mythic text-xs text-primary tracking-[0.3em] uppercase">{label}</span>
+                <span className="relative z-10 font-display text-sm text-primary tracking-[0.2em] uppercase">{label}</span>
             </div>
         )}
-        <div className="h-px flex-1 bg-gradient-to-l from-transparent via-primary/50 to-primary/20" />
+        <div className="h-[2px] flex-1 bg-primary/30" />
     </div>
 );
 
@@ -1415,7 +1371,7 @@ export default function CharacterSheet() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-mythic-void text-foreground flex items-center justify-center">
-        <p className="font-tech text-primary uppercase tracking-widest">Loading character data...</p>
+        <p className="font-code text-primary uppercase tracking-widest">Loading character data...</p>
       </div>
     );
   }
@@ -1424,9 +1380,9 @@ export default function CharacterSheet() {
   if (!characterId || (!loadedCharacter && !isLoading)) {
     return (
       <div className="min-h-screen bg-mythic-void text-foreground flex flex-col items-center justify-center gap-4">
-        <p className="font-tech text-muted-foreground uppercase tracking-widest">No character selected</p>
+        <p className="font-code text-muted-foreground uppercase tracking-widest">No character selected</p>
         <Link href="/">
-          <button className="text-sm text-primary hover:text-white border border-primary/30 hover:border-primary px-6 py-3 rounded-sm font-mythic uppercase tracking-wider flex items-center gap-2 transition-all hover:shadow-[0_0_15px_rgba(212,175,55,0.3)] hover:bg-primary/10">
+          <button className="text-sm text-primary hover:text-white border border-primary/30 hover:border-primary px-6 py-3 rounded-sm font-display uppercase tracking-wider flex items-center gap-2 transition-all hover:shadow-[0_0_15px_rgba(212,175,55,0.3)] hover:bg-primary/10">
             <ArrowLeft className="w-4 h-4" /> Return Home
           </button>
         </Link>
@@ -1435,7 +1391,7 @@ export default function CharacterSheet() {
   }
 
   return (
-    <div className="min-h-screen bg-mythic-void text-foreground overflow-x-hidden font-tech selection:bg-primary/30 relative">
+    <div className="min-h-screen bg-mythic-void text-foreground overflow-x-hidden font-code selection:bg-primary/30 relative">
       <div className="fixed inset-0 pointer-events-none z-10 overlay-vignette opacity-70" />
       <div className="fixed inset-0 pointer-events-none z-10 overlay-scanline opacity-10" />
       <div className="fixed inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03] pointer-events-none z-0" />
@@ -1448,12 +1404,12 @@ export default function CharacterSheet() {
         <div className="flex justify-between items-end mb-10 border-b border-primary/20 pb-4 relative">
              <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary to-transparent opacity-50 shadow-[0_0_10px_gold]" />
             <div className="flex flex-col relative z-10">
-                <h1 className="font-mythic text-5xl md:text-7xl text-primary tracking-[0.1em] drop-shadow-[0_0_15px_rgba(212,175,55,0.5)] animate-glitch" data-text="PANTHEONEXUS">
+                <h1 className="font-display text-5xl md:text-7xl text-primary tracking-[0.1em] drop-shadow-[0_0_15px_rgba(212,175,55,0.5)] animate-glitch" data-text="PANTHEONEXUS">
                     PANTHEON<span className="text-foreground">EXUS</span>
                 </h1>
                 <div className="flex items-center gap-2 mt-1">
                     <div className="h-px w-8 bg-primary/50" />
-                    <span className="font-tech text-xs text-muted-foreground tracking-[0.5em] uppercase text-shadow-tech">System v2.5 // Scion Neural Link</span>
+                    <span className="font-code text-xs text-muted-foreground tracking-[0.5em] uppercase text-shadow-tech">System v2.5 // Scion Neural Link</span>
                 </div>
             </div>
             <div className="text-right hidden md:block relative z-10">
@@ -1462,13 +1418,13 @@ export default function CharacterSheet() {
                        USER: {scionName || "UNKNOWN"}
                     </div>
                     <div className="flex items-center gap-1.5">
-                        <span className="text-[10px] font-tech text-primary animate-pulse">ONLINE</span>
+                        <span className="text-[10px] font-code text-primary animate-pulse">ONLINE</span>
                         <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse shadow-[0_0_8px_gold]"></div>
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <Link href="/">
-                    <button className="flex items-center gap-2 text-[10px] font-mythic uppercase tracking-widest text-primary border border-primary/30 px-3 py-1 hover:bg-primary/10 transition-colors rounded-sm hover:shadow-[0_0_10px_rgba(212,175,55,0.2)] group">
+                    <button className="flex items-center gap-2 text-[10px] font-display uppercase tracking-widest text-primary border border-primary/30 px-3 py-1 hover:bg-primary/10 transition-colors rounded-sm hover:shadow-[0_0_10px_rgba(212,175,55,0.2)] group">
                       <ArrowLeft className="w-3 h-3 group-hover:-translate-x-1 transition-transform" /> BACK TO PANT-HOME
                     </button>
                   </Link>
@@ -1508,7 +1464,7 @@ export default function CharacterSheet() {
                                       value={scionName} 
                                       onChange={(e) => setScionName(e.target.value)}
                                       placeholder="CODENAME" 
-                                      className="text-2xl font-mythic text-primary uppercase border-none bg-transparent p-0 shadow-none focus-visible:ring-0 placeholder:text-primary/20 text-shadow-glow" 
+                                      className="text-2xl font-display text-primary uppercase border-none bg-transparent p-0 shadow-none focus-visible:ring-0 placeholder:text-primary/20 text-shadow-glow" 
                                       viewMode={!editingIdentity}
                                      />
                                      <div className="flex gap-2 mt-1">
@@ -1516,7 +1472,7 @@ export default function CharacterSheet() {
                                             value={scionPantheon} 
                                             onChange={(e) => setScionPantheon(e.target.value)}
                                             placeholder="PANTHEON" 
-                                            className="text-xs font-tech tracking-[0.2em] text-primary/70 uppercase border-none bg-transparent p-0 shadow-none h-auto" 
+                                            className="text-xs font-code tracking-[0.2em] text-primary/70 uppercase border-none bg-transparent p-0 shadow-none h-auto" 
                                             viewMode={!editingIdentity}
                                          />
                                      </div>
@@ -1536,7 +1492,7 @@ export default function CharacterSheet() {
                                     key={tab}
                                     onClick={() => setIdCardTab(tab as any)}
                                     className={cn(
-                                      "text-[9px] uppercase tracking-[0.2em] font-mythic transition-colors pb-1 relative",
+                                      "text-[9px] uppercase tracking-[0.2em] font-display transition-colors pb-1 relative",
                                       idCardTab === tab ? "text-primary" : "text-muted-foreground hover:text-primary/70"
                                     )}
                                   >
@@ -1557,7 +1513,7 @@ export default function CharacterSheet() {
                                       exit={{ opacity: 0, height: 0 }}
                                       className="space-y-3 mt-4"
                                     >
-                                        <h5 className="text-[10px] font-mythic uppercase text-primary border-b border-primary/20 pb-1">Basic Data</h5>
+                                        <h5 className="text-[10px] font-display uppercase text-primary border-b border-primary/20 pb-1">Basic Data</h5>
                                         
                                         <div className="grid grid-cols-2 gap-3">
                                             <div className="col-span-2">
@@ -1651,7 +1607,7 @@ export default function CharacterSheet() {
                                       exit={{ opacity: 0, height: 0 }}
                                       className="space-y-3 mt-4"
                                     >
-                                        <h5 className="text-[10px] font-mythic uppercase text-[hsl(var(--highlight-purple))] border-b border-[hsl(var(--highlight-purple))]/20 pb-1">Psychological Matrix</h5>
+                                        <h5 className="text-[10px] font-display uppercase text-[hsl(var(--highlight-purple))] border-b border-[hsl(var(--highlight-purple))]/20 pb-1">Psychological Matrix</h5>
                                         
                                         <div className="space-y-2">
                                             <ScionInput 
@@ -1732,7 +1688,7 @@ export default function CharacterSheet() {
                                       exit={{ opacity: 0, height: 0 }}
                                       className="space-y-3 mt-4"
                                     >
-                                         <h5 className="text-[10px] font-mythic uppercase text-[hsl(var(--highlight-blue))] border-b border-[hsl(var(--highlight-blue))]/20 pb-1">Physical Presence</h5>
+                                         <h5 className="text-[10px] font-display uppercase text-[hsl(var(--highlight-blue))] border-b border-[hsl(var(--highlight-blue))]/20 pb-1">Physical Presence</h5>
                                          
                                          <div className="grid grid-cols-3 gap-3">
                                             <ScionInput 
@@ -1809,7 +1765,7 @@ export default function CharacterSheet() {
                                       exit={{ opacity: 0, height: 0 }}
                                       className="space-y-3 mt-4"
                                     >
-                                        <h5 className="text-[10px] font-mythic uppercase text-[hsl(var(--highlight-orange))] border-b border-[hsl(var(--highlight-orange))]/20 pb-1">Professional Profile</h5>
+                                        <h5 className="text-[10px] font-display uppercase text-[hsl(var(--highlight-orange))] border-b border-[hsl(var(--highlight-orange))]/20 pb-1">Professional Profile</h5>
                                         
                                         <ScionInput 
                                             label="Education History" 
@@ -1837,7 +1793,7 @@ export default function CharacterSheet() {
                                             />
                                         </div>
                                         
-                                        <h5 className="text-[10px] font-mythic uppercase text-primary/70 border-b border-primary/20 pb-1 mt-2">Interests</h5>
+                                        <h5 className="text-[10px] font-display uppercase text-primary/70 border-b border-primary/20 pb-1 mt-2">Interests</h5>
                                         
                                         <div className="grid grid-cols-3 gap-3">
                                             <ScionInput 
@@ -1964,13 +1920,13 @@ export default function CharacterSheet() {
                                 <div className="relative z-10 px-3 py-2 flex items-center justify-between gap-2">
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-2">
-                                            <span className="text-[8px] uppercase tracking-widest text-muted-foreground font-tech shrink-0">0{idx+1}</span>
+                                            <span className="text-[8px] uppercase tracking-widest text-muted-foreground font-code shrink-0">0{idx+1}</span>
                                             {editingCombat ? (
                                               <select
                                                 data-testid={`select-calling-${idx}`}
                                                 value={calling.name}
                                                 onChange={(e) => updateCalling(idx, 'name', e.target.value)}
-                                                className="text-sm font-mythic uppercase tracking-wider text-primary bg-black/60 border border-primary/30 rounded-sm px-1 py-0.5 h-auto focus:ring-1 focus:ring-primary/50 focus:outline-none drop-shadow-md cursor-pointer"
+                                                className="text-sm font-display uppercase tracking-wider text-primary bg-black/60 border border-primary/30 rounded-sm px-1 py-0.5 h-auto focus:ring-1 focus:ring-primary/50 focus:outline-none drop-shadow-md cursor-pointer"
                                               >
                                                 <option value="">CALLING</option>
                                                 {supabaseCallings.map((c) => (
@@ -1978,7 +1934,7 @@ export default function CharacterSheet() {
                                                 ))}
                                               </select>
                                             ) : (
-                                              <span className="text-sm font-mythic uppercase tracking-wider text-primary drop-shadow-md">
+                                              <span className="text-sm font-display uppercase tracking-wider text-primary drop-shadow-md">
                                                 {calling.name || "—"}
                                               </span>
                                             )}
@@ -2012,7 +1968,7 @@ export default function CharacterSheet() {
                 <div className="relative">
                     <div className="absolute inset-0 bg-gradient-to-r from-[hsl(var(--highlight-purple))]/10 to-transparent border-l-2 border-[hsl(var(--highlight-purple))]/60 rounded-sm" />
                     <div className="relative z-10 px-3 py-2 flex items-center gap-2">
-                        <span className="text-[8px] uppercase tracking-widest text-muted-foreground font-tech shrink-0">NAT</span>
+                        <span className="text-[8px] uppercase tracking-widest text-muted-foreground font-code shrink-0">NAT</span>
                         <div className="flex-1 relative">
                             <input 
                                 value={nature} 
@@ -2021,7 +1977,7 @@ export default function CharacterSheet() {
                                 onBlur={() => setTimeout(() => setNatureSearchOpen(false), 200)}
                                 onMouseEnter={() => !editingCombat && setShowNatureTooltip(true)}
                                 onMouseLeave={() => setShowNatureTooltip(false)}
-                                className="w-full text-sm font-mythic uppercase tracking-wider text-[hsl(var(--highlight-purple))] bg-transparent border-none p-0 h-auto focus:ring-0 outline-none placeholder:text-primary/30 cursor-pointer" 
+                                className="w-full text-sm font-display uppercase tracking-wider text-[hsl(var(--highlight-purple))] bg-transparent border-none p-0 h-auto focus:ring-0 outline-none placeholder:text-primary/30 cursor-pointer" 
                                 placeholder="SELECT NATURE"
                                 disabled={!editingCombat}
                             />
@@ -2029,7 +1985,7 @@ export default function CharacterSheet() {
                                 const natureStr = String(nature || '');
                                 const foundNature = availableNatures.find(n => n.nome?.toLowerCase() === natureStr.toLowerCase());
                                 return foundNature?.definition ? (
-                                    <div className="absolute left-0 top-full mt-2 p-2 bg-black/95 border border-primary/30 rounded-sm text-[10px] font-tech text-primary/70 max-w-[250px] z-50 pointer-events-none">
+                                    <div className="absolute left-0 top-full mt-2 p-2 bg-black/95 border border-primary/30 rounded-sm text-[10px] font-code text-primary/70 max-w-[250px] z-50 pointer-events-none">
                                         <p>{foundNature.definition}</p>
                                         {foundNature.gatilho_forca_vontade && (
                                             <p className="mt-1 text-accent-foreground/70">Gatilho: {foundNature.gatilho_forca_vontade}</p>
@@ -2049,7 +2005,7 @@ export default function CharacterSheet() {
                                                     setNature(n.nome);
                                                     setNatureSearchOpen(false);
                                                 }}
-                                                className="w-full text-left px-2 py-1.5 text-[9px] font-tech text-primary/80 hover:bg-primary/20 hover:text-primary transition-colors cursor-pointer"
+                                                className="w-full text-left px-2 py-1.5 text-[9px] font-code text-primary/80 hover:bg-primary/20 hover:text-primary transition-colors cursor-pointer"
                                                 title={n.definition || ''}
                                             >
                                                 <span className="block">{n.nome}</span>
@@ -2072,9 +2028,9 @@ export default function CharacterSheet() {
                         <div className="flex items-center justify-between p-2 bg-black/40 border-l-2 border-primary/60">
                             <div className="flex items-center gap-2">
                                 <Flame className="w-4 h-4 text-primary/60" />
-                                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-tech">Legend Level</span>
+                                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-code">Legend Level</span>
                             </div>
-                            <span className="text-xl font-mythic text-primary drop-shadow-[0_0_10px_gold]">
+                            <span className="text-xl font-display text-primary drop-shadow-[0_0_10px_gold]">
                                 {scionsight?.legend_level || 1}
                             </span>
                         </div>
@@ -2082,7 +2038,7 @@ export default function CharacterSheet() {
                         {/* Legend Pool: Current / Total (Level²) */}
                         <div className="p-2 bg-black/40 border-l-2 border-[hsl(var(--highlight-orange))]/60">
                             <div className="flex items-center justify-between mb-2">
-                                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-tech">Legend Pool</span>
+                                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-code">Legend Pool</span>
                                 <span className="text-[8px] text-muted-foreground">(Level² = {scionsight?.legend_pool_total || 1})</span>
                             </div>
                             <div className="flex items-center justify-center gap-3">
@@ -2104,7 +2060,7 @@ export default function CharacterSheet() {
                                     >
                                         <Minus className="w-3 h-3" />
                                     </button>
-                                    <span className="text-2xl font-mythic text-[hsl(var(--highlight-orange))] min-w-[60px] text-center drop-shadow-[0_0_8px_orange]">
+                                    <span className="text-2xl font-display text-[hsl(var(--highlight-orange))] min-w-[60px] text-center drop-shadow-[0_0_8px_orange]">
                                         {legendPoolCurrent}
                                     </span>
                                     <button 
@@ -2129,7 +2085,7 @@ export default function CharacterSheet() {
                                 <span className="text-xl text-muted-foreground">/</span>
                                 
                                 {/* Total (from Supabase, calculated as Legend²) */}
-                                <span className="text-2xl font-mythic text-primary/60">
+                                <span className="text-2xl font-display text-primary/60">
                                     {scionsight?.legend_pool_total || Math.pow(scionsight?.legend_level || 1, 2)}
                                 </span>
                             </div>
@@ -2275,13 +2231,13 @@ export default function CharacterSheet() {
                                         <div className="relative z-10 px-3 py-2 flex items-center justify-between gap-2">
                                             <div className="flex-1 min-w-0 relative group/virtue">
                                                 <div className="flex items-center gap-2">
-                                                    <span className="text-[8px] uppercase tracking-widest text-muted-foreground font-tech shrink-0">0{idx+1}</span>
+                                                    <span className="text-[8px] uppercase tracking-widest text-muted-foreground font-code shrink-0">0{idx+1}</span>
                                                     <input 
                                                         value={virtue.name} 
                                                         onChange={(e) => updateVirtue(idx, 'name', e.target.value)}
                                                         onFocus={() => editingVirtues && setVirtueSearchOpen(idx)}
                                                         onBlur={() => setTimeout(() => setVirtueSearchOpen(null), 200)}
-                                                        className="text-sm font-mythic uppercase tracking-wider text-primary bg-transparent border-none p-0 h-auto focus:ring-0 drop-shadow-md outline-none placeholder:text-primary/30" 
+                                                        className="text-sm font-display uppercase tracking-wider text-primary bg-transparent border-none p-0 h-auto focus:ring-0 drop-shadow-md outline-none placeholder:text-primary/30" 
                                                         placeholder="VIRTUE"
                                                         disabled={!editingVirtues}
                                                     />
@@ -2289,7 +2245,7 @@ export default function CharacterSheet() {
                                                     {virtue.name && !editingVirtues && (() => {
                                                         const foundVirtue = availableVirtues.find(v => v.name.toLowerCase() === virtue.name.toLowerCase());
                                                         return foundVirtue?.description ? (
-                                                            <div className="absolute left-0 top-full mt-2 p-2 bg-black/95 border border-primary/30 rounded-sm text-[10px] font-tech text-primary/70 max-w-[200px] opacity-0 group-hover/virtue:opacity-100 transition-opacity z-50 pointer-events-none">
+                                                            <div className="absolute left-0 top-full mt-2 p-2 bg-black/95 border border-primary/30 rounded-sm text-[10px] font-code text-primary/70 max-w-[200px] opacity-0 group-hover/virtue:opacity-100 transition-opacity z-50 pointer-events-none">
                                                                 {foundVirtue.description}
                                                             </div>
                                                         ) : null;
@@ -2307,7 +2263,7 @@ export default function CharacterSheet() {
                                                                             updateVirtue(idx, 'name', v.name);
                                                                             setVirtueSearchOpen(null);
                                                                         }}
-                                                                        className="w-full text-left px-2 py-1.5 text-xs font-tech text-primary/80 hover:bg-primary/20 hover:text-primary transition-colors cursor-pointer"
+                                                                        className="w-full text-left px-2 py-1.5 text-xs font-code text-primary/80 hover:bg-primary/20 hover:text-primary transition-colors cursor-pointer"
                                                                         title={v.description || ''}
                                                                     >
                                                                         <span className="block">{v.name}</span>
@@ -2359,7 +2315,7 @@ export default function CharacterSheet() {
                     
                     {/* Health Track - Moved here below Virtues */}
                     <div className="mt-3 pt-3 border-t border-primary/15 space-y-2">
-                        <div className="flex justify-between items-center text-xs font-mythic uppercase text-primary/70">
+                        <div className="flex justify-between items-center text-xs font-display uppercase text-primary/70">
                              <span>Níveis de Vitalidade</span>
                              <div className="flex items-center gap-2">
                                  <div className="flex items-center gap-1 text-[9px] text-muted-foreground">
@@ -2374,7 +2330,7 @@ export default function CharacterSheet() {
                                          className="w-4 h-4 flex items-center justify-center bg-black/50 border border-primary/30 text-primary/70 hover:bg-primary/20 hover:text-primary rounded-sm text-[10px] transition-colors"
                                          data-testid="btn-decrease-ox"
                                      >-</button>
-                                     <span className="text-[9px] font-tech text-primary w-4 text-center">{1 + extraOxBody}</span>
+                                     <span className="text-[9px] font-code text-primary w-4 text-center">{1 + extraOxBody}</span>
                                      <button 
                                          onClick={() => setExtraOxBody(extraOxBody + 1)}
                                          className="w-4 h-4 flex items-center justify-center bg-black/50 border border-primary/30 text-primary/70 hover:bg-primary/20 hover:text-primary rounded-sm text-[10px] transition-colors"
@@ -2387,7 +2343,7 @@ export default function CharacterSheet() {
                              {currentHealthLevels.map((level, idx) => (
                                  <div key={idx} className="flex flex-col items-center gap-1">
                                      <HealthBox status={healthDamage[idx]} onClick={() => toggleHealth(idx)} />
-                                     <span className="text-[9px] font-tech text-muted-foreground">{level}</span>
+                                     <span className="text-[9px] font-code text-muted-foreground">{level}</span>
                                  </div>
                              ))}
                          </div>
@@ -2399,14 +2355,14 @@ export default function CharacterSheet() {
                         <div className="flex items-center justify-between p-2 bg-black/40 border-l-2 border-[hsl(var(--highlight-blue))]/60">
                             <div className="flex items-center gap-2">
                                 <Shield className="w-4 h-4 text-[hsl(var(--highlight-blue))]/60" />
-                                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-tech">Total</span>
+                                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-code">Total</span>
                             </div>
                             <DotRating value={willpower} max={10} onChange={setWillpower} iconClassName="w-2.5 h-2.5" activeClassName="bg-[hsl(var(--highlight-blue))] shadow-[0_0_4px_hsl(var(--highlight-blue))]" />
                         </div>
                         
                         <div className="p-2 bg-black/40 border-l-2 border-primary/60">
                             <div className="flex items-center justify-between mb-2">
-                                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-tech">Current Pool</span>
+                                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-code">Current Pool</span>
                                 <span className="text-[8px] text-muted-foreground">({willpowerCurrent} / {willpower})</span>
                             </div>
                             <div className="flex items-center justify-center gap-3">
@@ -2417,7 +2373,7 @@ export default function CharacterSheet() {
                                     >
                                         <Minus className="w-3 h-3" />
                                     </button>
-                                    <span className="text-2xl font-mythic text-[hsl(var(--highlight-blue))] min-w-[60px] text-center drop-shadow-[0_0_8px_hsl(var(--highlight-blue))]">
+                                    <span className="text-2xl font-display text-[hsl(var(--highlight-blue))] min-w-[60px] text-center drop-shadow-[0_0_8px_hsl(var(--highlight-blue))]">
                                         {willpowerCurrent}
                                     </span>
                                     <button 
@@ -2430,7 +2386,7 @@ export default function CharacterSheet() {
                                 
                                 <span className="text-xl text-muted-foreground">/</span>
                                 
-                                <span className="text-2xl font-mythic text-primary/60">
+                                <span className="text-2xl font-display text-primary/60">
                                     {willpower}
                                 </span>
                             </div>
@@ -2458,19 +2414,19 @@ export default function CharacterSheet() {
                         <div className="grid grid-cols-2 gap-2">
                             <div className="bg-black/40 p-2 flex justify-between items-center border-l-2 border-primary/40">
                                 <span className="text-[8px] uppercase tracking-wider text-muted-foreground">Dodge DV</span>
-                                <span className="font-mythic text-primary text-sm">{dodgeDV}</span>
+                                <span className="font-display text-primary text-sm">{dodgeDV}</span>
                             </div>
                             <div className="bg-black/40 p-2 flex justify-between items-center border-l-2 border-primary/40">
                                 <span className="text-[8px] uppercase tracking-wider text-muted-foreground">Parry DV</span>
-                                <span className="font-mythic text-primary text-sm">{parryDV}</span>
+                                <span className="font-display text-primary text-sm">{parryDV}</span>
                             </div>
                             <div className="bg-black/40 p-2 flex justify-between items-center border-l-2 border-primary/40">
                                 <span className="text-[8px] uppercase tracking-wider text-muted-foreground">Armed DV</span>
-                                <span className="font-mythic text-primary text-sm">{armedDV}</span>
+                                <span className="font-display text-primary text-sm">{armedDV}</span>
                             </div>
                             <div className="bg-black/40 p-2 flex justify-between items-center border-l-2 border-primary/40">
                                 <span className="text-[8px] uppercase tracking-wider text-muted-foreground">Join Battle</span>
-                                <span className="font-mythic text-primary text-sm">{joinBattle}</span>
+                                <span className="font-display text-primary text-sm">{joinBattle}</span>
                             </div>
                         </div>
                         
@@ -2478,19 +2434,19 @@ export default function CharacterSheet() {
                         <div className="grid grid-cols-2 gap-2 pt-2 border-t border-primary/10">
                             <div className="bg-black/40 p-1.5 flex justify-between items-center border-l-2 border-primary/30">
                                 <span className="text-[7px] uppercase tracking-wider text-muted-foreground">Move</span>
-                                <span className="font-tech text-primary/80 text-xs">{moveSpeed}m</span>
+                                <span className="font-code text-primary/80 text-xs">{moveSpeed}m</span>
                             </div>
                             <div className="bg-black/40 p-1.5 flex justify-between items-center border-l-2 border-primary/30">
                                 <span className="text-[7px] uppercase tracking-wider text-muted-foreground">Dash</span>
-                                <span className="font-tech text-primary/80 text-xs">{dashSpeed}m</span>
+                                <span className="font-code text-primary/80 text-xs">{dashSpeed}m</span>
                             </div>
                             <div className="bg-black/40 p-1.5 flex justify-between items-center border-l-2 border-primary/30">
                                 <span className="text-[7px] uppercase tracking-wider text-muted-foreground">Jump V/H</span>
-                                <span className="font-tech text-primary/80 text-xs">{verticalJump}/{horizontalJump}m</span>
+                                <span className="font-code text-primary/80 text-xs">{verticalJump}/{horizontalJump}m</span>
                             </div>
                             <div className="bg-black/40 p-1.5 flex justify-between items-center border-l-2 border-primary/30">
                                 <span className="text-[7px] uppercase tracking-wider text-muted-foreground">Lift</span>
-                                <span className="font-tech text-primary/80 text-xs">{liftCapacity}kg</span>
+                                <span className="font-code text-primary/80 text-xs">{liftCapacity}kg</span>
                             </div>
                         </div>
                     </div>
@@ -2506,21 +2462,21 @@ export default function CharacterSheet() {
                 <div className="space-y-4">
                     {/* Soak Values */}
                     <div className="space-y-2">
-                        <div className="text-[10px] font-mythic uppercase text-primary/70 tracking-widest">Absorção (Soak)</div>
+                        <div className="text-[10px] font-display uppercase text-primary/70 tracking-widest">Absorção (Soak)</div>
                         <div className="grid grid-cols-3 gap-2">
                             <div className="bg-black/40 p-2 text-center border border-primary/20 rounded-sm">
                                 <div className="text-[8px] text-muted-foreground uppercase">Bashing</div>
-                                <div className="text-lg font-mythic text-primary">{totalBashingSoak}</div>
+                                <div className="text-lg font-display text-primary">{totalBashingSoak}</div>
                                 <div className="text-[7px] text-muted-foreground">({baseBashingSoak} + {currentArmor.soakB})</div>
                             </div>
                             <div className="bg-black/40 p-2 text-center border border-primary/20 rounded-sm">
                                 <div className="text-[8px] text-muted-foreground uppercase">Lethal</div>
-                                <div className="text-lg font-mythic text-primary">{totalLethalSoak}</div>
+                                <div className="text-lg font-display text-primary">{totalLethalSoak}</div>
                                 <div className="text-[7px] text-muted-foreground">({baseLethalSoak} + {currentArmor.soakL})</div>
                             </div>
                             <div className="bg-black/40 p-2 text-center border border-red-500/20 rounded-sm">
                                 <div className="text-[8px] text-red-400/70 uppercase">Aggravated</div>
-                                <div className="text-lg font-mythic text-red-400">{totalAggSoak}</div>
+                                <div className="text-lg font-display text-red-400">{totalAggSoak}</div>
                                 <div className="text-[7px] text-muted-foreground">({baseAggSoak} + {currentArmor.soakA})</div>
                             </div>
                         </div>
@@ -2528,7 +2484,7 @@ export default function CharacterSheet() {
 
                     {/* Armor Selection */}
                     <div className="space-y-2 pt-2 border-t border-primary/10">
-                        <div className="text-[10px] font-mythic uppercase text-primary/70 tracking-widest">Armadura Equipada</div>
+                        <div className="text-[10px] font-display uppercase text-primary/70 tracking-widest">Armadura Equipada</div>
                         <select
                             value={selectedArmor}
                             onChange={(e) => setSelectedArmor(e.target.value)}
@@ -2548,17 +2504,17 @@ export default function CharacterSheet() {
                                 <div className="grid grid-cols-2 gap-2 text-[9px]">
                                     <div className="flex justify-between">
                                         <span className="text-muted-foreground">Soak B/L/A:</span>
-                                        <span className="text-primary font-tech">{currentArmor.soakB}/{currentArmor.soakL}/{currentArmor.soakA}</span>
+                                        <span className="text-primary font-code">{currentArmor.soakB}/{currentArmor.soakL}/{currentArmor.soakA}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-muted-foreground">Mobilidade:</span>
-                                        <span className={cn("font-tech", mobilityPenalty < 0 ? "text-red-400" : "text-primary")}>
+                                        <span className={cn("font-code", mobilityPenalty < 0 ? "text-red-400" : "text-primary")}>
                                             {mobilityPenalty}
                                         </span>
                                     </div>
                                     <div className="flex justify-between col-span-2">
                                         <span className="text-muted-foreground">Fadiga:</span>
-                                        <span className={cn("font-tech", fatiguePenalty > 0 ? "text-amber-400" : "text-primary")}>
+                                        <span className={cn("font-code", fatiguePenalty > 0 ? "text-amber-400" : "text-primary")}>
                                             {fatiguePenalty}
                                         </span>
                                     </div>
@@ -2572,7 +2528,7 @@ export default function CharacterSheet() {
                         <div className="pt-2 border-t border-primary/10">
                             <div className="flex justify-between items-center text-xs">
                                 <span className="text-muted-foreground">Hardness (Epic Stamina):</span>
-                                <span className="font-mythic text-[hsl(var(--highlight-amber))]">{epicStamina}</span>
+                                <span className="font-display text-[hsl(var(--highlight-amber))]">{epicStamina}</span>
                             </div>
                         </div>
                     )}
@@ -2601,7 +2557,7 @@ export default function CharacterSheet() {
                                         <button
                                             key={`${o.offensive_name}-${i}`}
                                             onClick={() => addOffensiveFromDatabase(o)}
-                                            className="w-full text-left px-2 py-1.5 text-[9px] font-tech hover:bg-primary/20 text-primary transition-colors flex items-center justify-between gap-2 border-b border-primary/10 last:border-0"
+                                            className="w-full text-left px-2 py-1.5 text-[9px] font-code hover:bg-primary/20 text-primary transition-colors flex items-center justify-between gap-2 border-b border-primary/10 last:border-0"
                                         >
                                             <div className="flex items-center gap-2">
                                                 <Crosshair className="w-3 h-3 text-primary/50" />
@@ -2658,7 +2614,7 @@ export default function CharacterSheet() {
                     {/* Weapons List */}
                     <div className="space-y-0 max-h-[250px] overflow-y-auto">
                         {weapons.map((w, i) => (
-                            <div key={i} className={`grid grid-cols-[1.8fr_0.7fr_0.7fr_0.5fr_0.6fr_0.5fr_0.5fr_0.5fr_0.6fr_0.7fr_auto] gap-1 text-[10px] font-tech text-primary/90 items-center py-1.5 px-1 hover:bg-primary/10 transition-colors border-l-2 ${w.isInnate || w.category === 'innate' ? 'border-primary/30 bg-primary/5' : 'border-transparent hover:border-primary'} group`}>
+                            <div key={i} className={`grid grid-cols-[1.8fr_0.7fr_0.7fr_0.5fr_0.6fr_0.5fr_0.5fr_0.5fr_0.6fr_0.7fr_auto] gap-1 text-[10px] font-code text-primary/90 items-center py-1.5 px-1 hover:bg-primary/10 transition-colors border-l-2 ${w.isInnate || w.category === 'innate' ? 'border-primary/30 bg-primary/5' : 'border-transparent hover:border-primary'} group`}>
                                 <div className="font-bold truncate flex items-center gap-1.5">
                                     <Crosshair className="w-3 h-3 text-primary/50 shrink-0" />
                                     <span className="truncate">{w.name}</span>
@@ -2689,7 +2645,7 @@ export default function CharacterSheet() {
                         ))}
                         
                         {/* Empty Row for Custom Offensive */}
-                        <div className="grid grid-cols-[1.8fr_0.7fr_0.7fr_0.5fr_0.6fr_0.5fr_0.5fr_0.5fr_0.6fr_0.7fr_auto] gap-1 text-[10px] font-tech items-center py-1.5 px-1 border-l-2 border-accent/30 bg-accent/5">
+                        <div className="grid grid-cols-[1.8fr_0.7fr_0.7fr_0.5fr_0.6fr_0.5fr_0.5fr_0.5fr_0.6fr_0.7fr_auto] gap-1 text-[10px] font-code items-center py-1.5 px-1 border-l-2 border-accent/30 bg-accent/5">
                             <input 
                                 value={customOffensive.name || ''}
                                 onChange={e => setCustomOffensive({...customOffensive, name: e.target.value})}
@@ -2787,14 +2743,14 @@ export default function CharacterSheet() {
                 <div className="space-y-4 flex-1 flex flex-col justify-between">
                     {(Object.entries(attributes) as [AttributeCategory, Attribute[]][]).map(([category, attrs]) => (
                         <div key={category} className="space-y-1.5 relative flex-1">
-                            <h4 className="text-[11px] font-mythic uppercase tracking-[0.2em] text-primary/60 border-b border-primary/20 pb-1.5 mb-2">
+                            <h4 className="text-[11px] font-display uppercase tracking-[0.2em] text-primary/60 border-b border-primary/20 pb-1.5 mb-2">
                                 {category}
                             </h4>
                             {attrs.map((attr, idx) => (
                                 <div key={attr.name} className="flex items-center justify-between gap-2 group py-1 px-1 hover:bg-primary/5 rounded-sm transition-colors">
                                     <div className="flex items-center gap-2">
                                         <span className="text-primary/50 text-[10px] w-4">{attr.rune}</span>
-                                        <span className="text-[11px] font-bold font-tech text-foreground uppercase tracking-wide">
+                                        <span className="text-[11px] font-bold font-code text-foreground uppercase tracking-wide">
                                             {attr.name}
                                         </span>
                                     </div>
@@ -2807,7 +2763,7 @@ export default function CharacterSheet() {
                                             activeClassName="bg-primary shadow-[0_0_4px_gold] border-primary"
                                             readOnly={!editingAttributes}
                                         />
-                                        <span className="text-xs font-mythic text-primary w-3 text-center">{attr.value}</span>
+                                        <span className="text-xs font-display text-primary w-3 text-center">{attr.value}</span>
                                         {/* Epic indicator */}
                                         <div className="flex gap-0.5">
                                             {Array.from({length: 5}).map((_, i) => {
@@ -2854,7 +2810,7 @@ export default function CharacterSheet() {
                                             <Star className="w-3 h-3 text-[hsl(var(--highlight-amber))] fill-[hsl(var(--highlight-amber))] flex-shrink-0" />
                                         )}
                                         <span className={cn(
-                                            "text-[11px] uppercase tracking-wide font-tech transition-colors truncate",
+                                            "text-[11px] uppercase tracking-wide font-code transition-colors truncate",
                                             isHeritage ? "text-[hsl(var(--highlight-amber))] font-bold" : 
                                             (ability.value || 0) > 0 ? "text-foreground" : "text-muted-foreground group-hover:text-primary/70"
                                         )}>
@@ -2885,7 +2841,7 @@ export default function CharacterSheet() {
                                                 >
                                                     <Minus className="w-3 h-3" />
                                                 </button>
-                                                <span className="text-sm font-mythic text-primary w-4 text-center">{ability.value || 0}</span>
+                                                <span className="text-sm font-display text-primary w-4 text-center">{ability.value || 0}</span>
                                                 <button 
                                                     onClick={() => updateAbilityValue(abilityName, Math.min(5, (ability.value || 0) + 1))}
                                                     className="text-primary/40 hover:text-primary"
@@ -2895,7 +2851,7 @@ export default function CharacterSheet() {
                                             </div>
                                         ) : (
                                             <span className={cn(
-                                                "text-sm font-mythic w-5 text-center",
+                                                "text-sm font-display w-5 text-center",
                                                 (ability.value || 0) > 0 ? "text-primary" : "text-muted-foreground/40"
                                             )}>{ability.value || 0}</span>
                                         )}
@@ -2934,7 +2890,7 @@ export default function CharacterSheet() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                      {/* Knacks Column */}
                      <div>
-                         <h5 className="text-xs font-mythic text-primary/60 border-b border-primary/20 pb-1 mb-3 uppercase">Knacks Registry</h5>
+                         <h5 className="text-xs font-display text-primary/60 border-b border-primary/20 pb-1 mb-3 uppercase">Knacks Registry</h5>
                          <div className="space-y-2">
                              {knacks.length === 0 ? (
                                  <div className="text-[10px] text-muted-foreground/50 italic text-center py-4">
@@ -3016,7 +2972,7 @@ export default function CharacterSheet() {
                                                      onClick={() => addKnackFromDatabase(k)}
                                                      disabled={knacks.some(kk => kk.id === k.id)}
                                                      className={cn(
-                                                         "w-full text-left px-2 py-1.5 text-[9px] font-tech transition-colors flex items-center gap-3 border-b border-primary/10 last:border-0",
+                                                         "w-full text-left px-2 py-1.5 text-[9px] font-code transition-colors flex items-center gap-3 border-b border-primary/10 last:border-0",
                                                          knacks.some(kk => kk.id === k.id) 
                                                              ? "opacity-40 cursor-not-allowed" 
                                                              : "hover:bg-primary/20 text-primary"
@@ -3067,7 +3023,7 @@ export default function CharacterSheet() {
 
                      {/* Boons Column */}
                      <div>
-                         <h5 className="text-xs font-mythic text-accent-foreground/60 border-b border-accent-foreground/20 pb-1 mb-3 uppercase">Boons Registry</h5>
+                         <h5 className="text-xs font-display text-accent-foreground/60 border-b border-accent-foreground/20 pb-1 mb-3 uppercase">Boons Registry</h5>
                          <div className="space-y-2">
                              {selectedBoons.length === 0 ? (
                                  <div className="text-[10px] text-muted-foreground/50 italic text-center py-4">
@@ -3134,7 +3090,7 @@ export default function CharacterSheet() {
                                                      onClick={() => addBoonFromDatabase(b)}
                                                      disabled={selectedBoons.some(sb => sb.id === b.id)}
                                                      className={cn(
-                                                         "w-full text-left px-2 py-1.5 text-[9px] font-tech transition-colors flex items-center gap-3 border-b border-accent/10 last:border-0",
+                                                         "w-full text-left px-2 py-1.5 text-[9px] font-code transition-colors flex items-center gap-3 border-b border-accent/10 last:border-0",
                                                          selectedBoons.some(sb => sb.id === b.id) 
                                                              ? "opacity-40 cursor-not-allowed" 
                                                              : "hover:bg-accent/20 text-accent-foreground"
@@ -3190,7 +3146,7 @@ export default function CharacterSheet() {
                             <div className="w-6 h-6 flex items-center justify-center bg-primary/10 rounded-sm border border-primary/20">
                                 <span className="text-xs">🐺</span>
                             </div>
-                            <span className="text-[10px] font-mythic uppercase text-primary/80 tracking-widest">Criaturas</span>
+                            <span className="text-[10px] font-display uppercase text-primary/80 tracking-widest">Criaturas</span>
                         </div>
                         {/* List of creatures */}
                         <div className="space-y-1 max-h-32 overflow-y-auto">
@@ -3244,7 +3200,7 @@ export default function CharacterSheet() {
                             <div className="w-6 h-6 flex items-center justify-center bg-primary/10 rounded-sm border border-primary/20">
                                 <span className="text-xs">👁</span>
                             </div>
-                            <span className="text-[10px] font-mythic uppercase text-primary/80 tracking-widest">Guias</span>
+                            <span className="text-[10px] font-display uppercase text-primary/80 tracking-widest">Guias</span>
                         </div>
                         {/* List of guides */}
                         <div className="space-y-1 max-h-32 overflow-y-auto">
@@ -3298,7 +3254,7 @@ export default function CharacterSheet() {
                             <div className="w-6 h-6 flex items-center justify-center bg-primary/10 rounded-sm border border-primary/20">
                                 <span className="text-xs">⚔</span>
                             </div>
-                            <span className="text-[10px] font-mythic uppercase text-primary/80 tracking-widest">Seguidores</span>
+                            <span className="text-[10px] font-display uppercase text-primary/80 tracking-widest">Seguidores</span>
                         </div>
                         {/* List of followers */}
                         <div className="space-y-1 max-h-32 overflow-y-auto">
@@ -3352,7 +3308,7 @@ export default function CharacterSheet() {
                             <div className="w-6 h-6 flex items-center justify-center bg-primary/10 rounded-sm border border-primary/20">
                                 <span className="text-xs">✧</span>
                             </div>
-                            <span className="text-[10px] font-mythic uppercase text-primary/80 tracking-widest">Relíquias</span>
+                            <span className="text-[10px] font-display uppercase text-primary/80 tracking-widest">Relíquias</span>
                         </div>
                         {/* List of relics */}
                         <div className="space-y-1 max-h-32 overflow-y-auto">
