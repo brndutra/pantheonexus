@@ -420,7 +420,21 @@ const MythicHUDFrame = ({
     isLoading?: boolean
 }) => (
   <div className={cn("relative group", isEditing && "ring-1 ring-primary/30", variant === "gold" && "legend-gold-box", className)}>
-    <div className={cn("absolute inset-0 border", variant === "gold" ? "bg-gradient-to-br from-[#c9a84c] via-[#b8942e] to-[#a07d1c] border-[#d4af37]/60" : "bg-[#0a0a0a] border-primary/15")} />
+    <div className={cn("absolute inset-0 border", variant === "gold" ? "bg-gradient-to-br from-[#8a7520] via-[#7a6818] to-[#6a5a12] border-[#a08c2a]/60" : "bg-[#0a0a0a] border-primary/15")} />
+
+    <div className="absolute top-0 right-0 pointer-events-none z-20" style={{ width: '20px', height: '20px' }}>
+        <svg viewBox="0 0 20 20" className="w-full h-full">
+            <path d="M0,0 L20,0 L20,14 L14,20" fill="none" stroke={variant === "gold" ? "#1a1400" : "hsl(var(--primary))"} strokeWidth="1.5" opacity="0.5" />
+        </svg>
+    </div>
+    <div className="absolute bottom-0 left-0 pointer-events-none z-20" style={{ width: '14px', height: '14px' }}>
+        <svg viewBox="0 0 14 14" className="w-full h-full">
+            <path d="M0,8 L0,14 L6,14" fill="none" stroke={variant === "gold" ? "#1a1400" : "hsl(var(--primary))"} strokeWidth="1.5" opacity="0.4" />
+        </svg>
+    </div>
+    <div className="absolute top-[50%] -right-[2px] w-[2px] pointer-events-none z-20 flex flex-col gap-[2px]">
+        {[0,1,2].map(i => <div key={i} className={cn("w-full h-1", variant === "gold" ? "bg-[#1a1400]/40" : "bg-primary/30")} />)}
+    </div>
     
     {/* Header Section — Muller style: thick rule + condensed title */}
     {(title || Icon) && (
@@ -497,6 +511,17 @@ const MythicHUDFrame = ({
     {/* Content */}
     <div className="relative z-10 p-4">
         {children}
+    </div>
+    
+    <div className="absolute bottom-1 right-1 pointer-events-none z-20 flex gap-[2px] opacity-20">
+        {[0,1,2,3,4].map(i => (
+            <div key={i} className={cn("w-[2px] h-2", variant === "gold" ? "bg-[#e6db00]" : "bg-primary")} style={{ transform: 'skewX(-15deg)' }} />
+        ))}
+    </div>
+    <div className="absolute top-0 left-0 pointer-events-none z-20" style={{ width: '10px', height: '10px' }}>
+        <svg viewBox="0 0 10 10" className="w-full h-full">
+            <path d="M0,3 L0,0 L3,0" fill="none" stroke={variant === "gold" ? "#e6db00" : "hsl(var(--primary))"} strokeWidth="1.5" opacity="0.4" />
+        </svg>
     </div>
   </div>
 );
@@ -2505,20 +2530,20 @@ export default function CharacterSheet() {
             <div className="md:col-span-1 flex flex-col gap-6">
             <MythicHUDFrame title="Legend" icon={Flame} subHeader="DIVINE POWER" variant="gold" isEditing={editingCombatAll}>
                 <div className="space-y-3">
-                    <div className="flex items-center justify-between p-2 bg-[#1a1400]/20 border-l-2 border-[#1a1400]/40">
+                    <div className="flex items-center justify-between p-2 bg-black/20 border-l-2 border-[#e6db00]/40">
                         <div className="flex items-center gap-2">
-                            <Flame className="w-4 h-4 text-[#1a1400]/60" />
-                            <span className="text-[10px] uppercase tracking-widest text-[#1a1400]/70 font-code">Legend Level</span>
+                            <Flame className="w-4 h-4 text-[#e6db00]/70" />
+                            <span className="text-[10px] uppercase tracking-widest text-[#e6db00]/80 font-code">Legend Level</span>
                         </div>
-                        <span className="text-xl font-display text-[#1a1400] drop-shadow-[0_0_6px_rgba(26,20,0,0.3)]">
+                        <span className="text-xl font-display text-[#e6db00] drop-shadow-[0_0_8px_rgba(230,219,0,0.4)]">
                             {scionsight?.legend_level || 1}
                         </span>
                     </div>
                     
-                    <div className="p-2 bg-[#1a1400]/20 border-l-2 border-[#1a1400]/40">
+                    <div className="p-2 bg-black/20 border-l-2 border-[#e6db00]/40">
                         <div className="flex items-center justify-between mb-2">
-                            <span className="text-[10px] uppercase tracking-widest text-[#1a1400]/70 font-code">Legend Pool</span>
-                            <span className="text-[8px] text-[#1a1400]/50">(Level² = {scionsight?.legend_pool_total || 1})</span>
+                            <span className="text-[10px] uppercase tracking-widest text-[#e6db00]/80 font-code">Legend Pool</span>
+                            <span className="text-[8px] text-[#e6db00]/50">(Level² = {scionsight?.legend_pool_total || 1})</span>
                         </div>
                         <div className="flex items-center justify-center gap-3">
                             <div className="flex items-center gap-2">
@@ -2534,11 +2559,11 @@ export default function CharacterSheet() {
                                             });
                                         }
                                     }}
-                                    className="w-6 h-6 flex items-center justify-center rounded bg-[#1a1400]/15 border border-[#1a1400]/30 text-[#1a1400] hover:bg-[#1a1400]/25 transition-colors"
+                                    className="w-6 h-6 flex items-center justify-center rounded bg-black/30 border border-[#e6db00]/30 text-[#e6db00] hover:bg-black/40 transition-colors"
                                 >
                                     <Minus className="w-3 h-3" />
                                 </button>
-                                <span className="text-2xl font-display text-[#1a1400] min-w-[60px] text-center drop-shadow-[0_0_4px_rgba(26,20,0,0.2)]">
+                                <span className="text-2xl font-display text-[#e6db00] min-w-[60px] text-center drop-shadow-[0_0_8px_rgba(230,219,0,0.5)]">
                                     {legendPoolCurrent}
                                 </span>
                                 <button 
@@ -2554,15 +2579,15 @@ export default function CharacterSheet() {
                                             });
                                         }
                                     }}
-                                    className="w-6 h-6 flex items-center justify-center rounded bg-[#1a1400]/15 border border-[#1a1400]/30 text-[#1a1400] hover:bg-[#1a1400]/25 transition-colors"
+                                    className="w-6 h-6 flex items-center justify-center rounded bg-black/30 border border-[#e6db00]/30 text-[#e6db00] hover:bg-black/40 transition-colors"
                                 >
                                     <Plus className="w-3 h-3" />
                                 </button>
                             </div>
                             
-                            <span className="text-xl text-[#1a1400]/40">/</span>
+                            <span className="text-xl text-[#e6db00]/40">/</span>
                             
-                            <span className="text-2xl font-display text-[#1a1400]/60">
+                            <span className="text-2xl font-display text-[#e6db00]/60">
                                 {scionsight?.legend_pool_total || Math.pow(scionsight?.legend_level || 1, 2)}
                             </span>
                         </div>
