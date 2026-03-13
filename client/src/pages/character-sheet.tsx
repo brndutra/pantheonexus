@@ -2938,11 +2938,11 @@ export default function CharacterSheet() {
         <div className="mt-6">
             
             {/* POWERS */}
-            <MythicHUDFrame title="Legacy Profile" icon={Zap} className="min-h-[300px]">
+            <MythicHUDFrame title="Legacy Profile" icon={Zap} className="min-h-[300px]" titleSize="large">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                      {/* Knacks Column */}
                      <div>
-                         <h5 className="text-sm font-display text-primary/60 border-b border-primary/20 pb-1 mb-3 uppercase">Knacks</h5>
+                         <h5 className="text-xl font-display text-primary tracking-wide uppercase border-b border-primary/20 pb-1 mb-3">Knacks</h5>
                          <div className="space-y-2">
                              {knacks.length === 0 ? (
                                  <div className="text-[10px] text-muted-foreground/50 italic text-center py-4">
@@ -3075,7 +3075,7 @@ export default function CharacterSheet() {
 
                      {/* Boons Column */}
                      <div>
-                         <h5 className="text-sm font-display text-accent-foreground/60 border-b border-accent-foreground/20 pb-1 mb-3 uppercase">Boons</h5>
+                         <h5 className="text-xl font-display text-primary tracking-wide uppercase border-b border-primary/20 pb-1 mb-3">Boons</h5>
                          <div className="space-y-2">
                              {selectedBoons.length === 0 ? (
                                  <div className="text-[10px] text-muted-foreground/50 italic text-center py-4">
@@ -3184,7 +3184,7 @@ export default function CharacterSheet() {
 
                      {/* Birthrights Column */}
                      <div>
-                         <h5 className="text-sm font-display text-primary/60 border-b border-primary/20 pb-1 mb-3 uppercase">Birthrights</h5>
+                         <h5 className="text-xl font-display text-primary tracking-wide uppercase border-b border-primary/20 pb-1 mb-3">Birthrights</h5>
                          <div className="space-y-4">
                              {(['creatures', 'guides', 'followers', 'relics'] as const).map((category) => {
                                  const labels: Record<string, { icon: string; label: string }> = {
