@@ -1486,7 +1486,7 @@ export default function CharacterSheet() {
                 <MythicHUDFrame title="Identity Matrix" icon={Fingerprint} subHeader="SUBJECT DESIGNATION" className="h-auto" isEditing={editingIdentity} {...createEditHandlers(editingIdentity, setEditingIdentity)}>
                      <div className="flex flex-col gap-4">
                          {/* Portrait + Name - Always visible */}
-                         <div className="relative h-[280px] w-full border border-primary/20 bg-black/50 overflow-hidden group">
+                         <div className="relative aspect-[3/4] w-full border border-primary/20 bg-black/50 overflow-hidden group">
                              <div className="absolute top-0 left-0 w-8 h-8 border-t border-l border-primary/40 z-10" />
                              <div className="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-primary/40 z-10" />
                              
