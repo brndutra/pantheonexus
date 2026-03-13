@@ -258,7 +258,8 @@ const CyberSection = ({
             </button>
             {!collapsed && (
                 <div className="p-4 relative">
-                    {children}
+                    <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'url(/hexabump.png)', backgroundSize: '400px', backgroundRepeat: 'repeat' }} />
+                    <div className="relative">{children}</div>
                 </div>
             )}
         </div>
