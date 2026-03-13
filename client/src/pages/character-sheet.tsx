@@ -2007,6 +2007,63 @@ export default function CharacterSheet() {
                         ))}
                     </div>
                 </MythicHUDFrame>
+
+                {/* Nature Section - Below Callings */}
+                <div className="relative">
+                    <div className="absolute inset-0 bg-gradient-to-r from-[hsl(var(--highlight-purple))]/10 to-transparent border-l-2 border-[hsl(var(--highlight-purple))]/60 rounded-sm" />
+                    <div className="relative z-10 px-3 py-2 flex items-center gap-2">
+                        <span className="text-[8px] uppercase tracking-widest text-muted-foreground font-tech shrink-0">NAT</span>
+                        <div className="flex-1 relative">
+                            <input 
+                                value={nature} 
+                                onChange={(e) => setNature(e.target.value)}
+                                onFocus={() => editingCombat && setNatureSearchOpen(true)}
+                                onBlur={() => setTimeout(() => setNatureSearchOpen(false), 200)}
+                                onMouseEnter={() => !editingCombat && setShowNatureTooltip(true)}
+                                onMouseLeave={() => setShowNatureTooltip(false)}
+                                className="w-full text-sm font-mythic uppercase tracking-wider text-[hsl(var(--highlight-purple))] bg-transparent border-none p-0 h-auto focus:ring-0 outline-none placeholder:text-primary/30 cursor-pointer" 
+                                placeholder="SELECT NATURE"
+                                disabled={!editingCombat}
+                            />
+                            {nature && !editingCombat && showNatureTooltip && (() => {
+                                const natureStr = String(nature || '');
+                                const foundNature = availableNatures.find(n => n.nome?.toLowerCase() === natureStr.toLowerCase());
+                                return foundNature?.definition ? (
+                                    <div className="absolute left-0 top-full mt-2 p-2 bg-black/95 border border-primary/30 rounded-sm text-[10px] font-tech text-primary/70 max-w-[250px] z-50 pointer-events-none">
+                                        <p>{foundNature.definition}</p>
+                                        {foundNature.gatilho_forca_vontade && (
+                                            <p className="mt-1 text-accent-foreground/70">Gatilho: {foundNature.gatilho_forca_vontade}</p>
+                                        )}
+                                    </div>
+                                ) : null;
+                            })()}
+                            {natureSearchOpen && editingCombat && (
+                                <div className="absolute top-full left-0 right-0 mt-1 bg-black border border-primary/20 rounded-sm max-h-40 overflow-y-auto z-50 shadow-[0_4px_20px_rgba(0,0,0,0.8)]">
+                                    {availableNatures
+                                        .filter(n => n.nome?.toLowerCase().includes(String(nature || '').toLowerCase()))
+                                        .slice(0, 10)
+                                        .map((n, idx) => (
+                                            <div
+                                                key={n.nome + idx}
+                                                onClick={() => {
+                                                    setNature(n.nome);
+                                                    setNatureSearchOpen(false);
+                                                }}
+                                                className="w-full text-left px-2 py-1.5 text-[9px] font-tech text-primary/80 hover:bg-primary/20 hover:text-primary transition-colors cursor-pointer"
+                                                title={n.definition || ''}
+                                            >
+                                                <span className="block">{n.nome}</span>
+                                                {n.definition && (
+                                                    <span className="block text-[8px] text-muted-foreground truncate">{n.definition}</span>
+                                                )}
+                                            </div>
+                                        ))
+                                    }
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
                 
                 {/* LEGEND MODULE */}
                 <MythicHUDFrame title="Legend" icon={Flame} subHeader="DIVINE POWER">
@@ -2298,92 +2355,7 @@ export default function CharacterSheet() {
                         )}
                     </div>
                     
-                    {/* Nature Section - Moved from Callings */}
-                    <div className="mt-2 pt-2 border-t border-primary/15">
-                        <div className="relative">
-                            <div className="absolute inset-0 bg-gradient-to-r from-[hsl(var(--highlight-purple))]/10 to-transparent border-l-2 border-[hsl(var(--highlight-purple))]/60" />
-                            <div className="relative z-10 px-3 py-1.5 flex items-center gap-2">
-                                <span className="text-[8px] uppercase tracking-widest text-muted-foreground font-tech shrink-0">NAT</span>
-                                <div className="flex-1 relative">
-                                    <input 
-                                        value={nature} 
-                                        onChange={(e) => setNature(e.target.value)}
-                                        onFocus={() => editingVirtues && setNatureSearchOpen(true)}
-                                        onBlur={() => setTimeout(() => setNatureSearchOpen(false), 200)}
-                                        onMouseEnter={() => !editingVirtues && setShowNatureTooltip(true)}
-                                        onMouseLeave={() => setShowNatureTooltip(false)}
-                                        className="w-full text-sm font-mythic uppercase tracking-wider text-[hsl(var(--highlight-purple))] bg-transparent border-none p-0 h-auto focus:ring-0 outline-none placeholder:text-primary/30 cursor-pointer" 
-                                        placeholder="SELECT NATURE"
-                                        disabled={!editingVirtues}
-                                    />
-                                    {/* Nature Tooltip on hover */}
-                                    {nature && !editingVirtues && showNatureTooltip && (() => {
-                                        const natureStr = String(nature || '');
-                                        const foundNature = availableNatures.find(n => n.nome?.toLowerCase() === natureStr.toLowerCase());
-                                        return foundNature?.definition ? (
-                                            <div className="absolute left-0 top-full mt-2 p-2 bg-black/95 border border-primary/30 rounded-sm text-[10px] font-tech text-primary/70 max-w-[250px] z-50 pointer-events-none">
-                                                <p>{foundNature.definition}</p>
-                                                {foundNature.gatilho_forca_vontade && (
-                                                    <p className="mt-1 text-accent-foreground/70">Gatilho: {foundNature.gatilho_forca_vontade}</p>
-                                                )}
-                                            </div>
-                                        ) : null;
-                                    })()}
-                                    {/* Autocomplete dropdown */}
-                                    {natureSearchOpen && editingVirtues && (
-                                        <div className="absolute top-full left-0 right-0 mt-1 bg-black/95 border border-primary/30 rounded-sm max-h-40 overflow-y-auto z-50">
-                                            {availableNatures
-                                                .filter(n => n.nome?.toLowerCase().includes(String(nature || '').toLowerCase()))
-                                                .slice(0, 10)
-                                                .map((n, idx) => (
-                                                    <div
-                                                        key={n.nome + idx}
-                                                        onClick={() => {
-                                                            setNature(n.nome);
-                                                            setNatureSearchOpen(false);
-                                                        }}
-                                                        className="w-full text-left px-2 py-1.5 text-xs font-tech text-primary/80 hover:bg-primary/20 hover:text-primary transition-colors cursor-pointer"
-                                                        title={n.definition || ''}
-                                                    >
-                                                        <span className="block">{n.nome}</span>
-                                                        {n.definition && (
-                                                            <span className="block text-[9px] text-muted-foreground truncate">{n.definition}</span>
-                                                        )}
-                                                    </div>
-                                                ))
-                                            }
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                     
-                    {/* Willpower Integrity - Moved here below Virtues */}
-                    <div className="mt-3 pt-3 border-t border-primary/15 space-y-2">
-                         <div className="flex justify-between items-center text-xs font-mythic uppercase text-primary/70">
-                             <span>Willpower Integrity</span>
-                             <span>{willpowerCurrent} / {willpower}</span>
-                         </div>
-                         <div className="p-2 bg-black/40 border border-primary/20 rounded-sm">
-                             <div className="flex justify-between gap-1 mb-2">
-                                <DotRating value={willpower} max={10} onChange={setWillpower} iconClassName="w-2 h-2" activeClassName="bg-primary" />
-                             </div>
-                             <div className="flex gap-1 justify-between">
-                                 {Array.from({length: 10}).map((_, i) => (
-                                     <button 
-                                        key={i} 
-                                        onClick={() => updateWillpowerCurrent(i < willpowerCurrent ? i : i + 1)}
-                                        className={cn(
-                                            "h-1.5 w-full rounded-sm transition-all",
-                                            i < willpowerCurrent ? "bg-primary shadow-[0_0_5px_gold]" : "bg-primary/10"
-                                        )} 
-                                        disabled={i >= willpower}
-                                     />
-                                 ))}
-                             </div>
-                         </div>
-                    </div>
                     
                     {/* Health Track - Moved here below Virtues */}
                     <div className="mt-3 pt-3 border-t border-primary/15 space-y-2">
@@ -2419,6 +2391,50 @@ export default function CharacterSheet() {
                                  </div>
                              ))}
                          </div>
+                    </div>
+                </MythicHUDFrame>
+
+                <MythicHUDFrame title="Willpower" icon={Shield} subHeader="MENTAL FORTITUDE">
+                    <div className="space-y-3">
+                        <div className="flex items-center justify-between p-2 bg-black/40 border-l-2 border-[hsl(var(--highlight-blue))]/60">
+                            <div className="flex items-center gap-2">
+                                <Shield className="w-4 h-4 text-[hsl(var(--highlight-blue))]/60" />
+                                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-tech">Total</span>
+                            </div>
+                            <DotRating value={willpower} max={10} onChange={setWillpower} iconClassName="w-2.5 h-2.5" activeClassName="bg-[hsl(var(--highlight-blue))] shadow-[0_0_4px_hsl(var(--highlight-blue))]" />
+                        </div>
+                        
+                        <div className="p-2 bg-black/40 border-l-2 border-primary/60">
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-tech">Current Pool</span>
+                                <span className="text-[8px] text-muted-foreground">({willpowerCurrent} / {willpower})</span>
+                            </div>
+                            <div className="flex items-center justify-center gap-3">
+                                <div className="flex items-center gap-2">
+                                    <button 
+                                        onClick={() => updateWillpowerCurrent(Math.max(0, willpowerCurrent - 1))}
+                                        className="w-6 h-6 flex items-center justify-center rounded bg-black/60 border border-primary/30 text-primary hover:bg-primary/20 transition-colors"
+                                    >
+                                        <Minus className="w-3 h-3" />
+                                    </button>
+                                    <span className="text-2xl font-mythic text-[hsl(var(--highlight-blue))] min-w-[60px] text-center drop-shadow-[0_0_8px_hsl(var(--highlight-blue))]">
+                                        {willpowerCurrent}
+                                    </span>
+                                    <button 
+                                        onClick={() => updateWillpowerCurrent(Math.min(willpower, willpowerCurrent + 1))}
+                                        className="w-6 h-6 flex items-center justify-center rounded bg-black/60 border border-primary/30 text-primary hover:bg-primary/20 transition-colors"
+                                    >
+                                        <Plus className="w-3 h-3" />
+                                    </button>
+                                </div>
+                                
+                                <span className="text-xl text-muted-foreground">/</span>
+                                
+                                <span className="text-2xl font-mythic text-primary/60">
+                                    {willpower}
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </MythicHUDFrame>
 
