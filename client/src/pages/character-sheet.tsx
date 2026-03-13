@@ -1477,13 +1477,13 @@ export default function CharacterSheet() {
         </div>
 
         {/* --- GRID LAYOUT START --- */}
-        <div className="grid grid-cols-12 gap-6">
+        <div className="grid grid-cols-12 gap-6 items-start md:items-stretch">
 
             {/* LEFT COLUMN: IDENTITY & VIRTUES (Width 4) */}
             <div className="col-span-12 md:col-span-4 flex flex-col gap-6">
                 
                 {/* 1. IDENTITY MODULE */}
-                <MythicHUDFrame title="Identity Matrix" icon={Fingerprint} subHeader="SUBJECT DESIGNATION" className="h-auto" isEditing={editingIdentity} {...createEditHandlers(editingIdentity, setEditingIdentity)}>
+                <MythicHUDFrame title="Identity Matrix" icon={Fingerprint} subHeader="SUBJECT DESIGNATION" className="flex-1" isEditing={editingIdentity} {...createEditHandlers(editingIdentity, setEditingIdentity)}>
                      <div className="flex flex-col gap-4">
                          {/* Portrait + Name - Always visible */}
                          <div className="relative aspect-[3/4] w-full border border-primary/20 bg-black/50 overflow-hidden group">
@@ -2009,7 +2009,7 @@ export default function CharacterSheet() {
                 </MythicHUDFrame>
                 
                 {/* LEGEND MODULE */}
-                <MythicHUDFrame title="Legend" icon={Flame} subHeader="DIVINE POWER" className="mt-4">
+                <MythicHUDFrame title="Legend" icon={Flame} subHeader="DIVINE POWER">
                     <div className="space-y-3">
                         {/* Legend Level (Read-only, from Supabase Admin) */}
                         <div className="flex items-center justify-between p-2 bg-black/40 border-l-2 border-primary/60">
