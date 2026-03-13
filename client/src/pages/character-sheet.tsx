@@ -1808,7 +1808,7 @@ export default function CharacterSheet() {
                                       value={scionName} 
                                       onChange={(e) => setScionName(e.target.value)}
                                       placeholder="CODENAME" 
-                                      className="text-2xl font-display text-primary uppercase border-none bg-transparent p-0 shadow-none focus-visible:ring-0 placeholder:text-primary/20 text-shadow-glow" 
+                                      className="text-4xl font-display text-primary uppercase border-none bg-transparent p-0 shadow-none focus-visible:ring-0 placeholder:text-primary/20 text-shadow-glow" 
                                       viewMode={!editingIdentity}
                                      />
                                      <div className="flex gap-2 mt-1">
@@ -2460,7 +2460,7 @@ export default function CharacterSheet() {
                             <Flame className="w-4 h-4 text-[#e6db00]/70" />
                             <span className="text-[10px] uppercase tracking-widest text-[#e6db00]/80 font-code">Legend Level</span>
                         </div>
-                        <span className="text-xl font-display text-[#e6db00] drop-shadow-[0_0_8px_rgba(230,219,0,0.4)]">
+                        <span className="text-3xl font-display text-[#e6db00] drop-shadow-[0_0_8px_rgba(230,219,0,0.4)]">
                             {scionsight?.legend_level || 1}
                         </span>
                     </div>
