@@ -3004,7 +3004,7 @@ export default function CharacterSheet() {
                                 <div key={attr.name} className="flex items-center justify-between gap-2 group py-1 px-1 hover:bg-primary/5 rounded-sm transition-colors">
                                     <div className="flex items-center gap-2">
                                         <span className="text-primary/50 text-[10px] w-4">{attr.rune}</span>
-                                        <span className="text-[11px] font-bold font-code text-foreground uppercase tracking-wide">
+                                        <span className="text-[11px] font-bold font-code text-foreground uppercase tracking-wide hover:text-white transition-colors duration-300 cursor-default">
                                             {attr.name}
                                         </span>
                                     </div>
