@@ -2790,7 +2790,7 @@ export default function CharacterSheet() {
             </button>
             {!attribAbilCollapsed && (
         <div className="p-4 space-y-6">
-            <MythicHUDFrame title="Attributes" icon={Dna} subHeader="PHYSICAL / SOCIAL / MENTAL" className="flex flex-col" titleSize="large" isEditing={editingAttributes} {...createEditHandlers(editingAttributes, setEditingAttributes)}>
+            <MythicHUDFrame title="Attributes" icon={Dna} className="flex flex-col" titleSize="large" isEditing={editingAttributes} {...createEditHandlers(editingAttributes, setEditingAttributes)}>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-1">
                     {(Object.entries(attributes) as [AttributeCategory, Attribute[]][]).map(([category, attrs]) => (
                         <div key={category} className="space-y-1.5 relative">
@@ -2841,7 +2841,7 @@ export default function CharacterSheet() {
             </MythicHUDFrame>
 
             {/* ABILITIES DATABASE - 3 columns aligned with attributes above */}
-            <MythicHUDFrame title="Abilities" icon={Brain} subHeader="SKILL SET MATRIX" className="flex flex-col" titleSize="large" isEditing={editingAbilities} {...createEditHandlers(editingAbilities, setEditingAbilities)}>
+            <MythicHUDFrame title="Abilities" icon={Brain} className="flex flex-col" titleSize="large" isEditing={editingAbilities} {...createEditHandlers(editingAbilities, setEditingAbilities)}>
                 <div className="flex-1">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-1 h-full content-start">
                         {abilitiesSchema.map((schema) => {
@@ -2938,7 +2938,7 @@ export default function CharacterSheet() {
         <div className="mt-6">
             
             {/* POWERS */}
-            <MythicHUDFrame title="Legacy Profile" icon={Zap} subHeader="KNACKS, BOONS & BIRTHRIGHTS" className="min-h-[300px]">
+            <MythicHUDFrame title="Legacy Profile" icon={Zap} className="min-h-[300px]">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                      {/* Knacks Column */}
                      <div>
