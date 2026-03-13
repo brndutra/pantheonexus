@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { DotRating } from "@/components/ui/dot-rating";
 import { ScionInput } from "@/components/ui/scion-input";
@@ -27,6 +27,27 @@ import divineDivider from "@assets/generated_images/mythic_tech_divider_line.png
 import cornerTech from "@assets/generated_images/art_deco_mythic_corner_tech_ornament.png";
 import bgTech from "@assets/generated_images/ancient_high_tech_background_texture.png";
 
+
+const ViewportDropdown = ({ children, className, show }: { children: React.ReactNode; className?: string; show: boolean }) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [maxH, setMaxH] = useState(400);
+
+  useEffect(() => {
+    if (show && ref.current) {
+      const rect = ref.current.getBoundingClientRect();
+      const available = window.innerHeight - rect.top - 16;
+      setMaxH(Math.max(120, Math.min(400, available)));
+    }
+  }, [show]);
+
+  if (!show) return null;
+
+  return (
+    <div ref={ref} className={cn("absolute top-full left-0 right-0 mt-1 bg-black border border-primary/20 rounded-sm overflow-y-auto z-50 shadow-[0_4px_20px_rgba(0,0,0,0.8)]", className)} style={{ maxHeight: `${maxH}px` }}>
+      {children}
+    </div>
+  );
+};
 
 // --- Types ---
 type AttributeCategory = "Physical" | "Social" | "Mental";
@@ -2580,35 +2601,33 @@ export default function CharacterSheet() {
                                 >
                                     <Plus className="w-3 h-3" />
                                 </button>
-                                {showArmorDropdown && (
-                                    <div className="absolute top-full right-0 mt-1 w-56 bg-black border border-primary/20 rounded-sm max-h-[200px] overflow-y-auto z-50 shadow-[0_4px_20px_rgba(0,0,0,0.8)]">
-                                        <div className="sticky top-0 bg-black p-1 border-b border-primary/10">
-                                            <input
-                                                value={armorSearch}
-                                                onChange={(e) => setArmorSearch(e.target.value)}
-                                                placeholder="Search armor..."
-                                                className="w-full bg-black/60 border border-primary/20 text-[9px] px-2 py-1 rounded-sm text-primary placeholder:text-primary/30 outline-none"
-                                                autoFocus
-                                                data-testid="input-armor-search"
-                                            />
-                                        </div>
-                                        {filteredArmors.map((armor, i) => (
-                                            <button
-                                                key={`${armor.name}-${i}`}
-                                                onClick={() => {
-                                                    setArmorList([...armorList, armor]);
-                                                    setShowArmorDropdown(false);
-                                                    setArmorSearch("");
-                                                }}
-                                                className="w-full text-left px-2 py-1.5 text-[9px] text-primary/80 hover:bg-primary/10 hover:text-primary border-b border-primary/5 transition-colors"
-                                                data-testid={`btn-add-armor-${i}`}
-                                            >
-                                                <div className="font-code">{armor.name}</div>
-                                                <div className="text-[8px] text-muted-foreground">B:{armor.soakB} L:{armor.soakL} A:{armor.soakA} Mob:{armor.mobility} Fad:{armor.fatigue}</div>
-                                            </button>
-                                        ))}
+                                <ViewportDropdown show={showArmorDropdown} className="right-0 left-auto w-56">
+                                    <div className="sticky top-0 bg-black p-1 border-b border-primary/10">
+                                        <input
+                                            value={armorSearch}
+                                            onChange={(e) => setArmorSearch(e.target.value)}
+                                            placeholder="Search armor..."
+                                            className="w-full bg-black/60 border border-primary/20 text-[9px] px-2 py-1 rounded-sm text-primary placeholder:text-primary/30 outline-none"
+                                            autoFocus
+                                            data-testid="input-armor-search"
+                                        />
                                     </div>
-                                )}
+                                    {filteredArmors.map((armor, i) => (
+                                        <button
+                                            key={`${armor.name}-${i}`}
+                                            onClick={() => {
+                                                setArmorList([...armorList, armor]);
+                                                setShowArmorDropdown(false);
+                                                setArmorSearch("");
+                                            }}
+                                            className="w-full text-left px-2 py-1.5 text-[9px] text-primary/80 hover:bg-primary/10 hover:text-primary border-b border-primary/5 transition-colors"
+                                            data-testid={`btn-add-armor-${i}`}
+                                        >
+                                            <div className="font-code">{armor.name}</div>
+                                            <div className="text-[8px] text-muted-foreground">B:{armor.soakB} L:{armor.soakL} A:{armor.soakA} Mob:{armor.mobility} Fad:{armor.fatigue}</div>
+                                        </button>
+                                    ))}
+                                </ViewportDropdown>
                             </div>
                         </div>
 
@@ -2732,8 +2751,7 @@ export default function CharacterSheet() {
                                 placeholder="Search weapons..." 
                                 className="w-full bg-black border border-primary/20 text-[9px] px-2 py-1.5 rounded-sm focus:border-primary text-primary placeholder:text-primary/30 outline-none"
                             />
-                            {showOffensiveDropdown && filteredOffensives.length > 0 && (
-                                <div className="absolute top-full left-0 right-0 mt-1 bg-black border border-primary/20 rounded-sm max-h-[200px] overflow-y-auto z-50 shadow-[0_4px_20px_rgba(0,0,0,0.8)]">
+                            <ViewportDropdown show={showOffensiveDropdown && filteredOffensives.length > 0}>
                                     {filteredOffensives.slice(0, 15).map((o, i) => (
                                         <button
                                             key={`${o.offensive_name}-${i}`}
@@ -2756,8 +2774,7 @@ export default function CharacterSheet() {
                                             +{filteredOffensives.length - 15} mais resultados...
                                         </div>
                                     )}
-                                </div>
-                            )}
+                            </ViewportDropdown>
                         </div>
                         {showOffensiveDropdown && (
                             <button 
@@ -3144,8 +3161,8 @@ export default function CharacterSheet() {
                                      />
                                  </div>
                                  <div className="relative">
-                                     {showKnackDropdown && filteredKnacks.length > 0 && (
-                                         <div className="absolute top-full left-0 right-0 mt-1 bg-black border border-primary/20 rounded-sm max-h-[400px] overflow-y-auto z-50 shadow-[0_4px_20px_rgba(0,0,0,0.8)]">
+                                     <ViewportDropdown show={showKnackDropdown && filteredKnacks.length > 0}>
+                                         <div>
                                              {filteredKnacks.map((k) => (
                                                  <button
                                                      key={k.id}
@@ -3181,7 +3198,7 @@ export default function CharacterSheet() {
                                                  </button>
                                              ))}
                                          </div>
-                                     )}
+                                     </ViewportDropdown>
                                  </div>
                                  {showKnackDropdown && (
                                      <button 
@@ -3262,8 +3279,7 @@ export default function CharacterSheet() {
                                      />
                                  </div>
                                  <div className="relative">
-                                     {showBoonDropdown && filteredBoons.length > 0 && (
-                                         <div className="absolute top-full left-0 right-0 mt-1 bg-black border border-accent/20 rounded-sm max-h-[400px] overflow-y-auto z-50 shadow-[0_4px_20px_rgba(0,0,0,0.8)]">
+                                     <ViewportDropdown show={showBoonDropdown && filteredBoons.length > 0} className="border-accent/20">
                                              {filteredBoons.map((b) => (
                                                  <button
                                                      key={b.id}
@@ -3289,8 +3305,7 @@ export default function CharacterSheet() {
                                                      </div>
                                                  </button>
                                              ))}
-                                         </div>
-                                     )}
+                                     </ViewportDropdown>
                                  </div>
                                  {showBoonDropdown && (
                                      <button 
