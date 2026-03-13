@@ -359,19 +359,25 @@ const CyberSection = ({
                 </div>
             </button>
             {!collapsed && (
-                <div className="p-4 relative overflow-visible">
-                    <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'url(/hexabump.png)', backgroundSize: '400px', backgroundRepeat: 'repeat' }} />
+                <div className={cn(
+                    "p-4 relative overflow-visible",
+                    isYellow ? "bg-[#e6db00]" : ""
+                )}>
+                    <div className={cn(
+                        "absolute inset-0 pointer-events-none",
+                        isYellow ? "opacity-[0.08]" : "opacity-[0.03]"
+                    )} style={{ backgroundImage: 'url(/hexabump.png)', backgroundSize: '400px', backgroundRepeat: 'repeat' }} />
                     {isYellow && (
                         <>
                             <div className="absolute top-2 right-2 pointer-events-none z-10 opacity-20">
                                 <svg viewBox="0 0 24 24" className="w-5 h-5">
-                                    <path d="M4,4 L20,20 M20,4 L4,20" stroke="#e6db00" strokeWidth="3" />
-                                    <rect x="1" y="1" width="22" height="22" fill="none" stroke="#e6db00" strokeWidth="1.5" />
+                                    <path d="M4,4 L20,20 M20,4 L4,20" stroke="#000" strokeWidth="3" />
+                                    <rect x="1" y="1" width="22" height="22" fill="none" stroke="#000" strokeWidth="1.5" />
                                 </svg>
                             </div>
                             <div className="absolute bottom-3 left-3 pointer-events-none z-10 flex gap-[2px] opacity-30">
                                 {[0,1,2,3,4,5,6,7].map(i => (
-                                    <div key={i} className="w-[3px] h-3 bg-[#e6db00]" style={{ transform: 'skewX(-15deg)' }} />
+                                    <div key={i} className="w-[3px] h-3 bg-black" style={{ transform: 'skewX(-15deg)' }} />
                                 ))}
                             </div>
                         </>
