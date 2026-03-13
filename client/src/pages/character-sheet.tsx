@@ -216,7 +216,7 @@ const CyberSection = ({
             </svg>
         </div>
 
-        <div className="border border-primary/25 bg-black/30 overflow-hidden relative"
+        <div className="border border-primary/25 bg-[#0a0a0a] overflow-hidden relative"
              style={{ clipPath: 'polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px))' }}>
             <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-primary/60 via-primary/30 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-primary/40" />
@@ -224,13 +224,13 @@ const CyberSection = ({
 
             <button 
                 onClick={onToggle}
-                className="w-full flex items-center justify-between px-5 py-3 bg-black/50 hover:bg-black/70 transition-colors cursor-pointer relative"
+                className="w-full flex items-center justify-between px-5 py-2.5 bg-[#0a0a0a] hover:bg-[#111] transition-colors cursor-pointer relative"
                 data-testid={testId}
             >
                 <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-primary/20" />
                 <div className="flex items-center gap-3">
                     <div className="w-[3px] h-5 bg-primary/70 rounded-full" />
-                    <span className="text-2xl font-display uppercase tracking-[0.3em] text-primary drop-shadow-[0_0_8px_hsl(var(--primary)/0.3)]">{title}</span>
+                    <span className="text-xs font-code uppercase tracking-[0.25em] text-primary/80">{title}</span>
                 </div>
                 <div className="flex items-center gap-2">
                     {onEditToggle && !collapsed && (
