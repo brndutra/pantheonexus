@@ -15,7 +15,7 @@ export const ScionInput = React.forwardRef<HTMLInputElement, ScionInputProps>(
       return (
         <div className="relative group w-full mb-4">
           {label && (
-             <label className="block text-[9px] uppercase tracking-[0.2em] mb-1 font-mythic text-primary/40">
+             <label className="block text-[9px] uppercase tracking-[0.2em] mb-1 font-display text-primary/40">
                {label}
              </label>
           )}
@@ -34,7 +34,7 @@ export const ScionInput = React.forwardRef<HTMLInputElement, ScionInputProps>(
         {label && (
           <label
             className={cn(
-              "block text-[10px] md:text-xs uppercase tracking-[0.2em] mb-2 transition-colors font-mythic text-primary/70"
+              "block text-[10px] md:text-xs uppercase tracking-[0.2em] mb-2 transition-colors font-display text-primary/70"
             )}
           >
             {label}
@@ -44,7 +44,7 @@ export const ScionInput = React.forwardRef<HTMLInputElement, ScionInputProps>(
           {textarea ? (
              <textarea
                 className={cn(
-                  "w-full bg-transparent border-b border-muted-foreground/30 px-0 py-2 outline-none transition-all duration-300 font-tech text-foreground text-sm placeholder:text-muted-foreground/20 resize-none block",
+                  "w-full bg-transparent border-b border-muted-foreground/30 px-0 py-2 outline-none transition-all duration-300 font-code text-foreground text-sm placeholder:text-muted-foreground/20 resize-none block",
                   "focus:border-primary focus:bg-primary/5",
                   className
                 )}
@@ -56,7 +56,7 @@ export const ScionInput = React.forwardRef<HTMLInputElement, ScionInputProps>(
             <input
               ref={ref}
               className={cn(
-                "w-full bg-transparent border-b border-muted-foreground/30 px-0 py-2 outline-none transition-all duration-300 font-tech text-foreground text-lg placeholder:text-muted-foreground/20",
+                "w-full bg-transparent border-b border-muted-foreground/30 px-0 py-2 outline-none transition-all duration-300 font-code text-foreground text-lg placeholder:text-muted-foreground/20",
                 "focus:border-primary focus:bg-primary/5",
                 className
               )}
