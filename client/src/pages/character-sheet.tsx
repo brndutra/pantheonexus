@@ -361,7 +361,7 @@ const CyberSection = ({
             {!collapsed && (
                 <div className={cn(
                     "p-4 relative overflow-visible",
-                    isYellow ? "bg-[#1a1a1a]" : ""
+                    isYellow ? "bg-[#111]" : ""
                 )}>
                     <div className={cn(
                         "absolute inset-0 pointer-events-none",
@@ -421,9 +421,9 @@ const MythicHUDFrame = ({
 }) => (
   <div className={cn("relative group", isEditing && "ring-1 ring-primary/30", className)}>
     <div className={cn("absolute inset-0 border", 
-        variant === "gold" ? "bg-[#0c0c0c] border-[#e6db00]/50" : 
-        variant === "blue" ? "bg-[#0c0c0c] border-[#00b4ff]/50" : 
-        "bg-[#0a0a0a] border-primary/15"
+        variant === "gold" ? "bg-[#1a1a1a] border-[#e6db00]/50" : 
+        variant === "blue" ? "bg-[#1a1a1a] border-[#00b4ff]/50" : 
+        "bg-[#1a1a1a] border-primary/15"
     )} />
 
     <div className="absolute top-0 right-0 pointer-events-none z-20" style={{ width: '20px', height: '20px' }}>
