@@ -2997,7 +2997,7 @@ export default function CharacterSheet() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-1">
                     {(Object.entries(attributes) as [AttributeCategory, Attribute[]][]).map(([category, attrs]) => (
                         <div key={category} className="space-y-1.5 relative">
-                            <h4 className="text-[11px] font-display uppercase tracking-[0.2em] text-primary/60 border-b border-primary/20 pb-1.5 mb-2">
+                            <h4 className="text-[11px] font-display uppercase tracking-[0.2em] text-primary/60 border-b border-primary/20 pb-1.5 mb-2 hover:text-white transition-colors duration-300 cursor-default">
                                 {category}
                             </h4>
                             {attrs.map((attr, idx) => (
